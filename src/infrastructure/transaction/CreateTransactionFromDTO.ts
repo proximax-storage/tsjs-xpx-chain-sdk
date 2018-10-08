@@ -14,32 +14,33 @@
  * limitations under the License.
  */
 
-import {Address} from '../../model/account/Address';
-import {PublicAccount} from '../../model/account/PublicAccount';
-import {NetworkType} from '../../model/blockchain/NetworkType';
-import {Mosaic} from '../../model/mosaic/Mosaic';
-import {MosaicId} from '../../model/mosaic/MosaicId';
-import {MosaicProperties} from '../../model/mosaic/MosaicProperties';
-import {NamespaceId} from '../../model/namespace/NamespaceId';
-import {AggregateTransaction} from '../../model/transaction/AggregateTransaction';
-import {AggregateTransactionCosignature} from '../../model/transaction/AggregateTransactionCosignature';
-import {AggregateTransactionInfo} from '../../model/transaction/AggregateTransactionInfo';
-import {Deadline} from '../../model/transaction/Deadline';
-import {LockFundsTransaction} from '../../model/transaction/LockFundsTransaction';
-import {ModifyMultisigAccountTransaction} from '../../model/transaction/ModifyMultisigAccountTransaction';
-import {MosaicDefinitionTransaction} from '../../model/transaction/MosaicDefinitionTransaction';
-import {MosaicSupplyChangeTransaction} from '../../model/transaction/MosaicSupplyChangeTransaction';
-import {MultisigCosignatoryModification} from '../../model/transaction/MultisigCosignatoryModification';
-import {EmptyMessage, PlainMessage} from '../../model/transaction/PlainMessage';
-import {RegisterNamespaceTransaction} from '../../model/transaction/RegisterNamespaceTransaction';
-import {SecretLockTransaction} from '../../model/transaction/SecretLockTransaction';
-import {SecretProofTransaction} from '../../model/transaction/SecretProofTransaction';
-import {SignedTransaction} from '../../model/transaction/SignedTransaction';
-import {Transaction} from '../../model/transaction/Transaction';
-import {TransactionInfo} from '../../model/transaction/TransactionInfo';
-import {TransactionType} from '../../model/transaction/TransactionType';
-import {TransferTransaction} from '../../model/transaction/TransferTransaction';
-import {UInt64} from '../../model/UInt64';
+import { Address } from '../../model/account/Address';
+import { PublicAccount } from '../../model/account/PublicAccount';
+import { NetworkType } from '../../model/blockchain/NetworkType';
+import { Mosaic } from '../../model/mosaic/Mosaic';
+import { MosaicId } from '../../model/mosaic/MosaicId';
+import { MosaicProperties } from '../../model/mosaic/MosaicProperties';
+import { NamespaceId } from '../../model/namespace/NamespaceId';
+import { AggregateTransaction } from '../../model/transaction/AggregateTransaction';
+import { AggregateTransactionCosignature } from '../../model/transaction/AggregateTransactionCosignature';
+import { AggregateTransactionInfo } from '../../model/transaction/AggregateTransactionInfo';
+import { Deadline } from '../../model/transaction/Deadline';
+import { LockFundsTransaction } from '../../model/transaction/LockFundsTransaction';
+import { ModifyMultisigAccountTransaction } from '../../model/transaction/ModifyMultisigAccountTransaction';
+import { MosaicDefinitionTransaction } from '../../model/transaction/MosaicDefinitionTransaction';
+import { MosaicSupplyChangeTransaction } from '../../model/transaction/MosaicSupplyChangeTransaction';
+import { MultisigCosignatoryModification } from '../../model/transaction/MultisigCosignatoryModification';
+import { EmptyMessage, PlainMessage } from '../../model/transaction/PlainMessage';
+import { RegisterNamespaceTransaction } from '../../model/transaction/RegisterNamespaceTransaction';
+import { SecretLockTransaction } from '../../model/transaction/SecretLockTransaction';
+import { SecretProofTransaction } from '../../model/transaction/SecretProofTransaction';
+import { SignedTransaction } from '../../model/transaction/SignedTransaction';
+import { Transaction } from '../../model/transaction/Transaction';
+import { TransactionInfo } from '../../model/transaction/TransactionInfo';
+import { TransactionType } from '../../model/transaction/TransactionType';
+import { TransferTransaction } from '../../model/transaction/TransferTransaction';
+import { UInt64 } from '../../model/UInt64';
+import { SecureMessage } from '../../model/transaction/SecureMessage';
 
 /**
  * @internal
@@ -108,6 +109,16 @@ export const CreateTransactionFromDTO = (transactionDTO): Transaction => {
  */
 const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Transaction => {
     if (transactionDTO.type === TransactionType.TRANSFER) {
+
+        let message: PlainMessage | SecureMessage;
+        if (transactionDTO.message.type == 1) {
+            message = PlainMessage.createFromDTO(transactionDTO.message.payload);
+        } else if (transactionDTO.message.type == 2) {
+            message = SecureMessage.createFromDTO(transactionDTO.message.payload);
+        } else {
+            message = EmptyMessage;
+        }
+
         return new TransferTransaction(
             extractNetworkType(transactionDTO.version),
             extractTransactionVersion(transactionDTO.version),
@@ -117,8 +128,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             transactionDTO.mosaics === undefined ? [] :
                 transactionDTO.mosaics
                     .map((mosaicDTO) => new Mosaic(new MosaicId(mosaicDTO.id), new UInt64(mosaicDTO.amount))),
-            transactionDTO.message !== undefined ?
-                PlainMessage.createFromDTO(transactionDTO.message.payload) : EmptyMessage,
+            message,
             transactionDTO.signature,
             PublicAccount.createFromPublicKey(transactionDTO.signer, extractNetworkType(transactionDTO.version)),
             transactionInfo,
