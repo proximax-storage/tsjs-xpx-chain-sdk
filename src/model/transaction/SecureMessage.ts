@@ -29,7 +29,7 @@ export class SecureMessage extends Message {
 
     public static decrypt(encodedMessage: SecureMessage, recipientPublicKey: string, privateKey: string): PlainMessage {
         const decodedMessage = crypto.decode(privateKey, recipientPublicKey, encodedMessage);
-        return new PlainMessage(decodedMessage);
+        return new PlainMessage(this.decodeHex(decodedMessage));
     }
 
     /**
