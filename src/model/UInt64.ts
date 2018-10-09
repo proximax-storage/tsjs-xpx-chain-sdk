@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {uint64} from 'nem2-library';
+import {uint64} from '@thomas.tran/nem2-library';
 
 /**
  * UInt64 data model

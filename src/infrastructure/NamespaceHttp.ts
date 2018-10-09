@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {NamespaceRoutesApi} from 'nem2-library';
+import {NamespaceRoutesApi} from '@thomas.tran/nem2-library';
 import {from as observableFrom, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {Address} from '../model/account/Address';

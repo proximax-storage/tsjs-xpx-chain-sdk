@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {crypto} from 'nem2-library';
+import {crypto} from '@thomas.tran/nem2-library';
 import {Password} from './Password';
 
 /**
@@ -47,7 +47,7 @@ export class EncryptedPrivateKey {
         const common = {
             password: password.value,
             privateKey: '',
-        }
+        };
         const wallet = {
             encrypted: this.encryptedKey,
             iv: this.iv,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {AccountRoutesApi} from 'nem2-library';
+import {AccountRoutesApi} from '@thomas.tran/nem2-library';
 import {from as observableFrom, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {AccountInfo} from '../model/account/AccountInfo';

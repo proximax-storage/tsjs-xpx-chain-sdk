@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {MosaicRoutesApi} from 'nem2-library';
+import {MosaicRoutesApi} from '@thomas.tran/nem2-library';
 import {from as observableFrom, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {PublicAccount} from '../model/account/PublicAccount';

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+import {convert, crypto, KeyPair, nacl_catapult} from '@thomas.tran/nem2-library';
 import {LocalDateTime} from 'js-joda';
-import {convert, crypto, KeyPair, nacl_catapult} from 'nem2-library';
 import {Account} from '../account/Account';
 import {Address} from '../account/Address';
 import {NetworkType} from '../blockchain/NetworkType';

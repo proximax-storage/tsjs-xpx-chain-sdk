@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import {convert, nacl_catapult} from '@thomas.tran/nem2-library';
 import {expect} from 'chai';
 import {ChronoUnit} from 'js-joda';
 import {sha3_512} from 'js-sha3';
-import {convert, nacl_catapult} from 'nem2-library';
 import {AccountHttp} from '../../src/infrastructure/AccountHttp';
 import {Listener} from '../../src/infrastructure/Listener';
 import {TransactionHttp} from '../../src/infrastructure/TransactionHttp';

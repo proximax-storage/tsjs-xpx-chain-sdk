@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { TransferTransaction as TransferTransactionLibrary, VerifiableTransaction } from 'nem2-library';
+import { TransferTransaction as TransferTransactionLibrary, VerifiableTransaction } from '@thomas.tran/nem2-library';
 import { Address } from '../account/Address';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';

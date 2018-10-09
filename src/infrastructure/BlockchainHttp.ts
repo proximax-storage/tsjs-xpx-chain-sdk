@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {BlockchainRoutesApi} from 'nem2-library';
+import {BlockchainRoutesApi} from '@thomas.tran/nem2-library';
 import {from as observableFrom, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {PublicAccount} from '../model/account/PublicAccount';

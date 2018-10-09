@@ -1,6 +1,6 @@
 {
-  "name": "nem2-sdk",
-  "version": "0.10.2",
+  "name": "@thomas.tran/nem2-sdk",
+  "version": "0.10.5",
   "description": "Reactive Nem2 sdk for typescript and javascript",
   "scripts": {
     "pretest": "npm run build",
@@ -12,22 +12,19 @@
     "test:coveralls": "npm run test:cov | coveralls"
   },
   "contributors": [
-    {
-      "name": "Aleix",
-      "email": "aleix@nemeurope.eu"
-    },
-    {
-      "name": "Guillem",
-      "email": "guillem@nemeurope.eu"
-    }
+    "Aleix <aleix@nemeurope.eu>",
+    "Guillem <guillem@nemeurope.eu>",
+    "Thomas Tran <tldinteractive@gmail.com>"
   ],
-  "bugs": "https://github.com/nemtech/nem2-sdk-typescript-javascript/issues",
+  "bugs": {
+    "url": "https://github.com/thomas-tran/nem2-sdk-typescript-javascript/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nemtech/nem2-sdk-typescript-javascript.git"
+    "url": "git+https://github.com/thomas-tran/nem2-sdk-typescript-javascript.git"
   },
   "license": "Apache-2.0",
-  "homepage": "https://github.com/nemtech/nem2-sdk-typescript-javascript#readme",
+  "homepage": "https://github.com/thomas-tran/nem2-sdk-typescript-javascript#readme",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "devDependencies": {
@@ -51,7 +48,7 @@
   },
   "dependencies": {
     "js-joda": "^1.6.2",
-    "nem2-library": "^0.9.5",
+    "@thomas.tran/nem2-library": "^0.9.6",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5",
     "rxjs": "^6.2.1",
@@ -68,5 +65,13 @@
     "exclude": [
       "**/*.spec.js"
     ]
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [
+    "nem2",
+    "sdk"
+  ],
+  "author": "NEM"
 }

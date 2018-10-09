@@ -18,7 +18,7 @@
  * Hash type. Supported types are:
  * 0: SHA3_512.
  */
-import {convert} from 'nem2-library';
+import {convert} from '@thomas.tran/nem2-library';
 
 export enum HashType {
     SHA3_512 = 0,

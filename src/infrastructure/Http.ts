@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {ApiClient} from 'nem2-library';
+import {ApiClient} from '@thomas.tran/nem2-library';
 import {Observable, of as observableOf} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {NetworkType} from '../model/blockchain/NetworkType';

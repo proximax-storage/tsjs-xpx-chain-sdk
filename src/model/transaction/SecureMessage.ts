@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { crypto } from 'nem2-library';
+import { crypto } from '@thomas.tran/nem2-library';
 import { Message } from './Message';
 import { PlainMessage } from './PlainMessage';
 
@@ -27,9 +27,9 @@ export class SecureMessage extends Message {
         return new SecureMessage(encodedMessage, recipientPublicKey);
     }
 
-    public static decrypt(encodedMessage: SecureMessage, recipientPublicKey: string, privateKey: string): PlainMessage {
+    public static decrypt(encodedMessage: string, recipientPublicKey: string, privateKey: string): PlainMessage {
         const decodedMessage = crypto.decode(privateKey, recipientPublicKey, encodedMessage);
-        return new PlainMessage(this.decodeHex(decodedMessage));
+        return new PlainMessage(PlainMessage.decodeHex(decodedMessage));
     }
 
     /**

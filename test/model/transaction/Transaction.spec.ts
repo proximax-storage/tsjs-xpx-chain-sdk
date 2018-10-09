@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+import { VerifiableTransaction } from '@thomas.tran/nem2-library';
 import { expect } from 'chai';
-import { VerifiableTransaction } from 'nem2-library';
 import { NetworkType } from '../../../src/model/blockchain/NetworkType';
 import { Account } from '../../../src/model/model';
 import { Deadline } from '../../../src/model/transaction/Deadline';

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { convert, KeyPair } from 'nem2-library';
+import { convert, KeyPair } from '@thomas.tran/nem2-library';
 import { NetworkType } from '../blockchain/NetworkType';
 import { Address } from './Address';
 

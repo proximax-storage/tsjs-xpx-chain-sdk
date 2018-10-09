@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import {convert} from '@thomas.tran/nem2-library';
 import {expect} from 'chai';
 import {sha3_512} from 'js-sha3';
-import {convert} from 'nem2-library';
 import {Address} from '../../../src/model/account/Address';
 import {NetworkType} from '../../../src/model/blockchain/NetworkType';
 import {XEM} from '../../../src/model/mosaic/XEM';
