@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { SecretLockTransaction as SecretLockTransactionLibrary, VerifiableTransaction } from '@thomas.tran/nem2-library';
+import { SecretLockTransaction as SecretLockTransactionLibrary, VerifiableTransaction } from 'proximax-nem2-library';
 import { Address } from '../account/Address';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';

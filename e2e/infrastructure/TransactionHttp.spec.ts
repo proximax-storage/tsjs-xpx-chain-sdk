@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {convert, nacl_catapult} from '@thomas.tran/nem2-library';
+import {convert, nacl_catapult} from 'proximax-nem2-library';
 import {expect} from 'chai';
 import {ChronoUnit} from 'js-joda';
 import {sha3_512} from 'js-sha3';

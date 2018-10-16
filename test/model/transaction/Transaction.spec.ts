@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { VerifiableTransaction } from '@thomas.tran/nem2-library';
+import { VerifiableTransaction } from 'proximax-nem2-library';
 import { expect } from 'chai';
 import { NetworkType } from '../../../src/model/blockchain/NetworkType';
 import { Account } from '../../../src/model/model';

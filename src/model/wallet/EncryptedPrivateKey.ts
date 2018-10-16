@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {crypto} from '@thomas.tran/nem2-library';
+import {crypto} from 'proximax-nem2-library';
 import {Password} from './Password';
 
 /**
