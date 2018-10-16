@@ -22,7 +22,9 @@ describe('Deadline', () => {
     it('should createComplete timestamp today', () => {
         const deadline = Deadline.create();
         const date = new Date();
-        expect(deadline.value.dayOfMonth()).to.be.equal(date.getDate());
+        if (date.getHours() < 24 - 2) {
+          expect(deadline.value.dayOfMonth()).to.be.equal(date.getDate());
+        }
         expect(deadline.value.monthValue()).to.be.equal(date.getMonth() + 1);
         expect(deadline.value.year()).to.be.equal(date.getFullYear());
     });

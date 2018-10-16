@@ -51,4 +51,5 @@ export abstract class Message {
                  */
                 public readonly payload: string) {
     }
+
 }

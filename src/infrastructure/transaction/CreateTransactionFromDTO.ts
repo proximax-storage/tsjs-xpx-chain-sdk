@@ -111,9 +111,9 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
     if (transactionDTO.type === TransactionType.TRANSFER) {
 
         let message: PlainMessage | SecureMessage;
-        if (transactionDTO.message.type == 1) {
+        if (transactionDTO.message.type == 0) {
             message = PlainMessage.createFromDTO(transactionDTO.message.payload);
-        } else if (transactionDTO.message.type == 2) {
+        } else if (transactionDTO.message.type == 1) {
             message = SecureMessage.createFromDTO(transactionDTO.message.payload);
         } else {
             message = EmptyMessage;

@@ -12,7 +12,7 @@ describe('SecureMessage', () => {
         const encryptedMessage = SecureMessage.create(payload, recipientPublicKey, senderPrivateKey);
         // console.log(encryptedMessage);
 
-        const plainMessage = SecureMessage.decrypt(encryptedMessage.payload, recipientPublicKey, recipientPrivateKey);
+        const plainMessage = SecureMessage.decrypt(encryptedMessage.payload, recipientPublicKey, senderPrivateKey);
         // console.log(plainMessage.payload);
 
         expect(plainMessage.payload).to.be.equal(payload);

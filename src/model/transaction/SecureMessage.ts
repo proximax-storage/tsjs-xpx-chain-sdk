@@ -44,7 +44,7 @@ export class SecureMessage extends Message {
      * @param payload
      */
     constructor(payload: string, recipientPublicKey?: string) {
-        super(2, payload);
+        super(1, payload);
         this.recipientPublicKey = recipientPublicKey;
     }
 }
