@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {TransactionRoutesApi} from '@thomas.tran/nem2-library';
+import {TransactionRoutesApi} from 'proximax-nem2-library';
 import * as requestPromise from 'request-promise-native';
 import {from as observableFrom, Observable, throwError as observableThrowError} from 'rxjs';
 import {catchError, map} from 'rxjs/operators';
