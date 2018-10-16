@@ -1,7 +1,7 @@
 {
-  "name": "@thomas.tran/nem2-sdk",
+  "name": "proximax-nem2-sdk",
   "version": "0.10.5",
-  "description": "Reactive Nem2 sdk for typescript and javascript",
+  "description": "Proximax Nem2 sdk for typescript and javascript",
   "scripts": {
     "pretest": "npm run build",
     "test": "mocha --ui bdd --recursive ./dist/test --timeout 90000",
@@ -17,14 +17,17 @@
     "Thomas Tran <tldinteractive@gmail.com>"
   ],
   "bugs": {
-    "url": "https://github.com/thomas-tran/nem2-sdk-typescript-javascript/issues"
+    "url": "https://github.com/proximax-storage/proximax-nem2-sdk-ts-js/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thomas-tran/nem2-sdk-typescript-javascript.git"
+    "url": "git+https://github.com/proximax-storage/proximax-nem2-sdk-ts-js.git"
+  },
+  "publishConfig": {
+    "registry": "https://nexus.internal.proximax.io/repository/npm-private/"
   },
   "license": "Apache-2.0",
-  "homepage": "https://github.com/thomas-tran/nem2-sdk-typescript-javascript#readme",
+  "homepage": "https://github.com/proximax-storage/proximax-nem2-sdk-ts-jst#readme",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "devDependencies": {
@@ -48,7 +51,7 @@
   },
   "dependencies": {
     "js-joda": "^1.6.2",
-    "@thomas.tran/nem2-library": "^0.9.6",
+    "proximax-nem2-library": "^0.9.8",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5",
     "rxjs": "^6.2.1",

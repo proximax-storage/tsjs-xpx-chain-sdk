@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { crypto } from '@thomas.tran/nem2-library';
+import { crypto } from 'proximax-nem2-library';
 import { Message } from './Message';
 import { PlainMessage } from './PlainMessage';
 
@@ -44,7 +44,7 @@ export class SecureMessage extends Message {
      * @param payload
      */
     constructor(payload: string, recipientPublicKey?: string) {
-        super(2, payload);
+        super(1, payload);
         this.recipientPublicKey = recipientPublicKey;
     }
 }

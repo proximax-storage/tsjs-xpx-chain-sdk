@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {convert} from '@thomas.tran/nem2-library';
+import {convert} from 'proximax-nem2-library';
 import {expect} from 'chai';
 import {sha3_512} from 'js-sha3';
 import {NetworkType} from '../../../src/model/blockchain/NetworkType';

@@ -40,7 +40,7 @@ export class PlainMessage extends Message {
      * @param payload
      */
     constructor(payload: string) {
-        super(1, payload);
+        super(0, payload);
     }
 
 }
