@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-import { crypto } from 'proximax-nem2-library';
-import { Message } from './Message';
-import { PlainMessage } from './PlainMessage';
+import {convert, crypto} from 'proximax-nem2-library';
+import {Message} from './Message';
 
 export class SecureMessage extends Message {
 
-    public recipientPublicKey?: string;
-
-    public static create(message: string, recipientPublicKey: string, privateKey: string): SecureMessage {
-        const encodedMessage = crypto.encode(privateKey, recipientPublicKey, message);
-        return new SecureMessage(encodedMessage, recipientPublicKey);
-    }
-
-    public static decrypt(encodedMessage: string, recipientPublicKey: string, privateKey: string): PlainMessage {
-        const decodedMessage = crypto.decode(privateKey, recipientPublicKey, encodedMessage);
-        return new PlainMessage(PlainMessage.decodeHex(decodedMessage));
+    public static create(message: string, publicKey: string, privateKey: string): SecureMessage {
+        const encodedMessage = crypto.nemencrypt(privateKey, publicKey, convert.hexToUint8(convert.utf8ToHex(message)));
+        return new SecureMessage(convert.uint8ToHex(encodedMessage));
     }
 
     /**
@@ -43,8 +35,12 @@ export class SecureMessage extends Message {
      * @internal
      * @param payload
      */
-    constructor(payload: string, recipientPublicKey?: string) {
+    constructor(payload: string) {
         super(1, payload);
-        this.recipientPublicKey = recipientPublicKey;
+    }
+
+    public decrypt(publicKey: string, privateKey: string): string {
+        const decodedMessage = crypto.nemdecrypt(privateKey, publicKey, convert.hexToUint8(this.payload));
+        return Message.decodeHex(convert.uint8ToHex(decodedMessage));
     }
 }
