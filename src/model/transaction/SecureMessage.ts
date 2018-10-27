@@ -25,7 +25,7 @@ export class SecureMessage extends Message {
     }
 
     /**
-     * @internal
+     *
      */
     public static createFromDTO(payload: string): SecureMessage {
         return new SecureMessage(payload);
