@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import {convert} from 'proximax-nem2-library';
 import {Message} from './Message';
 
 /**
@@ -32,15 +33,16 @@ export class PlainMessage extends Message {
      * @internal
      */
     public static createFromDTO(payload: string): PlainMessage {
-        return new PlainMessage(this.decodeHex(payload));
+        return new PlainMessage(this.decodeHex(payload), payload);
     }
 
-    /**
-     * @internal
-     * @param payload
-     */
-    constructor(payload: string) {
-        super(0, payload);
+  /**
+   * @internal
+   * @param payload
+   * @param hexEncodedPayload
+   */
+    constructor(payload: string, hexEncodedPayload?: string) {
+        super(0, hexEncodedPayload || convert.utf8ToHex(payload), payload);
     }
 
 }

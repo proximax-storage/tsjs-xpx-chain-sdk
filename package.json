@@ -1,6 +1,6 @@
 {
   "name": "proximax-nem2-sdk",
-  "version": "0.10.8",
+  "version": "0.10.10",
   "description": "Proximax Nem2 sdk for typescript and javascript",
   "scripts": {
     "pretest": "npm run build",
@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "js-joda": "^1.6.2",
-    "proximax-nem2-library": "^0.9.8",
+    "proximax-nem2-library": "^0.9.10",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5",
     "rxjs": "^6.2.1",
