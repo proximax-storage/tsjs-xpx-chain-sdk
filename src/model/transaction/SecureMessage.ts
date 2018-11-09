@@ -21,7 +21,7 @@ export class SecureMessage extends Message {
 
     public static create(message: string, publicKey: string, privateKey: string): SecureMessage {
         const encodedMessage = crypto.nemencrypt(privateKey, publicKey, convert.hexToUint8(convert.utf8ToHex(message)));
-        return new SecureMessage(convert.uint8ToHex(encodedMessage));
+        return new SecureMessage(convert.uint8ToHex(encodedMessage), message);
     }
 
     /**
@@ -33,14 +33,15 @@ export class SecureMessage extends Message {
 
     /**
      * @internal
+     * @param hexEncodedPayload
      * @param payload
      */
-    constructor(payload: string) {
-        super(1, payload);
+    constructor(hexEncodedPayload: string, payload?: string) {
+        super(1, hexEncodedPayload, payload);
     }
 
     public decrypt(publicKey: string, privateKey: string): string {
-        const decodedMessage = crypto.nemdecrypt(privateKey, publicKey, convert.hexToUint8(this.payload));
+        const decodedMessage = crypto.nemdecrypt(privateKey, publicKey, convert.hexToUint8(this.hexEncodedPayload));
         return Message.decodeHex(convert.uint8ToHex(decodedMessage));
     }
 }
