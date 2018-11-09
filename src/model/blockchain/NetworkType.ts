@@ -22,12 +22,22 @@ export enum NetworkType {
      * Main net network
      * @type {number}
      */
-    MAIN_NET = 0x68,
+    MAIN_NET = 0xb8,
     /**
      * Test net network
      * @type {number}
      */
-    TEST_NET = 0x98,
+    TEST_NET = 0xa8,
+    /**
+     * Private network
+     * @type {number}
+     */
+    PRIVATE = 0xc8,
+    /**
+     * Private test network
+     * @type {number}
+     */
+    PRIVATE_TEST = 0xb0,
     /**
      * Mijin net network
      * @type {number}

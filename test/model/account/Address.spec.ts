@@ -40,14 +40,26 @@ describe('Address', () => {
 
     it('createComplete an address given publicKey + NetworkType.MAIN_NET', () => {
         const address = Address.createFromPublicKey(publicKey, NetworkType.MAIN_NET);
-        expect(address.plain()).to.be.equal('NCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPQUJ2ZML');
+        expect(address.plain()).to.be.equal('XCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPRVLFKS6');
         expect(address.networkType).to.be.equal(NetworkType.MAIN_NET);
     });
 
     it('createComplete an address given publicKey + NetworkType.TEST_NET', () => {
         const address = Address.createFromPublicKey(publicKey, NetworkType.TEST_NET);
-        expect(address.plain()).to.be.equal('TCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPSDRSFRF');
+        expect(address.plain()).to.be.equal('VCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPR3HTEHT');
         expect(address.networkType).to.be.equal(NetworkType.TEST_NET);
+    });
+
+    it('createComplete an address given publicKey + NetworkType.PRIVATE', () => {
+        const address = Address.createFromPublicKey(publicKey, NetworkType.PRIVATE);
+        expect(address.plain()).to.be.equal('ZCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPR2FNT66');
+        expect(address.networkType).to.be.equal(NetworkType.PRIVATE);
+    });
+
+    it('createComplete an address given publicKey + NetworkType.PRIVATE_TEST', () => {
+        const address = Address.createFromPublicKey(publicKey, NetworkType.PRIVATE_TEST);
+        expect(address.plain()).to.be.equal('WCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPSIBCI5Q');
+        expect(address.networkType).to.be.equal(NetworkType.PRIVATE_TEST);
     });
 
     it('createComplete an address given SCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPRLIKCF2', () => {
@@ -60,14 +72,24 @@ describe('Address', () => {
         expect(address.networkType).to.be.equal(NetworkType.MIJIN);
     });
 
-    it('createComplete an address given TCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPSDRSFRF', () => {
-        const address = Address.createFromRawAddress('NCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPQUJ2ZML');
+    it('createComplete an address given XCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPRVLFKS6', () => {
+        const address = Address.createFromRawAddress('XCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPRVLFKS6');
         expect(address.networkType).to.be.equal(NetworkType.MAIN_NET);
     });
 
-    it('createComplete an address given TCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPSDRSFRF', () => {
-        const address = Address.createFromRawAddress('TCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPSDRSFRF');
+    it('createComplete an address given VCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPR3HTEHT', () => {
+        const address = Address.createFromRawAddress('VCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPR3HTEHT');
         expect(address.networkType).to.be.equal(NetworkType.TEST_NET);
+    });
+
+    it('createComplete an address given ZCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPR2FNT66', () => {
+        const address = Address.createFromRawAddress('ZCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPR2FNT66');
+        expect(address.networkType).to.be.equal(NetworkType.PRIVATE);
+    });
+
+    it('createComplete an address given WCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPSIBCI5Q', () => {
+        const address = Address.createFromRawAddress('WCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPSIBCI5Q');
+        expect(address.networkType).to.be.equal(NetworkType.PRIVATE_TEST);
     });
 
     it('createComplete an address given SDRDGF-TDLLCB-67D4HP-GIMIHP-NSRYRJ-RT7DOB-GWZY', () => {
@@ -78,7 +100,7 @@ describe('Address', () => {
 
     it('should throw Error when the address contain an invalid network identifier', () => {
         expect(() => {
-            Address.createFromRawAddress('ZCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPSDRSFRF');
+            Address.createFromRawAddress('NCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPQUJ2ZML');
         }).to.throw('Address Network unsupported');
     });
 
@@ -89,19 +111,19 @@ describe('Address', () => {
     });
 
     it('should turn a lowercase address to uppercase', () => {
-        const address = Address.createFromRawAddress('tctvw23d2mn5ve4aq4tzidzengnozxprpsdrsfrf');
-        expect(address.plain()).to.be.equal('TCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPSDRSFRF');
+        const address = Address.createFromRawAddress('xctvw23d2mn5ve4aq4tzidzengnozxprprvlfks6');
+        expect(address.plain()).to.be.equal('XCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPRVLFKS6');
     });
 
     it('should equal addresses', () => {
-        const address = Address.createFromRawAddress('TCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPSDRSFRF');
-        const compareAddress = Address.createFromRawAddress('TCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPSDRSFRF');
+        const address = Address.createFromRawAddress('XCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPRVLFKS6');
+        const compareAddress = Address.createFromRawAddress('XCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPRVLFKS6');
         expect(address.equals(compareAddress)).to.be.equal(true);
     });
 
     it('should not equal addresses', () => {
-        const address = Address.createFromRawAddress('TCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPSDRSFRF');
-        const compareAddress = Address.createFromRawAddress('TCTMW23D2MN5VE4AQ4TZIDZENGNOZXPRPSDRSFRF');
+        const address = Address.createFromRawAddress('XCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPRVLFKS6');
+        const compareAddress = Address.createFromRawAddress('XCTMW23D2MN5VE4AQ4TZIDZENGNOZXPRPSDRSFRF');
         expect(address.equals(compareAddress)).to.be.equal(false);
     });
 });
