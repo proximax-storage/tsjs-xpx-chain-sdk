@@ -23,7 +23,7 @@ describe('NetworkType', () => {
         expect(NetworkType.MAIN_NET).to.be.equal(184);
     });
 
-    it('TEST_NET is 0x96', () => {
+    it('TEST_NET is 0xa8', () => {
         expect(NetworkType.TEST_NET).to.be.equal(0xa8);
         expect(NetworkType.TEST_NET).to.be.equal(168);
     });
