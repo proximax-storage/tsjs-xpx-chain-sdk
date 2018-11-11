@@ -18,14 +18,24 @@ import {expect} from 'chai';
 import {NetworkType} from '../../../src/model/blockchain/NetworkType';
 
 describe('NetworkType', () => {
-    it('MAIN_NET is 0x68', () => {
-        expect(NetworkType.MAIN_NET).to.be.equal(0x68);
-        expect(NetworkType.MAIN_NET).to.be.equal(104);
+    it('MAIN_NET is 0xb8', () => {
+        expect(NetworkType.MAIN_NET).to.be.equal(0xb8);
+        expect(NetworkType.MAIN_NET).to.be.equal(184);
     });
 
-    it('TEST_NET is 0x96', () => {
-        expect(NetworkType.TEST_NET).to.be.equal(0x98);
-        expect(NetworkType.TEST_NET).to.be.equal(152);
+    it('TEST_NET is 0xa8', () => {
+        expect(NetworkType.TEST_NET).to.be.equal(0xa8);
+        expect(NetworkType.TEST_NET).to.be.equal(168);
+    });
+
+    it('PRIVATE is 0xc8', () => {
+        expect(NetworkType.PRIVATE).to.be.equal(0xc8);
+        expect(NetworkType.PRIVATE).to.be.equal(200);
+    });
+
+    it('PRIVATE_TEST is 0xb0', () => {
+        expect(NetworkType.PRIVATE_TEST).to.be.equal(0xb0);
+        expect(NetworkType.PRIVATE_TEST).to.be.equal(176);
     });
 
     it('MIJIN is 0x60', () => {

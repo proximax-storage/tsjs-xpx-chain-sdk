@@ -248,6 +248,10 @@ const extractNetworkType = (version: number): NetworkType => {
         return NetworkType.MAIN_NET;
     } else if (networkType === NetworkType.TEST_NET) {
         return NetworkType.TEST_NET;
+    } else if (networkType === NetworkType.PRIVATE) {
+        return NetworkType.PRIVATE;
+    } else if (networkType === NetworkType.PRIVATE_TEST) {
+        return NetworkType.PRIVATE_TEST;
     } else if (networkType === NetworkType.MIJIN) {
         return NetworkType.MIJIN;
     } else if (networkType === NetworkType.MIJIN_TEST) {

@@ -1,6 +1,6 @@
 {
   "name": "proximax-nem2-sdk",
-  "version": "0.10.10",
+  "version": "0.10.11",
   "description": "Proximax Nem2 sdk for typescript and javascript",
   "scripts": {
     "pretest": "npm run build",

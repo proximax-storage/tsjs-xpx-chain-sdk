@@ -53,10 +53,14 @@ export class Address {
             networkType = NetworkType.MIJIN_TEST;
         } else if (addressTrimAndUpperCase.charAt(0) === 'M') {
             networkType = NetworkType.MIJIN;
-        } else if (addressTrimAndUpperCase.charAt(0) === 'T') {
+        } else if (addressTrimAndUpperCase.charAt(0) === 'V') {
             networkType = NetworkType.TEST_NET;
-        } else if (addressTrimAndUpperCase.charAt(0) === 'N') {
+        } else if (addressTrimAndUpperCase.charAt(0) === 'X') {
             networkType = NetworkType.MAIN_NET;
+        } else if (addressTrimAndUpperCase.charAt(0) === 'W') {
+            networkType = NetworkType.PRIVATE_TEST;
+        } else if (addressTrimAndUpperCase.charAt(0) === 'Z') {
+            networkType = NetworkType.PRIVATE;
         } else {
             throw new Error('Address Network unsupported');
         }
