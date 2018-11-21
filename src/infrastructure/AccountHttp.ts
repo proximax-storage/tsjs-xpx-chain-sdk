@@ -73,8 +73,6 @@ export class AccountHttp extends Http implements AccountRepository {
                     new MosaicId(mosaicDTO.id),
                     new UInt64(mosaicDTO.amount),
                 )),
-                new UInt64(accountInfoDTO.account.importance),
-                new UInt64(accountInfoDTO.account.importanceHeight),
             );
         }));
     }
@@ -98,8 +96,6 @@ export class AccountHttp extends Http implements AccountRepository {
                     accountInfoDTO.account.publicKey,
                     new UInt64(accountInfoDTO.account.publicKeyHeight),
                     accountInfoDTO.account.mosaics.map((mosaicDTO) => new Mosaic(mosaicDTO.id, mosaicDTO.amount)),
-                    new UInt64(accountInfoDTO.account.importance),
-                    new UInt64(accountInfoDTO.account.importanceHeight),
                 );
             });
         }));
