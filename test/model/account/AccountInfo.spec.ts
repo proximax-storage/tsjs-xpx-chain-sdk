@@ -49,9 +49,7 @@ describe('AccountInfo', () => {
             accountInfoDTO.account.addressHeight,
             accountInfoDTO.account.publicKey,
             accountInfoDTO.account.publicKeyHeight,
-            accountInfoDTO.account.mosaics.map((mosaicDTO) => new Mosaic(mosaicDTO.id, mosaicDTO.amount)),
-            accountInfoDTO.account.importance,
-            accountInfoDTO.account.importanceHeight,
+            accountInfoDTO.account.mosaics.map((mosaicDTO) => new Mosaic(mosaicDTO.id, mosaicDTO.amount))
         );
 
         expect(accountInfo.meta).to.be.equal(accountInfoDTO.meta);
@@ -59,8 +57,6 @@ describe('AccountInfo', () => {
         deepEqual(accountInfo.addressHeight, accountInfoDTO.account.addressHeight);
         expect(accountInfo.publicKey).to.be.equal(accountInfoDTO.account.publicKey);
         deepEqual(accountInfo.publicKeyHeight, accountInfoDTO.account.publicKeyHeight);
-        deepEqual(accountInfo.importance, accountInfoDTO.account.importance);
-        deepEqual(accountInfo.importanceHeight, accountInfoDTO.account.importanceHeight);
         deepEqual(accountInfo.publicAccount, PublicAccount.createFromPublicKey(accountInfoDTO.account.publicKey, NetworkType.MIJIN_TEST));
 
     });
