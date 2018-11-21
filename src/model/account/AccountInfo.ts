@@ -51,15 +51,7 @@ export class AccountInfo {
         /**
          * Mosaics hold by the account.
          */
-        public readonly mosaics: Mosaic[],
-        /**
-         * Importance of the account.
-         */
-        public readonly importance: UInt64,
-        /**
-         * Importance height of the account.
-         */
-        public readonly importanceHeight: UInt64) {
+        public readonly mosaics: Mosaic[]) {
 
     }
 
