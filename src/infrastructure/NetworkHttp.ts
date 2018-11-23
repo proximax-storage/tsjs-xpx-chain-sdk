@@ -54,9 +54,9 @@ export class NetworkHttp extends Http implements NetworkRepository {
               return NetworkType.MIJIN_TEST;
             } else if (networkTypeDTO.name === 'mijin') {
               return NetworkType.MIJIN;
-            } else if (networkTypeDTO.name === 'testnet') {
+            } else if (networkTypeDTO.name === 'testnet' || networkTypeDTO.name === 'publicTest') {
               return NetworkType.TEST_NET;
-            } else if (networkTypeDTO.name === 'mainnet') {
+            } else if (networkTypeDTO.name === 'mainnet' || networkTypeDTO.name === 'public') {
               return NetworkType.MAIN_NET;
             } else if (networkTypeDTO.name === 'privateTest') {
               return NetworkType.PRIVATE_TEST;
