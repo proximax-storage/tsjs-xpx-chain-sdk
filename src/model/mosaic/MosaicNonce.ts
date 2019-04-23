@@ -16,7 +16,7 @@
 import {
     convert,
     nacl_catapult,
-} from 'nem2-library';
+} from 'proximax-nem2-library';
 
 /**
  * The mosaic nonce structure

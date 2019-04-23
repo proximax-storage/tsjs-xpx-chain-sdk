@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { AccountPropertiesAddressTransaction as AccountPropertiesAddressTransactionLibrary, VerifiableTransaction } from 'nem2-library';
+import { AccountPropertiesAddressTransaction as AccountPropertiesAddressTransactionLibrary, VerifiableTransaction } from 'proximax-nem2-library';
 import { PropertyType } from '../account/PropertyType';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';

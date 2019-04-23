@@ -121,7 +121,7 @@ export class TransferTransaction extends Transaction {
         const byteNumMosaics = 2;
 
         // read message payload size
-        const bytePayload = convert.hexToUint8(convert.utf8ToHex(this.message.payload)).length;
+        const bytePayload = convert.hexToUint8(convert.utf8ToHex(this.message.payload || '')).length;
 
         // mosaicId / namespaceId are written on 8 bytes
         const byteMosaics = 8 * this.mosaics.length;

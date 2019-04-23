@@ -15,7 +15,7 @@
  */
 
 import { AccountPropertiesEntityTypeTransaction as AccountPropertiesEntityTypeTransactionLibrary,
-    VerifiableTransaction } from 'nem2-library';
+    VerifiableTransaction } from 'proximax-nem2-library';
 import { PropertyType } from '../account/PropertyType';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';

@@ -123,7 +123,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
 
         let message: PlainMessage | SecureMessage;
         if (transactionDTO.message && transactionDTO.message.type === 0) {
-            message = PlainMessage.createFromDTO(transactionDTO.message.payload);
+            message = PlainMessage.createFromPayload(transactionDTO.message.payload);
         } else if (transactionDTO.message && transactionDTO.message.type === 1) {
             message = SecureMessage.createFromDTO(transactionDTO.message.payload);
         } else {

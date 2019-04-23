@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { AccountPropertiesMosaicTransaction as AccountPropertiesMosaicTransactionLibrary, VerifiableTransaction } from 'nem2-library';
+import { AccountPropertiesMosaicTransaction as AccountPropertiesMosaicTransactionLibrary, VerifiableTransaction } from 'proximax-nem2-library';
 import { PropertyType } from '../account/PropertyType';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {convert, mosaicId as MosaicIdGenerator} from 'nem2-library';
 import {PublicAccount} from '../account/PublicAccount';
 import {NamespaceId} from '../namespace/NamespaceId';
 import {UInt64} from '../UInt64';
