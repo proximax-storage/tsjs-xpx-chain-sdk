@@ -15,6 +15,7 @@
  */
 
 import { VerifiableTransaction } from 'proximax-nem2-library';
+import { SerializeTransactionToJSON } from '../../infrastructure/transaction/SerializeTransactionToJSON';
 import { Account } from '../account/Account';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
@@ -24,6 +25,7 @@ import { Deadline } from './Deadline';
 import { InnerTransaction } from './InnerTransaction';
 import { SignedTransaction } from './SignedTransaction';
 import { TransactionInfo } from './TransactionInfo';
+import { TransactionType } from './TransactionType';
 
 /**
  * An abstract transaction class that serves as the base class of all NEM transactions.
@@ -36,7 +38,7 @@ export abstract class Transaction {
      * @param networkType
      * @param version
      * @param deadline
-     * @param fee
+     * @param maxFee
      * @param signature
      * @param signer
      * @param transactionInfo
@@ -58,10 +60,10 @@ export abstract class Transaction {
                  */
                 public readonly deadline: Deadline,
                 /**
-                 * The fee for the transaction. The higher the fee, the higher the priority of the transaction.
-                 * Transactions with high priority get included in a block before transactions with lower priority.
+                 * A sender of a transaction must specify during the transaction definition a max_fee,
+                 * meaning the maximum fee the account allows to spend for this transaction.
                  */
-                public readonly fee: UInt64,
+                public readonly maxFee: UInt64,
                 /**
                  * The transaction signature (missing if part of an aggregate transaction).
                  */
@@ -112,6 +114,9 @@ export abstract class Transaction {
      * @returns InnerTransaction
      */
     public toAggregate(signer: PublicAccount): InnerTransaction {
+        if (this.type === TransactionType.AGGREGATE_BONDED || this.type === TransactionType.AGGREGATE_COMPLETE) {
+            throw new Error('Inner transaction cannot be an aggregated transaction.');
+        }
         return Object.assign({__proto__: Object.getPrototypeOf(this)}, this, {signer});
     }
 
@@ -158,15 +163,65 @@ export abstract class Transaction {
     }
 
     /**
-     * @description re-aplly a given value to the transaction in an immutable way
+     * @description reapply a given value to the transaction in an immutable way
      * @param {Deadline} deadline
      * @returns {Transaction}
      * @memberof Transaction
      */
-    public replyGiven(deadline: Deadline = Deadline.create()): Transaction {
+    public reapplyGiven(deadline: Deadline = Deadline.create()): Transaction {
         if (this.isUnannounced()) {
             return Object.assign({__proto__: Object.getPrototypeOf(this)}, this, {deadline});
         }
         throw new Error('an Announced transaction can\'t be modified');
+    }
+
+    /**
+     * @description get the byte size of a transaction
+     * @returns {number}
+     * @memberof Transaction
+     */
+    public get size(): number {
+        const byteSize = 4 // size
+                        + 64 // signature
+                        + 32 // signer
+                        + 2 // version
+                        + 2 // type
+                        + 8 // maxFee
+                        + 8; // deadline
+
+        return byteSize;
+    }
+
+    /**
+     * @description Serialize a transaction object
+     * @returns {string}
+     * @memberof Transaction
+     */
+    public serialize() {
+        const transaction = this.buildTransaction();
+        return transaction.serializeUnsignedTransaction();
+    }
+
+    /**
+     * @description Create JSON object
+     * @returns {Object}
+     * @memberof Transaction
+     */
+    public toJSON() {
+        const commonTransactionObject = {
+            type: this.type,
+            networkType: this.networkType,
+            version: this.versionToDTO(),
+            maxFee: this.maxFee.toDTO(),
+            deadline: this.deadline.toDTO(),
+            signature: this.signature ? this.signature : '',
+        };
+
+        if (this.signer) {
+            Object.assign(commonTransactionObject, {signer: this.signer.publicKey});
+        }
+
+        const childClassObject = SerializeTransactionToJSON(this);
+        return {transaction: Object.assign(commonTransactionObject, childClassObject)};
     }
 }

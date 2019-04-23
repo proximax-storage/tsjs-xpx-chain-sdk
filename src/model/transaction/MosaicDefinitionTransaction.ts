@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-import { MosaicCreationTransaction as MosaicDefinitionTransactionLibrary, mosaicId as mosaicIdLibrary, VerifiableTransaction } from 'proximax-nem2-library';
+import {
+    MosaicCreationTransaction as MosaicDefinitionTransactionLibrary,
+    mosaicId as mosaicIdLibrary,
+    VerifiableTransaction,
+} from 'proximax-nem2-library';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { MosaicId } from '../mosaic/MosaicId';
+import { MosaicNonce } from '../mosaic/MosaicNonce';
 import { MosaicProperties } from '../mosaic/MosaicProperties';
-import { NamespaceId } from '../namespace/NamespaceId';
 import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
 import { Transaction } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
+import { TransactionVersion } from './TransactionVersion';
 
 /**
  * Before a mosaic can be created or transferred, a corresponding definition of the mosaic has to be created and published to the network.
@@ -35,24 +40,25 @@ export class MosaicDefinitionTransaction extends Transaction {
     /**
      * Create a mosaic creation transaction object
      * @param deadline - The deadline to include the transaction.
-     * @param mosaicName - The mosaic name ex: xem.
-     * @param namespaceName - The namespace where mosaic will be included ex: nem.
+     * @param nonce - The mosaic nonce ex: MosaicNonce.createRandom().
+     * @param mosaicId - The mosaic id ex: new MosaicId([481110499, 231112638]).
      * @param mosaicProperties - The mosaic properties.
      * @param networkType - The network type.
+     * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {MosaicDefinitionTransaction}
      */
     public static create(deadline: Deadline,
-                         mosaicName: string,
-                         namespaceName: string,
+                         nonce: MosaicNonce,
+                         mosaicId: MosaicId,
                          mosaicProperties: MosaicProperties,
-                         networkType: NetworkType): MosaicDefinitionTransaction {
+                         networkType: NetworkType,
+                         maxFee: UInt64 = new UInt64([0, 0])): MosaicDefinitionTransaction {
         return new MosaicDefinitionTransaction(networkType,
-            2,
+            TransactionVersion.MOSAIC_DEFINITION,
             deadline,
-            new UInt64([0, 0]),
-            new NamespaceId(namespaceName),
-            new MosaicId(mosaicIdLibrary(namespaceName, mosaicName)),
-            mosaicName,
+            maxFee,
+            nonce,
+            mosaicId,
             mosaicProperties,
         );
     }
@@ -61,10 +67,9 @@ export class MosaicDefinitionTransaction extends Transaction {
      * @param networkType
      * @param version
      * @param deadline
-     * @param fee
-     * @param parentId
+     * @param maxFee
+     * @param mosaicNonce
      * @param mosaicId
-     * @param mosaicName
      * @param mosaicProperties
      * @param signature
      * @param signer
@@ -73,19 +78,15 @@ export class MosaicDefinitionTransaction extends Transaction {
     constructor(networkType: NetworkType,
                 version: number,
                 deadline: Deadline,
-                fee: UInt64,
+                maxFee: UInt64,
                 /**
-                 * The namespace id.
+                 * The mosaic nonce.
                  */
-                public readonly parentId: NamespaceId,
+                public readonly nonce: MosaicNonce,
                 /**
                  * The mosaic id.
                  */
                 public readonly mosaicId: MosaicId,
-                /**
-                 * The name of the mosaic.
-                 */
-                public readonly mosaicName: string,
                 /**
                  * The mosaic properties.
                  */
@@ -93,7 +94,28 @@ export class MosaicDefinitionTransaction extends Transaction {
                 signature?: string,
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
-        super(TransactionType.MOSAIC_DEFINITION, networkType, version, deadline, fee, signature, signer, transactionInfo);
+        super(TransactionType.MOSAIC_DEFINITION, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
+    }
+
+    /**
+     * @override Transaction.size()
+     * @description get the byte size of a MosaicDefinitionTransaction
+     * @returns {number}
+     * @memberof MosaicDefinitionTransaction
+     */
+    public get size(): number {
+        const byteSize = super.size;
+
+        // set static byte size fields
+        const byteNonce = 4;
+        const byteMosaicId = 8;
+        const byteNumProps = 1;
+        const byteFlags = 1;
+        const byteDivisibility = 1;
+        const byteDurationSize = 1;
+        const byteDuration = 8;
+
+        return byteSize + byteNonce + byteMosaicId + byteNumProps + byteFlags + byteDivisibility + byteDurationSize + byteDuration;
     }
 
     /**
@@ -103,13 +125,12 @@ export class MosaicDefinitionTransaction extends Transaction {
     protected buildTransaction(): VerifiableTransaction {
         let mosaicDefinitionTransaction = new MosaicDefinitionTransactionLibrary.Builder()
             .addDeadline(this.deadline.toDTO())
-            .addFee(this.fee.toDTO())
+            .addFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addDivisibility(this.mosaicProperties.divisibility)
-            .addDuration(this.mosaicProperties.duration.toDTO())
-            .addParentId(this.parentId.id.toDTO())
-            .addMosaicId(this.mosaicId.id.toDTO())
-            .addMosaicName(this.mosaicName);
+            .addDuration(this.mosaicProperties.duration ? this.mosaicProperties.duration.toDTO() : [])
+            .addNonce(this.nonce.toDTO())
+            .addMosaicId(this.mosaicId.id.toDTO());
 
         if (this.mosaicProperties.supplyMutable === true) {
             mosaicDefinitionTransaction = mosaicDefinitionTransaction.addSupplyMutable();

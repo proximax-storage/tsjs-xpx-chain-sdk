@@ -17,6 +17,8 @@
 import {expect} from 'chai';
 import {Account} from '../../../src/model/account/Account';
 import {NetworkType} from '../../../src/model/blockchain/NetworkType';
+import {MosaicId} from '../../../src/model/mosaic/MosaicId';
+import {MosaicNonce} from '../../../src/model/mosaic/MosaicNonce';
 import {MosaicProperties} from '../../../src/model/mosaic/MosaicProperties';
 import {Deadline} from '../../../src/model/transaction/Deadline';
 import {MosaicDefinitionTransaction} from '../../../src/model/transaction/MosaicDefinitionTransaction';
@@ -30,11 +32,11 @@ describe('MosaicDefinitionTransaction', () => {
         account = TestingAccount;
     });
 
-    it('should createComplete an MosaicDefinitionTransaction object and sign it with flags 7', () => {
+    it('should default maxFee field be set to 0', () => {
         const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
             Deadline.create(),
-            'test-mosaic-name',
-            'test-parent-name',
+            new MosaicNonce(new Uint8Array([0xE6, 0xDE, 0x84, 0xB8])), // nonce
+            new MosaicId(UInt64.fromUint(1).toDTO()), // ID
             MosaicProperties.create({
                 supplyMutable: true,
                 transferable: true,
@@ -45,9 +47,47 @@ describe('MosaicDefinitionTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        expect(mosaicDefinitionTransaction.mosaicName).to.be.equal('test-mosaic-name');
-        expect(mosaicDefinitionTransaction.mosaicProperties.duration.lower).to.be.equal(1000);
-        expect(mosaicDefinitionTransaction.mosaicProperties.duration.higher).to.be.equal(0);
+        expect(mosaicDefinitionTransaction.maxFee.higher).to.be.equal(0);
+        expect(mosaicDefinitionTransaction.maxFee.lower).to.be.equal(0);
+    });
+
+    it('should filled maxFee override transaction maxFee', () => {
+        const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
+            Deadline.create(),
+            new MosaicNonce(new Uint8Array([0xE6, 0xDE, 0x84, 0xB8])), // nonce
+            new MosaicId(UInt64.fromUint(1).toDTO()), // ID
+            MosaicProperties.create({
+                supplyMutable: true,
+                transferable: true,
+                levyMutable: true,
+                divisibility: 3,
+                duration: UInt64.fromUint(1000),
+            }),
+            NetworkType.MIJIN_TEST,
+            new UInt64([1, 0])
+        );
+
+        expect(mosaicDefinitionTransaction.maxFee.higher).to.be.equal(0);
+        expect(mosaicDefinitionTransaction.maxFee.lower).to.be.equal(1);
+    });
+
+    it('should createComplete an MosaicDefinitionTransaction object and sign it with flags 7', () => {
+        const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
+            Deadline.create(),
+            new MosaicNonce(new Uint8Array([0xE6, 0xDE, 0x84, 0xB8])), // nonce
+            new MosaicId(UInt64.fromUint(1).toDTO()), // ID
+            MosaicProperties.create({
+                supplyMutable: true,
+                transferable: true,
+                levyMutable: true,
+                divisibility: 3,
+                duration: UInt64.fromUint(1000),
+            }),
+            NetworkType.MIJIN_TEST,
+        );
+
+        expect(mosaicDefinitionTransaction.mosaicProperties.duration!.lower).to.be.equal(1000);
+        expect(mosaicDefinitionTransaction.mosaicProperties.duration!.higher).to.be.equal(0);
         expect(mosaicDefinitionTransaction.mosaicProperties.divisibility).to.be.equal(3);
         expect(mosaicDefinitionTransaction.mosaicProperties.supplyMutable).to.be.equal(true);
         expect(mosaicDefinitionTransaction.mosaicProperties.transferable).to.be.equal(true);
@@ -58,15 +98,16 @@ describe('MosaicDefinitionTransaction', () => {
         expect(signedTransaction.payload.substring(
             240,
             signedTransaction.payload.length,
-        )).to.be.equal('967D149BA9BC5A5B4CCCD78612DDF5CA10010703746573742D6D6F736169632D6E616D6502E803000000000000');
+        )).to.be.equal('E6DE84B8010000000000000001070302E803000000000000');
 
     });
 
     it('should createComplete an MosaicDefinitionTransaction object and sign it with flags 0', () => {
+
         const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
             Deadline.create(),
-            'test-mosaic-name',
-            'test-parent-name',
+            new MosaicNonce(new Uint8Array([0xE6, 0xDE, 0x84, 0xB8])), // nonce
+            new MosaicId(UInt64.fromUint(1).toDTO()), // ID
             MosaicProperties.create({
                 supplyMutable: false,
                 transferable: false,
@@ -77,9 +118,8 @@ describe('MosaicDefinitionTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        expect(mosaicDefinitionTransaction.mosaicName).to.be.equal('test-mosaic-name');
-        expect(mosaicDefinitionTransaction.mosaicProperties.duration.lower).to.be.equal(1000);
-        expect(mosaicDefinitionTransaction.mosaicProperties.duration.higher).to.be.equal(0);
+        expect(mosaicDefinitionTransaction.mosaicProperties.duration!.lower).to.be.equal(1000);
+        expect(mosaicDefinitionTransaction.mosaicProperties.duration!.higher).to.be.equal(0);
         expect(mosaicDefinitionTransaction.mosaicProperties.divisibility).to.be.equal(3);
         expect(mosaicDefinitionTransaction.mosaicProperties.supplyMutable).to.be.equal(false);
         expect(mosaicDefinitionTransaction.mosaicProperties.transferable).to.be.equal(false);
@@ -90,7 +130,55 @@ describe('MosaicDefinitionTransaction', () => {
         expect(signedTransaction.payload.substring(
             240,
             signedTransaction.payload.length,
-        )).to.be.equal('967D149BA9BC5A5B4CCCD78612DDF5CA10010003746573742D6D6F736169632D6E616D6502E803000000000000');
+        )).to.be.equal('E6DE84B8010000000000000001000302E803000000000000');
+
+    });
+
+    describe('size', () => {
+        it('should return 144 for MosaicDefinition transaction byte size', () => {
+            const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
+                Deadline.create(),
+                new MosaicNonce(new Uint8Array([0xE6, 0xDE, 0x84, 0xB8])), // nonce
+                new MosaicId(UInt64.fromUint(1).toDTO()), // ID
+                MosaicProperties.create({
+                    supplyMutable: true,
+                    transferable: true,
+                    levyMutable: true,
+                    divisibility: 3,
+                    duration: UInt64.fromUint(1000),
+                }),
+                NetworkType.MIJIN_TEST,
+            );
+            expect(mosaicDefinitionTransaction.size).to.be.equal(144);
+        });
+    });
+
+    it('should createComplete an MosaicDefinitionTransaction object and sign it without duration', () => {
+
+        const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
+            Deadline.create(),
+            new MosaicNonce(new Uint8Array([0xE6, 0xDE, 0x84, 0xB8])), // nonce
+            new MosaicId(UInt64.fromUint(1).toDTO()), // ID
+            MosaicProperties.create({
+                supplyMutable: false,
+                transferable: false,
+                levyMutable: false,
+                divisibility: 3,
+            }),
+            NetworkType.MIJIN_TEST,
+        );
+
+        expect(mosaicDefinitionTransaction.mosaicProperties.divisibility).to.be.equal(3);
+        expect(mosaicDefinitionTransaction.mosaicProperties.supplyMutable).to.be.equal(false);
+        expect(mosaicDefinitionTransaction.mosaicProperties.transferable).to.be.equal(false);
+        expect(mosaicDefinitionTransaction.mosaicProperties.levyMutable).to.be.equal(false);
+
+        const signedTransaction = mosaicDefinitionTransaction.signWith(account);
+
+        expect(signedTransaction.payload.substring(
+            240,
+            signedTransaction.payload.length,
+        )).to.be.equal('E6DE84B80100000000000000000003');
 
     });
 });

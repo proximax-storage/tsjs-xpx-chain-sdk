@@ -21,12 +21,38 @@ import {Deadline} from '../../../src/model/transaction/Deadline';
 import {RegisterNamespaceTransaction} from '../../../src/model/transaction/RegisterNamespaceTransaction';
 import {UInt64} from '../../../src/model/UInt64';
 import {TestingAccount} from '../../conf/conf.spec';
+import { NamespaceId } from '../../../src/model/namespace/NamespaceId';
 
 describe('RegisterNamespaceTransaction', () => {
     let account: Account;
 
     before(() => {
         account = TestingAccount;
+    });
+
+    it('should default maxFee field be set to 0', () => {
+        const registerNamespaceTransaction = RegisterNamespaceTransaction.createRootNamespace(
+            Deadline.create(),
+            'root-test-namespace',
+            UInt64.fromUint(1000),
+            NetworkType.MIJIN_TEST,
+        );
+
+        expect(registerNamespaceTransaction.maxFee.higher).to.be.equal(0);
+        expect(registerNamespaceTransaction.maxFee.lower).to.be.equal(0);
+    });
+
+    it('should filled maxFee override transaction maxFee', () => {
+        const registerNamespaceTransaction = RegisterNamespaceTransaction.createRootNamespace(
+            Deadline.create(),
+            'root-test-namespace',
+            UInt64.fromUint(1000),
+            NetworkType.MIJIN_TEST,
+            new UInt64([1, 0])
+        );
+
+        expect(registerNamespaceTransaction.maxFee.higher).to.be.equal(0);
+        expect(registerNamespaceTransaction.maxFee.lower).to.be.equal(1);
     });
 
     it('should createComplete an root RegisterNamespaceTransaction object and sign it', () => {
@@ -45,7 +71,7 @@ describe('RegisterNamespaceTransaction', () => {
         expect(signedTransaction.payload.substring(
             240,
             signedTransaction.payload.length,
-        )).to.be.equal('00E803000000000000CFCBE72D994BE61B13726F6F742D746573742D6E616D657370616365');
+        )).to.be.equal('00E803000000000000CFCBE72D994BE69B13726F6F742D746573742D6E616D657370616365');
 
     });
 
@@ -62,7 +88,35 @@ describe('RegisterNamespaceTransaction', () => {
         expect(signedTransaction.payload.substring(
             240,
             signedTransaction.payload.length,
-        )).to.be.equal('014DF55E7F6D8FB77F70BB66539D9C260613726F6F742D746573742D6E616D657370616365');
+        )).to.be.equal('014DF55E7F6D8FB7FF924207DF2CA1BBF313726F6F742D746573742D6E616D657370616365');
 
+    });
+    
+    it('should createComplete an sub RegisterNamespaceTransaction object and sign it - ParentId', () => {
+        const registerNamespaceTransaction = RegisterNamespaceTransaction.createSubNamespace(
+            Deadline.create(),
+            'root-test-namespace',
+            new NamespaceId([929036875, 2226345261]),
+            NetworkType.MIJIN_TEST,
+        );
+
+        const signedTransaction = registerNamespaceTransaction.signWith(account);
+
+        expect(signedTransaction.payload.substring(
+            240,
+            signedTransaction.payload.length,
+        )).to.be.equal('014BFA5F372D55B384CFCBE72D994BE69B13726F6F742D746573742D6E616D657370616365');
+    });
+  
+    describe('size', () => {
+        it('should return 176 for RegisterNamespaceTransaction with name of 19 bytes', () => {
+            const registerNamespaceTransaction = RegisterNamespaceTransaction.createRootNamespace(
+                Deadline.create(),
+                'root-test-namespace',
+                UInt64.fromUint(1000),
+                NetworkType.MIJIN_TEST,
+            );
+            expect(registerNamespaceTransaction.size).to.be.equal(157);
+        });
     });
 });

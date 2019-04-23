@@ -57,4 +57,13 @@ export abstract class Message {
                 public readonly payload?: string) {
     }
 
+    /**
+     * Create DTO object
+     */
+    toDTO() {
+        return {
+            type: this.type,
+            payload: this.payload,
+        };
+    }
 }

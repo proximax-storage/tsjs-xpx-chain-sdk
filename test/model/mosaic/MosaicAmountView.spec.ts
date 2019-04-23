@@ -29,32 +29,38 @@ describe('MosaicAmountView', () => {
     let mosaicInfo: MosaicInfo;
 
     before(() => {
-        mosaicInfo = new MosaicInfo(true, 0, '59FDA0733F17CF0001772CBC', new NamespaceId([929036875, 2226345261]),
-            new MosaicId([3646934825, 3576016193]), new UInt64([3403414400, 2095475]), new UInt64([1, 0]),
+        mosaicInfo = new MosaicInfo(
+            '59FDA0733F17CF0001772CBC',
+            new MosaicId([3294802500, 2243684972]), // mosaicId
+            new UInt64([3403414400, 2095475]), // supply
+            new UInt64([1, 0]), // height
             PublicAccount.createFromPublicKey('B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF', NetworkType.MIJIN_TEST),
+            1, // revision
             MosaicProperties.create({
                 supplyMutable: true,
                 transferable: true,
                 levyMutable: true,
                 divisibility: 3,
                 duration: UInt64.fromUint(1000),
-            }), {});
+            }),
+            {});
     });
 
     it('should createComplete a Mosaic Amount View', () => {
-        const mosaicAmountView = new MosaicAmountView(mosaicInfo, 'namespaceName', 'mosaicName', UInt64.fromUint(100));
+        const mosaicAmountView = new MosaicAmountView(mosaicInfo, UInt64.fromUint(100));
         expect(mosaicAmountView.amount.compact()).to.be.equal(100);
-        expect(mosaicAmountView.namespaceName).to.be.equal('namespaceName');
-        expect(mosaicAmountView.mosaicName).to.be.equal('mosaicName');
+        expect(mosaicAmountView.mosaicInfo).to.be.an.instanceof(MosaicInfo);
     });
 
     it('should createComplete a Mosaic Amount View get relative amount', () => {
-        const mosaicAmountView = new MosaicAmountView(mosaicInfo, 'namespaceName', 'mosaicName', UInt64.fromUint(100));
+        const mosaicAmountView = new MosaicAmountView(mosaicInfo, UInt64.fromUint(100));
         expect(mosaicAmountView.relativeAmount()).to.be.equal(100 / Math.pow(10, 3));
+        expect(mosaicAmountView.mosaicInfo).to.be.an.instanceof(MosaicInfo);
     });
 
-    it('should createComplete a Mosaic Amount View get correct fullName', () => {
-        const mosaicAmountView = new MosaicAmountView(mosaicInfo, 'namespaceName', 'mosaicName', UInt64.fromUint(100));
-        expect(mosaicAmountView.fullName()).to.be.equal('namespaceName:mosaicName');
+    it('should createComplete a Mosaic Amount View get correct amount', () => {
+        const mosaicAmountView = new MosaicAmountView(mosaicInfo, UInt64.fromUint(100));
+        expect(mosaicAmountView.mosaicInfo).to.be.an.instanceof(MosaicInfo);
+        expect(mosaicAmountView.amount.compact()).to.be.equal(100);
     });
 });

@@ -16,6 +16,7 @@
 
 import {convert} from 'proximax-nem2-library';
 import {Message} from './Message';
+import {MessageType} from './MessageType';
 
 /**
  * The plain message model defines a plain string. When sending it to the network we transform the payload to hex-string.
@@ -32,7 +33,7 @@ export class PlainMessage extends Message {
     /**
      * @internal
      */
-    public static createFromDTO(payload: string): PlainMessage {
+    public static createFromPayload(payload: string): PlainMessage {
         return new PlainMessage(this.decodeHex(payload), payload);
     }
 
@@ -42,9 +43,8 @@ export class PlainMessage extends Message {
    * @param hexEncodedPayload
    */
     constructor(payload: string, hexEncodedPayload?: string) {
-        super(0, hexEncodedPayload || convert.utf8ToHex(payload), payload);
+        super(MessageType.PlainMessage, hexEncodedPayload || convert.utf8ToHex(payload), payload);
     }
-
 }
 
 /**
