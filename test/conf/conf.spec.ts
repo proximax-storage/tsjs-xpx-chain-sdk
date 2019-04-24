@@ -37,4 +37,7 @@ export const Cosignatory3Account = Account.createFromPrivateKey(
     '111602be4d36f92dd60ca6a3c68478988578f26f6a02f8c72089839515ab603e',
     NetworkType.MIJIN_TEST);
 
-export const NIS2_URL = 'http://localhost:3000';
+//export const NIS2_URL = 'http://localhost:3000';
+//export const NIS2_URL = 'http://bcdev1.xpxsirius.io:3000';
+export const NIS2_URL = 'http://bcstage1.xpxsirius.io:3000';
+//export const NIS2_URL = 'http://bctestnet1.xpxsirius.io:3000';
