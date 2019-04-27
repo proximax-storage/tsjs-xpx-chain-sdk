@@ -40,21 +40,17 @@ export abstract class Message {
     /**
      * @internal
      * @param type
-     * @param hexEncodedPayload
      * @param payload
      */
     constructor(/**
                  * Message type
                  */
                 public readonly type: number,
+
                 /**
-                 * Message encoded payload in hex
+                 * Message payload
                  */
-                public readonly hexEncodedPayload: string,
-                /**
-                 * Message raw payload
-                 */
-                public readonly payload?: string) {
+                public readonly payload: string) {
     }
 
     /**

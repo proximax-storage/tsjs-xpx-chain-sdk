@@ -34,16 +34,15 @@ export class PlainMessage extends Message {
      * @internal
      */
     public static createFromPayload(payload: string): PlainMessage {
-        return new PlainMessage(this.decodeHex(payload), payload);
+        return new PlainMessage(this.decodeHex(payload));
     }
 
   /**
    * @internal
    * @param payload
-   * @param hexEncodedPayload
    */
-    constructor(payload: string, hexEncodedPayload?: string) {
-        super(MessageType.PlainMessage, hexEncodedPayload || convert.utf8ToHex(payload), payload);
+    constructor(payload: string) {
+        super(MessageType.PlainMessage, payload);
     }
 }
 

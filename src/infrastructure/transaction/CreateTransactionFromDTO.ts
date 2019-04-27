@@ -49,7 +49,7 @@ import {TransactionInfo} from '../../model/transaction/TransactionInfo';
 import {TransactionType} from '../../model/transaction/TransactionType';
 import {TransferTransaction} from '../../model/transaction/TransferTransaction';
 import {UInt64} from '../../model/UInt64';
-import {SecureMessage} from '../../model/transaction/SecureMessage';
+import { EncryptedMessage } from '../../model/model';
 
 /**
  * @internal
@@ -121,11 +121,11 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
 
     if (transactionDTO.type === TransactionType.TRANSFER) {
 
-        let message: PlainMessage | SecureMessage;
+        let message: PlainMessage | EncryptedMessage;
         if (transactionDTO.message && transactionDTO.message.type === 0) {
             message = PlainMessage.createFromPayload(transactionDTO.message.payload);
         } else if (transactionDTO.message && transactionDTO.message.type === 1) {
-            message = SecureMessage.createFromDTO(transactionDTO.message.payload);
+            message = EncryptedMessage.createFromDTO(transactionDTO.message.payload);
         } else {
             message = EmptyMessage;
         }
