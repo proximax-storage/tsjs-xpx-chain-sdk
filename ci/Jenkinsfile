@@ -1,0 +1,39 @@
+pipeline {
+  agent {
+    node {
+      label 'docker-build-node'
+    }
+  }
+
+  environment {
+    npm_config_cache = "npm-cache"
+    nexusAuth = credentials('jenkins-nexus-npm')
+  }
+
+  options {
+    timestamps()
+    timeout(time: 2, unit: 'HOURS')
+  }
+
+  stages {
+    stage('Tests') {
+      steps {
+        echo 'Writing Nexus Credentials'
+        script {
+          writeFile file: '.npmrc', 'registry=https://nexus.internal.proximax.io/repository/npm-group/\n@scope:registry=https://nexus.internal.proximax.io/repository/npm-private/\nemail=jenkins@proximax.io\nalways-auth=true\n_auth=' + env.nexusAuth + '\n'
+        }
+
+        echo 'Starting Docker Container'
+        withDockerContainer(image: 'node:10') {
+          echo 'Installing Dependencies'
+          sh 'npm install'
+
+          echo 'Running Build and Tests'
+          sh 'npm run test'
+        }
+
+        echo 'Leaving Container'
+      }
+    }
+  }
+}
