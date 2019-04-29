@@ -16,24 +16,50 @@ pipeline {
   }
 
   stages {
-    stage('Tests') {
+    stage('Authentication') {
       steps {
         echo 'Writing Nexus Credentials'
         script {
           writeFile file: '.npmrc', 'registry=https://nexus.internal.proximax.io/repository/npm-group/\n@scope:registry=https://nexus.internal.proximax.io/repository/npm-private/\nemail=jenkins@proximax.io\nalways-auth=true\n_auth=' + env.nexusAuth + '\n'
         }
+      }
+    }
 
+    stage('Unit Test') {
+      steps {
         echo 'Starting Docker Container'
         withDockerContainer(image: 'node:10') {
           echo 'Installing Dependencies'
           sh 'npm install'
 
-          echo 'Running Build and Tests'
+          echo 'Running Unit Tests'
           sh 'npm run test'
         }
 
         echo 'Leaving Container'
       }
     }
+
+    stage('End to End Test') {
+      steps {
+        echo 'Starting Docker Container'
+        withDockerContainer(image: 'node:10') {
+          echo 'Running Unit Tests'
+          sh 'npm run test:e2e'
+        }
+
+        echo 'Leaving Container'
+      }
+    }
+
+    // stage('Publish Artifact') {
+    //   steps {
+    //     echo 'Starting Docker Container'
+    //     withDockerContainer(image: 'node:10') {
+    //       echo 'Running publish'
+    //       sh 'npm publish --tag unstable'
+    //     }
+    //   }
+    // }
   }
 }
