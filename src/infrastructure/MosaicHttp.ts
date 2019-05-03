@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {MosaicRoutesApi} from 'proximax-nem2-library';
+import {MosaicRoutesApi} from 'js-xpx-catapult-library';
 import {from as observableFrom, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {PublicAccount} from '../model/account/PublicAccount';

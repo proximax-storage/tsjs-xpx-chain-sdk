@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { AggregateTransaction as AggregateTransactionLibrary } from 'proximax-nem2-library';
+import { AggregateTransaction as AggregateTransactionLibrary } from 'js-xpx-catapult-library';
 import { Account } from '../account/Account';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';

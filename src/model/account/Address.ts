@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {address as AddressLibrary, convert} from 'proximax-nem2-library';
+import {address as AddressLibrary, convert} from 'js-xpx-catapult-library';
 import {NetworkType} from '../blockchain/NetworkType';
 
 /**

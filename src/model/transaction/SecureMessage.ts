@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {convert, crypto} from 'proximax-nem2-library';
+import {convert, crypto} from 'js-xpx-catapult-library';
 import {Message} from './Message';
 
 export class SecureMessage extends Message {

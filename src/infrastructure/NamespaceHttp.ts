@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {address as AddressLibrary, convert, NamespaceRoutesApi} from 'proximax-nem2-library';
+import {address as AddressLibrary, convert, NamespaceRoutesApi} from 'js-xpx-catapult-library';
 import {from as observableFrom, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {Address} from '../model/account/Address';

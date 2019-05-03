@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { VerifiableTransaction } from 'proximax-nem2-library';
+import { VerifiableTransaction } from 'js-xpx-catapult-library';
 import { expect } from 'chai';
 import { Account } from '../../../src/model/account/Account';
 import { NetworkType } from '../../../src/model/blockchain/NetworkType';

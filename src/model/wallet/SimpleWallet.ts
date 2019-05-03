@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {convert, crypto, KeyPair, nacl_catapult} from 'proximax-nem2-library';
+import {convert, crypto, KeyPair, nacl_catapult} from 'js-xpx-catapult-library';
 import {LocalDateTime} from 'js-joda';
 import {Account} from '../account/Account';
 import {Address} from '../account/Address';

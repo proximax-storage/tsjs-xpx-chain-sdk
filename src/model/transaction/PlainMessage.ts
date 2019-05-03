@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {convert} from 'proximax-nem2-library';
+import {convert} from 'js-xpx-catapult-library';
 import {Message} from './Message';
 import {MessageType} from './MessageType';
 

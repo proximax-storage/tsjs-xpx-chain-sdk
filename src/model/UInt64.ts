@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {uint64} from 'proximax-nem2-library';
+import {uint64} from 'js-xpx-catapult-library';
 
 /**
  * UInt64 data model

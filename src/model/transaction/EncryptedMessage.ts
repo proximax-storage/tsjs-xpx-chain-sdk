@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {crypto} from 'proximax-nem2-library';
+import {crypto} from 'js-xpx-catapult-library';
 import {PublicAccount} from '../account/PublicAccount';
 import {Message} from './Message';
 import {MessageType} from './MessageType';

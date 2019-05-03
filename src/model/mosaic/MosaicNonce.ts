@@ -16,7 +16,7 @@
 import {
     convert,
     nacl_catapult,
-} from 'proximax-nem2-library';
+} from 'js-xpx-catapult-library';
 
 /**
  * The mosaic nonce structure

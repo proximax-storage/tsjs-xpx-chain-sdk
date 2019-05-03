@@ -7,7 +7,7 @@
     "test": "mocha --ui bdd --recursive ./dist/test --timeout 90000",
     "test:e2e": "mocha --ui bdd --recursive ./dist/e2e --timeout 90000",
     "test:all": "mocha --ui bdd --recursive ./dist/ --timeout 90000",
-    "postinstall": "cd node_modules/tsjs-xpx-catapult-sdk && npm install && npm run build",
+    "preinstall": "cd node_modules/tsjs-xpx-catapult-sdk && npm install && npm run build",
     "build": "rm -rf dist/ && tsc",
     "test:cov": "nyc --reporter=lcov --reporter=text-lcov npm t && nyc report --reporter=text-lcov",
     "test:coveralls": "npm run test:cov | coveralls"
@@ -55,7 +55,6 @@
     "@types/crypto-js": "^3.1.43",
     "crypto-js": "^3.1.9-1",
     "js-joda": "^1.6.2",
-    "proximax-nem2-library": "file:../js-xpx-catapult-library",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5",
     "rxjs": "^6.2.1",
