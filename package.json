@@ -7,10 +7,10 @@
     "test": "mocha --ui bdd --recursive ./dist/test --timeout 90000",
     "test:e2e": "mocha --ui bdd --recursive ./dist/e2e --timeout 90000",
     "test:all": "mocha --ui bdd --recursive ./dist/ --timeout 90000",
-    "preinstall": "cd node_modules/tsjs-xpx-catapult-sdk && npm install && npm run build",
     "build": "rm -rf dist/ && tsc",
     "test:cov": "nyc --reporter=lcov --reporter=text-lcov npm t && nyc report --reporter=text-lcov",
-    "test:coveralls": "npm run test:cov | coveralls"
+    "test:coveralls": "npm run test:cov | coveralls",
+    "prepublish": "npm run build"
   },
   "contributors": [
     "Aleix <aleix@nemeurope.eu>",
