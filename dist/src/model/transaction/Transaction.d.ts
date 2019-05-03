@@ -126,7 +126,7 @@ export declare abstract class Transaction {
      * @returns {string}
      * @memberof Transaction
      */
-    serialize(): any;
+    serialize(): string;
     /**
      * @description Create JSON object
      * @returns {Object}
