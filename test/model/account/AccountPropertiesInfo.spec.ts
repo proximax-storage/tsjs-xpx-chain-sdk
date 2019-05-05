@@ -24,7 +24,7 @@ describe('AccountPropertiesInfo', () => {
 
         const accountPropertiesInfoDTO = {
             meta: {id: '12345'},
-            accountProperties: [{
+            accountProperties: {
                 address: Address.createFromEncoded('9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142'),
                 properties: [{
                     propertyType: PropertyType.AllowAddress,
@@ -32,7 +32,7 @@ describe('AccountPropertiesInfo', () => {
                               value: 'SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM',
                              }],
                 }],
-            }],
+            },
         };
 
         const accountPropertiesInfo = new AccountPropertiesInfo(
@@ -41,11 +41,12 @@ describe('AccountPropertiesInfo', () => {
         );
 
         deepEqual(accountPropertiesInfo.meta.id, accountPropertiesInfoDTO.meta.id);
-        deepEqual(accountPropertiesInfo.accountProperties.length, accountPropertiesInfoDTO.accountProperties.length);
-        deepEqual(accountPropertiesInfo.accountProperties[0].address, accountPropertiesInfoDTO.accountProperties[0].address);
-        deepEqual(accountPropertiesInfo.accountProperties[0].properties.length,
-            accountPropertiesInfoDTO.accountProperties[0].properties.length);
-        deepEqual(accountPropertiesInfo.accountProperties[0].properties[0].values[0],
-            accountPropertiesInfoDTO.accountProperties[0].properties[0].values[0]);
+        deepEqual(accountPropertiesInfo.accountProperties.address, accountPropertiesInfoDTO.accountProperties.address);
+        deepEqual(accountPropertiesInfo.accountProperties.properties.length,
+            accountPropertiesInfoDTO.accountProperties.properties.length);
+        deepEqual(accountPropertiesInfo.accountProperties.properties[0].values.length,
+            accountPropertiesInfoDTO.accountProperties.properties[0].values.length);
+        deepEqual(accountPropertiesInfo.accountProperties.properties[0].values[0],
+            accountPropertiesInfoDTO.accountProperties.properties[0].values[0]);
     });
 });

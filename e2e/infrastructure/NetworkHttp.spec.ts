@@ -16,7 +16,7 @@
 import {expect} from 'chai';
 import {NetworkHttp} from '../../src/infrastructure/NetworkHttp';
 import {NetworkType} from '../../src/model/blockchain/NetworkType';
-import {APIUrl} from '../conf/conf.spec';
+import {APIUrl, ConfNetworkType} from '../conf/conf.spec';
 
 describe('NetworkHttp', () => {
     const networkHttp = new NetworkHttp(APIUrl);
@@ -25,7 +25,7 @@ describe('NetworkHttp', () => {
         it('should return network type', (done) => {
             networkHttp.getNetworkType()
                 .subscribe((networkType) => {
-                    expect(networkType).to.be.equal(NetworkType.MIJIN_TEST);
+                    expect(networkType).to.be.equal(ConfNetworkType);
                     done();
                 });
         });

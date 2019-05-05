@@ -17,37 +17,29 @@
 import {expect} from 'chai';
 import {AccountHttp} from '../../src/infrastructure/AccountHttp';
 import {QueryParams} from '../../src/infrastructure/QueryParams';
-import {Address} from '../../src/model/account/Address';
-import {PublicAccount} from '../../src/model/account/PublicAccount';
-import {NetworkType} from '../../src/model/blockchain/NetworkType';
 
-import {APIUrl} from '../conf/conf.spec';
+import { TestingAccount, MultisigAccount, APIUrl, CosignatoryAccount, Cosignatory2Account, Cosignatory3Account, TestingRecipient, TestingAccountAccountPropertyAddress, SeedAccount } from '../conf/conf.spec';
+import { ConfUtils } from '../conf/ConfUtils';
+
+const accountHttp = new AccountHttp(APIUrl);
 
 describe('AccountHttp', () => {
-    const accountAddress = Address.createFromRawAddress('SATVSIHOBUYIVN5KPPLQ4K5FY3XVWQTN426XT645');
-    const accountPublicKey = '97D1A892667B113121053AB9474E0E3F02A3006D454649AA9609845FF6A37E96';
-    const publicAccount = PublicAccount.createFromPublicKey('846B4439154579A5903B1459C9CF69CB8153F6D0110A7A0ED61DE29AE4810BF2',
-        NetworkType.MIJIN_TEST);
-    const multisigPublicAccount = PublicAccount.createFromPublicKey('B694186EE4AB0558CA4AFCFDD43B42114AE71094F5A1FC4A913FE9971CACD21D',
-        NetworkType.MIJIN_TEST);
-
-    const accountHttp = new AccountHttp(APIUrl);
 
     describe('getAccountInfo', () => {
         it('should return account data given a NEM Address', (done) => {
-            accountHttp.getAccountInfo(accountAddress)
+            accountHttp.getAccountInfo(TestingAccount.address)
                 .subscribe((accountInfo) => {
-                    expect(accountInfo.publicKey).to.be.equal(accountPublicKey);
+                    expect(accountInfo.publicKey).to.be.equal(TestingAccount.publicKey);       
                     done();
-                });
+            });
         });
     });
 
     describe('getAccountsInfo', () => {
         it('should return account data given a NEM Address', (done) => {
-            accountHttp.getAccountsInfo([accountAddress])
+            accountHttp.getAccountsInfo([TestingAccount.address])
                 .subscribe((accountsInfo) => {
-                    expect(accountsInfo[0].publicKey).to.be.equal(accountPublicKey);
+                    expect(accountsInfo[0].publicKey).to.be.equal(TestingAccount.publicKey);
                     done();
                 });
         });
@@ -55,8 +47,8 @@ describe('AccountHttp', () => {
 
     describe('getMultisigAccountInfo', () => {
         it('should call getMultisigAccountInfo successfully', (done) => {
-            accountHttp.getMultisigAccountInfo(multisigPublicAccount.address).subscribe((multisigAccountInfo) => {
-                expect(multisigAccountInfo.account.publicKey).to.be.equal(multisigPublicAccount.publicKey);
+            accountHttp.getMultisigAccountInfo(MultisigAccount.address).subscribe((multisigAccountInfo) => {
+                expect(multisigAccountInfo.account.publicKey).to.be.equal(MultisigAccount.publicKey);
                 done();
             });
         });
@@ -64,8 +56,9 @@ describe('AccountHttp', () => {
 
     describe('getAccountProperty', () => {
         it('should call getAccountProperty successfully', (done) => {
-            accountHttp.getAccountProperty(publicAccount).subscribe((accountProperty) => {
-                expect(accountProperty.accountProperties[0]!.address).to.be.equal(accountAddress);
+            ConfUtils.simplePropertyModificationBLockAddress(TestingAccount, TestingRecipient.address);
+            accountHttp.getAccountProperty(TestingAccount.publicAccount).subscribe((accountProperty) => {
+                expect(accountProperty.accountProperties!.address).to.be.equal(TestingAccountAccountPropertyAddress);
                 done();
             });
         });
@@ -73,16 +66,16 @@ describe('AccountHttp', () => {
 
     describe('getAccountProperties', () => {
         it('should call getAccountProperties successfully', (done) => {
-            accountHttp.getAccountProperties([accountAddress]).subscribe((accountProperties) => {
-                expect(accountProperties[0]!.accountProperties[0]!.address).to.be.equal(accountAddress);
+            accountHttp.getAccountProperties([TestingAccount.address]).subscribe((accountProperties) => {
+                expect(accountProperties[0]!.accountProperties!.address).to.be.equal(TestingAccountAccountPropertyAddress);
                 done();
             });
         });
     });
     describe('getMultisigAccountGraphInfo', () => {
         it('should call getMultisigAccountGraphInfo successfully', (done) => {
-            accountHttp.getMultisigAccountGraphInfo(multisigPublicAccount.address).subscribe((multisigAccountGraphInfo) => {
-                expect(multisigAccountGraphInfo.multisigAccounts.get(0)![0].account.publicKey).to.be.equal(multisigPublicAccount.publicKey);
+            accountHttp.getMultisigAccountGraphInfo(MultisigAccount.address).subscribe((multisigAccountGraphInfo) => {
+                expect(multisigAccountGraphInfo.multisigAccounts.get(0)![0].account.publicKey).to.be.equal(MultisigAccount.publicKey);
                 done();
             });
         });
@@ -90,7 +83,7 @@ describe('AccountHttp', () => {
 
     describe('incomingTransactions', () => {
         it('should call incomingTransactions successfully', (done) => {
-            accountHttp.incomingTransactions(publicAccount).subscribe((transactions) => {
+            accountHttp.incomingTransactions(TestingAccount.publicAccount).subscribe((transactions) => {
                 expect(transactions.length).to.be.greaterThan(0);
                 done();
             });
@@ -102,13 +95,13 @@ describe('AccountHttp', () => {
         let lastId: string;
 
         it('should call outgoingTransactions successfully', (done) => {
-            accountHttp.outgoingTransactions(publicAccount).subscribe((transactions) => {
+            accountHttp.outgoingTransactions(TestingAccount.publicAccount).subscribe((transactions) => {
                 expect(transactions.length).to.be.equal(10);
                 done();
             });
         });
         it('should call outgoingTransactions successfully pageSize 11', (done) => {
-            accountHttp.outgoingTransactions(publicAccount, new QueryParams(22)).subscribe((transactions) => {
+            accountHttp.outgoingTransactions(TestingAccount.publicAccount, new QueryParams(22)).subscribe((transactions) => {
                 expect(transactions.length).to.be.equal(22);
                 nextId = transactions[10].transactionInfo!.id;
                 lastId = transactions[11].transactionInfo!.id;
@@ -117,7 +110,7 @@ describe('AccountHttp', () => {
         });
 
         it('should call outgoingTransactions successfully pageSize 11 and next id', (done) => {
-            accountHttp.outgoingTransactions(publicAccount, new QueryParams(11, nextId)).subscribe((transactions) => {
+            accountHttp.outgoingTransactions(TestingAccount.publicAccount, new QueryParams(11, nextId)).subscribe((transactions) => {
                 expect(transactions.length).to.be.equal(11);
                 expect(transactions[0].transactionInfo!.id).to.be.equal(lastId);
                 done();
@@ -127,7 +120,7 @@ describe('AccountHttp', () => {
 
     describe('aggregateBondedTransactions', () => {
         it('should call aggregateBondedTransactions successfully', (done) => {
-            accountHttp.aggregateBondedTransactions(publicAccount).subscribe((transactions) => {
+            accountHttp.aggregateBondedTransactions(TestingAccount.publicAccount).subscribe((transactions) => {
                 expect(transactions.length).to.be.equal(0);
                 done();
             });
@@ -136,7 +129,7 @@ describe('AccountHttp', () => {
 
     describe('transactions', () => {
         it('should call transactions successfully', (done) => {
-            accountHttp.transactions(publicAccount).subscribe((transactions) => {
+            accountHttp.transactions(TestingAccount.publicAccount).subscribe((transactions) => {
                 expect(transactions.length).to.be.greaterThan(0);
                 done();
             });
@@ -145,10 +138,10 @@ describe('AccountHttp', () => {
 
     describe('unconfirmedTransactions', () => {
         it('should call unconfirmedTransactions successfully', (done) => {
-            accountHttp.unconfirmedTransactions(publicAccount).subscribe((transactions) => {
+            accountHttp.unconfirmedTransactions(TestingAccount.publicAccount).subscribe((transactions) => {
                 expect(transactions.length).to.be.equal(0);
                 done();
             });
         });
     });
-});
+})

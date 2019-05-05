@@ -233,7 +233,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             new Mosaic(new MosaicId(transactionDTO.mosaicId), new UInt64(transactionDTO.amount)),
             new UInt64(transactionDTO.duration),
             transactionDTO.hashAlgorithm,
-            transactionDTO.secret,
+            (transactionDTO.hashAlgorithm === 2 ? transactionDTO.secret.substr(0, 40) : transactionDTO.secret),
             typeof recipient === 'object' && recipient.hasOwnProperty('address') ?
                 Address.createFromRawAddress(recipient.address) : Address.createFromEncoded(recipient),
             transactionDTO.signature,

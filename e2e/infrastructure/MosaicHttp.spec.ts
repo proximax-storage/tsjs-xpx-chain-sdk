@@ -16,12 +16,10 @@
 import {expect} from 'chai';
 import {MosaicHttp} from '../../src/infrastructure/MosaicHttp';
 import {MosaicId} from '../../src/model/mosaic/MosaicId';
-import {NamespaceId} from '../../src/model/namespace/NamespaceId';
-import {APIUrl} from '../conf/conf.spec';
+import {APIUrl, ConfNetworkMosaic} from '../conf/conf.spec';
 
 describe('MosaicHttp', () => {
-    const mosaicId = new MosaicId([3646934825, 3576016193]);
-    const namespaceId = new NamespaceId([929036875, 2226345261]);
+    const mosaicId = ConfNetworkMosaic;
     const mosaicHttp = new MosaicHttp(APIUrl);
 
     describe('getMosaic', () => {
