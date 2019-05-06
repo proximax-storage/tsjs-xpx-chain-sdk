@@ -158,7 +158,7 @@ const ValidateTransaction = {
             .to.be.equal("test-message");
         } else {
             expect(transferTransaction.message.payload)
-            .to.be.equal(undefined);
+            .to.be.equal("");
         }
     },
 };

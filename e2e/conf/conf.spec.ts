@@ -142,8 +142,6 @@ const ConfNamespace2 = new NamespaceId(getNsId("xpx"));
 const ConfNetworkMosaic = new MosaicId(getMosId("xpx"));
 const ConfNetworkMosaicName = "xpx";
 
-const TestingAccountAccountPropertyAddress = 'kI8Li1LEnUAlQieseA6NaM5bY34zsKh48g==';
-    
 const GetNemesisBlockDataPromise = () => {
     const blockchainHttp = new BlockchainHttp(APIUrl);
     return blockchainHttp.getBlockByHeight(1).toPromise().then((nemesisBlockInfo) => {
@@ -200,7 +198,4 @@ export {
     ConfNamespace2,
     ConfNetworkMosaic,
     ConfNetworkMosaicName,
-
-    // should we read this from block/1/transactions instead?
-    TestingAccountAccountPropertyAddress
 };

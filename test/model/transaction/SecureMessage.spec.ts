@@ -40,7 +40,7 @@ describe('SecureMessage', () => {
         const privateKey = '97226FCCBD876D399BA2A70E640AD2C2C97AD5CE57A40EE9455C226D3C39AD49';
         const publicKey = 'D1869362F4FAA5F683AEF78FC0D6E04B976833000F3958862A09CC7B6DF347C2';
         const publicAccount = PublicAccount.createFromPublicKey(publicKey, NetworkType.MIJIN_TEST);
-        const secureMessage = EncryptedMessage.createFromDTO(payload);
+        const secureMessage = new EncryptedMessage(payload);
 
         const decodedMessagePayload = EncryptedMessage.decrypt(secureMessage, privateKey, publicAccount);
 
@@ -53,7 +53,7 @@ describe('SecureMessage', () => {
         const privateKey = 'D19EDBF7C5F4665BBB168F8BFF3DC1CA85766080B10AABD60DDE5D6D7E893D5B';
         const publicKey = '632479641258F56F961473CD729F6357563D276CE7B68D5AD8F9F7FA071BB963';
         const publicAccount = PublicAccount.createFromPublicKey(publicKey, NetworkType.MIJIN_TEST);
-        const secureMessage = EncryptedMessage.createFromDTO(payload);
+        const secureMessage = new EncryptedMessage(payload);
 
         const decodedMessagePayload = EncryptedMessage.decrypt(secureMessage, privateKey, publicAccount);
 
