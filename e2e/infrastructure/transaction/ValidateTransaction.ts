@@ -20,6 +20,7 @@ import {MultisigCosignatoryModification} from '../../../src/model/transaction/Mu
 import {TransactionType} from '../../../src/model/transaction/TransactionType';
 import {UInt64} from '../../../src/model/UInt64';
 import {Address} from '../../../src/model/account/Address';
+import { PublicAccount } from '../../../src/model/model';
 
 const ValidateTransaction = {
     validateStandaloneTx: (transaction, transactionDTO) => {
@@ -44,8 +45,8 @@ const ValidateTransaction = {
             .to.be.equal(parseInt(transactionDTO.transaction.version.toString(16).substr(2, 2), 16));
         expect(transaction.type)
             .to.be.equal(transactionDTO.transaction.type);
-        deepEqual(transaction.fee,
-            new UInt64(transactionDTO.transaction.fee));
+        deepEqual(transaction.maxFee,
+            new UInt64(transactionDTO.transaction.maxFee));
         deepEqual(transaction.deadline.toDTO(),
             transactionDTO.transaction.deadline);
 
@@ -84,8 +85,8 @@ const ValidateTransaction = {
             .to.be.equal(parseInt(aggregateTransactionDTO.transaction.version.toString(16).substr(2, 2), 16));
         expect(aggregateTransaction.type)
             .to.be.equal(aggregateTransactionDTO.transaction.type);
-        deepEqual(aggregateTransaction.fee,
-            new UInt64(aggregateTransactionDTO.transaction.fee));
+        deepEqual(aggregateTransaction.maxFee,
+            new UInt64(aggregateTransactionDTO.transaction.maxFee));
         deepEqual(aggregateTransaction.deadline.toDTO(),
             aggregateTransactionDTO.transaction.deadline);
 
@@ -113,7 +114,7 @@ const ValidateTransaction = {
             .to.be.equal(true);
     },
     validateMosaicSupplyChangeTx: (mosaicSupplyChangeTransaction, mosaicSupplyChangeTransactionDTO) => {
-        deepEqual(mosaicSupplyChangeTransaction.mosaicId,
+        deepEqual(mosaicSupplyChangeTransaction.mosaicId.id,
             new UInt64(mosaicSupplyChangeTransactionDTO.transaction.mosaicId));
         expect(mosaicSupplyChangeTransaction.direction)
             .to.be.equal(mosaicSupplyChangeTransactionDTO.transaction.direction);
@@ -128,7 +129,8 @@ const ValidateTransaction = {
 
         deepEqual(modifyMultisigAccountTransaction.modifications[0], new MultisigCosignatoryModification(
             modifyMultisigAccountTransactionDTO.transaction.modifications[0].type,
-            modifyMultisigAccountTransactionDTO.transaction.modifications[0].cosignatoryPublicAccount,
+            PublicAccount.createFromPublicKey(modifyMultisigAccountTransactionDTO.transaction.modifications[0].cosignatoryPublicKey,
+                modifyMultisigAccountTransaction.networkType),
             ),
         );
     },
@@ -137,22 +139,27 @@ const ValidateTransaction = {
             .to.be.equal(registerNamespaceTransactionDTO.transaction.namespaceType);
         expect(registerNamespaceTransaction.namespaceName)
             .to.be.equal(registerNamespaceTransactionDTO.transaction.name);
-        deepEqual(registerNamespaceTransaction.namespaceId,
+        deepEqual(registerNamespaceTransaction.namespaceId.id,
             new UInt64(registerNamespaceTransactionDTO.transaction.namespaceId));
 
         if (registerNamespaceTransaction.namespaceType === 0) {
             deepEqual(registerNamespaceTransaction.duration,
                 new UInt64(registerNamespaceTransactionDTO.transaction.duration));
         } else {
-            deepEqual(registerNamespaceTransaction.parentId,
+            deepEqual(registerNamespaceTransaction.parentId.id,
                 new UInt64(registerNamespaceTransactionDTO.transaction.parentId));
         }
     },
     validateTransferTx: (transferTransaction, transferTransactionDTO) => {
         deepEqual(transferTransaction.recipient,
             Address.createFromEncoded(transferTransactionDTO.transaction.recipient));
-        expect(transferTransaction.message.payload)
+        if (transferTransactionDTO.transaction.message) {
+            expect(transferTransaction.message.payload)
             .to.be.equal("test-message");
+        } else {
+            expect(transferTransaction.message.payload)
+            .to.be.equal("");
+        }
     },
 };
 

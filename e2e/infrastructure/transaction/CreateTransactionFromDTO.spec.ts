@@ -37,7 +37,7 @@ describe('CreateTransactionFromDTO', () => {
                         10000,
                         0,
                     ],
-                    fee: [
+                    maxFee: [
                         0,
                         0,
                     ],
@@ -88,7 +88,7 @@ describe('CreateTransactionFromDTO', () => {
                         10000,
                         0,
                     ],
-                    fee: [
+                    maxFee: [
                         0,
                         0,
                     ],
@@ -142,7 +142,7 @@ describe('CreateTransactionFromDTO', () => {
                         3266625578,
                         11,
                     ],
-                    fee: [
+                    maxFee: [
                         0,
                         0,
                     ],
@@ -219,7 +219,7 @@ describe('CreateTransactionFromDTO', () => {
                             1000,
                             0,
                         ],
-                        fee: [
+                        maxFee: [
                             0,
                             0,
                         ],
@@ -266,7 +266,7 @@ describe('CreateTransactionFromDTO', () => {
                             3266625578,
                             11,
                         ],
-                        fee: [
+                        maxFee: [
                             0,
                             0,
                         ],
@@ -334,7 +334,7 @@ describe('CreateTransactionFromDTO', () => {
                             1,
                             0,
                         ],
-                        fee: [
+                        maxFee: [
                             0,
                             0,
                         ],
@@ -384,7 +384,7 @@ describe('CreateTransactionFromDTO', () => {
                             3266625578,
                             11,
                         ],
-                        fee: [
+                        maxFee: [
                             0,
                             0,
                         ],
@@ -452,7 +452,7 @@ describe('CreateTransactionFromDTO', () => {
                         1,
                         0,
                     ],
-                    fee: [
+                    maxFee: [
                         0,
                         0,
                     ],
@@ -524,7 +524,7 @@ describe('CreateTransactionFromDTO', () => {
                         3266625578,
                         11,
                     ],
-                    fee: [
+                    maxFee: [
                         0,
                         0,
                     ],
@@ -617,7 +617,7 @@ describe('CreateTransactionFromDTO', () => {
                         0,
                     ],
                     direction: 1,
-                    fee: [
+                    maxFee: [
                         0,
                         0,
                     ],
@@ -662,7 +662,7 @@ describe('CreateTransactionFromDTO', () => {
                         3266625578,
                         11,
                     ],
-                    fee: [
+                    maxFee: [
                         0,
                         0,
                     ],
@@ -728,7 +728,7 @@ describe('CreateTransactionFromDTO', () => {
                         1,
                         0,
                     ],
-                    fee: [
+                    maxFee: [
                         0,
                         0,
                     ],
@@ -778,7 +778,7 @@ describe('CreateTransactionFromDTO', () => {
                         3266625578,
                         11,
                     ],
-                    fee: [
+                    maxFee: [
                         0,
                         0,
                     ],

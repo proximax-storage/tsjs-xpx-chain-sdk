@@ -81,7 +81,7 @@ export class AccountHttp extends Http implements AccountRepository {
     /**
      * Gets Account property.
      * @param publicAccount public account
-     * @returns Observable<AccountProperty>
+     * @returns Observable<AccountPropertiesInfo>
      */
     public getAccountProperty(publicAccount: PublicAccount): Observable<AccountPropertiesInfo> {
         return observableFrom(this.accountRoutesApi.getAccountProperties(publicAccount.publicKey)).pipe(map((accountProperties) => {
@@ -95,7 +95,7 @@ export class AccountHttp extends Http implements AccountRepository {
     /**
      * Gets Account properties.
      * @param address list of addresses
-     * @returns Observable<AccountProperty[]>
+     * @returns Observable<AccountPropertiesInfo[]>
      */
     public getAccountProperties(addresses: Address[]): Observable<AccountPropertiesInfo[]> {
         const accountIds = addresses.map((address) => address.plain());

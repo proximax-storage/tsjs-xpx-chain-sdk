@@ -30,7 +30,9 @@ import {AggregateTransaction} from '../../model/transaction/AggregateTransaction
 import {AggregateTransactionCosignature} from '../../model/transaction/AggregateTransactionCosignature';
 import {AggregateTransactionInfo} from '../../model/transaction/AggregateTransactionInfo';
 import {Deadline} from '../../model/transaction/Deadline';
+import { EncryptedMessage } from '../../model/transaction/EncryptedMessage';
 import {LockFundsTransaction} from '../../model/transaction/LockFundsTransaction';
+import { MessageType } from '../../model/transaction/MessageType';
 import {ModifyAccountPropertyAddressTransaction} from '../../model/transaction/ModifyAccountPropertyAddressTransaction';
 import {ModifyAccountPropertyEntityTypeTransaction} from '../../model/transaction/ModifyAccountPropertyEntityTypeTransaction';
 import {ModifyAccountPropertyMosaicTransaction} from '../../model/transaction/ModifyAccountPropertyMosaicTransaction';
@@ -49,7 +51,6 @@ import {TransactionInfo} from '../../model/transaction/TransactionInfo';
 import {TransactionType} from '../../model/transaction/TransactionType';
 import {TransferTransaction} from '../../model/transaction/TransferTransaction';
 import {UInt64} from '../../model/UInt64';
-import {SecureMessage} from '../../model/transaction/SecureMessage';
 
 /**
  * @internal
@@ -121,11 +122,11 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
 
     if (transactionDTO.type === TransactionType.TRANSFER) {
 
-        let message: PlainMessage | SecureMessage;
+        let message: PlainMessage | EncryptedMessage;
         if (transactionDTO.message && transactionDTO.message.type === 0) {
             message = PlainMessage.createFromPayload(transactionDTO.message.payload);
         } else if (transactionDTO.message && transactionDTO.message.type === 1) {
-            message = SecureMessage.createFromDTO(transactionDTO.message.payload);
+            message = EncryptedMessage.createFromDTO(transactionDTO.message.payload);
         } else {
             message = EmptyMessage;
         }
@@ -137,7 +138,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             new UInt64(transactionDTO.maxFee || [0, 0]),
             extractRecipient(transactionDTO.recipient),
             extractMosaics(transactionDTO.mosaics),
-            extractMessage(transactionDTO.message !== undefined ? transactionDTO.message.payload : undefined),
+            message,
             transactionDTO.signature,
             transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
                     extractNetworkType(transactionDTO.version)) : undefined,
@@ -233,7 +234,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             new Mosaic(new MosaicId(transactionDTO.mosaicId), new UInt64(transactionDTO.amount)),
             new UInt64(transactionDTO.duration),
             transactionDTO.hashAlgorithm,
-            transactionDTO.secret,
+            (transactionDTO.hashAlgorithm === 2 ? transactionDTO.secret.substr(0, 40) : transactionDTO.secret),
             typeof recipient === 'object' && recipient.hasOwnProperty('address') ?
                 Address.createFromRawAddress(recipient.address) : Address.createFromEncoded(recipient),
             transactionDTO.signature,
@@ -436,23 +437,6 @@ export const extractMosaics = (mosaics: any): Mosaic[] => {
 };
 
 /**
- * Extract message from either JSON payload (unencoded) or DTO (encoded)
- *
- * @param message - message payload
- * @return {PlainMessage}
- */
-const extractMessage = (message: any): PlainMessage => {
-    let plainMessage = EmptyMessage;
-    if (message !== undefined && convert.isHexString(message)) {
-        plainMessage = PlainMessage.createFromPayload(message);
-    } else {
-        plainMessage = PlainMessage.create(message);
-    }
-
-    return plainMessage;
-};
-
-/**
  * Extract beneficiary public key from DTO.
  *
  * @todo Upgrade of catapult-rest WITH catapult-service-bootstrap versioning.
@@ -469,7 +453,7 @@ const extractMessage = (message: any): PlainMessage => {
  */
 export const extractBeneficiary = (
     blockDTO: any,
-    networkType: NetworkType
+    networkType: NetworkType,
 ): PublicAccount | undefined => {
 
     let dtoPublicAccount: PublicAccount | undefined;
