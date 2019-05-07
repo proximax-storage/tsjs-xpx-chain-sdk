@@ -184,7 +184,7 @@ describe('TransactionHttp', () => {
             });
             it('aggregate', (done) => {
                 const nonce = MosaicNonce.createRandom();
-                const mosaicId = MosaicId.createFromNonce(nonce, TestingAccount.publicAccount);
+                mosaicId = MosaicId.createFromNonce(nonce, TestingAccount.publicAccount);
                 const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
                     Deadline.create(),
                     nonce,
@@ -207,12 +207,11 @@ describe('TransactionHttp', () => {
                 transactionHttp.announce(signedTransaction);
             });
         });
-        xdescribe('MosaicSupplyChangeTransaction', () => {
-            
+        describe('MosaicSupplyChangeTransaction', () => {
             it('standalone', (done) => {
                 const mosaicSupplyChangeTransaction = MosaicSupplyChangeTransaction.create(
                     Deadline.create(),
-                    mosaicId,
+                    mosaicId, // depends on mosaicId created randomly in the previous test
                     MosaicSupplyType.Increase,
                     UInt64.fromUint(10),
                     ConfNetworkType,
@@ -224,7 +223,7 @@ describe('TransactionHttp', () => {
             it('aggregate', (done) => {
                 const mosaicSupplyChangeTransaction = MosaicSupplyChangeTransaction.create(
                     Deadline.create(),
-                    mosaicId,
+                    mosaicId, // depends on mosaicId created randomly in the previous test
                     MosaicSupplyType.Increase,
                     UInt64.fromUint(10),
                     ConfNetworkType,
@@ -432,7 +431,7 @@ describe('TransactionHttp', () => {
                 });
             });
 
-            xdescribe('HashType: Op_Hash_160', () => {
+            describe('HashType: Op_Hash_160', () => {
                 it('standalone', (done) => {
                     const secretLockTransaction = SecretLockTransaction.create(
                         Deadline.create(),
