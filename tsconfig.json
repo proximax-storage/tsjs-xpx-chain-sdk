@@ -12,6 +12,7 @@
     "stripInternal": true,
     "outDir": "dist",
     "allowJs": false,
+    "allowSyntheticDefaultImports": true,
     "lib": [
       "es2016",
       "dom"
