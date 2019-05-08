@@ -26,11 +26,11 @@
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "e2e"
   ],
   "include": [
     "test/**/*.spec.ts",
-    "src/**/*.ts",
-    "e2e/**/*.ts"
+    "src/**/*.ts"
   ]
 }

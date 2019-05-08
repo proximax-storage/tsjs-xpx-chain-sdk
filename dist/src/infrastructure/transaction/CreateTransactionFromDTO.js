@@ -32,6 +32,7 @@ const AggregateTransaction_1 = require("../../model/transaction/AggregateTransac
 const AggregateTransactionCosignature_1 = require("../../model/transaction/AggregateTransactionCosignature");
 const AggregateTransactionInfo_1 = require("../../model/transaction/AggregateTransactionInfo");
 const Deadline_1 = require("../../model/transaction/Deadline");
+const EncryptedMessage_1 = require("../../model/transaction/EncryptedMessage");
 const LockFundsTransaction_1 = require("../../model/transaction/LockFundsTransaction");
 const ModifyAccountPropertyAddressTransaction_1 = require("../../model/transaction/ModifyAccountPropertyAddressTransaction");
 const ModifyAccountPropertyEntityTypeTransaction_1 = require("../../model/transaction/ModifyAccountPropertyEntityTypeTransaction");
@@ -50,7 +51,6 @@ const TransactionInfo_1 = require("../../model/transaction/TransactionInfo");
 const TransactionType_1 = require("../../model/transaction/TransactionType");
 const TransferTransaction_1 = require("../../model/transaction/TransferTransaction");
 const UInt64_1 = require("../../model/UInt64");
-const SecureMessage_1 = require("../../model/transaction/SecureMessage");
 /**
  * @internal
  * @param transactionDTO
@@ -91,12 +91,12 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo) => 
             message = PlainMessage_1.PlainMessage.createFromPayload(transactionDTO.message.payload);
         }
         else if (transactionDTO.message && transactionDTO.message.type === 1) {
-            message = SecureMessage_1.SecureMessage.createFromDTO(transactionDTO.message.payload);
+            message = EncryptedMessage_1.EncryptedMessage.createFromPayload(transactionDTO.message.payload);
         }
         else {
             message = PlainMessage_1.EmptyMessage;
         }
-        return new TransferTransaction_1.TransferTransaction(exports.extractNetworkType(transactionDTO.version), exports.extractTransactionVersion(transactionDTO.version), Deadline_1.Deadline.createFromDTO(transactionDTO.deadline), new UInt64_1.UInt64(transactionDTO.maxFee || [0, 0]), exports.extractRecipient(transactionDTO.recipient), exports.extractMosaics(transactionDTO.mosaics), extractMessage(transactionDTO.message !== undefined ? transactionDTO.message.payload : undefined), transactionDTO.signature, transactionDTO.signer ? PublicAccount_1.PublicAccount.createFromPublicKey(transactionDTO.signer, exports.extractNetworkType(transactionDTO.version)) : undefined, transactionInfo);
+        return new TransferTransaction_1.TransferTransaction(exports.extractNetworkType(transactionDTO.version), exports.extractTransactionVersion(transactionDTO.version), Deadline_1.Deadline.createFromDTO(transactionDTO.deadline), new UInt64_1.UInt64(transactionDTO.maxFee || [0, 0]), exports.extractRecipient(transactionDTO.recipient), exports.extractMosaics(transactionDTO.mosaics), message, transactionDTO.signature, transactionDTO.signer ? PublicAccount_1.PublicAccount.createFromPublicKey(transactionDTO.signer, exports.extractNetworkType(transactionDTO.version)) : undefined, transactionInfo);
     }
     else if (transactionDTO.type === TransactionType_1.TransactionType.REGISTER_NAMESPACE) {
         return new RegisterNamespaceTransaction_1.RegisterNamespaceTransaction(exports.extractNetworkType(transactionDTO.version), exports.extractTransactionVersion(transactionDTO.version), Deadline_1.Deadline.createFromDTO(transactionDTO.deadline), new UInt64_1.UInt64(transactionDTO.maxFee || [0, 0]), transactionDTO.namespaceType, transactionDTO.name, new NamespaceId_1.NamespaceId(transactionDTO.namespaceId), transactionDTO.namespaceType === 0 ? new UInt64_1.UInt64(transactionDTO.duration) : undefined, transactionDTO.namespaceType === 1 ? new NamespaceId_1.NamespaceId(transactionDTO.parentId) : undefined, transactionDTO.signature, transactionDTO.signer ? PublicAccount_1.PublicAccount.createFromPublicKey(transactionDTO.signer, exports.extractNetworkType(transactionDTO.version)) : undefined, transactionInfo);
@@ -117,7 +117,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo) => 
     }
     else if (transactionDTO.type === TransactionType_1.TransactionType.SECRET_LOCK) {
         const recipient = transactionDTO.recipient;
-        return new SecretLockTransaction_1.SecretLockTransaction(exports.extractNetworkType(transactionDTO.version), exports.extractTransactionVersion(transactionDTO.version), Deadline_1.Deadline.createFromDTO(transactionDTO.deadline), new UInt64_1.UInt64(transactionDTO.maxFee || [0, 0]), new Mosaic_1.Mosaic(new MosaicId_1.MosaicId(transactionDTO.mosaicId), new UInt64_1.UInt64(transactionDTO.amount)), new UInt64_1.UInt64(transactionDTO.duration), transactionDTO.hashAlgorithm, transactionDTO.secret, typeof recipient === 'object' && recipient.hasOwnProperty('address') ?
+        return new SecretLockTransaction_1.SecretLockTransaction(exports.extractNetworkType(transactionDTO.version), exports.extractTransactionVersion(transactionDTO.version), Deadline_1.Deadline.createFromDTO(transactionDTO.deadline), new UInt64_1.UInt64(transactionDTO.maxFee || [0, 0]), new Mosaic_1.Mosaic(new MosaicId_1.MosaicId(transactionDTO.mosaicId), new UInt64_1.UInt64(transactionDTO.amount)), new UInt64_1.UInt64(transactionDTO.duration), transactionDTO.hashAlgorithm, (transactionDTO.hashAlgorithm === 2 ? transactionDTO.secret.substr(0, 40) : transactionDTO.secret), typeof recipient === 'object' && recipient.hasOwnProperty('address') ?
             Address_1.Address.createFromRawAddress(recipient.address) : Address_1.Address.createFromEncoded(recipient), transactionDTO.signature, transactionDTO.signer ? PublicAccount_1.PublicAccount.createFromPublicKey(transactionDTO.signer, exports.extractNetworkType(transactionDTO.version)) : undefined, transactionInfo);
     }
     else if (transactionDTO.type === TransactionType_1.TransactionType.SECRET_PROOF) {
@@ -226,22 +226,6 @@ exports.extractMosaics = (mosaics) => {
         // most significant bit of byte 0 is not set => mosaicId
         return new Mosaic_1.Mosaic(new MosaicId_1.MosaicId(mosaicDTO.id), new UInt64_1.UInt64(mosaicDTO.amount));
     });
-};
-/**
- * Extract message from either JSON payload (unencoded) or DTO (encoded)
- *
- * @param message - message payload
- * @return {PlainMessage}
- */
-const extractMessage = (message) => {
-    let plainMessage = PlainMessage_1.EmptyMessage;
-    if (message !== undefined && js_xpx_catapult_library_1.convert.isHexString(message)) {
-        plainMessage = PlainMessage_1.PlainMessage.createFromPayload(message);
-    }
-    else {
-        plainMessage = PlainMessage_1.PlainMessage.create(message);
-    }
-    return plainMessage;
 };
 /**
  * Extract beneficiary public key from DTO.

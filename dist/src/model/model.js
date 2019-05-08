@@ -37,6 +37,13 @@ __export(require("./blockchain/BlockchainScore"));
 __export(require("./blockchain/BlockchainStorageInfo"));
 __export(require("./blockchain/BlockInfo"));
 __export(require("./blockchain/NetworkType"));
+// Http
+__export(require("./http/AuthenticationBasic"));
+__export(require("./http/ApiKeyAuthentication"));
+__export(require("./http/AuthenticationOauth2"));
+__export(require("./http/AutenticationType"));
+__export(require("./http/AuthenticationHeader"));
+__export(require("./http/Authentications"));
 // Mosaic
 __export(require("./mosaic/Mosaic"));
 __export(require("./mosaic/MosaicInfo"));
@@ -96,7 +103,6 @@ __export(require("./transaction/TransactionStatus"));
 __export(require("./transaction/TransactionStatusError"));
 __export(require("./transaction/TransactionType"));
 __export(require("./transaction/TransferTransaction"));
-__export(require("./transaction/SecureMessage"));
 // Wallet
 __export(require("./wallet/EncryptedPrivateKey"));
 __export(require("./wallet/Password"));

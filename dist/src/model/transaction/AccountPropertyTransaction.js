@@ -17,7 +17,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const PropertyType_1 = require("../account/PropertyType");
 const UInt64_1 = require("../UInt64");
-const AccountPropertyModification_1 = require("./AccountPropertyModification");
 const ModifyAccountPropertyAddressTransaction_1 = require("./ModifyAccountPropertyAddressTransaction");
 const ModifyAccountPropertyEntityTypeTransaction_1 = require("./ModifyAccountPropertyEntityTypeTransaction");
 const ModifyAccountPropertyMosaicTransaction_1 = require("./ModifyAccountPropertyMosaicTransaction");
@@ -66,33 +65,6 @@ class AccountPropertyTransaction {
             throw new Error('Property type is not allowed.');
         }
         return ModifyAccountPropertyEntityTypeTransaction_1.ModifyAccountPropertyEntityTypeTransaction.create(deadline, propertyType, modifications, networkType, maxFee);
-    }
-    /**
-     * Create an address filter for account property modification
-     * @param modificationType - modification type. 0: Add, 1: Remove
-     * @param address - modification value (Address)
-     * @returns {AccountPropertyModification}
-     */
-    static createAddressFilter(modificationType, address) {
-        return new AccountPropertyModification_1.AccountPropertyModification(modificationType, address.plain());
-    }
-    /**
-     * Create an mosaic filter for account property modification
-     * @param modificationType - modification type. 0: Add, 1: Remove
-     * @param mosaicId - modification value (Mosaic)
-     * @returns {AccountPropertyModification}
-     */
-    static createMosaicFilter(modificationType, mosaicId) {
-        return new AccountPropertyModification_1.AccountPropertyModification(modificationType, mosaicId.id.toDTO());
-    }
-    /**
-     * Create an entity type filter for account property modification
-     * @param modificationType - modification type. 0: Add, 1: Remove
-     * @param entityType - modification value (Transaction Type)
-     * @returns {AccountPropertyModification}
-     */
-    static createEntityTypeFilter(modificationType, entityType) {
-        return new AccountPropertyModification_1.AccountPropertyModification(modificationType, entityType);
     }
 }
 exports.AccountPropertyTransaction = AccountPropertyTransaction;

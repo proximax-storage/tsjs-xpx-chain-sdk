@@ -43,9 +43,11 @@ describe('Listener', () => {
             const listener = new Listener_1.Listener('https://notcorrecturl:0000');
             yield listener.open()
                 .then((result) => {
+                listener.close();
                 throw new Error('This should not be called when expecting error');
             })
                 .catch((error) => {
+                listener.close();
                 chai_1.expect(error.message.toString()).to.be.equal("getaddrinfo ENOTFOUND notcorrecturl notcorrecturl:0000");
             });
         }));

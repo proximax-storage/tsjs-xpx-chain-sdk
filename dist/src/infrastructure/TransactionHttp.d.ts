@@ -6,18 +6,18 @@ import { TransactionAnnounceResponse } from '../model/transaction/TransactionAnn
 import { TransactionStatus } from '../model/transaction/TransactionStatus';
 import { Http } from './Http';
 import { TransactionRepository } from './TransactionRepository';
+import { Authentications } from '../model/model';
 /**
  * Transaction http repository.
  *
  * @since 1.0
  */
 export declare class TransactionHttp extends Http implements TransactionRepository {
-    private readonly url;
     /**
      * Constructor
      * @param url
      */
-    constructor(url: string);
+    constructor(url: string, authentications?: Authentications, defaultHeaders?: object);
     /**
      * Gets a transaction for a transactionId
      * @param transactionId - Transaction id or hash.

@@ -41,9 +41,9 @@ class AccountHttp extends Http_1.Http {
      * @param url
      * @param networkHttp
      */
-    constructor(url, networkHttp) {
+    constructor(url, networkHttp, authentications, defaultHeaders) {
         networkHttp = networkHttp == null ? new NetworkHttp_1.NetworkHttp(url) : networkHttp;
-        super(url, networkHttp);
+        super(url, networkHttp, authentications, defaultHeaders);
         this.accountRoutesApi = new js_xpx_catapult_library_1.AccountRoutesApi(this.apiClient);
     }
     /**
@@ -59,7 +59,7 @@ class AccountHttp extends Http_1.Http {
     /**
      * Gets Account property.
      * @param publicAccount public account
-     * @returns Observable<AccountProperty>
+     * @returns Observable<AccountPropertiesInfo>
      */
     getAccountProperty(publicAccount) {
         return rxjs_1.from(this.accountRoutesApi.getAccountProperties(publicAccount.publicKey)).pipe(operators_1.map((accountProperties) => {
@@ -69,7 +69,7 @@ class AccountHttp extends Http_1.Http {
     /**
      * Gets Account properties.
      * @param address list of addresses
-     * @returns Observable<AccountProperty[]>
+     * @returns Observable<AccountPropertiesInfo[]>
      */
     getAccountProperties(addresses) {
         const accountIds = addresses.map((address) => address.plain());

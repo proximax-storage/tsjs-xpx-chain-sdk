@@ -57,9 +57,8 @@ export class TransactionHttp extends Http implements TransactionRepository {
      * Constructor
      * @param url
      */
-    constructor(url: string, networkHttp?: NetworkHttp, authentications?: Authentications, defaultHeaders?: object) {
-        networkHttp = networkHttp == null ? new NetworkHttp(url) : networkHttp;
-        super(url, networkHttp, authentications, defaultHeaders);
+    constructor(url: string, authentications?: Authentications, defaultHeaders?: object) {
+        super(url, undefined, authentications, defaultHeaders);
         this.transactionRoutesApi = new TransactionRoutesApi(this.apiClient);
         this.blockchainRoutesApi = new BlockchainRoutesApi(this.apiClient);
     }
@@ -180,7 +179,7 @@ export class TransactionHttp extends Http implements TransactionRepository {
             address.plain(),
         );
         return observableFrom(
-            requestPromise.put({url: this.url + `/transaction/sync`, body: syncAnnounce, json: true}),
+            requestPromise.put({url: this.apiClient.basePath + `/transaction/sync`, body: syncAnnounce, json: true}),
         ).pipe(map((response) => {
             if (response.status !== undefined) {
                 throw new TransactionStatus(

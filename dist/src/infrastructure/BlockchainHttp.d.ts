@@ -7,6 +7,8 @@ import { UInt64 } from '../model/UInt64';
 import { BlockchainRepository } from './BlockchainRepository';
 import { Http } from './Http';
 import { QueryParams } from './QueryParams';
+import { NetworkHttp } from './NetworkHttp';
+import { Authentications } from '../model/model';
 /**
  * Blockchain http repository.
  *
@@ -17,7 +19,7 @@ export declare class BlockchainHttp extends Http implements BlockchainRepository
      * Constructor
      * @param url
      */
-    constructor(url: string);
+    constructor(url: string, networkHttp?: NetworkHttp, authentications?: Authentications, defaultHeaders?: object);
     /**
      * Gets a BlockInfo for a given block height
      * @param height - Block height

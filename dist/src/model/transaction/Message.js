@@ -23,22 +23,16 @@ class Message {
     /**
      * @internal
      * @param type
-     * @param hexEncodedPayload
      * @param payload
      */
     constructor(/**
                  * Message type
                  */ type, 
     /**
-     * Message encoded payload in hex
-     */
-    hexEncodedPayload, 
-    /**
-     * Message raw payload
+     * Message payload
      */
     payload) {
         this.type = type;
-        this.hexEncodedPayload = hexEncodedPayload;
         this.payload = payload;
     }
     /**

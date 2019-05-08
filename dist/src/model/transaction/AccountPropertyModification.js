@@ -34,6 +34,33 @@ class AccountPropertyModification {
         this.value = value;
     }
     /**
+     * Create an address filter for account property modification
+     * @param modificationType - modification type. 0: Add, 1: Remove
+     * @param address - modification value (Address)
+     * @returns {AccountPropertyModification}
+     */
+    static createForAddress(modificationType, address) {
+        return new AccountPropertyModification(modificationType, address.plain());
+    }
+    /**
+     * Create an mosaic filter for account property modification
+     * @param modificationType - modification type. 0: Add, 1: Remove
+     * @param mosaicId - modification value (Mosaic)
+     * @returns {AccountPropertyModification}
+     */
+    static createForMosaic(modificationType, mosaicId) {
+        return new AccountPropertyModification(modificationType, mosaicId.id.toDTO());
+    }
+    /**
+     * Create an entity type filter for account property modification
+     * @param modificationType - modification type. 0: Add, 1: Remove
+     * @param entityType - modification value (Transaction Type)
+     * @returns {AccountPropertyModification}
+     */
+    static createForEntityType(modificationType, entityType) {
+        return new AccountPropertyModification(modificationType, entityType);
+    }
+    /**
      * @internal
      */
     toDTO() {

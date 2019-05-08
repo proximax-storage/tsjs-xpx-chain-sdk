@@ -45,7 +45,14 @@ class UInt64 {
      * @param uintArray
      */
     constructor(uintArray) {
-        if (uintArray.length !== 2 || uintArray[0] < 0 || uintArray[1] < 0) {
+        // TODO: temporary hack to get around maxFee as string ("0") in i.e. /block/1/transactions
+        if (typeof uintArray === 'string' || uintArray instanceof String) {
+            const i = UInt64.fromUint(Number.parseInt(uintArray));
+            this.lower = i.lower;
+            this.higher = i.higher;
+            return;
+        }
+        if (!uintArray || uintArray.length !== 2 || uintArray[0] < 0 || uintArray[1] < 0) {
             throw new Error('uintArray must be be an array of two uint numbers');
         }
         this.lower = uintArray[0];

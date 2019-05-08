@@ -9,21 +9,21 @@ export declare class EncryptedMessage extends Message {
     constructor(payload: string, recipientPublicAccount?: PublicAccount);
     /**
      *
-     * @param message
-     * @param recipientPublicAccount
-     * @param privateKey
+     * @param message - Plain message to be encrypted
+     * @param recipientPublicAccount - Recipient public account
+     * @param privateKey - Sender private key
      */
     static create(message: string, recipientPublicAccount: PublicAccount, privateKey: any): EncryptedMessage;
     /**
      *
      * @param payload
      */
-    static createFromDTO(payload: string): EncryptedMessage;
+    static createFromPayload(payload: string): EncryptedMessage;
     /**
      *
-     * @param encryptMessage
-     * @param privateKey
-     * @param recipientPublicAccount
+     * @param encryptMessage - Encrypted message to be decrypted
+     * @param privateKey - Recipient private key
+     * @param recipientPublicAccount - Sender public account
      */
     static decrypt(encryptMessage: EncryptedMessage, privateKey: any, recipientPublicAccount: PublicAccount): PlainMessage;
 }

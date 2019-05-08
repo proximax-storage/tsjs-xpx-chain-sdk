@@ -36,9 +36,9 @@ class MosaicHttp extends Http_1.Http {
      * @param url
      * @param networkHttp
      */
-    constructor(url, networkHttp) {
+    constructor(url, networkHttp, authentications, defaultHeaders) {
         networkHttp = networkHttp == null ? new NetworkHttp_1.NetworkHttp(url) : networkHttp;
-        super(url, networkHttp);
+        super(url, networkHttp, authentications, defaultHeaders);
         this.mosaicRoutesApi = new js_xpx_catapult_library_1.MosaicRoutesApi(this.apiClient);
     }
     /**

@@ -34,6 +34,7 @@ const AggregateTransactionCosignature_1 = require("../../model/transaction/Aggre
 const Deadline_1 = require("../../model/transaction/Deadline");
 const HashType_1 = require("../../model/transaction/HashType");
 const LockFundsTransaction_1 = require("../../model/transaction/LockFundsTransaction");
+const Message_1 = require("../../model/transaction/Message");
 const ModifyAccountPropertyAddressTransaction_1 = require("../../model/transaction/ModifyAccountPropertyAddressTransaction");
 const ModifyAccountPropertyEntityTypeTransaction_1 = require("../../model/transaction/ModifyAccountPropertyEntityTypeTransaction");
 const ModifyAccountPropertyMosaicTransaction_1 = require("../../model/transaction/ModifyAccountPropertyMosaicTransaction");
@@ -42,7 +43,6 @@ const MosaicAliasTransaction_1 = require("../../model/transaction/MosaicAliasTra
 const MosaicDefinitionTransaction_1 = require("../../model/transaction/MosaicDefinitionTransaction");
 const MosaicSupplyChangeTransaction_1 = require("../../model/transaction/MosaicSupplyChangeTransaction");
 const MultisigCosignatoryModification_1 = require("../../model/transaction/MultisigCosignatoryModification");
-const PlainMessage_1 = require("../../model/transaction/PlainMessage");
 const RegisterNamespaceTransaction_1 = require("../../model/transaction/RegisterNamespaceTransaction");
 const SecretLockTransaction_1 = require("../../model/transaction/SecretLockTransaction");
 const SecretProofTransaction_1 = require("../../model/transaction/SecretProofTransaction");
@@ -181,11 +181,12 @@ const CreateTransaction = (type, transactionData, networkType, deadline) => {
             const transferRecipient = transactionData.substring(0, 50);
             const transferMessageSize = parseInt(js_xpx_catapult_library_1.convert.uint8ToHex(js_xpx_catapult_library_1.convert.hexToUint8(transactionData.substring(50, 54)).reverse()), 16);
             const transferMessageAndMosaicSubString = transactionData.substring(56);
-            const transferMessageType = transferMessageAndMosaicSubString.substring(0, 2);
-            const transferMessage = transferMessageAndMosaicSubString.substring(2, (transferMessageSize - 1) * 2 + 2);
+            const transferMessageType = parseInt(js_xpx_catapult_library_1.convert.uint8ToHex(js_xpx_catapult_library_1.convert.hexToUint8(transferMessageAndMosaicSubString.substring(0, 2)).reverse()), 16);
+            const transferPayload = transferMessageAndMosaicSubString.substring(2, (transferMessageSize - 1) * 2 + 2);
+            const transferMessage = new Message_1.Message(transferMessageType, transferPayload);
             const transferMosaic = transferMessageAndMosaicSubString.substring(transferMessageSize * 2);
             const transferMosaicArray = transferMosaic.match(/.{1,32}/g);
-            return TransferTransaction_1.TransferTransaction.create(Deadline_1.Deadline.createFromDTO(deadline), Address_1.Address.createFromEncoded(transferRecipient), transferMosaicArray ? transferMosaicArray.map((mosaic) => new Mosaic_1.Mosaic(new MosaicId_1.MosaicId(UInt64_1.UInt64.fromHex(reverse(mosaic.substring(0, 16))).toDTO()), UInt64_1.UInt64.fromHex(reverse(mosaic.substring(16))))) : [], PlainMessage_1.PlainMessage.createFromPayload(transferMessage), networkType);
+            return TransferTransaction_1.TransferTransaction.create(Deadline_1.Deadline.createFromDTO(deadline), Address_1.Address.createFromEncoded(transferRecipient), transferMosaicArray ? transferMosaicArray.map((mosaic) => new Mosaic_1.Mosaic(new MosaicId_1.MosaicId(UInt64_1.UInt64.fromHex(reverse(mosaic.substring(0, 16))).toDTO()), UInt64_1.UInt64.fromHex(reverse(mosaic.substring(16))))) : [], transferMessage, networkType);
         case TransactionType_1.TransactionType.SECRET_LOCK:
             // read bytes
             const secretLockMosaic = transactionData.substring(0, 32);

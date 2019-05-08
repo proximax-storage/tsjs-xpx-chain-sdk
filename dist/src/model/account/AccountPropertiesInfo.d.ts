@@ -10,7 +10,7 @@ export declare class AccountPropertiesInfo {
     /**
      * Properties.
      */
-    readonly accountProperties: AccountProperties[];
+    readonly accountProperties: AccountProperties;
     /**
      * Constructor
      * @param meta
@@ -24,5 +24,5 @@ export declare class AccountPropertiesInfo {
     /**
      * Properties.
      */
-    accountProperties: AccountProperties[]);
+    accountProperties: AccountProperties);
 }

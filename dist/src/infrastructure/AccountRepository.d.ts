@@ -29,13 +29,13 @@ export interface AccountRepository {
     /**
      * Gets Account property.
      * @param publicAccount public account
-     * @returns Observable<AccountProperty>
+     * @returns Observable<AccountPropertiesInfo>
      */
     getAccountProperty(publicAccount: PublicAccount): Observable<AccountPropertiesInfo>;
     /**
      * Gets Account properties.
      * @param address list of addresses
-     * @returns Observable<AccountProperty[]>
+     * @returns Observable<AccountPropertiesInfo[]>
      */
     getAccountProperties(addresses: Address[]): Observable<AccountPropertiesInfo[]>;
     /**

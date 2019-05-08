@@ -27,13 +27,19 @@ class Http {
      * @param url
      * @param networkHttp
      */
-    constructor(url, networkHttp) {
+    constructor(url, networkHttp, authentications, defaultHeaders) {
         this.apiClient = new js_xpx_catapult_library_1.ApiClient();
         if (url) {
             this.apiClient.basePath = url;
         }
         if (networkHttp) {
             this.networkHttp = networkHttp;
+        }
+        if (authentications) {
+            this.apiClient.authentications = authentications;
+        }
+        if (defaultHeaders) {
+            this.apiClient.defaultHeaders = defaultHeaders;
         }
     }
     getNetworkTypeObservable() {

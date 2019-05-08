@@ -6,9 +6,10 @@ import { AccountPropertyModification } from './AccountPropertyModification';
 import { Deadline } from './Deadline';
 import { Transaction } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
+import { TransactionType } from './TransactionType';
 export declare class ModifyAccountPropertyEntityTypeTransaction extends Transaction {
     readonly propertyType: PropertyType;
-    readonly modifications: Array<AccountPropertyModification<number>>;
+    readonly modifications: Array<AccountPropertyModification<TransactionType>>;
     /**
      * Create a modify account property entity type transaction object
      * @param deadline - The deadline to include the transaction.
@@ -18,7 +19,7 @@ export declare class ModifyAccountPropertyEntityTypeTransaction extends Transact
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {ModifyAccountPropertyEntityTypeTransaction}
      */
-    static create(deadline: Deadline, propertyType: PropertyType, modifications: Array<AccountPropertyModification<number>>, networkType: NetworkType, maxFee?: UInt64): ModifyAccountPropertyEntityTypeTransaction;
+    static create(deadline: Deadline, propertyType: PropertyType, modifications: Array<AccountPropertyModification<TransactionType>>, networkType: NetworkType, maxFee?: UInt64): ModifyAccountPropertyEntityTypeTransaction;
     /**
      * @param networkType
      * @param version
@@ -31,7 +32,7 @@ export declare class ModifyAccountPropertyEntityTypeTransaction extends Transact
      * @param signer
      * @param transactionInfo
      */
-    constructor(networkType: NetworkType, version: number, deadline: Deadline, maxFee: UInt64, propertyType: PropertyType, modifications: Array<AccountPropertyModification<number>>, signature?: string, signer?: PublicAccount, transactionInfo?: TransactionInfo);
+    constructor(networkType: NetworkType, version: number, deadline: Deadline, maxFee: UInt64, propertyType: PropertyType, modifications: Array<AccountPropertyModification<TransactionType>>, signature?: string, signer?: PublicAccount, transactionInfo?: TransactionInfo);
     /**
      * @override Transaction.size()
      * @description get the byte size of a ModifyAccountPropertyEntityTypeTransaction

@@ -29,9 +29,9 @@ class EncryptedMessage extends Message_1.Message {
     }
     /**
      *
-     * @param message
-     * @param recipientPublicAccount
-     * @param privateKey
+     * @param message - Plain message to be encrypted
+     * @param recipientPublicAccount - Recipient public account
+     * @param privateKey - Sender private key
      */
     static create(message, recipientPublicAccount, privateKey) {
         return new EncryptedMessage(js_xpx_catapult_library_1.crypto.encode(privateKey, recipientPublicAccount.publicKey, message).toUpperCase(), recipientPublicAccount);
@@ -40,17 +40,17 @@ class EncryptedMessage extends Message_1.Message {
      *
      * @param payload
      */
-    static createFromDTO(payload) {
+    static createFromPayload(payload) {
         return new EncryptedMessage(payload);
     }
     /**
      *
-     * @param encryptMessage
-     * @param privateKey
-     * @param recipientPublicAccount
+     * @param encryptMessage - Encrypted message to be decrypted
+     * @param privateKey - Recipient private key
+     * @param recipientPublicAccount - Sender public account
      */
     static decrypt(encryptMessage, privateKey, recipientPublicAccount) {
-        return new PlainMessage_1.PlainMessage(Message_1.Message.decodeHex(js_xpx_catapult_library_1.crypto.decode(privateKey, recipientPublicAccount.publicKey, encryptMessage.payload)));
+        return new PlainMessage_1.PlainMessage(this.decodeHex(js_xpx_catapult_library_1.crypto.decode(privateKey, recipientPublicAccount.publicKey, encryptMessage.payload)));
     }
 }
 exports.EncryptedMessage = EncryptedMessage;

@@ -2,6 +2,7 @@ import { Observable } from 'rxjs';
 import { NetworkType } from '../model/blockchain/NetworkType';
 import { Http } from './Http';
 import { NetworkRepository } from './NetworkRepository';
+import { Authentications } from '../model/model';
 /**
  * Network http repository.
  *
@@ -12,7 +13,7 @@ export declare class NetworkHttp extends Http implements NetworkRepository {
      * Constructor
      * @param url
      */
-    constructor(url: string);
+    constructor(url: string, networkHttp?: NetworkHttp, authentications?: Authentications, defaultHeaders?: object);
     /**
      * Get current network type.
      *

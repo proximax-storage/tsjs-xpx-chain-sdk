@@ -28,15 +28,31 @@ const NamespaceName_1 = require("../../src/model/namespace/NamespaceName");
 const UInt64_1 = require("../../src/model/UInt64");
 const NamespaceService_1 = require("../../src/service/NamespaceService");
 describe('NamespaceService', () => {
-    let namespaceService;
-    let rootNamespace;
-    let subnamespace;
-    before(() => {
+    it('should return the NamespaceInfo + name for a root namespace', () => {
         const mockedNamespaceHttp = ts_mockito_1.mock(NamespaceHttp_1.NamespaceHttp);
-        rootNamespace = givenRootNamespace();
-        subnamespace = givenSubnamespace();
-        // e43f43d2c5a8f299 rootNamespace.id.toHex()
-        // f7ce33276a3288c1 subnamespace.id.toHex()
+        const rootNamespace = givenRootNamespace();
+        const subnamespace = givenSubnamespace();
+        ts_mockito_1.when(mockedNamespaceHttp.getNamespace(rootNamespace.id))
+            .thenReturn(rxjs_1.of(rootNamespace));
+        ts_mockito_1.when(mockedNamespaceHttp.getNamespace(subnamespace.id))
+            .thenReturn(rxjs_1.of(subnamespace));
+        ts_mockito_1.when(mockedNamespaceHttp.getNamespacesName(ts_mockito_1.deepEqual([rootNamespace.id])))
+            .thenReturn(rxjs_1.of([new NamespaceName_1.NamespaceName(new NamespaceId_1.NamespaceId([3316183705, 3829351378]), 'nem2tests')]));
+        ts_mockito_1.when(mockedNamespaceHttp.getNamespacesName(ts_mockito_1.deepEqual([rootNamespace.id, subnamespace.id])))
+            .thenReturn(rxjs_1.of([
+            new NamespaceName_1.NamespaceName(new NamespaceId_1.NamespaceId([3316183705, 3829351378]), 'nem2tests'),
+            new NamespaceName_1.NamespaceName(new NamespaceId_1.NamespaceId([1781696705, 4157485863]), 'level2'),
+        ]));
+        const namespaceHttp = ts_mockito_1.instance(mockedNamespaceHttp);
+        const namespaceService = new NamespaceService_1.NamespaceService(namespaceHttp);
+        namespaceService.namespace(rootNamespace.id).subscribe((namespace) => {
+            chai_1.expect(namespace.name).to.be.equal('nem2tests');
+        });
+    });
+    it('should return the NamespaceInfo + name for a subnamespace', () => {
+        const mockedNamespaceHttp = ts_mockito_1.mock(NamespaceHttp_1.NamespaceHttp);
+        const rootNamespace = givenRootNamespace();
+        const subnamespace = givenSubnamespace();
         ts_mockito_1.when(mockedNamespaceHttp.getNamespace(rootNamespace.id))
             .thenReturn(rxjs_1.of(rootNamespace));
         ts_mockito_1.when(mockedNamespaceHttp.getNamespace(subnamespace.id))
@@ -51,15 +67,8 @@ describe('NamespaceService', () => {
             new NamespaceName_1.NamespaceName(new NamespaceId_1.NamespaceId([1781696705, 4157485863]), 'level2'),
         ]));
         const namespaceHttp = ts_mockito_1.instance(mockedNamespaceHttp);
-        namespaceService = new NamespaceService_1.NamespaceService(namespaceHttp);
-    });
-    it('should return the NamespaceInfo + name for a root namespace', () => {
-        return namespaceService.namespace(rootNamespace.id).toPromise().then((namespace) => {
-            chai_1.expect(namespace.name).to.be.equal('nem2tests');
-        });
-    });
-    it('should return the NamespaceInfo + name for a subnamespace', () => {
-        return namespaceService.namespace(subnamespace.id).toPromise().then((namespace) => {
+        const namespaceService = new NamespaceService_1.NamespaceService(namespaceHttp);
+        namespaceService.namespace(subnamespace.id).subscribe((namespace) => {
             chai_1.expect(namespace.name).to.be.equal('nem2tests.level2');
         });
     });

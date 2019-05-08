@@ -8,6 +8,7 @@ import { Http } from './Http';
 import { NamespaceRepository } from './NamespaceRepository';
 import { NetworkHttp } from './NetworkHttp';
 import { QueryParams } from './QueryParams';
+import { Authentications } from '../model/model';
 /**
  * Namespace http repository.
  *
@@ -19,7 +20,7 @@ export declare class NamespaceHttp extends Http implements NamespaceRepository {
      * @param url
      * @param networkHttp
      */
-    constructor(url: string, networkHttp?: NetworkHttp);
+    constructor(url: string, networkHttp?: NetworkHttp, authentications?: Authentications, defaultHeaders?: object);
     /**
      * Gets the NamespaceInfo for a given namespaceId
      * @param namespaceId - Namespace id

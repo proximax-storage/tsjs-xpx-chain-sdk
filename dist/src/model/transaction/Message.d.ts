@@ -1,21 +1,17 @@
 /**
  * An abstract message class that serves as the base class of all message types.
  */
-export declare abstract class Message {
+export declare class Message {
     readonly type: number;
     /**
-     * Message encoded payload in hex
+     * Message payload
      */
-    readonly hexEncodedPayload: string;
-    /**
-     * Message raw payload
-     */
-    readonly payload?: string | undefined;
+    readonly payload: string;
     /**
      * Create DTO object
      */
     toDTO(): {
         type: number;
-        payload: string | undefined;
+        payload: string;
     };
 }

@@ -38,9 +38,8 @@ class TransactionHttp extends Http_1.Http {
      * Constructor
      * @param url
      */
-    constructor(url) {
-        super(url);
-        this.url = url;
+    constructor(url, authentications, defaultHeaders) {
+        super(url, undefined, authentications, defaultHeaders);
         this.transactionRoutesApi = new js_xpx_catapult_library_1.TransactionRoutesApi(this.apiClient);
         this.blockchainRoutesApi = new js_xpx_catapult_library_1.BlockchainRoutesApi(this.apiClient);
     }
@@ -111,7 +110,7 @@ class TransactionHttp extends Http_1.Http {
      */
     announceAggregateBonded(signedTransaction) {
         if (signedTransaction.type !== TransactionType_1.TransactionType.AGGREGATE_BONDED) {
-            rxjs_1.throwError('Only Transaction Type 0x4241 is allowed for announce aggregate bonded');
+            return rxjs_1.throwError('Only Transaction Type 0x4241 is allowed for announce aggregate bonded');
         }
         return rxjs_1.from(this.transactionRoutesApi.announcePartialTransaction(signedTransaction)).pipe(operators_1.map((transactionAnnounceResponseDTO) => {
             return new TransactionAnnounceResponse_1.TransactionAnnounceResponse(transactionAnnounceResponseDTO.message);
@@ -130,7 +129,7 @@ class TransactionHttp extends Http_1.Http {
     announceSync(signedTx) {
         const address = PublicAccount_1.PublicAccount.createFromPublicKey(signedTx.signer, signedTx.networkType).address;
         const syncAnnounce = new SyncAnnounce_1.SyncAnnounce(signedTx.payload, signedTx.hash, address.plain());
-        return rxjs_1.from(requestPromise.put({ url: this.url + `/transaction/sync`, body: syncAnnounce, json: true })).pipe(operators_1.map((response) => {
+        return rxjs_1.from(requestPromise.put({ url: this.apiClient.basePath + `/transaction/sync`, body: syncAnnounce, json: true })).pipe(operators_1.map((response) => {
             if (response.status !== undefined) {
                 throw new TransactionStatus_1.TransactionStatus('failed', response.status, response.hash, Deadline_1.Deadline.createFromDTO(response.deadline), UInt64_1.UInt64.fromUint(0));
             }

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const js_xpx_catapult_library_1 = require("js-xpx-catapult-library");
 const Message_1 = require("./Message");
 const MessageType_1 = require("./MessageType");
 /**
@@ -33,15 +32,14 @@ class PlainMessage extends Message_1.Message {
      * @internal
      */
     static createFromPayload(payload) {
-        return new PlainMessage(this.decodeHex(payload), payload);
+        return new PlainMessage(this.decodeHex(payload));
     }
     /**
      * @internal
      * @param payload
-     * @param hexEncodedPayload
      */
-    constructor(payload, hexEncodedPayload) {
-        super(MessageType_1.MessageType.PlainMessage, hexEncodedPayload || js_xpx_catapult_library_1.convert.utf8ToHex(payload), payload);
+    constructor(payload) {
+        super(MessageType_1.MessageType.PlainMessage, payload);
     }
 }
 exports.PlainMessage = PlainMessage;

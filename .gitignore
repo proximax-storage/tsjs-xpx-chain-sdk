@@ -25,7 +25,6 @@ typings/
 .yarn-integrity
 .env
 build/
-dist/
 .vscode
 
 

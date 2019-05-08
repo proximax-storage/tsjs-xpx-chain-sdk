@@ -25,6 +25,7 @@ const BlockInfo_1 = require("../model/blockchain/BlockInfo");
 const UInt64_1 = require("../model/UInt64");
 const Http_1 = require("./Http");
 const CreateTransactionFromDTO_1 = require("./transaction/CreateTransactionFromDTO");
+const NetworkHttp_1 = require("./NetworkHttp");
 /**
  * Blockchain http repository.
  *
@@ -35,8 +36,9 @@ class BlockchainHttp extends Http_1.Http {
      * Constructor
      * @param url
      */
-    constructor(url) {
-        super(url);
+    constructor(url, networkHttp, authentications, defaultHeaders) {
+        networkHttp = networkHttp == null ? new NetworkHttp_1.NetworkHttp(url) : networkHttp;
+        super(url, networkHttp, authentications, defaultHeaders);
         this.blockchainRoutesApi = new js_xpx_catapult_library_1.BlockchainRoutesApi(this.apiClient);
     }
     /**

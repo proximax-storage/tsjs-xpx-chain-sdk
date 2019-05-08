@@ -4,6 +4,7 @@ import { MosaicInfo } from '../model/mosaic/MosaicInfo';
 import { Http } from './Http';
 import { MosaicRepository } from './MosaicRepository';
 import { NetworkHttp } from './NetworkHttp';
+import { Authentications } from '../model/model';
 /**
  * Mosaic http repository.
  *
@@ -15,7 +16,7 @@ export declare class MosaicHttp extends Http implements MosaicRepository {
      * @param url
      * @param networkHttp
      */
-    constructor(url: string, networkHttp?: NetworkHttp);
+    constructor(url: string, networkHttp?: NetworkHttp, authentications?: Authentications, defaultHeaders?: object);
     /**
      * Gets the MosaicInfo for a given mosaicId
      * @param mosaicId - Mosaic id
