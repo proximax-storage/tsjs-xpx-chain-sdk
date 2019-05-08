@@ -36,6 +36,14 @@ export * from './blockchain/BlockchainStorageInfo';
 export * from './blockchain/BlockInfo';
 export * from './blockchain/NetworkType';
 
+// Http
+export * from './http/AuthenticationBasic';
+export * from './http/ApiKeyAuthentication';
+export * from './http/AuthenticationOauth2';
+export * from './http/AutenticationType';
+export * from './http/AuthenticationHeader';
+export * from './http/Authentications';
+
 // Mosaic
 export * from './mosaic/Mosaic';
 export * from './mosaic/MosaicInfo';

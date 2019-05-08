@@ -21,12 +21,10 @@ import {PublicAccount} from '../model/account/PublicAccount';
 import {MosaicId} from '../model/mosaic/MosaicId';
 import {MosaicInfo} from '../model/mosaic/MosaicInfo';
 import {MosaicProperties} from '../model/mosaic/MosaicProperties';
-import {NamespaceId} from '../model/namespace/NamespaceId';
 import {UInt64} from '../model/UInt64';
 import {Http} from './Http';
 import {MosaicRepository} from './MosaicRepository';
 import {NetworkHttp} from './NetworkHttp';
-import {QueryParams} from './QueryParams';
 
 /**
  * Mosaic http repository.

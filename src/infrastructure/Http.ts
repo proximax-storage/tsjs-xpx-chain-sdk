@@ -18,6 +18,7 @@ import {ApiClient} from 'js-xpx-catapult-library';
 import {Observable, of as observableOf} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {NetworkType} from '../model/blockchain/NetworkType';
+import {Authentications} from '../model/http/Authentications';
 import {NetworkHttp} from './NetworkHttp';
 
 /**
@@ -27,7 +28,7 @@ export abstract class Http {
     /**
      * @internal
      */
-    protected readonly apiClient;
+    protected readonly apiClient: ApiClient;
 
     private networkHttp: NetworkHttp;
     private networkType: NetworkType;
@@ -37,13 +38,19 @@ export abstract class Http {
      * @param url
      * @param networkHttp
      */
-    constructor(url: string, networkHttp?: NetworkHttp) {
+    constructor(url: string, networkHttp?: NetworkHttp, authentications?: Authentications, defaultHeaders?: object) {
         this.apiClient = new ApiClient();
         if (url) {
             this.apiClient.basePath = url;
         }
         if (networkHttp) {
             this.networkHttp = networkHttp;
+        }
+        if (authentications) {
+            this.apiClient.authentications = authentications;
+        }
+        if (defaultHeaders) {
+            this.apiClient.defaultHeaders = defaultHeaders;
         }
     }
 

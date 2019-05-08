@@ -19,7 +19,7 @@ import {decode} from 'utf8';
 /**
  * An abstract message class that serves as the base class of all message types.
  */
-export abstract class Message {
+export class Message {
     /**
      * @internal
      * @param hex

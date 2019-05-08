@@ -271,7 +271,8 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
             const transferMessageAndMosaicSubString = transactionData.substring(56);
             const transferMessageType = parseInt(convert.uint8ToHex(convert.hexToUint8(
                                                                         transferMessageAndMosaicSubString.substring(0, 2)).reverse()), 16);
-            const transferMessage = transferMessageAndMosaicSubString.substring(2, (transferMessageSize - 1) * 2 + 2);
+            const transferPayload = transferMessageAndMosaicSubString.substring(2, (transferMessageSize - 1) * 2 + 2);
+            const transferMessage = new Message(transferMessageType, transferPayload);
             const transferMosaic = transferMessageAndMosaicSubString.substring(transferMessageSize * 2);
             const transferMosaicArray = transferMosaic.match(/.{1,32}/g);
 

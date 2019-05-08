@@ -126,7 +126,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
         if (transactionDTO.message && transactionDTO.message.type === 0) {
             message = PlainMessage.createFromPayload(transactionDTO.message.payload);
         } else if (transactionDTO.message && transactionDTO.message.type === 1) {
-            message = EncryptedMessage.createFromDTO(transactionDTO.message.payload);
+            message = EncryptedMessage.createFromPayload(transactionDTO.message.payload);
         } else {
             message = EmptyMessage;
         }
