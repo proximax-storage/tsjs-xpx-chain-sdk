@@ -20,6 +20,7 @@ import {map} from 'rxjs/operators';
 import {NetworkType} from '../model/blockchain/NetworkType';
 import {Http} from './Http';
 import {NetworkRepository} from './NetworkRepository';
+import { Authentications } from '../model/model';
 
 /**
  * Network http repository.
@@ -37,8 +38,9 @@ export class NetworkHttp extends Http implements NetworkRepository {
      * Constructor
      * @param url
      */
-    constructor(url: string) {
-        super(url);
+    constructor(url: string, networkHttp?: NetworkHttp, authentications?: Authentications, defaultHeaders?: object) {
+        networkHttp = networkHttp == null ? new NetworkHttp(url) : networkHttp;
+        super(url, networkHttp, authentications, defaultHeaders);
         this.networkRoutesApi = new NetworkRoutesApi(this.apiClient);
 
     }

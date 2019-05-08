@@ -25,6 +25,7 @@ import {UInt64} from '../model/UInt64';
 import {Http} from './Http';
 import {MosaicRepository} from './MosaicRepository';
 import {NetworkHttp} from './NetworkHttp';
+import { Authentications } from '../model/model';
 
 /**
  * Mosaic http repository.
@@ -43,9 +44,9 @@ export class MosaicHttp extends Http implements MosaicRepository {
      * @param url
      * @param networkHttp
      */
-    constructor(url: string, networkHttp?: NetworkHttp) {
+    constructor(url: string, networkHttp?: NetworkHttp, authentications?: Authentications, defaultHeaders?: object) {
         networkHttp = networkHttp == null ? new NetworkHttp(url) : networkHttp;
-        super(url, networkHttp);
+        super(url, networkHttp, authentications, defaultHeaders);
         this.mosaicRoutesApi = new MosaicRoutesApi(this.apiClient);
     }
 

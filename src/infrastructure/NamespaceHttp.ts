@@ -32,6 +32,7 @@ import {Http} from './Http';
 import {NamespaceRepository} from './NamespaceRepository';
 import {NetworkHttp} from './NetworkHttp';
 import {QueryParams} from './QueryParams';
+import { Authentications } from '../model/model';
 
 /**
  * Namespace http repository.
@@ -50,9 +51,9 @@ export class NamespaceHttp extends Http implements NamespaceRepository {
      * @param url
      * @param networkHttp
      */
-    constructor(url: string, networkHttp?: NetworkHttp) {
+    constructor(url: string, networkHttp?: NetworkHttp, authentications?: Authentications, defaultHeaders?: object) {
         networkHttp = networkHttp == null ? new NetworkHttp(url) : networkHttp;
-        super(url, networkHttp);
+        super(url, networkHttp, authentications, defaultHeaders);
         this.namespaceRoutesApi = new NamespaceRoutesApi(this.apiClient);
     }
 

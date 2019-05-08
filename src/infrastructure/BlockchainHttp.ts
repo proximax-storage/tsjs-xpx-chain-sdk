@@ -27,6 +27,8 @@ import {BlockchainRepository} from './BlockchainRepository';
 import {Http} from './Http';
 import {QueryParams} from './QueryParams';
 import {CreateTransactionFromDTO, extractBeneficiary} from './transaction/CreateTransactionFromDTO';
+import { NetworkHttp } from './NetworkHttp';
+import { Authentications } from '../model/model';
 
 /**
  * Blockchain http repository.
@@ -44,8 +46,9 @@ export class BlockchainHttp extends Http implements BlockchainRepository {
      * Constructor
      * @param url
      */
-    constructor(url: string) {
-        super(url);
+    constructor(url: string, networkHttp?: NetworkHttp, authentications?: Authentications, defaultHeaders?: object) {
+        networkHttp = networkHttp == null ? new NetworkHttp(url) : networkHttp;
+        super(url, networkHttp, authentications, defaultHeaders);
         this.blockchainRoutesApi = new BlockchainRoutesApi(this.apiClient);
     }
 

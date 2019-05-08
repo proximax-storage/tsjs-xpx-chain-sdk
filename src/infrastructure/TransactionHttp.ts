@@ -32,6 +32,8 @@ import {UInt64} from '../model/UInt64';
 import {Http} from './Http';
 import {CreateTransactionFromDTO} from './transaction/CreateTransactionFromDTO';
 import {TransactionRepository} from './TransactionRepository';
+import { NetworkHttp } from './NetworkHttp';
+import { Authentications } from '../model/model';
 
 /**
  * Transaction http repository.
@@ -55,8 +57,9 @@ export class TransactionHttp extends Http implements TransactionRepository {
      * Constructor
      * @param url
      */
-    constructor(private readonly url: string) {
-        super(url);
+    constructor(url: string, networkHttp?: NetworkHttp, authentications?: Authentications, defaultHeaders?: object) {
+        networkHttp = networkHttp == null ? new NetworkHttp(url) : networkHttp;
+        super(url, networkHttp, authentications, defaultHeaders);
         this.transactionRoutesApi = new TransactionRoutesApi(this.apiClient);
         this.blockchainRoutesApi = new BlockchainRoutesApi(this.apiClient);
     }

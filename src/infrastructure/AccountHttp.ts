@@ -54,7 +54,7 @@ export class AccountHttp extends Http implements AccountRepository {
      */
     constructor(url: string, networkHttp?: NetworkHttp, authentications?: Authentications, defaultHeaders?: object) {
         networkHttp = networkHttp == null ? new NetworkHttp(url) : networkHttp;
-        super(url, networkHttp);
+        super(url, networkHttp, authentications, defaultHeaders);
         this.accountRoutesApi = new AccountRoutesApi(this.apiClient);
     }
 
