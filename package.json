@@ -12,23 +12,7 @@
     "test:coveralls": "npm run test:cov | coveralls",
     "prepublish": "npm run build"
   },
-  "contributors": [
-    "Aleix <aleix@nemeurope.eu>",
-    "Guillem <guillem@nemeurope.eu>",
-    "Thomas Tran <tldinteractive@gmail.com>"
-  ],
-  "bugs": {
-    "url": "https://github.com/proximax-storage/proximax-nem2-sdk-ts-js/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/proximax-storage/proximax-nem2-sdk-ts-js.git"
-  },
-  "publishConfig": {
-    "registry": "https://nexus.internal.proximax.io/repository/npm-private/"
-  },
   "license": "Apache-2.0",
-  "homepage": "https://github.com/proximax-storage/proximax-nem2-sdk-ts-jst#readme",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "devDependencies": {
