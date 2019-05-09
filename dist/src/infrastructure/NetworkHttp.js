@@ -30,9 +30,8 @@ class NetworkHttp extends Http_1.Http {
      * Constructor
      * @param url
      */
-    constructor(url, networkHttp, authentications, defaultHeaders) {
-        networkHttp = networkHttp == null ? new NetworkHttp(url) : networkHttp;
-        super(url, networkHttp, authentications, defaultHeaders);
+    constructor(url, authentications, defaultHeaders) {
+        super(url, undefined, authentications, defaultHeaders);
         this.networkRoutesApi = new js_xpx_catapult_library_1.NetworkRoutesApi(this.apiClient);
     }
     /**

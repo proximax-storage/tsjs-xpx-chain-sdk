@@ -38,11 +38,9 @@ export class NetworkHttp extends Http implements NetworkRepository {
      * Constructor
      * @param url
      */
-    constructor(url: string, networkHttp?: NetworkHttp, authentications?: Authentications, defaultHeaders?: object) {
-        networkHttp = networkHttp == null ? new NetworkHttp(url) : networkHttp;
-        super(url, networkHttp, authentications, defaultHeaders);
+    constructor(url: string, authentications?: Authentications, defaultHeaders?: object) {
+        super(url, undefined, authentications, defaultHeaders);
         this.networkRoutesApi = new NetworkRoutesApi(this.apiClient);
-
     }
 
     /**

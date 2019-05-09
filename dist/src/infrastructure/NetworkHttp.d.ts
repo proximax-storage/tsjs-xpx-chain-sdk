@@ -13,7 +13,7 @@ export declare class NetworkHttp extends Http implements NetworkRepository {
      * Constructor
      * @param url
      */
-    constructor(url: string, networkHttp?: NetworkHttp, authentications?: Authentications, defaultHeaders?: object);
+    constructor(url: string, authentications?: Authentications, defaultHeaders?: object);
     /**
      * Get current network type.
      *
