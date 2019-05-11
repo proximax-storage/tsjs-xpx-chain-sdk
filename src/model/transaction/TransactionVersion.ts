@@ -121,4 +121,11 @@ export class TransactionVersion {
      * @type {number}
      */
     public static readonly LINK_ACCOUNT = 2;
+
+    /**
+     * Modify metadata transactions version
+     * @type {number}
+     */
+    public static readonly MODIFY_METADATA = 1;
+
 }

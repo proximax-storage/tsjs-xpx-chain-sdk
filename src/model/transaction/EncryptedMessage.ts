@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import {crypto} from 'proximax-nem2-library';
+import {crypto, convert} from 'proximax-nem2-library';
 import {PublicAccount} from '../account/PublicAccount';
 import {Message} from './Message';
 import {MessageType} from './MessageType';
 import {PlainMessage} from './PlainMessage';
+import {encode, decode} from 'utf8';
 
 /**
  * Encrypted Message model
@@ -41,8 +42,8 @@ export class EncryptedMessage extends Message {
      */
     public static create(message: string, recipientPublicAccount: PublicAccount, privateKey) {
         return new EncryptedMessage(
-            crypto.encode(privateKey, recipientPublicAccount.publicKey, message).toUpperCase(),
-            recipientPublicAccount);
+            convert.ab2hex(crypto.nemencrypt(privateKey, recipientPublicAccount.publicKey, convert.hexToUint8(convert.utf8ToHex(message)))) 
+        );
     }
 
     /**
@@ -60,6 +61,7 @@ export class EncryptedMessage extends Message {
      * @param recipientPublicAccount - Sender public account
      */
     public static decrypt(encryptMessage: EncryptedMessage, privateKey, recipientPublicAccount: PublicAccount): PlainMessage {
-        return new PlainMessage(this.decodeHex(crypto.decode(privateKey, recipientPublicAccount.publicKey, encryptMessage.payload)));
+        const decrypted = crypto.nemdecrypt(privateKey, recipientPublicAccount.publicKey, convert.hexToUint8(encryptMessage.payload));
+        return new PlainMessage(Message.decodeHex(convert.ab2hex(decrypted)));
     }
 }

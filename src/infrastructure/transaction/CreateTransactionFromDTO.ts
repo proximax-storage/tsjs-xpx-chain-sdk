@@ -51,6 +51,7 @@ import {TransactionInfo} from '../../model/transaction/TransactionInfo';
 import {TransactionType} from '../../model/transaction/TransactionType';
 import {TransferTransaction} from '../../model/transaction/TransferTransaction';
 import {UInt64} from '../../model/UInt64';
+import { MetadataType, ModifyMetadataTransaction, MetadataModification } from '../../model/transaction/ModifyMetadataTransaction';
 
 /**
  * @internal
@@ -126,7 +127,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
         if (transactionDTO.message && transactionDTO.message.type === 0) {
             message = PlainMessage.createFromPayload(transactionDTO.message.payload);
         } else if (transactionDTO.message && transactionDTO.message.type === 1) {
-            message = EncryptedMessage.createFromDTO(transactionDTO.message.payload);
+            message = EncryptedMessage.createFromPayload(transactionDTO.message.payload);
         } else {
             message = EmptyMessage;
         }
@@ -345,7 +346,68 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
                     extractNetworkType(transactionDTO.version)) : undefined,
             transactionInfo,
         );
+    } else if (transactionDTO.type === TransactionType.MODIFY_ACCOUNT_METADATA ||
+                transactionDTO.type === TransactionType.MODIFY_MOSAIC_METADATA ||
+                transactionDTO.type === TransactionType.MODIFY_NAMESPACE_METADATA) {
+        const networkType = extractNetworkType(transactionDTO.version);
+        const transactionVersion = extractTransactionVersion(transactionDTO.version);
+        const deadline = Deadline.createFromDTO(transactionDTO.deadline);
+        const maxFee = new UInt64(transactionDTO.maxFee || [0, 0]);
+        const metadataType = transactionDTO.metadataType;
+        const metadataId = transactionDTO.metadataId;
+        const modifications =
+            transactionDTO.modifications ?
+            transactionDTO.modifications.map(m => new MetadataModification(m.modificationType, m.key, m.value)) :
+            undefined
+        switch(metadataType) {
+            case MetadataType.ADDRESS: {
+                return ModifyMetadataTransaction.createWithAddress(
+                    networkType,
+                    deadline,
+                    maxFee,
+                    Address.createFromEncoded(metadataId),
+                    modifications,
+                    transactionDTO.signature,
+                    transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                            extractNetworkType(transactionDTO.version)) : undefined,
+                    transactionInfo,
+                    )
+                //break;
+            }
+            case MetadataType.MOSAIC: {
+                return ModifyMetadataTransaction.createWithMosaicId(
+                    networkType,
+                    deadline,
+                    maxFee,
+                    new MosaicId(metadataId),
+                    modifications,
+                    transactionDTO.signature,
+                    transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                            extractNetworkType(transactionDTO.version)) : undefined,
+                    transactionInfo,
+                    )
+                //break;
+            }
+            case MetadataType.NAMESPACE: {
+                return ModifyMetadataTransaction.createWithMosaicId(
+                    networkType,
+                    deadline,
+                    maxFee,
+                    new NamespaceId(metadataId),
+                    modifications,
+                    transactionDTO.signature,
+                    transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                            extractNetworkType(transactionDTO.version)) : undefined,
+                    transactionInfo,
+                    )
+                //break;
+            }
+            default: {
+                throw new Error('Unimplemented modify metadata transaction with type ' + metadataType);
+            }
+        }
     }
+
     throw new Error('Unimplemented transaction with type ' + transactionDTO.type);
 };
 

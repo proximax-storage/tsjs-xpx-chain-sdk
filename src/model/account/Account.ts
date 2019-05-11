@@ -94,11 +94,11 @@ export class Account {
     /**
      * Decrypts an encrypted message
      * @param encryptedMessage
-     * @param recipientPublicAccount
+     * @param senderPublicAccount
      * @returns {PlainMessage}
      */
-    public decryptMessage(encryptedMessage: EncryptedMessage, recipientPublicAccount: PublicAccount): PlainMessage {
-        return EncryptedMessage.decrypt(encryptedMessage, this.privateKey, recipientPublicAccount);
+    public decryptMessage(encryptedMessage: EncryptedMessage, senderPublicAccount: PublicAccount): PlainMessage {
+        return EncryptedMessage.decrypt(encryptedMessage, this.privateKey, senderPublicAccount);
     }
     /**
      * Account public key.

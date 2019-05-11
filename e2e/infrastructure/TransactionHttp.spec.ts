@@ -52,6 +52,9 @@ import {UInt64} from '../../src/model/UInt64';
 import {APIUrl , ConfNetworkType, ConfNetworkMosaic,
     SeedAccount, TestingAccount, TestingRecipient, MultisigAccount, CosignatoryAccount, Cosignatory2Account, Cosignatory3Account, GetNemesisBlockDataPromise} from '../conf/conf.spec';
 import { Mosaic } from '../../src/model/model';
+import { ModifyMetadataTransaction, MetadataModification, MetadataModificationType } from '../../src/model/transaction/ModifyMetadataTransaction';
+import { MetadataHttp } from '../../src/infrastructure/MetadataHttp';
+import { ConfUtils } from '../conf/ConfUtils';
 
 describe('TransactionHttp', () => {
     let transactionHttp: TransactionHttp;
@@ -179,9 +182,23 @@ describe('TransactionHttp', () => {
                     ConfNetworkType,
                 );
                 const signedTransaction = mosaicDefinitionTransaction.signWith(TestingAccount);
-                validateTransactionAnnounceCorrectly(TestingAccount.address, done);
+                console.log(mosaicId.toHex());
+                validateTransactionAnnounceCorrectly(TestingAccount.address, () => {
+                        const modifyMetadataTransaction = ModifyMetadataTransaction.createWithMosaicId(
+                            ConfNetworkType,
+                            Deadline.create(),
+                            undefined,
+                            mosaicId,
+                            [new MetadataModification(MetadataModificationType.ADD, "key2", "some other value")]
+                        );
+
+                        const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount);
+                        validateTransactionAnnounceCorrectly(TestingAccount.address, done);
+                        transactionHttp.announce(signedTransaction);
+                });
                 transactionHttp.announce(signedTransaction);
             });
+
             it('aggregate', (done) => {
                 const nonce = MosaicNonce.createRandom();
                 mosaicId = MosaicId.createFromNonce(nonce, TestingAccount.publicAccount);
@@ -207,6 +224,55 @@ describe('TransactionHttp', () => {
                 transactionHttp.announce(signedTransaction);
             });
         });
+
+        describe('MosaicDefinitionTransaction with zero nonce', () => {
+            it('standalone', (done) => {
+                const nonce = MosaicNonce.createFromHex('00000000');
+                const mosaicId = MosaicId.createFromNonce(nonce, TestingAccount.publicAccount);
+                const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
+                    Deadline.create(),
+                    nonce,
+                    mosaicId,
+                    MosaicProperties.create({
+                        supplyMutable: true,
+                        transferable: true,
+                        levyMutable: true,
+                        divisibility: 3,
+                        duration: UInt64.fromUint(60000),
+                    }),
+                    ConfNetworkType,
+                );
+                const signedTransaction = mosaicDefinitionTransaction.signWith(TestingAccount);
+                validateTransactionAnnounceCorrectly(TestingAccount.address, done);
+                transactionHttp.announce(signedTransaction);
+            });
+
+            it('aggregate', (done) => {
+                const nonce = MosaicNonce.createFromHex('00000000');
+                const mosaicId = MosaicId.createFromNonce(nonce, TestingAccount.publicAccount);
+                const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
+                    Deadline.create(),
+                    nonce,
+                    mosaicId,
+                    MosaicProperties.create({
+                        supplyMutable: true,
+                        transferable: true,
+                        levyMutable: true,
+                        divisibility: 3,
+                        duration: UInt64.fromUint(1000),
+                    }),
+                    ConfNetworkType,
+                );
+                const aggregateTransaction = AggregateTransaction.createComplete(Deadline.create(),
+                    [mosaicDefinitionTransaction.toAggregate(TestingAccount.publicAccount)],
+                    ConfNetworkType,
+                    []);
+                const signedTransaction = aggregateTransaction.signWith(TestingAccount);
+                validateTransactionAnnounceCorrectly(TestingAccount.address, done);
+                transactionHttp.announce(signedTransaction);
+            });
+        });
+
         describe('MosaicSupplyChangeTransaction', () => {
             it('standalone', (done) => {
                 const mosaicSupplyChangeTransaction = MosaicSupplyChangeTransaction.create(

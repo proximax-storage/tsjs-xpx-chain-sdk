@@ -42,6 +42,13 @@ describe('MosaicId', () => {
         deepEqual(id.id, new Id([481110499, 231112638]));
     });
 
+    it('should create id given nonce and owner, too', () => {
+        const owner = PublicAccount.createFromPublicKey('4AFF7B4BA8C1C26A7917575993346627CB6C80DE62CD92F7F9AEDB7064A3DE62', NetworkType.MIJIN_TEST);
+        const bytes = new Uint8Array([0x78, 0xE3, 0x6F, 0xB7]);
+        const id = MosaicId.createFromNonce(new MosaicNonce(bytes), owner);
+        deepEqual(id.id, new Id([0xC0AFC518, 0x3AD842A8]));
+    });
+
     it('should create id twice the same given nonce and owner', () => {
         const owner = PublicAccount.createFromPublicKey(publicKey, NetworkType.MIJIN_TEST);
         const bytes = new Uint8Array([0x0, 0x0, 0x0, 0x0]);

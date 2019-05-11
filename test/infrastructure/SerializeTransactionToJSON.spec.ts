@@ -250,7 +250,7 @@ describe('SerializeTransactionToJSON', () => {
         const json = transferTransaction.toJSON();
 
         expect(json.transaction.type).to.be.equal(TransactionType.TRANSFER);
-        expect(json.transaction.message.payload).to.be.equal('test-message');
+        expect(json.transaction.message.payload).to.be.equal('746573742d6d657373616765');
         expect(json.transaction.message.type).to.be.equal(0);
 
     });

@@ -1,12 +1,29 @@
-import { SeedAccount, CosignatoryAccount, Cosignatory2Account, APIUrl, Cosignatory3Account, ConfNetworkMosaic, TestingAccount, TestingRecipient, AllTestingAccounts, TestAccount } from "./conf.spec";
-import { Account, TransferTransaction, PublicAccount, Deadline, PlainMessage, UInt64, MultisigCosignatoryModification, ModifyAccountPropertyAddressTransaction, PropertyModificationType, AccountPropertyModification, MultisigCosignatoryModificationType, ModifyMultisigAccountTransaction, Address, PropertyType, Mosaic, MosaicId, TransactionType, AccountInfo, SignedTransaction } from "../../src/model/model";
+import { SeedAccount, APIUrl, ConfNetworkMosaic, AllTestingAccounts, TestAccount } from "./conf.spec";
+import { Account, TransferTransaction, PublicAccount, Deadline, PlainMessage, UInt64, MultisigCosignatoryModification, ModifyAccountPropertyAddressTransaction, PropertyModificationType, AccountPropertyModification, MultisigCosignatoryModificationType, ModifyMultisigAccountTransaction, Address, PropertyType, Mosaic, MosaicId, TransactionType, AccountInfo, SignedTransaction, MosaicDefinitionTransaction, MosaicNonce, MosaicProperties } from "../../src/model/model";
 import { TransactionHttp, Listener, AccountHttp } from "../../src/infrastructure/infrastructure";
-import { rejects } from "assert";
+import { forkJoin } from "rxjs";
 
 const accountHttp = new AccountHttp(APIUrl);
+const transactionHttp = new TransactionHttp(APIUrl);
 
 export class ConfUtils {
-    
+
+    public static waitForConfirmation(listener: Listener, onAddress: Address, callback, hash?: string) {
+        const sub = listener.confirmed(onAddress).subscribe(tx => {
+            if (hash) {
+                if (tx && tx.transactionInfo && tx.transactionInfo.hash === hash) {
+                    sub.unsubscribe();
+                    callback();
+                }    
+            } else {
+                sub.unsubscribe();
+                callback();
+            }
+        }, error => {
+            console.log(error);
+        });
+    }
+
     public static prepareE2eTestAccounts() {
         return Array.from(AllTestingAccounts.values()).reduce((prev, curr) => {
             return prev.then(() => {
@@ -15,7 +32,7 @@ export class ConfUtils {
                 });
             });
         }, Promise.resolve()).then(() => {
-            Array.from(AllTestingAccounts.values()).reduce((prev, curr) => {
+            return Array.from(AllTestingAccounts.values()).reduce((prev, curr) => {
                 return prev.then(() => {
                     return ConfUtils.checkIfNeedMsig(curr);
                 });
@@ -84,7 +101,18 @@ export class ConfUtils {
                 ConfUtils.simpleCreateAndAnnounceWaitForConfirmation(ta.acc.address, ta.conf.seed * 1000000, SeedAccount, 'Good luck!')
                     .then(() => {
                         accountHttp.getAccountInfo(ta.acc.address).subscribe(accInfo => {
-                            resolve(accInfo);
+                            if (ta.conf.alias === 'testing') {
+                                //initiate 20 more txs.
+                                forkJoin(
+                                    new Array(20).fill(0).map(n => ConfUtils.simpleCreateAndAnnounceWaitForConfirmation(ta.acc.address, 0, ta.acc))
+                                ).toPromise().then(() => {
+                                    resolve(accInfo);
+                                }).catch(() => {
+                                    resolve(accInfo); //continue anyway
+                                });
+                            } else {
+                                resolve(accInfo);
+                            }
                         }, error => {
                             reject(error);
                         });
@@ -97,86 +125,54 @@ export class ConfUtils {
 
     public static simpleCreateAndAnnounceWaitForConfirmation(address: Address, absoluteAmount: number, from: Account = SeedAccount, message = '') {
         return new Promise((resolve, reject) => {
-            let tx: SignedTransaction;
-            const sendTx = (amount) => {
-                return ConfUtils.simpleCreateAndAnnounce(from, address, amount, message);
-            };
             const listener = new Listener(APIUrl);
             listener.open().then(() => {
-                const sub = listener.confirmed(address).subscribe(t => {
-                    if (tx && t.transactionInfo && t.transactionInfo.hash === tx.hash) {
-                        console.log("confirmed: " + tx.hash);
-                        listener.close();
-                        resolve();
-                    }
+                
+                const transferTransaction = TransferTransaction.create(
+                    Deadline.create(),
+                    address,
+                    [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(absoluteAmount))],
+                    PlainMessage.create(message),
+                    address.networkType,
+                );
+                
+                const signedTransaction = from.sign(transferTransaction);
+                
+                this.waitForConfirmation(listener, address, () => {
+                    listener.close();
+                    resolve();    
+                }, signedTransaction.hash);
+                
+                transactionHttp.announce(signedTransaction).subscribe(result => {
+                    console.log(result);
                 }, error => {
                     console.error(error);
                 });
-
-                const status = listener.status(address).subscribe(error => {
-                    if (tx && error.hash === tx.hash) {
-                        console.error(error);
-                        listener.close();
-                        reject();    
-                    }
-                });
-
-                tx = sendTx(absoluteAmount);
-            });
+            });    
         });
     }
 
-     public static convertToMultisig(a: TestAccount) {
+     public static convertToMultisig(ta: TestAccount) {
         return new Promise<void>((resolve, reject) => {
             const listener = new Listener(APIUrl);
             listener.open().then(() => {
-                const sub = listener.multisigAccountAdded(a.acc.address).subscribe(t => {
-                    console.log(t);
-                    listener.close();
+
+                const convertIntoMultisigTransaction = ModifyMultisigAccountTransaction.create(
+                    Deadline.create(),
+                    ta.cosignatories.length<=1 ? 1 : ta.cosignatories.length - 1,
+                    1,
+                    ta.cosignatories.map(cos => new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, cos.acc.publicAccount)),
+                    ta.acc.address.networkType);
+        
+                const signedTransaction = ta.acc.sign(convertIntoMultisigTransaction);
+        
+                this.waitForConfirmation(listener, ta.acc.address, () => {
                     resolve();
-                }, error => {
-                    console.error(error);
-                });
-                ConfUtils.simpleConvertToNminus1Multisig(
-                    a.acc, a.cosignatories.map(c => c.acc.publicAccount)
-                ).subscribe(result => {
-                    console.log("Convert to multisig: " + result);
-                }, error => {
-                    console.error(error);
-                });                    
+                }, signedTransaction.hash);
+
+                return transactionHttp.announce(signedTransaction);     
             });
         });
-    }
-
-    public static simpleCreateAndAnnounce(signer: Account, recipient: Address, absoluteAmount: number, message: string,
-        transactionHttp: TransactionHttp = new TransactionHttp(APIUrl)) {
-        const transferTransaction = TransferTransaction.create(
-            Deadline.create(),
-            recipient,
-            [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(absoluteAmount))],
-            PlainMessage.create(message),
-            recipient.networkType,
-        );
-        const signedTransaction = signer.sign(transferTransaction);
-        transactionHttp.announce(signedTransaction).subscribe(result => {
-            console.log(result);
-        }, error => {
-            console.error(error);
-        });
-        return signedTransaction;
-    }
-
-    public static simpleConvertToNminus1Multisig(account: Account, coss: PublicAccount[], transactionHttp: TransactionHttp = new TransactionHttp(APIUrl)) {
-        const convertIntoMultisigTransaction = ModifyMultisigAccountTransaction.create(
-            Deadline.create(),
-            coss.length<=1 ? 1 : coss.length - 1,
-            1,
-            coss.map(cos => new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, cos)),
-            account.address.networkType);
-
-        const signedTransaction = account.sign(convertIntoMultisigTransaction);
-
-        return transactionHttp.announce(signedTransaction);
     }
 
     public static simplePropertyModificationBLockAddress(account: Account, blockAddress: Address, transactionHttp: TransactionHttp = new TransactionHttp(APIUrl)) {

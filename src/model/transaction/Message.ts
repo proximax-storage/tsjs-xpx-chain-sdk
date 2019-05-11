@@ -15,6 +15,7 @@
  */
 
 import {decode} from 'utf8';
+import { convert } from 'proximax-nem2-library';
 
 /**
  * An abstract message class that serves as the base class of all message types.
@@ -59,7 +60,7 @@ export abstract class Message {
     toDTO() {
         return {
             type: this.type,
-            payload: this.payload,
+            payload: this.type === 0 ? convert.utf8ToHex(this.payload) : this.payload,
         };
     }
 }

@@ -94,10 +94,12 @@ const ValidateTransaction = {
             aggregateTransactionDTO.transaction.transactions[0]);
     },
     validateMosaicCreationTx: (mosaicDefinitionTransaction, mosaicDefinitionTransactionDTO) => {
-
-        deepEqual(mosaicDefinitionTransaction.parentId,
-            new UInt64(mosaicDefinitionTransactionDTO.transaction.parentId));
-        deepEqual(mosaicDefinitionTransaction.mosaicId,
+        if (mosaicDefinitionTransaction.parentId !== undefined ||
+            mosaicDefinitionTransactionDTO.transaction.parentId !== undefined) {
+                deepEqual(mosaicDefinitionTransaction.parentId,
+                    new UInt64(mosaicDefinitionTransactionDTO.transaction.parentId));        
+            }
+        deepEqual(mosaicDefinitionTransaction.mosaicId.id,
             new UInt64(mosaicDefinitionTransactionDTO.transaction.mosaicId));
         expect(mosaicDefinitionTransaction.mosaicName)
             .to.be.equal(mosaicDefinitionTransactionDTO.transaction.name);
