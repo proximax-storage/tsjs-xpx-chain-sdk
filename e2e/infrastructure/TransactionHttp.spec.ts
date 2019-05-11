@@ -17,7 +17,7 @@ import {expect} from 'chai';
 import * as CryptoJS from 'crypto-js';
 import {ChronoUnit} from 'js-joda';
 import {keccak_256, sha3_256 } from 'js-sha3';
-import {convert, nacl_catapult} from 'proximax-nem2-library';
+import {convert, nacl_catapult} from 'js-xpx-catapult-library';
 import {AccountHttp} from '../../src/infrastructure/AccountHttp';
 import {Listener} from '../../src/infrastructure/Listener';
 import {TransactionHttp} from '../../src/infrastructure/TransactionHttp';

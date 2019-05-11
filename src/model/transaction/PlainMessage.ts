@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {convert} from 'proximax-nem2-library';
 import {Message} from './Message';
 import {MessageType} from './MessageType';
 

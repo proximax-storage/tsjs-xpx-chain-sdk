@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import {crypto, convert} from 'proximax-nem2-library';
+import {crypto, convert} from 'js-xpx-catapult-library';
 import {PublicAccount} from '../account/PublicAccount';
 import {Message} from './Message';
 import {MessageType} from './MessageType';
 import {PlainMessage} from './PlainMessage';
-import {encode, decode} from 'utf8';
 
 /**
  * Encrypted Message model

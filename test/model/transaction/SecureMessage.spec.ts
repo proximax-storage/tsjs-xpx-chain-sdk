@@ -1,7 +1,6 @@
 import {expect} from 'chai';
 import {EncryptedMessage} from '../../../src/model/transaction/EncryptedMessage';
 import { PublicAccount, NetworkType } from '../../../src/model/model';
-import { convert } from 'proximax-nem2-library';
 
 describe('SecureMessage', () => {
     it('should create secure message and decrypt message with sender private key ', () => {

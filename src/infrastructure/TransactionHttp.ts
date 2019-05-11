@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {BlockchainRoutesApi, TransactionRoutesApi} from 'proximax-nem2-library';
+import {BlockchainRoutesApi, TransactionRoutesApi} from 'js-xpx-catapult-library';
 import * as requestPromise from 'request-promise-native';
 import {from as observableFrom, Observable, throwError as observableThrowError} from 'rxjs';
 import {catchError, map, mergeMap} from 'rxjs/operators';

@@ -18,7 +18,7 @@ import {
     mosaicId as MosaicIdentifierGenerator,
     nacl_catapult,
     uint64 as uint64_t,
-} from 'proximax-nem2-library';
+} from 'js-xpx-catapult-library';
 
 import {PublicAccount} from '../account/PublicAccount';
 import {Id} from '../Id';

@@ -1,4 +1,4 @@
-import { ModifyMetadataTransaction as ModifyMetadataTransactionLibrary, VerifiableTransaction } from 'proximax-nem2-library';
+import { ModifyMetadataTransaction as ModifyMetadataTransactionLibrary, VerifiableTransaction } from 'js-xpx-catapult-library';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { NamespaceId } from '../namespace/NamespaceId';

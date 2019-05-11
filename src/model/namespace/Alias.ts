@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {namespaceId as NamespaceIdGenerator} from 'proximax-nem2-library';
+import {namespaceId as NamespaceIdGenerator} from 'js-xpx-catapult-library';
 import {Address} from '../account/Address';
 import {MosaicId} from '../mosaic/MosaicId';
 import {AddressAlias} from './AddressAlias';

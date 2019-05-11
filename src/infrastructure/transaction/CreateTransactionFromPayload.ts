@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { convert } from 'proximax-nem2-library';
+import { convert } from 'js-xpx-catapult-library';
 import {decode} from 'utf8';
 import { Address } from '../../model/account/Address';
 import { PublicAccount } from '../../model/account/PublicAccount';

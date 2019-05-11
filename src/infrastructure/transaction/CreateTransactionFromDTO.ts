@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {convert} from 'proximax-nem2-library';
-import {uint64 as UInt64Library} from 'proximax-nem2-library';
+import {uint64 as UInt64Library, convert} from 'js-xpx-catapult-library';
 import {Address} from '../../model/account/Address';
 import {PublicAccount} from '../../model/account/PublicAccount';
 import {NetworkType} from '../../model/blockchain/NetworkType';

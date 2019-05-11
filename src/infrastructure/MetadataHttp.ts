@@ -1,5 +1,5 @@
 
-import {MetadataRoutesApi} from 'proximax-nem2-library';
+import {MetadataRoutesApi} from 'js-xpx-catapult-library';
 import {from as observableFrom, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {PublicAccount} from '../model/account/PublicAccount';

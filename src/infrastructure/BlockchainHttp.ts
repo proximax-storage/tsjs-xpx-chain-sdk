@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {BlockchainRoutesApi} from 'proximax-nem2-library';
+import {BlockchainRoutesApi} from 'js-xpx-catapult-library';
 import {from as observableFrom, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {PublicAccount} from '../model/account/PublicAccount';
