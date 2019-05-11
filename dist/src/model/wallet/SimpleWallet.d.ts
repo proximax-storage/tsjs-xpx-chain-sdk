@@ -1,4 +1,6 @@
+import { LocalDateTime } from 'js-joda';
 import { Account } from '../account/Account';
+import { Address } from '../account/Address';
 import { NetworkType } from '../blockchain/NetworkType';
 import { EncryptedPrivateKey } from './EncryptedPrivateKey';
 import { Password } from './Password';
@@ -11,6 +13,19 @@ export declare class SimpleWallet extends Wallet {
      * The encrypted private key and information to decrypt it
      */
     readonly encryptedPrivateKey: EncryptedPrivateKey;
+    /**
+     * @internal
+     * @param name
+     * @param network
+     * @param address
+     * @param creationDate
+     * @param encryptedPrivateKey
+     */
+    constructor(name: string, network: NetworkType, address: Address, creationDate: LocalDateTime, 
+    /**
+     * The encrypted private key and information to decrypt it
+     */
+    encryptedPrivateKey: EncryptedPrivateKey);
     /**
      * Create a Simple wallet
      * @param name - Wallet name

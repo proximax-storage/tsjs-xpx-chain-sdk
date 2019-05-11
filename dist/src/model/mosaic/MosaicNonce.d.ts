@@ -27,4 +27,9 @@ export declare class MosaicNonce {
      * @param id
      */
     constructor(nonce: Uint8Array);
+    /**
+     * @internal
+     * @returns {[number,number,number,number]}
+     */
+    toDTO(): Uint8Array;
 }

@@ -29,4 +29,11 @@ export declare class MultisigCosignatoryModification {
      * Cosignatory public account.
      */
     cosignatoryPublicAccount: PublicAccount);
+    /**
+     * @internal
+     */
+    toDTO(): {
+        cosignatoryPublicKey: string;
+        type: MultisigCosignatoryModificationType;
+    };
 }

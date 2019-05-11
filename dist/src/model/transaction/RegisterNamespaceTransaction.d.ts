@@ -1,3 +1,4 @@
+import { VerifiableTransaction } from 'js-xpx-catapult-library';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { NamespaceId } from '../namespace/NamespaceId';
@@ -95,4 +96,9 @@ export declare class RegisterNamespaceTransaction extends Transaction {
      * @memberof RegisterNamespaceTransaction
      */
     readonly size: number;
+    /**
+     * @internal
+     * @returns {VerifiableTransaction}
+     */
+    protected buildTransaction(): VerifiableTransaction;
 }

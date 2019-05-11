@@ -1,3 +1,4 @@
+import { VerifiableTransaction } from 'js-xpx-catapult-library';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { MosaicId } from '../mosaic/MosaicId';
@@ -66,4 +67,9 @@ export declare class MosaicSupplyChangeTransaction extends Transaction {
      * @memberof MosaicSupplyChangeTransaction
      */
     readonly size: number;
+    /**
+     * @internal
+     * @returns {VerifiableTransaction}
+     */
+    protected buildTransaction(): VerifiableTransaction;
 }

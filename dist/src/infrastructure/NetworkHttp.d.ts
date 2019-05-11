@@ -10,6 +10,11 @@ import { Authentications } from '../model/model';
  */
 export declare class NetworkHttp extends Http implements NetworkRepository {
     /**
+     * @internal
+     * Nem2 Library account routes api
+     */
+    private networkRoutesApi;
+    /**
      * Constructor
      * @param url
      */

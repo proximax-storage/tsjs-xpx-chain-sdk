@@ -46,4 +46,11 @@ export declare class AccountPropertyModification<T> {
      * @returns {AccountPropertyModification}
      */
     static createForEntityType(modificationType: PropertyModificationType, entityType: number): AccountPropertyModification<TransactionType>;
+    /**
+     * @internal
+     */
+    toDTO(): {
+        value: T;
+        modificationType: PropertyModificationType;
+    };
 }

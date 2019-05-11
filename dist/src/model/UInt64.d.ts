@@ -28,6 +28,13 @@ export declare class UInt64 {
      */
     constructor(uintArray: number[]);
     /**
+     * Get DTO representation with format: `[lower, higher]`
+     *
+     * @internal
+     * @returns {[number,number]}
+     */
+    toDTO(): number[];
+    /**
      * Get hexadecimal representation
      *
      * @return {string}

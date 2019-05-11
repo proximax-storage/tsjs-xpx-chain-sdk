@@ -3,6 +3,14 @@ import { PublicAccount } from '../../model/account/PublicAccount';
 import { NetworkType } from '../../model/blockchain/NetworkType';
 import { Mosaic } from '../../model/mosaic/Mosaic';
 import { NamespaceId } from '../../model/namespace/NamespaceId';
+import { Transaction } from '../../model/transaction/Transaction';
+/**
+ * @internal
+ * @param transactionDTO
+ * @returns {Transaction}
+ * @constructor
+ */
+export declare const CreateTransactionFromDTO: (transactionDTO: any) => Transaction;
 export declare const extractNetworkType: (version: number) => NetworkType;
 export declare const extractTransactionVersion: (version: number) => number;
 /**

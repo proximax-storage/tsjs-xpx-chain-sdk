@@ -17,6 +17,21 @@ export declare class Listener {
     private websocketInjected?;
     readonly url: string;
     /**
+     * @internal
+     * WebSocket connector
+     */
+    private webSocket;
+    /**
+     * @internal
+     * Message subject for all requests
+     */
+    private messageSubject;
+    /**
+     * @internal
+     * id
+     */
+    private uid;
+    /**
      * Constructor
      * @param config - Listener configuration
      * @param websocketInjected - (Optional) WebSocket injected when using listeners in client
@@ -128,4 +143,38 @@ export declare class Listener {
      * @return an observable stream of {@link CosignatureSignedTransaction}
      */
     cosignatureAdded(address: Address): Observable<CosignatureSignedTransaction>;
+    /**
+     * @internal
+     * Subscribes to a channelName.
+     * @param channel - Channel subscribed to.
+     */
+    private subscribeTo;
+    /**
+     * @internal
+     * @param channel - Channel to unsubscribe
+     */
+    private unsubscribeTo;
+    /**
+     * @internal
+     * Filters if a transaction has been initiated or signed by an address
+     * @param transaction - Transaction object
+     * @param address - Address
+     * @returns boolean
+     */
+    private transactionFromAddress;
+    /**
+     * @internal
+     * @param transaction
+     * @param address
+     * @returns {boolean}
+     */
+    private transactionHasSignerOrReceptor;
+    /**
+     * @internal
+     * Filters if an account has been added to multi signatories
+     * @param transaction - Transaction object
+     * @param address - Address
+     * @returns boolean
+     */
+    private accountAddedToMultiSig;
 }

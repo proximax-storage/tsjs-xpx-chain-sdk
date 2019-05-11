@@ -1,3 +1,4 @@
+import { VerifiableTransaction } from 'js-xpx-catapult-library';
 import { Address } from '../account/Address';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
@@ -61,10 +62,21 @@ export declare class TransferTransaction extends Transaction {
      */
     message: Message, signature?: string, signer?: PublicAccount, transactionInfo?: TransactionInfo);
     /**
+     * Return the string notation for the set recipient
+     * @internal
+     * @returns {string}
+     */
+    recipientToString(): string;
+    /**
      * @override Transaction.size()
      * @description get the byte size of a TransferTransaction
      * @returns {number}
      * @memberof TransferTransaction
      */
     readonly size: number;
+    /**
+     * @internal
+     * @returns {VerifiableTransaction}
+     */
+    protected buildTransaction(): VerifiableTransaction;
 }

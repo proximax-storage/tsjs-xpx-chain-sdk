@@ -1,3 +1,4 @@
+import { VerifiableTransaction } from 'js-xpx-catapult-library';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { Mosaic } from '../mosaic/Mosaic';
@@ -64,4 +65,9 @@ export declare class LockFundsTransaction extends Transaction {
      * @memberof LockFundsTransaction
      */
     readonly size: number;
+    /**
+     * @internal
+     * @return {VerifiableTransaction}
+     */
+    protected buildTransaction(): VerifiableTransaction;
 }

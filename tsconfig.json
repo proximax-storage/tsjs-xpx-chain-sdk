@@ -9,10 +9,10 @@
     "sourceMap": true,
     "declaration": true,
     "moduleResolution": "node",
-    "stripInternal": true,
+    "stripInternal": false,
     "outDir": "dist",
     "allowJs": false,
-    "allowSyntheticDefaultImports": true,
+    "allowSyntheticDefaultImports": false,
     "lib": [
       "es2016",
       "dom"

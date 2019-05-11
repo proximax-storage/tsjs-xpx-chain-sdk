@@ -15,4 +15,23 @@ export declare class TransactionStatusError {
      * The transaction deadline.
      */
     readonly deadline: Deadline;
+    /**
+     * @internal
+     * @param hash
+     * @param status
+     * @param deadline
+     */
+    constructor(
+    /**
+     * The transaction hash.
+     */
+    hash: string, 
+    /**
+     * The status error message.
+     */
+    status: string, 
+    /**
+     * The transaction deadline.
+     */
+    deadline: Deadline);
 }

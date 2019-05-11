@@ -13,6 +13,20 @@ export declare class PublicAccount {
      */
     readonly address: Address;
     /**
+     * @internal
+     * @param publicKey
+     * @param address
+     */
+    constructor(
+    /**
+     * The account public private.
+     */
+    publicKey: string, 
+    /**
+     * The account address.
+     */
+    address: Address);
+    /**
      * Create a PublicAccount from a public key and network type.
      * @param publicKey Public key
      * @param networkType Network type

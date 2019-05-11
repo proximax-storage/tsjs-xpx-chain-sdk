@@ -1,3 +1,4 @@
+import { VerifiableTransaction } from 'js-xpx-catapult-library';
 import { PropertyType } from '../account/PropertyType';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
@@ -39,4 +40,9 @@ export declare class ModifyAccountPropertyAddressTransaction extends Transaction
      * @memberof ModifyAccountPropertyAddressTransaction
      */
     readonly size: number;
+    /**
+     * @internal
+     * @returns {VerifiableTransaction}
+     */
+    protected buildTransaction(): VerifiableTransaction;
 }

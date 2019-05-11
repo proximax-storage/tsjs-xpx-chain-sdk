@@ -1,9 +1,12 @@
+import { VerifiableTransaction } from 'js-xpx-catapult-library';
+import { Account } from '../account/Account';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
 import { AggregateTransactionInfo } from './AggregateTransactionInfo';
 import { Deadline } from './Deadline';
 import { InnerTransaction } from './InnerTransaction';
+import { SignedTransaction } from './SignedTransaction';
 import { TransactionInfo } from './TransactionInfo';
 /**
  * An abstract transaction class that serves as the base class of all NEM transactions.
@@ -83,6 +86,22 @@ export declare abstract class Transaction {
      */
     transactionInfo?: TransactionInfo | AggregateTransactionInfo | undefined);
     /**
+     * @internal
+     * Serialize and sign transaction creating a new SignedTransaction
+     * @param account - The account to sign the transaction
+     * @returns {SignedTransaction}
+     */
+    signWith(account: Account): SignedTransaction;
+    /**
+     * @internal
+     */
+    protected abstract buildTransaction(): VerifiableTransaction;
+    /**
+     * @internal
+     * @returns {Array<number>}
+     */
+    aggregateTransaction(): number[];
+    /**
      * Convert an aggregate transaction to an inner transaction including transaction signer.
      * @param signer - Transaction signer.
      * @returns InnerTransaction
@@ -108,6 +127,10 @@ export declare abstract class Transaction {
      * @return {boolean}
      */
     isUnannounced(): boolean;
+    /**
+     * @internal
+     */
+    versionToDTO(): number;
     /**
      * @description reapply a given value to the transaction in an immutable way
      * @param {Deadline} deadline

@@ -30,4 +30,12 @@ export declare class Mosaic {
      * i.e. if it has a divisibility of 3 the quantity is given in millis.
      */
     amount: UInt64);
+    /**
+     * @internal
+     * @returns {{amount: number[], id: number[]}}
+     */
+    toDTO(): {
+        amount: number[];
+        id: number[];
+    };
 }

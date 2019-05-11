@@ -16,6 +16,11 @@ import { Authentications } from '../model/model';
  */
 export declare class BlockchainHttp extends Http implements BlockchainRepository {
     /**
+     * @internal
+     * Nem2 Library blockchain routes api
+     */
+    private blockchainRoutesApi;
+    /**
      * Constructor
      * @param url
      */

@@ -22,6 +22,33 @@ export declare class SignedTransaction {
      */
     readonly networkType: NetworkType;
     /**
+     * @internal
+     * @param payload
+     * @param hash
+     * @param signer
+     * @param type
+     * @param networkType
+     */
+    constructor(/**
+                 * Transaction serialized data
+                 */ payload: string, 
+    /**
+     * Transaction hash
+     */
+    hash: string, 
+    /**
+     * Transaction signer
+     */
+    signer: string, 
+    /**
+     * Transaction type
+     */
+    type: number, 
+    /**
+     * Signer network type
+     */
+    networkType: NetworkType);
+    /**
      * Create DTO object
      */
     toDTO(): {

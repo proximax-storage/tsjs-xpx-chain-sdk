@@ -1,3 +1,4 @@
+import { VerifiableTransaction } from 'js-xpx-catapult-library';
 import { Address } from '../account/Address';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
@@ -67,4 +68,9 @@ export declare class AddressAliasTransaction extends Transaction {
      * @memberof AddressAliasTransaction
      */
     readonly size: number;
+    /**
+     * @internal
+     * @returns {VerifiableTransaction}
+     */
+    protected buildTransaction(): VerifiableTransaction;
 }

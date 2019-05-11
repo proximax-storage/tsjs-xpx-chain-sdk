@@ -12,6 +12,11 @@ import { Authentications } from '../model/model';
  */
 export declare class MosaicHttp extends Http implements MosaicRepository {
     /**
+     * @internal
+     * Nem2 Library mosaic routes api
+     */
+    private mosaicRoutesApi;
+    /**
      * Constructor
      * @param url
      * @param networkHttp

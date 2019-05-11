@@ -8,6 +8,15 @@ export declare class PlainMessage extends Message {
      * @returns PlainMessage
      */
     static create(message: string): PlainMessage;
+    /**
+     * @internal
+     */
+    static createFromPayload(payload: string): PlainMessage;
+    /**
+     * @internal
+     * @param payload
+     */
+    constructor(payload: string);
 }
 /**
  * Plain message containing an empty string

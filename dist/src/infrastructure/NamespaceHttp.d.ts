@@ -16,6 +16,11 @@ import { Authentications } from '../model/model';
  */
 export declare class NamespaceHttp extends Http implements NamespaceRepository {
     /**
+     * @internal
+     * Nem2 Library namespace routes api
+     */
+    private namespaceRoutesApi;
+    /**
      * Constructor
      * @param url
      * @param networkHttp
@@ -60,4 +65,12 @@ export declare class NamespaceHttp extends Http implements NamespaceRepository {
      */
     getLinkedAddress(namespaceId: NamespaceId): Observable<Address>;
     private extractLevels;
+    /**
+     * Extract the alias from a namespace
+     *
+     * @internal
+     * @access private
+     * @param namespace
+     */
+    private extractAlias;
 }

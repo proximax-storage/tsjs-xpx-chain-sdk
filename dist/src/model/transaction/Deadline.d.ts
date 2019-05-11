@@ -20,7 +20,17 @@ export declare class Deadline {
      */
     static create(deadline?: number, chronoUnit?: ChronoUnit): Deadline;
     /**
+     * @internal
+     * @param value
+     * @returns {Deadline}
+     */
+    static createFromDTO(value: number[]): Deadline;
+    /**
      * @param deadline
      */
     private constructor();
+    /**
+     * @internal
+     */
+    toDTO(): number[];
 }

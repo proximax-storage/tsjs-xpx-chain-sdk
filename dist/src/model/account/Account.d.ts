@@ -21,6 +21,12 @@ export declare class Account {
      */
     private readonly keyPair;
     /**
+     * @internal
+     * @param address
+     * @param keyPair
+     */
+    private constructor();
+    /**
      * Create an Account from a given private key
      * @param privateKey - Private key from an account
      * @param networkType - Network type

@@ -14,6 +14,16 @@ import { Authentications } from '../model/model';
  */
 export declare class TransactionHttp extends Http implements TransactionRepository {
     /**
+     * @internal
+     * Nem2 Library transaction routes api
+     */
+    private transactionRoutesApi;
+    /**
+     * @internal
+     * Nem2 Library blockchain routes api
+     */
+    private blockchainRoutesApi;
+    /**
      * Constructor
      * @param url
      */

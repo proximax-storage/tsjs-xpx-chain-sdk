@@ -19,6 +19,11 @@ import { Authentications } from '../model/model';
  */
 export declare class AccountHttp extends Http implements AccountRepository {
     /**
+     * @internal
+     * Nem2 Library account routes api
+     */
+    private accountRoutesApi;
+    /**
      * Constructor
      * @param url
      * @param networkHttp

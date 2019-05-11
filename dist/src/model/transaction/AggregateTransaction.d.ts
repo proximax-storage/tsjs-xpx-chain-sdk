@@ -1,9 +1,12 @@
+import { AggregateTransaction as AggregateTransactionLibrary } from 'js-xpx-catapult-library';
+import { Account } from '../account/Account';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
 import { AggregateTransactionCosignature } from './AggregateTransactionCosignature';
 import { Deadline } from './Deadline';
 import { InnerTransaction } from './InnerTransaction';
+import { SignedTransaction } from './SignedTransaction';
 import { Transaction } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 /**
@@ -59,6 +62,19 @@ export declare class AggregateTransaction extends Transaction {
      * @return {AggregateTransaction}
      */
     static createBonded(deadline: Deadline, innerTransactions: InnerTransaction[], networkType: NetworkType, cosignatures?: AggregateTransactionCosignature[], maxFee?: UInt64): AggregateTransaction;
+    /**
+     * @internal
+     * @returns {AggregateTransaction}
+     */
+    buildTransaction(): AggregateTransactionLibrary;
+    /**
+     * @internal
+     * Sign transaction with cosignatories creating a new SignedTransaction
+     * @param initiatorAccount - Initiator account
+     * @param cosignatories - The array of accounts that will cosign the transaction
+     * @returns {SignedTransaction}
+     */
+    signTransactionWithCosignatories(initiatorAccount: Account, cosignatories: Account[]): SignedTransaction;
     /**
      * Check if account has signed transaction
      * @param publicAccount - Signer public account
