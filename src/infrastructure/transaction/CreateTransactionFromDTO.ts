@@ -50,7 +50,8 @@ import {TransactionInfo} from '../../model/transaction/TransactionInfo';
 import {TransactionType} from '../../model/transaction/TransactionType';
 import {TransferTransaction} from '../../model/transaction/TransferTransaction';
 import {UInt64} from '../../model/UInt64';
-import { MetadataType, ModifyMetadataTransaction, MetadataModification } from '../../model/transaction/ModifyMetadataTransaction';
+import { ModifyMetadataTransaction, MetadataModification } from '../../model/transaction/ModifyMetadataTransaction';
+import { MetadataType } from '../../model/metadata/MetadataType';
 
 /**
  * @internal

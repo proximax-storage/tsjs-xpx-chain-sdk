@@ -1,10 +1,13 @@
-import { SeedAccount, APIUrl, ConfNetworkMosaic, AllTestingAccounts, TestAccount } from "./conf.spec";
-import { Account, TransferTransaction, PublicAccount, Deadline, PlainMessage, UInt64, MultisigCosignatoryModification, ModifyAccountPropertyAddressTransaction, PropertyModificationType, AccountPropertyModification, MultisigCosignatoryModificationType, ModifyMultisigAccountTransaction, Address, PropertyType, Mosaic, MosaicId, TransactionType, AccountInfo, SignedTransaction, MosaicDefinitionTransaction, MosaicNonce, MosaicProperties } from "../../src/model/model";
-import { TransactionHttp, Listener, AccountHttp } from "../../src/infrastructure/infrastructure";
+import { SeedAccount, APIUrl, ConfNetworkMosaic, AllTestingAccounts, TestAccount, ConfNetworkType, TestingAccount, ConfTestingNamespace, ConfTestingMosaic, ConfTestingMosaicNonce, ConfTestingMosaicProperties } from "./conf.spec";
+import { Account, TransferTransaction, PublicAccount, Deadline, PlainMessage, UInt64, MultisigCosignatoryModification, ModifyAccountPropertyAddressTransaction, PropertyModificationType, AccountPropertyModification, MultisigCosignatoryModificationType, ModifyMultisigAccountTransaction, Address, PropertyType, Mosaic, MosaicId, TransactionType, AccountInfo, SignedTransaction, MosaicDefinitionTransaction, MosaicNonce, MosaicProperties, NamespaceId, RegisterNamespaceTransaction } from "../../src/model/model";
+import { TransactionHttp, Listener, AccountHttp, NamespaceHttp, MosaicHttp } from "../../src/infrastructure/infrastructure";
 import { forkJoin } from "rxjs";
+import { NamespaceCreationTransaction, namespaceId } from "js-xpx-catapult-library";
 
 const accountHttp = new AccountHttp(APIUrl);
 const transactionHttp = new TransactionHttp(APIUrl);
+const namespaceHttp = new NamespaceHttp(APIUrl);
+const mosaicHttp = new MosaicHttp(APIUrl);
 
 export class ConfUtils {
 
@@ -24,7 +27,7 @@ export class ConfUtils {
         });
     }
 
-    public static prepareE2eTestAccounts() {
+    public static prepareE2eTestData() {
         return Array.from(AllTestingAccounts.values()).reduce((prev, curr) => {
             return prev.then(() => {
                 return ConfUtils.seed(curr).then((accInfo) => {
@@ -37,6 +40,10 @@ export class ConfUtils {
                     return ConfUtils.checkIfNeedMsig(curr);
                 });
             }, Promise.resolve());
+        }).then(() => {
+            return ConfUtils.checkOrCreateRootNamespace(ConfTestingNamespace);
+        }).then(() => {
+            return ConfUtils.checkOrCreateMosaic(ConfTestingMosaic)
         });
     }
 
@@ -188,4 +195,54 @@ export class ConfUtils {
         return transactionHttp.announce(signedTransaction);
     }
 
+    public static checkOrCreateRootNamespace(namespaceId: NamespaceId) {
+        return new Promise((resolve, reject) => {
+            namespaceHttp.getNamespace(namespaceId).subscribe(namespaceInfo => {
+                resolve();
+            }, error => {
+                const listener = new Listener(APIUrl);
+                listener.open().then(() => {
+                    RegisterNamespaceTransaction
+                    const registerNamespaceTransaction = RegisterNamespaceTransaction.createRootNamespace(
+                        Deadline.create(),
+                        'testing',
+                        UInt64.fromUint(1000),
+                        ConfNetworkType
+                    )
+                    const signedRegisterNamespaceTransaction = registerNamespaceTransaction.signWith(TestingAccount);
+                    this.waitForConfirmation(listener, TestingAccount.address, () => {
+                        listener.close();
+                        resolve();
+                    }, signedRegisterNamespaceTransaction.hash);
+                    transactionHttp.announce(signedRegisterNamespaceTransaction);    
+                });
+            });
+        });
+    }
+
+    public static checkOrCreateMosaic(mosaicId: MosaicId) {
+        return new Promise((resolve, reject) => {
+            mosaicHttp.getMosaic(mosaicId).subscribe(mosaicInfo => {
+                resolve();
+            }, error => {
+                const listener = new Listener(APIUrl);
+                listener.open().then(() => {
+                    const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
+                        Deadline.create(),
+                        ConfTestingMosaicNonce,
+                        ConfTestingMosaic,
+                        ConfTestingMosaicProperties,
+                        ConfNetworkType
+                    );
+                    const signedRegisterNamespaceTransaction = mosaicDefinitionTransaction.signWith(TestingAccount);
+                    this.waitForConfirmation(listener, TestingAccount.address, () => {
+                        listener.close();
+                        resolve();
+                    }, signedRegisterNamespaceTransaction.hash);
+                    transactionHttp.announce(signedRegisterNamespaceTransaction);    
+                });
+            });
+        });
+    }
+    
 }

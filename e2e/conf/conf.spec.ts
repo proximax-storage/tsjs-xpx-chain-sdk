@@ -3,7 +3,7 @@ const conf = require("config");
 import { Account } from '../../src/model/account/Account';
 import { NetworkType } from '../../src/model/blockchain/NetworkType';
 import { MosaicId, NamespaceId, TransactionType, RegisterNamespaceTransaction, MosaicDefinitionTransaction,
-    TransferTransaction, TransactionInfo } from '../../src/model/model';
+    TransferTransaction, TransactionInfo, MosaicNonce, MosaicProperties, UInt64 } from '../../src/model/model';
 import { ConfUtils } from './ConfUtils';
 import { BlockchainHttp } from '../../src/infrastructure/BlockchainHttp';
 import { QueryParams } from '../../src/infrastructure/QueryParams';
@@ -142,6 +142,17 @@ const ConfNamespace2 = new NamespaceId(getNsId("xpx"));
 const ConfNetworkMosaic = new MosaicId(getMosId("xpx"));
 const ConfNetworkMosaicName = "xpx";
 
+const ConfTestingMosaicNonce = new MosaicNonce(new Uint8Array([0x01, 0x02, 0x03, 0x04]));
+const ConfTestingMosaic = MosaicId.createFromNonce(ConfTestingMosaicNonce,TestingAccount.publicAccount);
+const ConfTestingMosaicProperties = MosaicProperties.create({
+    supplyMutable: true,
+    transferable: true,
+    levyMutable: true,
+    divisibility: 3,
+    duration: UInt64.fromUint(1000)},
+);
+const ConfTestingNamespace = new NamespaceId('testing');
+
 const GetNemesisBlockDataPromise = () => {
     const blockchainHttp = new BlockchainHttp(APIUrl);
     return blockchainHttp.getBlockByHeight(1).toPromise().then((nemesisBlockInfo) => {
@@ -172,7 +183,7 @@ const GetNemesisBlockDataPromise = () => {
 
 describe("Prepare environment.", () => {
     it ('should run', (done) => {
-        ConfUtils.prepareE2eTestAccounts().then(() => {
+        ConfUtils.prepareE2eTestData().then(() => {
             done();
         });    
     });
@@ -193,6 +204,11 @@ export {
     Cosignatory3Account,
 
     AllTestingAccounts,
+
+    ConfTestingMosaicNonce,
+    ConfTestingMosaicProperties,
+    ConfTestingMosaic,
+    ConfTestingNamespace,
 
     ConfNamespace,
     ConfNamespace2,

@@ -13,6 +13,13 @@ import {MosaicRepository} from './MosaicRepository';
 import {NetworkHttp} from './NetworkHttp';
 import {QueryParams} from './QueryParams';
 import { MetadataRepository } from './MetadataRepository';
+import { MetadataInfo } from '../model/metadata/MetadataInfo';
+import { Metadata } from '../model/metadata/Metadata';
+import { Field } from '../model/metadata/Field';
+import { AddressMetadata } from '../model/metadata/AddressMetadata';
+import { Address } from '../model/model';
+import { NamespaceMetadata } from '../model/metadata/NamespaceMetadata';
+import { MosaicMetadata } from '../model/metadata/MosaicMetadata';
 
 /**
  export declare class MetadataRoutesApi {
@@ -68,84 +75,36 @@ export class MetadataHttp extends Http implements MetadataRepository {
      * @param accountId - Account address/public key
      * @returns Observable<MosaicInfo>
      */
-    public getAccountMetadata(accountId: string): Observable<any> {
+    public getAccountMetadata(accountId: string): Observable<AddressMetadata> {
         return this.getNetworkTypeObservable().pipe(
             mergeMap((networkType) => observableFrom(
-                this.metadataRoutesApi.getAccountMetadata(accountId)).pipe(map((metadataInfoDTO) => {
-                return metadataInfoDTO; // TODO: create strongly typed Info class/object here
+                this.metadataRoutesApi.getAccountMetadata(accountId)).pipe(map((addressMetadataInfoDTO) => {
+                return new AddressMetadata(
+                    Address.createFromEncoded(addressMetadataInfoDTO.metadata.metadataId),
+                    addressMetadataInfoDTO.metadata.metadataType,
+                    addressMetadataInfoDTO.metadata.fields.map(fieldDTO => new Field(fieldDTO.key, fieldDTO.value)));
             }))));
     }
 
-    public getNamespaceMetadata(namespaceId: NamespaceId): Observable<any> {
+    public getNamespaceMetadata(namespaceId: NamespaceId): Observable<NamespaceMetadata> {
         return this.getNetworkTypeObservable().pipe(
             mergeMap((networkType) => observableFrom(
-                this.metadataRoutesApi.getNamespaceMetadata(namespaceId.id.toHex())).pipe(map((metadataInfoDTO) => {
-                return metadataInfoDTO; // TODO: create strongly typed Info class/object here
-            }))));
+                this.metadataRoutesApi.getNamespaceMetadata(namespaceId.id.toHex())).pipe(map((namespaceMetadataInfoDTO) => {
+                    return new NamespaceMetadata(
+                        new NamespaceId(namespaceMetadataInfoDTO.metadata.metadataId),
+                        namespaceMetadataInfoDTO.metadata.metadataType,
+                        namespaceMetadataInfoDTO.metadata.fields.map(fieldDTO => new Field(fieldDTO.key, fieldDTO.value)));
+                }))));
     }
 
-    public getMosaicMetadata(mosaicId: MosaicId): Observable<any> {
+    public getMosaicMetadata(mosaicId: MosaicId): Observable<MosaicMetadata> {
         return this.getNetworkTypeObservable().pipe(
             mergeMap((networkType) => observableFrom(
-                this.metadataRoutesApi.getMosaicMetadata(mosaicId.id.toHex())).pipe(map((metadataInfoDTO) => {
-                return metadataInfoDTO; // TODO: create strongly typed Info class/object here
-            }))));
+                this.metadataRoutesApi.getMosaicMetadata(mosaicId.id.toHex())).pipe(map((mosaicMetadataInfoDTO) => {
+                    return new MosaicMetadata(
+                        new MosaicId(mosaicMetadataInfoDTO.metadata.metadataId),
+                        mosaicMetadataInfoDTO.metadata.metadataType,
+                        mosaicMetadataInfoDTO.metadata.fields.map(fieldDTO => new Field(fieldDTO.key, fieldDTO.value)));
+                }))));
     }
-
-    /**
-     * Gets the MosaicInfo for a given mosaicId
-     * @param mosaicId - Mosaic id
-     * @returns Observable<MosaicInfo>
-     */ /*
-    public getMosaic(mosaicId: MosaicId): Observable<MosaicInfo> {
-        return this.getNetworkTypeObservable().pipe(
-            mergeMap((networkType) => observableFrom(
-                this.mosaicRoutesApi.getMosaic(mosaicId.toHex())).pipe(map((mosaicInfoDTO) => {
-                return new MosaicInfo(
-                    mosaicInfoDTO.meta.id,
-                    new MosaicId(mosaicInfoDTO.mosaic.mosaicId),
-                    new UInt64(mosaicInfoDTO.mosaic.supply),
-                    new UInt64(mosaicInfoDTO.mosaic.height),
-                    PublicAccount.createFromPublicKey(mosaicInfoDTO.mosaic.owner, networkType),
-                    mosaicInfoDTO.mosaic.revision,
-                    new MosaicProperties(
-                        new UInt64(mosaicInfoDTO.mosaic.properties[0]),
-                        (new UInt64(mosaicInfoDTO.mosaic.properties[1])).compact(),
-                        new UInt64(mosaicInfoDTO.mosaic.properties[2]),
-                    ),
-                    mosaicInfoDTO.mosaic.levy,
-                );
-            }))));
-    }
-
-    /**
-     * Gets MosaicInfo for different mosaicIds.
-     * @param mosaicIds - Array of mosaic ids
-     * @returns Observable<MosaicInfo[]>
-     */ /*
-    public getMosaics(mosaicIds: MosaicId[]): Observable<MosaicInfo[]> {
-        const mosaicIdsBody = {
-            mosaicIds: mosaicIds.map((id) => id.toHex()),
-        };
-        return this.getNetworkTypeObservable().pipe(
-            mergeMap((networkType) => observableFrom(
-                this.mosaicRoutesApi.getMosaics(mosaicIdsBody)).pipe(map((mosaicInfosDTO) => {
-                return mosaicInfosDTO.map((mosaicInfoDTO) => {
-                    return new MosaicInfo(
-                        mosaicInfoDTO.meta.id,
-                        new MosaicId(mosaicInfoDTO.mosaic.mosaicId),
-                        new UInt64(mosaicInfoDTO.mosaic.supply),
-                        new UInt64(mosaicInfoDTO.mosaic.height),
-                        PublicAccount.createFromPublicKey(mosaicInfoDTO.mosaic.owner, networkType),
-                        mosaicInfoDTO.mosaic.revision,
-                        new MosaicProperties(
-                            new UInt64(mosaicInfoDTO.mosaic.properties[0]),
-                            (new UInt64(mosaicInfoDTO.mosaic.properties[1])).compact(),
-                            new UInt64(mosaicInfoDTO.mosaic.properties[2]),
-                        ),
-                        mosaicInfoDTO.mosaic.levy,
-                    );
-                });
-            }))));
-    } //*/
 }

@@ -11,17 +11,11 @@ import { TransactionVersion } from './TransactionVersion';
 import { AggregateTransactionInfo } from './AggregateTransactionInfo';
 import { MosaicId } from '../mosaic/MosaicId';
 import { Address } from '../account/Address';
+import { MetadataType } from '../metadata/MetadataType';
 
 export enum MetadataModificationType {
     ADD = 0,
     REMOVE = 1
-}
-
-export enum MetadataType {
-    NONE = 0,
-    ADDRESS = 1,
-    MOSAIC = 2,
-    NAMESPACE = 3
 }
 
 /**

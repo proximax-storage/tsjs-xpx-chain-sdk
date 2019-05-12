@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {APIUrl, TestingAccount, ConfNetworkType} from '../conf/conf.spec';
+import {APIUrl, TestingAccount, ConfNetworkType, ConfTestingNamespace, ConfTestingMosaic} from '../conf/conf.spec';
 import { MetadataHttp } from '../../src/infrastructure/MetadataHttp';
 import { MosaicId, NamespaceId, Deadline, Address, Transaction, SignedTransaction } from '../../src/model/model';
 import { ModifyMetadataTransaction, MetadataModification, MetadataModificationType } from '../../src/model/transaction/ModifyMetadataTransaction';
@@ -16,7 +16,7 @@ before(() => {
 
     listener = new Listener(APIUrl);
     return listener.open().then(() => {
-        return ConfUtils.prepareE2eTestAccounts();
+        return ConfUtils.prepareE2eTestData();
     });
 });
 
@@ -55,7 +55,6 @@ describe('MetadataHttp', () => {
         it('should return metadata given namespaceId', (done) => {
             metadataHttp.getNamespaceMetadata(new NamespaceId([3157842063, 3375771904]))
                 .subscribe((metadataInfo) => {
-                    console.log(metadataInfo);
                     expect(metadataInfo).not.to.be.equal(undefined);
                     done();
                 });
@@ -64,7 +63,6 @@ describe('MetadataHttp', () => {
         it('should return metadata given mosaicId', (done) => {
             metadataHttp.getMosaicMetadata(new MosaicId('04E8F1965203B09C'))
                 .subscribe((metadataInfo) => {
-                    console.log(metadataInfo);
                     expect(metadataInfo).not.to.be.equal(undefined);
                     done();
                 });
@@ -92,7 +90,6 @@ describe('MetadataHttp', () => {
             it('standalone', (done) => {
                 metadataHttp.getAccountMetadata(TestingAccount.address.plain())
                 .subscribe((metadataInfo) => {
-                    console.log(metadataInfo);
                     expect(metadataInfo).not.to.be.equal(undefined);
                     done();
                 });
@@ -114,28 +111,14 @@ describe('MetadataHttp', () => {
             });
                 
         });
-/*
-        xdescribe('should add metadata to a mosaic', () => {
-            const modifyMetadataTransaction = ModifyMetadataTransaction.createWithMosaicId(
+
+        describe('should add metadata to a namespace', () => {
+            const modifyMetadataTransaction = ModifyMetadataTransaction.createWithNamespaceId(
                 ConfNetworkType,
                 Deadline.create(),
                 undefined,
-                TestingAccount.address,
-                [new MetadataModification(MetadataModificationType.ADD, "key2", "some other value")]
-            );
-            it('standalone', (done) => {
-                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount);
-                validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
-                transactionHttp.announce(signedTransaction);
-            }); 
-        });
-        xdescribe('should remove metadata from a mosaic', () => {
-            const modifyMetadataTransaction = ModifyMetadataTransaction.createWithMosaicId(
-                ConfNetworkType,
-                Deadline.create(),
-                undefined,
-                TestingAccount.address,
-                [new MetadataModification(MetadataModificationType.REMOVE, "key2")]
+                ConfTestingNamespace,
+                [new MetadataModification(MetadataModificationType.ADD, "key1", "some value")]
             );
             it('standalone', (done) => {
                 const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount);
@@ -144,9 +127,73 @@ describe('MetadataHttp', () => {
             });
                 
         });
-        
-        it('should add metadata to a namespace', (done) => {
-            
-        });*/
+
+        describe('should get metadata given namespaceId', () => {
+            it('standalone', (done) => {
+                metadataHttp.getNamespaceMetadata(ConfTestingNamespace)
+                .subscribe((metadataInfo) => {
+                    expect(metadataInfo).not.to.be.equal(undefined);
+                    done();
+                });
+            });
+        });
+
+        describe('should remove metadata from a namespace', () => {
+            const modifyMetadataTransaction = ModifyMetadataTransaction.createWithNamespaceId(
+                ConfNetworkType,
+                Deadline.create(),
+                undefined,
+                ConfTestingNamespace,
+                [new MetadataModification(MetadataModificationType.REMOVE, "key1")]
+            );
+            it('standalone', (done) => {
+                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount);
+                validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
+                transactionHttp.announce(signedTransaction);
+            });
+                
+        });
+
+        describe('should add metadata to a mosaic', () => {
+            const modifyMetadataTransaction = ModifyMetadataTransaction.createWithMosaicId(
+                ConfNetworkType,
+                Deadline.create(),
+                undefined,
+                ConfTestingMosaic,
+                [new MetadataModification(MetadataModificationType.ADD, "key1", "some value")]
+            );
+            it('standalone', (done) => {
+                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount);
+                validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
+                transactionHttp.announce(signedTransaction);
+            });
+                
+        });
+
+        describe('should get metadata given mosaicId', () => {
+            it('standalone', (done) => {
+                metadataHttp.getMosaicMetadata(ConfTestingMosaic)
+                .subscribe((metadataInfo) => {
+                    expect(metadataInfo).not.to.be.equal(undefined);
+                    done();
+                });
+            });
+        });
+
+        describe('should remove metadata from a mosaic', () => {
+            const modifyMetadataTransaction = ModifyMetadataTransaction.createWithMosaicId(
+                ConfNetworkType,
+                Deadline.create(),
+                undefined,
+                ConfTestingMosaic,
+                [new MetadataModification(MetadataModificationType.REMOVE, "key1")]
+            );
+            it('standalone', (done) => {
+                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount);
+                validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
+                transactionHttp.announce(signedTransaction);
+            });
+                
+        });
     });
 });
