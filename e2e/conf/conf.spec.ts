@@ -160,22 +160,22 @@ const GetNemesisBlockDataPromise = () => {
         .then(txs => {
             const regNamespaceTxs = txs.filter(tx => tx.type === TransactionType.REGISTER_NAMESPACE) as RegisterNamespaceTransaction[];
             const currencyNamespace = regNamespaceTxs.find(tx => tx.namespaceName === "currency");
-            const someNamespace = currencyNamespace ? currencyNamespace : regNamespaceTxs[0];
+            const testNamespace = currencyNamespace ? currencyNamespace : regNamespaceTxs[0];
             const regMosaicTx = txs.find(tx => tx.type === TransactionType.MOSAIC_DEFINITION) as MosaicDefinitionTransaction;
             const transferTx = txs.find(tx => tx.type === TransactionType.TRANSFER) as TransferTransaction;
 
             return {
                 nemesisBlockInfo,
-                someNamespace: {
-                    Id: someNamespace.namespaceId,
-                    Name: someNamespace.namespaceName,
+                testNamespace: {
+                    Id: testNamespace.namespaceId,
+                    Name: testNamespace.namespaceName,
                 },
-                otherNamespace: {
+                otherTestNamespace: {
                     Id: regNamespaceTxs[0].namespaceId,
                     Name: regNamespaceTxs[0].namespaceName,
                 },
-                someTxHash: (transferTx.transactionInfo as TransactionInfo).hash as string,
-                someTxId: (transferTx.transactionInfo as TransactionInfo).id,
+                testTxHash: (transferTx.transactionInfo as TransactionInfo).hash as string,
+                testTxId: (transferTx.transactionInfo as TransactionInfo).id,
             }
         });    
     });

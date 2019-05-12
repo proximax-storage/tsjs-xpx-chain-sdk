@@ -15,9 +15,7 @@ before(() => {
     transactionHttp = new TransactionHttp(APIUrl);
 
     listener = new Listener(APIUrl);
-    return listener.open().then(() => {
-        return ConfUtils.prepareE2eTestData();
-    });
+    return listener.open();
 });
 
 after(() => {
@@ -49,25 +47,6 @@ const validateTransactionAnnounceCorrectly = (address: Address, done, hash?:stri
 };
 
 describe('MetadataHttp', () => {
-
-    describe('getMetadata', () => {
-
-        it('should return metadata given namespaceId', (done) => {
-            metadataHttp.getNamespaceMetadata(new NamespaceId([3157842063, 3375771904]))
-                .subscribe((metadataInfo) => {
-                    expect(metadataInfo).not.to.be.equal(undefined);
-                    done();
-                });
-        });
-
-        it('should return metadata given mosaicId', (done) => {
-            metadataHttp.getMosaicMetadata(new MosaicId('04E8F1965203B09C'))
-                .subscribe((metadataInfo) => {
-                    expect(metadataInfo).not.to.be.equal(undefined);
-                    done();
-                });
-        });
-    });
 
     describe('add ,modify, get Metadata', () => {
         describe('should add metadata to an account', () => {

@@ -813,10 +813,10 @@ describe('TransactionHttp', () => {
     describe('getTransaction', () => {
         it('should return transaction info given transactionHash', (done) => {
             GetNemesisBlockDataPromise().then((data) => {
-                transactionHttp.getTransaction(data.someTxHash)
+                transactionHttp.getTransaction(data.testTxHash)
                 .subscribe((transaction) => {
-                    expect(transaction.transactionInfo!.hash).to.be.equal(data.someTxHash);
-                    expect(transaction.transactionInfo!.id).to.be.equal(data.someTxId);
+                    expect(transaction.transactionInfo!.hash).to.be.equal(data.testTxHash);
+                    expect(transaction.transactionInfo!.id).to.be.equal(data.testTxId);
                     done();
                 });
             })
@@ -824,10 +824,10 @@ describe('TransactionHttp', () => {
 
         it('should return transaction info given transactionId', (done) => {
             GetNemesisBlockDataPromise().then((data) => {
-                transactionHttp.getTransaction(data.someTxId)
+                transactionHttp.getTransaction(data.testTxId)
                 .subscribe((transaction) => {
-                    expect(transaction.transactionInfo!.hash).to.be.equal(data.someTxHash);
-                    expect(transaction.transactionInfo!.id).to.be.equal(data.someTxId);
+                    expect(transaction.transactionInfo!.hash).to.be.equal(data.testTxHash);
+                    expect(transaction.transactionInfo!.id).to.be.equal(data.testTxId);
                     done();
                 });
             });
@@ -837,10 +837,10 @@ describe('TransactionHttp', () => {
     describe('getTransactions', () => {
         it('should return transaction info given array of transactionHash', (done) => {
             GetNemesisBlockDataPromise().then((data) => {
-                transactionHttp.getTransactions([data.someTxHash])
+                transactionHttp.getTransactions([data.testTxHash])
                 .subscribe((transactions) => {
-                    expect(transactions[0].transactionInfo!.hash).to.be.equal(data.someTxHash);
-                    expect(transactions[0].transactionInfo!.id).to.be.equal(data.someTxId);
+                    expect(transactions[0].transactionInfo!.hash).to.be.equal(data.testTxHash);
+                    expect(transactions[0].transactionInfo!.id).to.be.equal(data.testTxId);
                     done();
                 });
             });
@@ -848,10 +848,10 @@ describe('TransactionHttp', () => {
 
         it('should return transaction info given array of transactionId', (done) => {
             GetNemesisBlockDataPromise().then((data) => {
-                transactionHttp.getTransactions([data.someTxId])
+                transactionHttp.getTransactions([data.testTxId])
                 .subscribe((transactions) => {
-                    expect(transactions[0].transactionInfo!.hash).to.be.equal(data.someTxHash);
-                    expect(transactions[0].transactionInfo!.id).to.be.equal(data.someTxId);
+                    expect(transactions[0].transactionInfo!.hash).to.be.equal(data.testTxHash);
+                    expect(transactions[0].transactionInfo!.id).to.be.equal(data.testTxId);
                     done();
                 });
             });
@@ -861,7 +861,7 @@ describe('TransactionHttp', () => {
     describe('getTransactionStatus', () => {
         it('should return transaction status given array transactionHash', (done) => {
             GetNemesisBlockDataPromise().then((data) => {
-                transactionHttp.getTransactionStatus(data.someTxHash)
+                transactionHttp.getTransactionStatus(data.testTxHash)
                 .subscribe((transactionStatus) => {
                     expect(transactionStatus.group).to.be.equal('confirmed');
                     expect(transactionStatus.height.lower).to.be.equal(1);
@@ -875,7 +875,7 @@ describe('TransactionHttp', () => {
     describe('getTransactionsStatuses', () => {
         it('should return transaction status given array of transactionHash', (done) => {
             GetNemesisBlockDataPromise().then((data) => {
-                transactionHttp.getTransactionsStatuses([data.someTxHash])
+                transactionHttp.getTransactionsStatuses([data.testTxHash])
                 .subscribe((transactionStatuses) => {
                     expect(transactionStatuses[0].group).to.be.equal('confirmed');
                     expect(transactionStatuses[0].height.lower).to.be.equal(1);
@@ -1002,7 +1002,7 @@ describe('TransactionHttp', () => {
     describe('getTransactionEffectiveFee', () => {
         it('should return effective paid fee given transactionHash', (done) => {
             GetNemesisBlockDataPromise().then((data) => {
-                transactionHttp.getTransactionEffectiveFee(data.someTxHash)
+                transactionHttp.getTransactionEffectiveFee(data.testTxHash)
                 .subscribe((effectiveFee) => {
                     expect(effectiveFee).to.not.be.undefined;
                     expect(effectiveFee).to.be.equal(0);

@@ -1,8 +1,8 @@
-import { SeedAccount, APIUrl, ConfNetworkMosaic, AllTestingAccounts, TestAccount, ConfNetworkType, TestingAccount, ConfTestingNamespace, ConfTestingMosaic, ConfTestingMosaicNonce, ConfTestingMosaicProperties } from "./conf.spec";
+import { SeedAccount, APIUrl, ConfNetworkMosaic, AllTestingAccounts, TestAccount, ConfNetworkType, TestingAccount, ConfTestingNamespace, ConfTestingMosaic, ConfTestingMosaicNonce, ConfTestingMosaicProperties, TestingRecipient } from "./conf.spec";
 import { Account, TransferTransaction, PublicAccount, Deadline, PlainMessage, UInt64, MultisigCosignatoryModification, ModifyAccountPropertyAddressTransaction, PropertyModificationType, AccountPropertyModification, MultisigCosignatoryModificationType, ModifyMultisigAccountTransaction, Address, PropertyType, Mosaic, MosaicId, TransactionType, AccountInfo, SignedTransaction, MosaicDefinitionTransaction, MosaicNonce, MosaicProperties, NamespaceId, RegisterNamespaceTransaction } from "../../src/model/model";
 import { TransactionHttp, Listener, AccountHttp, NamespaceHttp, MosaicHttp } from "../../src/infrastructure/infrastructure";
 import { forkJoin } from "rxjs";
-import { NamespaceCreationTransaction, namespaceId } from "js-xpx-catapult-library";
+import { ChronoUnit } from "js-joda";
 
 const accountHttp = new AccountHttp(APIUrl);
 const transactionHttp = new TransactionHttp(APIUrl);
@@ -12,14 +12,22 @@ const mosaicHttp = new MosaicHttp(APIUrl);
 export class ConfUtils {
 
     public static waitForConfirmation(listener: Listener, onAddress: Address, callback, hash?: string) {
+        const status = listener.status(onAddress).subscribe(error => {
+            console.log(error);
+            if (error && error.hash &&  error.hash === hash) {
+                throw new Error(error.status);
+            }
+        });
         const sub = listener.confirmed(onAddress).subscribe(tx => {
             if (hash) {
                 if (tx && tx.transactionInfo && tx.transactionInfo.hash === hash) {
                     sub.unsubscribe();
+                    status.unsubscribe();
                     callback();
-                }    
+                }
             } else {
                 sub.unsubscribe();
+                status.unsubscribe();
                 callback();
             }
         }, error => {
@@ -44,6 +52,8 @@ export class ConfUtils {
             return ConfUtils.checkOrCreateRootNamespace(ConfTestingNamespace);
         }).then(() => {
             return ConfUtils.checkOrCreateMosaic(ConfTestingMosaic)
+        }).then(() => {
+            return ConfUtils.simplePropertyModificationBLockAddress(TestingAccount, TestingRecipient.address);
         });
     }
 
@@ -126,7 +136,7 @@ export class ConfUtils {
                     }, reason => {
                         reject(reason);
                     });
-            });    
+            });
         });
     }
 
@@ -134,7 +144,7 @@ export class ConfUtils {
         return new Promise((resolve, reject) => {
             const listener = new Listener(APIUrl);
             listener.open().then(() => {
-                
+
                 const transferTransaction = TransferTransaction.create(
                     Deadline.create(),
                     address,
@@ -142,20 +152,20 @@ export class ConfUtils {
                     PlainMessage.create(message),
                     address.networkType,
                 );
-                
+
                 const signedTransaction = from.sign(transferTransaction);
-                
+
                 this.waitForConfirmation(listener, address, () => {
                     listener.close();
-                    resolve();    
+                    resolve();
                 }, signedTransaction.hash);
-                
+
                 transactionHttp.announce(signedTransaction).subscribe(result => {
                     console.log(result);
                 }, error => {
                     console.error(error);
                 });
-            });    
+            });
         });
     }
 
@@ -170,29 +180,40 @@ export class ConfUtils {
                     1,
                     ta.cosignatories.map(cos => new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, cos.acc.publicAccount)),
                     ta.acc.address.networkType);
-        
+
                 const signedTransaction = ta.acc.sign(convertIntoMultisigTransaction);
-        
+
                 this.waitForConfirmation(listener, ta.acc.address, () => {
+                    listener.close();
                     resolve();
                 }, signedTransaction.hash);
 
-                return transactionHttp.announce(signedTransaction);     
+                return transactionHttp.announce(signedTransaction);
             });
         });
     }
 
     public static simplePropertyModificationBLockAddress(account: Account, blockAddress: Address, transactionHttp: TransactionHttp = new TransactionHttp(APIUrl)) {
-        const modifyAccountPropertyAddressTransaction = ModifyAccountPropertyAddressTransaction.create(
-            Deadline.create(),
-            PropertyType.BlockAddress,
-            [new AccountPropertyModification(PropertyModificationType.Add, blockAddress.plain())],
-            account.address.networkType,
-        )
+        return new Promise((resolve, reject) => {
+            const listener = new Listener(APIUrl);
+            listener.open().then(() => {
+                const modifyAccountPropertyAddressTransaction = ModifyAccountPropertyAddressTransaction.create(
+                    Deadline.create(23, ChronoUnit.HOURS),
+                    PropertyType.BlockAddress,
+                    [new AccountPropertyModification(PropertyModificationType.Add, blockAddress.plain())],
+                    account.address.networkType,
+                )
 
-        const signedTransaction = account.sign(modifyAccountPropertyAddressTransaction);
+                const signedTransaction = account.sign(modifyAccountPropertyAddressTransaction);
 
-        return transactionHttp.announce(signedTransaction);
+                this.waitForConfirmation(listener, account.address, () => {
+                    listener.close();
+                    resolve();
+                }, signedTransaction.hash);
+
+                return transactionHttp.announce(signedTransaction);
+            });
+        });
     }
 
     public static checkOrCreateRootNamespace(namespaceId: NamespaceId) {
@@ -214,7 +235,7 @@ export class ConfUtils {
                         listener.close();
                         resolve();
                     }, signedRegisterNamespaceTransaction.hash);
-                    transactionHttp.announce(signedRegisterNamespaceTransaction);    
+                    transactionHttp.announce(signedRegisterNamespaceTransaction);
                 });
             });
         });
@@ -239,10 +260,10 @@ export class ConfUtils {
                         listener.close();
                         resolve();
                     }, signedRegisterNamespaceTransaction.hash);
-                    transactionHttp.announce(signedRegisterNamespaceTransaction);    
+                    transactionHttp.announce(signedRegisterNamespaceTransaction);
                 });
             });
         });
     }
-    
+
 }

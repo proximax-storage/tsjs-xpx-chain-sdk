@@ -23,7 +23,7 @@ describe('NamespaceHttp', () => {
     describe('getNamespace', () => {
         it('should return namespace data given namepsaceId', (done) => {
             GetNemesisBlockDataPromise().then(data => {
-                namespaceHttp.getNamespace(data.someNamespace.Id)
+                namespaceHttp.getNamespace(data.testNamespace.Id)
                 .subscribe((namespace) => {
                     expect(namespace.startHeight.lower).to.be.equal(1);
                     expect(namespace.startHeight.higher).to.be.equal(0);
@@ -63,9 +63,9 @@ describe('NamespaceHttp', () => {
     describe('getNamespacesName', () => {
         it('should return namespace name given array of namespaceIds', (done) => {
             GetNemesisBlockDataPromise().then(data => {
-                namespaceHttp.getNamespacesName([data.someNamespace.Id])
+                namespaceHttp.getNamespacesName([data.testNamespace.Id])
                 .subscribe((namespaceNames) => {
-                    expect(namespaceNames[0].name).to.be.equal(data.someNamespace.Name);
+                    expect(namespaceNames[0].name).to.be.equal(data.testNamespace.Name);
                     done();
                 });
             });
@@ -75,7 +75,7 @@ describe('NamespaceHttp', () => {
     describe('getLinkedMosaicId', () => {
         it('should return mosaicId given currency namespaceId', (done) => {
             GetNemesisBlockDataPromise().then(data => {
-                namespaceHttp.getLinkedMosaicId(data.someNamespace.Id)
+                namespaceHttp.getLinkedMosaicId(data.testNamespace.Id)
                 .subscribe((mosaicId) => {
                     expect(mosaicId).to.not.be.null;
                     done();
@@ -87,7 +87,7 @@ describe('NamespaceHttp', () => {
     xdescribe('getLinkedAddress', () => {
         it('should return address given namespaceId', (done) => {
             GetNemesisBlockDataPromise().then(data => {
-                namespaceHttp.getLinkedAddress(data.someNamespace.Id)
+                namespaceHttp.getLinkedAddress(data.testNamespace.Id)
                 .subscribe((address) => {
                     expect(address).to.be.null;
                     done();
