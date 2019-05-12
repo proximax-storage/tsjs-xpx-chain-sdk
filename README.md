@@ -50,3 +50,9 @@ Licensed under the [Apache License 2.0](LICENSE)
 [issues]: https://github.com/proximax-storage/tsjs-xpx-catapult-sdk/issues
 [wiki]: https://github.com/proximax-storage/tsjs-xpx-catapult-sdk/wiki
 [examples]: https://github.com/proximax-storage/tsjs-xpx-catapult-sdk/wiki/Examples
+
+## Acknowledgments
+* Hat tips
+    * NEM
+    * Aleix <aleix@nemeurope.eu>
+    * Guillem <guillem@nemeurope.eu>
