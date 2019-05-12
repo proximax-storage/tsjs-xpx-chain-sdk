@@ -7,14 +7,6 @@
 
 The official ProximaX Blockchain SDK for TypeScript and JavaScript, available for browsers, mobile applications and NodeJS, to work with the ProximaX Sirius Blockchain (a.k.a Catapult)
 
-## Important Notes
-
-Due to a network upgrade with [catapult-server@cow](https://github.com/nemtech/catapult-server/releases/tag/v0.3.0.2) version, **transactions from Alpaca&Bison are not compatible anymore**.
-
-The upgrade to this SDK's [version v0.11.5](https://github.com/nemtech/nem2-sdk-typescript-javascript/releases/tag/v0.11.5) is mandatory for **cow compatibility**.
-
-Other versions like [version v0.10.1-beta](https://github.com/nemtech/nem2-sdk-typescript-javascript/releases/tag/v0.10.1-beta) can be used for **bison** network version.
-
 ## Requirements
 
 ### NodeJS
@@ -25,7 +17,7 @@ Other versions like [version v0.10.1-beta](https://github.com/nemtech/nem2-sdk-t
 
 ## Installation
 
-```npm install nem2-sdk rxjs```
+```npm install tsjs-xpx-catapult-sdk rxjs```
 
 ## Documentation and Getting Started
 

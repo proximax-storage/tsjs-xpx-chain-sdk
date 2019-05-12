@@ -51,14 +51,6 @@ const validateTransactionAnnounceCorrectly = (address: Address, done, hash?:stri
 describe('MetadataHttp', () => {
 
     describe('getMetadata', () => {
-        it('should return metadata given accountId', (done) => {
-            metadataHttp.getAccountMetadata('VCMY23PRJYEVEZWLNY3GCPYDOYLMOLZCJWUVYK7U')
-                .subscribe((metadataInfo) => {
-                    console.log(metadataInfo);
-                    expect(metadataInfo).not.to.be.equal(undefined);
-                    done();
-                });
-        });
 
         it('should return metadata given namespaceId', (done) => {
             metadataHttp.getNamespaceMetadata(new NamespaceId([3157842063, 3375771904]))
@@ -79,7 +71,7 @@ describe('MetadataHttp', () => {
         });
     });
 
-    describe('add or modifyMetadata', () => {
+    describe('add ,modify, get Metadata', () => {
         describe('should add metadata to an account', () => {
             const modifyMetadataTransaction = ModifyMetadataTransaction.createWithAddress(
                 ConfNetworkType,
@@ -95,6 +87,18 @@ describe('MetadataHttp', () => {
             });
                 
         });
+
+        describe('should get metadata given accountId', () => {
+            it('standalone', (done) => {
+                metadataHttp.getAccountMetadata(TestingAccount.address.plain())
+                .subscribe((metadataInfo) => {
+                    console.log(metadataInfo);
+                    expect(metadataInfo).not.to.be.equal(undefined);
+                    done();
+                });
+            });
+        });
+
         describe('should remove metadata from an account', () => {
             const modifyMetadataTransaction = ModifyMetadataTransaction.createWithAddress(
                 ConfNetworkType,
