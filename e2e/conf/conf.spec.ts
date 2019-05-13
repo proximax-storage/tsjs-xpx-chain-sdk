@@ -7,6 +7,7 @@ import { MosaicId, NamespaceId, TransactionType, RegisterNamespaceTransaction, M
 import { ConfUtils } from './ConfUtils';
 import { BlockchainHttp } from '../../src/infrastructure/BlockchainHttp';
 import { QueryParams } from '../../src/infrastructure/QueryParams';
+import { AccountHttp, TransactionHttp, NamespaceHttp, MosaicHttp } from '../../src/infrastructure/infrastructure';
 
 // config types
 interface ConfApi {
@@ -53,6 +54,11 @@ interface ConfEnv {
 
 const api = conf.get('api') as ConfApi;
 const APIUrl = api.protocol + "://" + api.hostname + ":" + api.port;
+const ConfAccountHttp = new AccountHttp(APIUrl);
+const ConfTransactionHttp = new TransactionHttp(APIUrl);
+const ConfNamespaceHttp = new NamespaceHttp(APIUrl);
+const ConfMosaicHttp = new MosaicHttp(APIUrl);
+
 const ConfNetworkType = NetworkType[api.networkType];
 
 const blockchain = conf.get('blockchain') as ConfBlockchain;
@@ -177,7 +183,7 @@ const GetNemesisBlockDataPromise = () => {
                 testTxHash: (transferTx.transactionInfo as TransactionInfo).hash as string,
                 testTxId: (transferTx.transactionInfo as TransactionInfo).id,
             }
-        });    
+        });
     });
 }
 
@@ -185,7 +191,7 @@ describe("Prepare environment.", () => {
     it ('should run', (done) => {
         ConfUtils.prepareE2eTestData().then(() => {
             done();
-        });    
+        });
     });
 });
 
@@ -194,6 +200,11 @@ export {
     GetNemesisBlockDataPromise,
 
     APIUrl,
+    ConfAccountHttp,
+    ConfMosaicHttp,
+    ConfNamespaceHttp,
+    ConfTransactionHttp,
+
     ConfNetworkType,
     SeedAccount,
     TestingAccount,

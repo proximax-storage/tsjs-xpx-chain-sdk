@@ -1,13 +1,8 @@
-import { SeedAccount, APIUrl, ConfNetworkMosaic, AllTestingAccounts, TestAccount, ConfNetworkType, TestingAccount, ConfTestingNamespace, ConfTestingMosaic, ConfTestingMosaicNonce, ConfTestingMosaicProperties, TestingRecipient } from "./conf.spec";
+import { SeedAccount, APIUrl, ConfNetworkMosaic, AllTestingAccounts, TestAccount, ConfNetworkType, TestingAccount, ConfTestingNamespace, ConfTestingMosaic, ConfTestingMosaicNonce, ConfTestingMosaicProperties, TestingRecipient, ConfAccountHttp, ConfTransactionHttp, ConfNamespaceHttp, ConfMosaicHttp } from "./conf.spec";
 import { Account, TransferTransaction, PublicAccount, Deadline, PlainMessage, UInt64, MultisigCosignatoryModification, ModifyAccountPropertyAddressTransaction, PropertyModificationType, AccountPropertyModification, MultisigCosignatoryModificationType, ModifyMultisigAccountTransaction, Address, PropertyType, Mosaic, MosaicId, TransactionType, AccountInfo, SignedTransaction, MosaicDefinitionTransaction, MosaicNonce, MosaicProperties, NamespaceId, RegisterNamespaceTransaction } from "../../src/model/model";
 import { TransactionHttp, Listener, AccountHttp, NamespaceHttp, MosaicHttp } from "../../src/infrastructure/infrastructure";
 import { forkJoin } from "rxjs";
 import { ChronoUnit } from "js-joda";
-
-const accountHttp = new AccountHttp(APIUrl);
-const transactionHttp = new TransactionHttp(APIUrl);
-const namespaceHttp = new NamespaceHttp(APIUrl);
-const mosaicHttp = new MosaicHttp(APIUrl);
 
 export class ConfUtils {
 
@@ -58,6 +53,7 @@ export class ConfUtils {
     }
 
     public static checkIfNeedMsig(ta: TestAccount) {
+        const accountHttp = ConfAccountHttp;
         if (ta.hasCosignatories()) {
             return accountHttp.getMultisigAccountInfo(ta.acc.address).toPromise().then(msigInfo => {
                 console.log(ta.conf.alias + " already is msig");
@@ -78,6 +74,7 @@ export class ConfUtils {
     }
 
     public static checkIfNeedPubKey(ta: TestAccount, accountInfo: AccountInfo) {
+        const accountHttp = ConfAccountHttp;
         if (ta.isCosignatory() && accountInfo.publicKey.match('0'.repeat(64))) {
             console.log(ta.conf.alias + " need pubkey");
             return ConfUtils.simpleCreateAndAnnounceWaitForConfirmation(ta.acc.address, 0, ta.acc, '')
@@ -92,6 +89,7 @@ export class ConfUtils {
     }
 
     public static seed(ta: TestAccount) {
+        const accountHttp = ConfAccountHttp;
         return ConfUtils.getOrCreate(ta).then(info => {
             const m = info.mosaics.find(mos => mos.id.equals(ConfNetworkMosaic));
             if (!m || m.amount.compact() < (ta.conf.seed * 1000000)) {
@@ -108,6 +106,7 @@ export class ConfUtils {
     }
 
     public static getOrCreate(ta: TestAccount) {
+        const accountHttp = ConfAccountHttp;
         return new Promise<AccountInfo>((resolve, reject) => {
             accountHttp.getAccountInfo(ta.acc.address).subscribe(accInfo => {
                 console.log(ta.conf.alias + " exists.");
@@ -141,6 +140,7 @@ export class ConfUtils {
     }
 
     public static simpleCreateAndAnnounceWaitForConfirmation(address: Address, absoluteAmount: number, from: Account = SeedAccount, message = '') {
+        const transactionHttp = ConfTransactionHttp;
         return new Promise((resolve, reject) => {
             const listener = new Listener(APIUrl);
             listener.open().then(() => {
@@ -170,6 +170,7 @@ export class ConfUtils {
     }
 
      public static convertToMultisig(ta: TestAccount) {
+        const transactionHttp = ConfTransactionHttp;
         return new Promise<void>((resolve, reject) => {
             const listener = new Listener(APIUrl);
             listener.open().then(() => {
@@ -217,6 +218,8 @@ export class ConfUtils {
     }
 
     public static checkOrCreateRootNamespace(namespaceId: NamespaceId) {
+        const namespaceHttp = ConfNamespaceHttp;
+        const transactionHttp = ConfTransactionHttp;
         return new Promise((resolve, reject) => {
             namespaceHttp.getNamespace(namespaceId).subscribe(namespaceInfo => {
                 resolve();
@@ -242,6 +245,9 @@ export class ConfUtils {
     }
 
     public static checkOrCreateMosaic(mosaicId: MosaicId) {
+        const mosaicHttp = ConfMosaicHttp;
+        const transactionHttp = ConfTransactionHttp;
+
         return new Promise((resolve, reject) => {
             mosaicHttp.getMosaic(mosaicId).subscribe(mosaicInfo => {
                 resolve();
