@@ -21,12 +21,11 @@ import {PublicAccount} from '../model/account/PublicAccount';
 import {MosaicId} from '../model/mosaic/MosaicId';
 import {MosaicInfo} from '../model/mosaic/MosaicInfo';
 import {MosaicProperties} from '../model/mosaic/MosaicProperties';
-import {NamespaceId} from '../model/namespace/NamespaceId';
 import {UInt64} from '../model/UInt64';
 import {Http} from './Http';
 import {MosaicRepository} from './MosaicRepository';
 import {NetworkHttp} from './NetworkHttp';
-import {QueryParams} from './QueryParams';
+import { MosaicNames } from '../model/mosaic/MosaicNames';
 
 /**
  * Mosaic http repository.
@@ -103,6 +102,27 @@ export class MosaicHttp extends Http implements MosaicRepository {
                             new UInt64(mosaicInfoDTO.mosaic.properties[2]),
                         ),
                         mosaicInfoDTO.mosaic.levy,
+                    );
+                });
+            }))));
+    }
+
+    /**
+     * Gets Mosaic names for different mosaicIds.
+     * @param mosaicIds - Array of mosaic ids
+     * @returns Observable<MosaicName[]>
+     */
+    public getMosaicNames(mosaicIds: MosaicId[]): Observable<MosaicNames[]> {
+        const mosaicIdsBody = {
+            mosaicIds: mosaicIds.map((id) => id.toHex()),
+        };
+        return this.getNetworkTypeObservable().pipe(
+            mergeMap((networkType) => observableFrom(
+                this.mosaicRoutesApi.getMosaicsName(mosaicIdsBody)).pipe(map((mosaicNamesDTO) => {
+                return mosaicNamesDTO.map((mosaicNameDTO) => {
+                    return new MosaicNames(
+                        new MosaicId(mosaicNameDTO.mosaicId),
+                        mosaicNameDTO.names
                     );
                 });
             }))));

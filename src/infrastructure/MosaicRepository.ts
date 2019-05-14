@@ -18,6 +18,7 @@ import {Observable} from 'rxjs';
 import {MosaicId} from '../model/mosaic/MosaicId';
 import {MosaicInfo} from '../model/mosaic/MosaicInfo';
 import {QueryParams} from './QueryParams';
+import { MosaicNames } from '../model/mosaic/MosaicNames';
 
 /**
  * Mosaic interface repository.
@@ -39,4 +40,11 @@ export interface MosaicRepository {
      * @returns Observable<MosaicInfo[]>
      */
     getMosaics(mosaicIds: MosaicId[]): Observable<MosaicInfo[]>;
+
+    /**
+     * Gets Mosaic names for different mosaicIds.
+     * @param mosaicIds - Array of mosaic ids
+     * @returns Observable<MosaicName[]>
+     */
+    getMosaicNames(mosaicIds: MosaicId[]): Observable<MosaicNames[]>;
 }
