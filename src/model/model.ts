@@ -24,6 +24,11 @@ export * from './account/Address';
 export * from './account/MultisigAccountGraphInfo';
 export * from './account/MultisigAccountInfo';
 export * from './account/PublicAccount';
+export * from './account/AccountProperties';
+export * from './account/AccountPropertiesInfo';
+export * from './account/AccountProperty';
+export * from './account/PropertyModificationType';
+export * from './account/PropertyType';
 
 // Blockchain
 export * from './blockchain/BlockchainScore';
@@ -35,32 +40,50 @@ export * from './blockchain/NetworkType';
 export * from './mosaic/Mosaic';
 export * from './mosaic/MosaicInfo';
 export * from './mosaic/MosaicId';
-export * from './mosaic/MosaicName';
+export * from './mosaic/MosaicNonce';
 export * from './mosaic/MosaicSupplyType';
 export * from './mosaic/MosaicProperties';
 export * from '../service/MosaicView';
 export * from '../service/MosaicAmountView';
-export * from './mosaic/XEM';
+export * from './mosaic/NetworkCurrencyMosaic';
+export * from './mosaic/NetworkHarvestMosaic';
 
 // Namespace
 export * from '../service/Namespace';
+export * from './namespace/AliasType';
+export * from './namespace/Alias';
+export * from './namespace/AddressAlias';
+export * from './namespace/MosaicAlias';
 export * from './namespace/NamespaceId';
 export * from './namespace/NamespaceInfo';
 export * from './namespace/NamespaceName';
 export * from './namespace/NamespaceType';
+export * from './namespace/AliasActionType';
 
 // Transaction
+export * from './transaction/AccountLinkTransaction';
+export * from './transaction/AccountPropertyTransaction';
+export * from './transaction/ModifyAccountPropertyAddressTransaction';
+export * from './transaction/ModifyAccountPropertyEntityTypeTransaction';
+export * from './transaction/ModifyAccountPropertyMosaicTransaction';
+export * from './transaction/AccountPropertyModification';
+export * from './transaction/AddressAliasTransaction';
 export * from './transaction/AggregateTransaction';
 export * from './transaction/AggregateTransactionCosignature';
 export * from './transaction/AggregateTransactionInfo';
+export * from './transaction/AliasTransaction';
 export * from './transaction/CosignatureSignedTransaction';
 export * from './transaction/CosignatureTransaction';
 export * from './transaction/Deadline';
+export * from './transaction/EncryptedMessage';
+export * from './transaction/HashLockTransaction';
 export * from './transaction/HashType';
 export * from './transaction/InnerTransaction';
+export * from './transaction/LinkAction';
 export * from './transaction/LockFundsTransaction';
 export * from './transaction/Message';
 export * from './transaction/ModifyMultisigAccountTransaction';
+export * from './transaction/MosaicAliasTransaction';
 export * from './transaction/MosaicDefinitionTransaction';
 export * from './transaction/MosaicSupplyChangeTransaction';
 export * from './transaction/MultisigCosignatoryModification';
@@ -70,6 +93,7 @@ export * from './transaction/RegisterNamespaceTransaction';
 export * from './transaction/SecretLockTransaction';
 export * from './transaction/SecretProofTransaction';
 export * from './transaction/SignedTransaction';
+export * from './transaction/SyncAnnounce';
 export * from './transaction/Transaction';
 export * from './transaction/TransactionAnnounceResponse';
 export * from './transaction/TransactionInfo';
@@ -77,7 +101,6 @@ export * from './transaction/TransactionStatus';
 export * from './transaction/TransactionStatusError';
 export * from './transaction/TransactionType';
 export * from './transaction/TransferTransaction';
-export * from './transaction/SecureMessage';
 
 // Wallet
 export * from './wallet/EncryptedPrivateKey';

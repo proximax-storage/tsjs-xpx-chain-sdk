@@ -15,6 +15,7 @@
  */
 
 import {decode} from 'utf8';
+import { convert } from 'js-xpx-catapult-library';
 
 /**
  * An abstract message class that serves as the base class of all message types.
@@ -40,21 +41,26 @@ export abstract class Message {
     /**
      * @internal
      * @param type
-     * @param hexEncodedPayload
      * @param payload
      */
     constructor(/**
                  * Message type
                  */
                 public readonly type: number,
+
                 /**
-                 * Message encoded payload in hex
+                 * Message payload
                  */
-                public readonly hexEncodedPayload: string,
-                /**
-                 * Message raw payload
-                 */
-                public readonly payload?: string) {
+                public readonly payload: string) {
     }
 
+    /**
+     * Create DTO object
+     */
+    toDTO() {
+        return {
+            type: this.type,
+            payload: this.type === 0 ? convert.utf8ToHex(this.payload) : this.payload,
+        };
+    }
 }

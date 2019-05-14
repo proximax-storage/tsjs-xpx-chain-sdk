@@ -14,18 +14,29 @@
  * limitations under the License.
  */
 
-import { VerifiableTransaction } from 'proximax-nem2-library';
+import { VerifiableTransaction } from 'js-xpx-catapult-library';
 import { expect } from 'chai';
+import { Account } from '../../../src/model/account/Account';
 import { NetworkType } from '../../../src/model/blockchain/NetworkType';
-import { Account } from '../../../src/model/model';
+import { AggregateTransaction } from '../../../src/model/transaction/AggregateTransaction';
+import { Address } from '../../../src/model/account/Address';
 import { Deadline } from '../../../src/model/transaction/Deadline';
+import { PlainMessage } from '../../../src/model/transaction/PlainMessage';
 import { SignedTransaction } from '../../../src/model/transaction/SignedTransaction';
 import { Transaction } from '../../../src/model/transaction/Transaction';
 import { TransactionInfo } from '../../../src/model/transaction/TransactionInfo';
 import { TransactionType } from '../../../src/model/transaction/TransactionType';
+import { TransferTransaction } from '../../../src/model/transaction/TransferTransaction';
 import { UInt64 } from '../../../src/model/UInt64';
+import { TestingAccount } from '../../conf/conf.spec';
 
 describe('Transaction', () => {
+    let account: Account;
+
+    before(() => {
+        account = TestingAccount;
+    });
+
     describe('isUnannounced', () => {
         it('should return true when there is no Transaction Info', () => {
             const transaction = new FakeTransaction(TransactionType.TRANSFER,
@@ -99,7 +110,7 @@ describe('Transaction', () => {
         });
     });
 
-    describe('replyGiven', () => {
+    describe('reapplyGiven', () => {
         it('should throw an error if the transaction is announced', () => {
             const transaction = new FakeTransaction(TransactionType.TRANSFER,
                 NetworkType.MIJIN_TEST,
@@ -111,7 +122,7 @@ describe('Transaction', () => {
                 new TransactionInfo(UInt64.fromUint(100), 1, 'id_hash', 'hash', 'hash'),
             );
             expect(() => {
-                transaction.replyGiven(Deadline.create());
+                transaction.reapplyGiven(Deadline.create());
             }).to.throws('an Announced transaction can\'t be modified');
         });
         it('should return a new transaction', () => {
@@ -124,7 +135,7 @@ describe('Transaction', () => {
                 undefined,
             );
 
-            const newTransaction = transaction.replyGiven(Deadline.create());
+            const newTransaction = transaction.reapplyGiven(Deadline.create());
             expect(newTransaction).to.not.equal(transaction);
         });
         it('should overide deadline properly', () => {
@@ -138,12 +149,68 @@ describe('Transaction', () => {
             );
 
             const newDeadline = Deadline.create(3);
-            const newTransaction = transaction.replyGiven(newDeadline);
+            const newTransaction = transaction.reapplyGiven(newDeadline);
             const equal = newTransaction.deadline.value.equals(transaction.deadline.value);
             const after = newTransaction.deadline.value.isAfter(transaction.deadline.value);
             expect(newTransaction.deadline).to.be.equal(newDeadline);
             expect(equal).to.be.equal(false);
             expect(after).to.be.equal(true);
+        });
+    });
+
+    describe('toAggregate', () => {
+        it('should throw exception when adding an aggregated transaction as inner transaction', () => {
+            const transaction = new FakeTransaction(TransactionType.TRANSFER,
+                NetworkType.MIJIN_TEST,
+                1,
+                Deadline.create(),
+                UInt64.fromUint(0),
+                undefined,
+                undefined,
+            );
+
+            const aggregateTransaction = AggregateTransaction.createComplete(
+                Deadline.create(),
+                [transaction.toAggregate(account.publicAccount)],
+                NetworkType.MIJIN_TEST,
+                []);
+
+            expect(() => {
+                aggregateTransaction.toAggregate(account.publicAccount);
+            }).to.throw(Error, 'Inner transaction cannot be an aggregated transaction.');
+        });
+    });
+
+    describe('Transaction serialize', () => {
+        it('Should return serialized payload', () => {
+            const transaction = TransferTransaction.create(
+                Deadline.create(),
+                Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC'),
+                [],
+                PlainMessage.create('test-message'),
+                NetworkType.MIJIN_TEST,
+            );
+            const serialized = transaction.serialize();
+
+            expect(serialized.substring(
+                240,
+                serialized.length,
+            )).to.be.equal('9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1420D000000746573742D6D657373616765');
+        });
+    });
+  
+    describe('size', () => {
+        it('should return 120 for base transaction size', () => {
+            const transaction = new FakeTransaction(TransactionType.TRANSFER,
+                NetworkType.MIJIN_TEST,
+                1,
+                Deadline.create(),
+                UInt64.fromUint(0),
+                undefined,
+                undefined,
+                new TransactionInfo(UInt64.fromUint(100), 1, 'id_hash', 'hash', 'hash'),
+            );
+            expect(transaction.size).to.be.equal(120);
         });
     });
 });

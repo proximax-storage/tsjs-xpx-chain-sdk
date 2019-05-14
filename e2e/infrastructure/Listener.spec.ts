@@ -15,22 +15,18 @@
  */
 import { AccountHttp } from '../../src/infrastructure/AccountHttp';
 import { Listener } from '../../src/infrastructure/Listener';
-import { Address } from '../../src/model/account/Address';
-import * as conf from '../conf/conf.spec';
-import {
-    APIUrl, Cosignatory2Account, Cosignatory3Account, CosignatoryAccount, MultisigAccount,
-    TestingAccount,
+import { APIUrl, Cosignatory2Account, Cosignatory3Account, CosignatoryAccount,
+    MultisigAccount, TestingAccount, TestingRecipient
 } from '../conf/conf.spec';
 import { TransactionUtils } from './TransactionUtils';
+import { ConfUtils } from '../conf/ConfUtils';
+import { MultisigCosignatoryModificationType } from '../../src/model/model';
+import { fail } from 'assert';
 
 describe('Listener', () => {
-    let account;
-    let multisigAccount;
     let listener: Listener;
 
     before(() => {
-        account = TestingAccount;
-        multisigAccount = MultisigAccount;
         listener = new Listener(APIUrl);
         return listener.open();
     });
@@ -40,42 +36,38 @@ describe('Listener', () => {
     });
 
     it('newBlock', (done) => {
-        listener.newBlock()
-            .toPromise()
-            .then((res) => {
-                done();
-            });
+        const sub = listener.newBlock().subscribe(res => {
+            sub.unsubscribe();
+            done();
+        })
 
         TransactionUtils.createAndAnnounce();
     });
 
     it('confirmedTransactionsGiven address signer', (done) => {
-        listener.confirmed(account.address)
-            .toPromise()
-            .then((res) => {
-                done();
-            });
+        const sub = listener.confirmed(TestingAccount.address).subscribe(res => {
+            sub.unsubscribe();
+            done();
+        });
 
         TransactionUtils.createAndAnnounce();
     });
 
     it('confirmedTransactionsGiven address recipient', (done) => {
-        const recipientAddress = Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
-        listener.confirmed(recipientAddress)
-            .toPromise()
-            .then((res) => {
-                done();
-            });
+        const recipientAddress = TestingRecipient.address;
+        const sub = listener.confirmed(recipientAddress).subscribe(res => {
+            sub.unsubscribe();
+            done();
+        });
 
         TransactionUtils.createAndAnnounce();
     });
 
     it('unconfirmedTransactionsAdded', (done) => {
-        listener.unconfirmedAdded(account.address)
-            .toPromise()
-            .then((res) => {
-                done();
-            });
+        const sub = listener.unconfirmedAdded(TestingAccount.address).subscribe(res => {
+            sub.unsubscribe();
+            done();
+        });
 
         setTimeout(() => {
             TransactionUtils.createAndAnnounce();
@@ -83,11 +75,10 @@ describe('Listener', () => {
     });
 
     it('unconfirmedTransactionsRemoved', (done) => {
-        listener.unconfirmedRemoved(account.address)
-            .toPromise()
-            .then((res) => {
-                done();
-            });
+        const sub = listener.unconfirmedRemoved(TestingAccount.address).subscribe(res => {
+            sub.unsubscribe();
+            done();
+        });
 
         setTimeout(() => {
             TransactionUtils.createAndAnnounce();
@@ -95,63 +86,85 @@ describe('Listener', () => {
     });
 
     it('aggregateBondedTransactionsAdded', (done) => {
-        listener.aggregateBondedAdded(multisigAccount.address)
-            .toPromise()
-            .then((res) => {
-                done();
-            });
+        const sub = listener.aggregateBondedAdded(MultisigAccount.address).subscribe(res => {
+            sub.unsubscribe();
+            done();
+        });
 
         setTimeout(() => {
-            TransactionUtils.createAggregateBoundedTransactionAndAnnounce();
+            TransactionUtils.createAggregateBondedTransactionAndAnnounce();
         }, 1000);
     });
 
     it('aggregateBondedTransactionsRemoved', (done) => {
-        listener.aggregateBondedRemoved(multisigAccount.address)
-            .toPromise()
-            .then((res) => {
-                done();
-            });
+        const subAggregated = listener.aggregateBondedAdded(MultisigAccount.address).subscribe(transactionToCosign => {
+            subAggregated.unsubscribe();
+            TransactionUtils.cosignTransaction(transactionToCosign, Cosignatory2Account);
+        });
+        const sub = listener.aggregateBondedRemoved(MultisigAccount.address).subscribe(res => {
+            sub.unsubscribe();
+            done();
+        });
 
         setTimeout(() => {
-            TransactionUtils.createAggregateBoundedTransactionAndAnnounce();
-            setTimeout(() => {
-                new AccountHttp(conf.APIUrl).aggregateBondedTransactions(CosignatoryAccount.publicAccount).subscribe((transactions) => {
-                    const transactionToCosign = transactions[0];
-                    TransactionUtils.cosignTransaction(transactionToCosign, Cosignatory2Account);
-                    TransactionUtils.cosignTransaction(transactionToCosign, Cosignatory3Account);
-                });
-            }, 2000);
+            TransactionUtils.createAggregateBondedTransactionAndAnnounce();
         }, 1000);
     });
-
+    
     it('cosignatureAdded', (done) => {
-        listener.cosignatureAdded(multisigAccount.address)
-            .toPromise()
-            .then((res) => {
-                done();
-            });
+        let ok = false;
+        const subCosign = listener.aggregateBondedAdded(MultisigAccount.address).subscribe(transactionToCosign => {
+            subCosign.unsubscribe();
+            setTimeout(() => {
+                if (! ok) {
+                    fail("cosignatureAdded not invoked in time; cosigning and announcing probably fine.");
+                }
+            }, 60 * 1000);
+            TransactionUtils.cosignTransaction(transactionToCosign, Cosignatory3Account);
+        });
+
+        const sub1 = listener.cosignatureAdded(CosignatoryAccount.address).subscribe(res => {
+            sub1.unsubscribe();
+            ok = true;
+            done();
+        });
 
         setTimeout(() => {
-            TransactionUtils.createAggregateBoundedTransactionAndAnnounce();
-            setTimeout(() => {
-                new AccountHttp(conf.APIUrl).aggregateBondedTransactions(CosignatoryAccount.publicAccount).subscribe((transactions) => {
-                    const transactionToCosign = transactions[0];
-                    TransactionUtils.cosignTransaction(transactionToCosign, Cosignatory2Account);
-                });
-            }, 1000);
+            TransactionUtils.createAggregateBondedTransactionAndAnnounce();
         }, 1000);
     });
 
     it('transactionStatusGiven', (done) => {
-        listener.status(account.address)
-            .toPromise()
-            .then((res) => {
-                done();
-            });
+        const sub = listener.status(TestingAccount.address).subscribe(res => {
+            sub.unsubscribe();
+            done();
+        });
 
         setTimeout(() => {
             TransactionUtils.createAndAnnounceWithInsufficientBalance();
         }, 1000);
     });
+
+    xit('multisigAccountAdded', (done) => {
+        const sub = listener.multisigAccountAdded(TestingAccount.address).subscribe(res => {
+            sub.unsubscribe();
+            done();
+        });
+
+        setTimeout(() => {
+            TransactionUtils.createModifyMultisigAccountTransaction(TestingAccount.publicAccount, MultisigCosignatoryModificationType.Add);
+        }, 1000);
+    });
+
+    xit('multisigAccountRemoved', (done) => {
+        const sub = listener.multisigAccountAdded(TestingAccount.address).subscribe(res => {
+            sub.unsubscribe();
+            done();
+        });
+
+        setTimeout(() => {
+            TransactionUtils.createModifyMultisigAccountTransaction(TestingAccount.publicAccount, MultisigCosignatoryModificationType.Remove);
+        }, 1000);
+    });
+
 });

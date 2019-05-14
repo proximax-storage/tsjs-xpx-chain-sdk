@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 NEM
+ * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,32 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import {NamespaceId} from '../namespace/NamespaceId';
-import {MosaicId} from './MosaicId';
-
+import { AccountProperty } from './AccountProperty';
+import { Address } from './Address';
 /**
- * The mosaic name info structure describes basic information of a mosaic and name.
+ * Account properties structure describes property information for an account.
  */
-export class MosaicName {
+export class AccountProperties {
 
     /**
-     * @param mosaicId
-     * @param namespaceId
-     * @param name
+     * Constructor
+     * @param address
+     * @param properties
      */
-    constructor(/**
-                 * The mosaic id.
-                 */
-                public readonly mosaicId: MosaicId,
+    constructor(
                 /**
-                 * The namespace id.
+                 * Account Address
                  */
-                public readonly namespaceId: NamespaceId,
+                public readonly address: Address,
                 /**
-                 * The mosaic name.
+                 * Properties.
                  */
-                public readonly name: string) {
+                public readonly properties: AccountProperty[]) {
 
     }
 }

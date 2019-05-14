@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-import {TransactionRoutesApi} from 'proximax-nem2-library';
+import {BlockchainRoutesApi, TransactionRoutesApi} from 'js-xpx-catapult-library';
 import * as requestPromise from 'request-promise-native';
 import {from as observableFrom, Observable, throwError as observableThrowError} from 'rxjs';
-import {catchError, map} from 'rxjs/operators';
+import {catchError, map, mergeMap} from 'rxjs/operators';
 import {PublicAccount} from '../model/account/PublicAccount';
 import {CosignatureSignedTransaction} from '../model/transaction/CosignatureSignedTransaction';
 import {Deadline} from '../model/transaction/Deadline';
 import {SignedTransaction} from '../model/transaction/SignedTransaction';
+import { SyncAnnounce } from '../model/transaction/SyncAnnounce';
 import {Transaction} from '../model/transaction/Transaction';
 import {TransactionAnnounceResponse} from '../model/transaction/TransactionAnnounceResponse';
+import {TransactionInfo} from '../model/transaction/TransactionInfo';
 import {TransactionStatus} from '../model/transaction/TransactionStatus';
 import {TransactionType} from '../model/transaction/TransactionType';
 import {UInt64} from '../model/UInt64';
@@ -44,12 +46,19 @@ export class TransactionHttp extends Http implements TransactionRepository {
     private transactionRoutesApi: TransactionRoutesApi;
 
     /**
+     * @internal
+     * Nem2 Library blockchain routes api
+     */
+    private blockchainRoutesApi: BlockchainRoutesApi;
+
+    /**
      * Constructor
      * @param url
      */
     constructor(private readonly url: string) {
         super(url);
         this.transactionRoutesApi = new TransactionRoutesApi(this.apiClient);
+        this.blockchainRoutesApi = new BlockchainRoutesApi(this.apiClient);
     }
 
     /**
@@ -93,7 +102,7 @@ export class TransactionHttp extends Http implements TransactionRepository {
                     transactionStatusDTO.status,
                     transactionStatusDTO.hash,
                     Deadline.createFromDTO(transactionStatusDTO.deadline),
-                    new UInt64(transactionStatusDTO.height));
+                    transactionStatusDTO.height ? new UInt64(transactionStatusDTO.height) : UInt64.fromUint(0));
             }));
     }
 
@@ -115,7 +124,7 @@ export class TransactionHttp extends Http implements TransactionRepository {
                         transactionStatusDTO.status,
                         transactionStatusDTO.hash,
                         Deadline.createFromDTO(transactionStatusDTO.deadline),
-                        new UInt64(transactionStatusDTO.height));
+                        transactionStatusDTO.height ? new UInt64(transactionStatusDTO.height) : UInt64.fromUint(0));
                 });
             }));
     }
@@ -139,9 +148,7 @@ export class TransactionHttp extends Http implements TransactionRepository {
      */
     public announceAggregateBonded(signedTransaction: SignedTransaction): Observable<TransactionAnnounceResponse> {
         if (signedTransaction.type !== TransactionType.AGGREGATE_BONDED) {
-            return observableFrom(new Promise((resolve, reject) => {
-                reject('Only Transaction Type 0x4241 is allowed for announce aggregate bonded');
-            }));
+            return observableThrowError('Only Transaction Type 0x4241 is allowed for announce aggregate bonded');
         }
         return observableFrom(this.transactionRoutesApi.announcePartialTransaction(signedTransaction)).pipe(
             map((transactionAnnounceResponseDTO) => {
@@ -182,27 +189,36 @@ export class TransactionHttp extends Http implements TransactionRepository {
             } else {
                 return CreateTransactionFromDTO(response);
             }
-        }),catchError((err) => {
+        }), catchError((err) => {
             if (err.statusCode === 405) {
                 return observableThrowError('non sync server');
             }
             return observableThrowError(err);
-        }),);
+        }));
     }
-}
 
-class SyncAnnounce {
-    constructor(/**
-                 * Transaction serialized data
-                 */
-                public readonly payload: string,
-                /**
-                 * Transaction hash
-                 */
-                public readonly hash: string,
-                /**
-                 * Transaction address
-                 */
-                public readonly address: string) {
+    /**
+     * Gets a transaction's effective paid fee
+     * @param transactionId - Transaction id or hash.
+     * @returns Observable<number>
+     */
+    public getTransactionEffectiveFee(transactionId: string): Observable<number> {
+        return observableFrom(this.transactionRoutesApi.getTransaction(transactionId)).pipe(
+            mergeMap((transactionDTO) => {
+                // parse transaction to take advantage of `size` getter overload
+                const transaction = CreateTransactionFromDTO(transactionDTO);
+                const uintHeight = (transaction.transactionInfo as TransactionInfo).height;
+
+                // now read block details
+                return observableFrom(this.blockchainRoutesApi.getBlockByHeight(uintHeight.compact())).pipe(
+                map((blockDTO) => {
+
+                    // @see https://nemtech.github.io/concepts/transaction.html#fees
+                    // effective_fee = feeMultiplier x transaction::size
+                    return blockDTO.block.feeMultiplier * transaction.size;
+                }));
+            }), catchError((err) => {
+                return observableThrowError(err);
+            }));
     }
 }

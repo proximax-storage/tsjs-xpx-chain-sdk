@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {address as AddressLibrary, convert} from 'proximax-nem2-library';
+import {address as AddressLibrary, convert} from 'js-xpx-catapult-library';
 import {NetworkType} from '../blockchain/NetworkType';
 
 /**
@@ -116,5 +116,15 @@ export class Address {
      */
     public equals(address: Address): boolean {
         return this.plain() === address.plain() && this.networkType === address.networkType;
+    }
+
+    /**
+     * Create DTO object
+     */
+    public toDTO() {
+        return {
+            address: this.address,
+            networkType: this.networkType,
+        };
     }
 }

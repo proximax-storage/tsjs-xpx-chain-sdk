@@ -20,16 +20,21 @@ import * as WebSocket from 'ws';
 import {Address} from '../model/account/Address';
 import {PublicAccount} from '../model/account/PublicAccount';
 import {BlockInfo} from '../model/blockchain/BlockInfo';
+import {NetworkType} from '../model/blockchain/NetworkType';
+import {NamespaceId} from '../model/namespace/NamespaceId';
 import {AggregateTransaction} from '../model/transaction/AggregateTransaction';
 import {AggregateTransactionCosignature} from '../model/transaction/AggregateTransactionCosignature';
 import {CosignatureSignedTransaction} from '../model/transaction/CosignatureSignedTransaction';
 import {Deadline} from '../model/transaction/Deadline';
 import {InnerTransaction} from '../model/transaction/InnerTransaction';
+import {ModifyMultisigAccountTransaction} from '../model/transaction/ModifyMultisigAccountTransaction';
+import {MultisigCosignatoryModification} from '../model/transaction/MultisigCosignatoryModification';
+import {MultisigCosignatoryModificationType} from '../model/transaction/MultisigCosignatoryModificationType';
 import {Transaction} from '../model/transaction/Transaction';
 import {TransactionStatusError} from '../model/transaction/TransactionStatusError';
 import {TransferTransaction} from '../model/transaction/TransferTransaction';
 import {UInt64} from '../model/UInt64';
-import {CreateTransactionFromDTO} from './transaction/CreateTransactionFromDTO';
+import {CreateTransactionFromDTO, extractBeneficiary} from './transaction/CreateTransactionFromDTO';
 
 enum ListenerChannelName {
     block = 'block',
@@ -39,6 +44,7 @@ enum ListenerChannelName {
     aggregateBondedAdded = 'partialAdded',
     aggregateBondedRemoved = 'partialRemoved',
     cosignature = 'cosignature',
+    modifyMultisigAccount = 'modifyMultisigAccount',
     status = 'status',
 }
 
@@ -104,6 +110,7 @@ export class Listener {
                 this.webSocket.onerror = (err) => {
                     console.log('WebSocket Error ');
                     console.log(err);
+                    reject(err);
                 };
                 this.webSocket.onmessage = (msg) => {
                     const message = JSON.parse(msg.data as string);
@@ -129,8 +136,12 @@ export class Listener {
                                 new UInt64(message.block.height),
                                 new UInt64(message.block.timestamp),
                                 new UInt64(message.block.difficulty),
+                                message.block.feeMultiplier,
                                 message.block.previousBlockHash,
                                 message.block.blockTransactionsHash,
+                                message.block.blockReceiptsHash,
+                                message.block.stateHash,
+                                extractBeneficiary(message, networkType), // passing `message` as `blockDTO`
                             ),
                         });
                     } else if (message.status) {
@@ -153,6 +164,17 @@ export class Listener {
                 resolve();
             }
         });
+    }
+
+    /**
+     * returns a boolean that repressents the open state
+     * @returns a boolean
+     */
+    public isOpen(): boolean {
+        if (this.webSocket) {
+            return this.webSocket.readyState === WebSocket.OPEN;
+        }
+        return false;
     }
 
     /**
@@ -189,7 +211,7 @@ export class Listener {
             share(),
             filter((_) => _.channelName === ListenerChannelName.block),
             filter((_) => _.message instanceof BlockInfo),
-            map((_) => _.message as BlockInfo),);
+            map((_) => _.message as BlockInfo));
     }
 
     /**
@@ -206,7 +228,7 @@ export class Listener {
             filter((_) => _.channelName === ListenerChannelName.confirmedAdded),
             filter((_) => _.message instanceof Transaction),
             map((_) => _.message as Transaction),
-            filter((_) => this.transactionFromAddress(_, address)),);
+            filter((_) => this.transactionFromAddress(_, address)));
     }
 
     /**
@@ -223,7 +245,7 @@ export class Listener {
             filter((_) => _.channelName === ListenerChannelName.unconfirmedAdded),
             filter((_) => _.message instanceof Transaction),
             map((_) => _.message as Transaction),
-            filter((_) => this.transactionFromAddress(_, address)),);
+            filter((_) => this.transactionFromAddress(_, address)));
     }
 
     /**
@@ -239,7 +261,7 @@ export class Listener {
         return this.messageSubject.asObservable().pipe(
             filter((_) => _.channelName === ListenerChannelName.unconfirmedRemoved),
             filter((_) => typeof _.message === 'string'),
-            map((_) => _.message as string),);
+            map((_) => _.message as string));
     }
 
     /**
@@ -256,7 +278,7 @@ export class Listener {
             filter((_) => _.channelName === ListenerChannelName.aggregateBondedAdded),
             filter((_) => _.message instanceof AggregateTransaction),
             map((_) => _.message as AggregateTransaction),
-            filter((_) => this.transactionFromAddress(_, address)),);
+            filter((_) => this.transactionFromAddress(_, address)));
     }
 
     /**
@@ -272,7 +294,25 @@ export class Listener {
         return this.messageSubject.asObservable().pipe(
             filter((_) => _.channelName === ListenerChannelName.aggregateBondedRemoved),
             filter((_) => typeof _.message === 'string'),
-            map((_) => _.message as string),);
+            map((_) => _.message as string));
+    }
+
+    /**
+     * Return an observable of {@link ModifyMultisigAccountTransaction} for specific address which has been added to multi signatories.
+     * Each time an modify multi signatures transaction is announced,
+     * it emits a new {@link ModifyMultisigAccountTransaction} in the event stream.
+     *
+     * @param address address we listen when a transaction with missing signatures state
+     * @return an observable stream of ModifyMultisigAccountTransaction with missing signatures state
+     */
+    public multisigAccountAdded(address: Address): Observable<ModifyMultisigAccountTransaction> {
+        this.subscribeTo(`modifyMultisigAccount/${address.plain()}`);
+        return this.messageSubject.asObservable().pipe(
+            filter((_) => _.channelName === ListenerChannelName.modifyMultisigAccount),
+            filter((_) => _.message instanceof ModifyMultisigAccountTransaction),
+            map((_) => _.message as ModifyMultisigAccountTransaction),
+            filter((_) => this.accountAddedToMultiSig(_, address)),
+        );
     }
 
     /**
@@ -288,7 +328,7 @@ export class Listener {
         return this.messageSubject.asObservable().pipe(
             filter((_) => _.channelName === ListenerChannelName.status),
             filter((_) => _.message instanceof TransactionStatusError),
-            map((_) => _.message as TransactionStatusError),);
+            map((_) => _.message as TransactionStatusError));
     }
 
     /**
@@ -304,7 +344,7 @@ export class Listener {
         return this.messageSubject.asObservable().pipe(
             filter((_) => _.channelName === ListenerChannelName.cosignature),
             filter((_) => _.message instanceof CosignatureSignedTransaction),
-            map((_) => _.message as CosignatureSignedTransaction),);
+            map((_) => _.message as CosignatureSignedTransaction));
     }
 
     /**
@@ -318,6 +358,18 @@ export class Listener {
             subscribe: channel,
         };
         this.webSocket.send(JSON.stringify(subscriptionMessage));
+    }
+
+    /**
+     * @internal
+     * @param channel - Channel to unsubscribe
+     */
+    private unsubscribeTo(channel: string) {
+        const unsubscribeMessage = {
+            uid: this.uid,
+            unsubscribe: channel,
+        };
+        this.webSocket.send(JSON.stringify(unsubscribeMessage));
     }
 
     /**
@@ -351,8 +403,35 @@ export class Listener {
      * @param address
      * @returns {boolean}
      */
-    private transactionHasSignerOrReceptor(transaction: Transaction, address: Address): boolean {
-        return transaction.signer!.address.equals(address) ||
-            (transaction instanceof TransferTransaction && transaction.recipient.equals(address));
+    private transactionHasSignerOrReceptor(transaction: Transaction, address: Address | NamespaceId): boolean {
+
+        if (address instanceof NamespaceId) {
+            return transaction instanceof TransferTransaction
+                && (transaction.recipient as NamespaceId).equals(address);
+        }
+
+        return transaction.signer!.address.equals(address) || (
+               transaction instanceof TransferTransaction
+            && (transaction.recipient as Address).equals(address)
+        );
+    }
+
+    /**
+     * @internal
+     * Filters if an account has been added to multi signatories
+     * @param transaction - Transaction object
+     * @param address - Address
+     * @returns boolean
+     */
+    // tslint:disable-next-line:adjacent-overload-signatures
+    private accountAddedToMultiSig(transaction: Transaction, address: Address): boolean {
+        if (transaction instanceof ModifyMultisigAccountTransaction) {
+            transaction.modifications.map((_: MultisigCosignatoryModification) => {
+                if (_.type === MultisigCosignatoryModificationType.Add && _.cosignatoryPublicAccount.address.equals(address)) {
+                    return true;
+                }
+            });
+        }
+        return false;
     }
 }

@@ -29,9 +29,13 @@ describe('MosaicView', () => {
     let mosaicInfo: MosaicInfo;
 
     before(() => {
-        mosaicInfo = new MosaicInfo(true, 0, '59FDA0733F17CF0001772CBC', new NamespaceId([929036875, 2226345261]),
-            new MosaicId([3646934825, 3576016193]), new UInt64([3403414400, 2095475]), new UInt64([1, 0]),
+        mosaicInfo = new MosaicInfo(
+            '59FDA0733F17CF0001772CBC',
+            new MosaicId([3294802500, 2243684972]),
+            new UInt64([3403414400, 2095475]), // supply
+            new UInt64([1, 0]), // height
             PublicAccount.createFromPublicKey('B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF', NetworkType.MIJIN_TEST),
+            1, // revision
             MosaicProperties.create({
                 supplyMutable: true,
                 transferable: true,
@@ -42,13 +46,7 @@ describe('MosaicView', () => {
     });
 
     it('should createComplete a Mosaic View', () => {
-        const mosaicView = new MosaicView(mosaicInfo, 'namespaceName', 'mosaicName');
-        expect(mosaicView.namespaceName).to.be.equal('namespaceName');
-        expect(mosaicView.mosaicName).to.be.equal('mosaicName');
-    });
-
-    it('should createComplete a Mosaic View get correct fullName', () => {
-        const mosaicView = new MosaicView(mosaicInfo, 'namespaceName', 'mosaicName');
-        expect(mosaicView.fullName()).to.be.equal('namespaceName:mosaicName');
+        const mosaicView = new MosaicView(mosaicInfo);
+        expect(mosaicView.mosaicInfo).to.be.an.instanceof(MosaicInfo);
     });
 });

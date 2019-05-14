@@ -16,12 +16,10 @@
 import {expect} from 'chai';
 import {MosaicHttp} from '../../src/infrastructure/MosaicHttp';
 import {MosaicId} from '../../src/model/mosaic/MosaicId';
-import {NamespaceId} from '../../src/model/namespace/NamespaceId';
-import {APIUrl} from '../conf/conf.spec';
+import {APIUrl, ConfNetworkMosaic} from '../conf/conf.spec';
 
 describe('MosaicHttp', () => {
-    const mosaicId = new MosaicId([3646934825, 3576016193]);
-    const namespaceId = new NamespaceId([929036875, 2226345261]);
+    const mosaicId = ConfNetworkMosaic;
     const mosaicHttp = new MosaicHttp(APIUrl);
 
     describe('getMosaic', () => {
@@ -49,31 +47,6 @@ describe('MosaicHttp', () => {
                     expect(mosaicInfos[0].isSupplyMutable()).to.be.equal(false);
                     expect(mosaicInfos[0].isTransferable()).to.be.equal(true);
                     expect(mosaicInfos[0].isLevyMutable()).to.be.equal(false);
-                    done();
-                });
-        });
-    });
-
-    describe('getMosaicsFromNamespace', () => {
-        it('should return mosaics given namespaceId', (done) => {
-            mosaicHttp.getMosaicsFromNamespace(namespaceId)
-                .subscribe((mosaicInfos) => {
-                    expect(mosaicInfos[0].height.lower).to.be.equal(1);
-                    expect(mosaicInfos[0].height.higher).to.be.equal(0);
-                    expect(mosaicInfos[0].divisibility).to.be.equal(6);
-                    expect(mosaicInfos[0].isSupplyMutable()).to.be.equal(false);
-                    expect(mosaicInfos[0].isTransferable()).to.be.equal(true);
-                    expect(mosaicInfos[0].isLevyMutable()).to.be.equal(false);
-                    done();
-                });
-        });
-    });
-
-    describe('getMosaicsName', () => {
-        it('should return mosaics name given array of mosaicIds', (done) => {
-            mosaicHttp.getMosaicsName([mosaicId])
-                .subscribe((mosaicNames) => {
-                    expect(mosaicNames[0].name).to.be.equal('xem');
                     done();
                 });
         });

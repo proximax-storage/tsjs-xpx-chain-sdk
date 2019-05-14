@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { MosaicSupplyChangeTransaction as MosaicSupplyChangeTransactionLibrary, VerifiableTransaction } from 'proximax-nem2-library';
+import { MosaicSupplyChangeTransaction as MosaicSupplyChangeTransactionLibrary, VerifiableTransaction } from 'js-xpx-catapult-library';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { MosaicId } from '../mosaic/MosaicId';
@@ -24,6 +24,7 @@ import { Deadline } from './Deadline';
 import { Transaction } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
+import { TransactionVersion } from './TransactionVersion';
 
 /**
  * In case a mosaic has the flag 'supplyMutable' set to true, the creator of the mosaic can change the supply,
@@ -38,17 +39,19 @@ export class MosaicSupplyChangeTransaction extends Transaction {
      * @param direction - The supply type.
      * @param delta - The supply change in units for the mosaic.
      * @param networkType - The network type.
+     * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {MosaicSupplyChangeTransaction}
      */
     public static create(deadline: Deadline,
                          mosaicId: MosaicId,
                          direction: MosaicSupplyType,
                          delta: UInt64,
-                         networkType: NetworkType): MosaicSupplyChangeTransaction {
+                         networkType: NetworkType,
+                         maxFee: UInt64 = new UInt64([0, 0])): MosaicSupplyChangeTransaction {
         return new MosaicSupplyChangeTransaction(networkType,
-            2,
+            TransactionVersion.MOSAIC_SUPPLY_CHANGE,
             deadline,
-            new UInt64([0, 0]),
+            maxFee,
             mosaicId,
             direction,
             delta,
@@ -59,7 +62,7 @@ export class MosaicSupplyChangeTransaction extends Transaction {
      * @param networkType
      * @param version
      * @param deadline
-     * @param fee
+     * @param maxFee
      * @param mosaicId
      * @param direction
      * @param delta
@@ -70,7 +73,7 @@ export class MosaicSupplyChangeTransaction extends Transaction {
     constructor(networkType: NetworkType,
                 version: number,
                 deadline: Deadline,
-                fee: UInt64,
+                maxFee: UInt64,
                 /**
                  * The mosaic id.
                  */
@@ -86,7 +89,24 @@ export class MosaicSupplyChangeTransaction extends Transaction {
                 signature?: string,
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
-        super(TransactionType.MOSAIC_SUPPLY_CHANGE, networkType, version, deadline, fee, signature, signer, transactionInfo);
+        super(TransactionType.MOSAIC_SUPPLY_CHANGE, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
+    }
+
+    /**
+     * @override Transaction.size()
+     * @description get the byte size of a MosaicSupplyChangeTransaction
+     * @returns {number}
+     * @memberof MosaicSupplyChangeTransaction
+     */
+    public get size(): number {
+        const byteSize = super.size;
+
+        // set static byte size fields
+        const byteMosaicId = 8;
+        const byteDirection = 1;
+        const byteDelta = 8;
+
+        return byteSize + byteMosaicId + byteDirection + byteDelta;
     }
 
     /**
@@ -96,7 +116,7 @@ export class MosaicSupplyChangeTransaction extends Transaction {
     protected buildTransaction(): VerifiableTransaction {
         return new MosaicSupplyChangeTransactionLibrary.Builder()
             .addDeadline(this.deadline.toDTO())
-            .addFee(this.fee.toDTO())
+            .addFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addMosaicId(this.mosaicId.id.toDTO())
             .addDirection(this.direction)

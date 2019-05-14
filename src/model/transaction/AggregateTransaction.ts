@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { AggregateTransaction as AggregateTransactionLibrary } from 'proximax-nem2-library';
+import { AggregateTransaction as AggregateTransactionLibrary } from 'js-xpx-catapult-library';
 import { Account } from '../account/Account';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
@@ -26,6 +26,7 @@ import { SignedTransaction } from './SignedTransaction';
 import { Transaction } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
+import { TransactionVersion } from './TransactionVersion';
 
 /**
  * Aggregate innerTransactions contain multiple innerTransactions that can be initiated by different accounts.
@@ -37,7 +38,7 @@ export class AggregateTransaction extends Transaction {
      * @param type
      * @param version
      * @param deadline
-     * @param fee
+     * @param maxFee
      * @param innerTransactions
      * @param cosignatures
      * @param signature
@@ -48,7 +49,7 @@ export class AggregateTransaction extends Transaction {
                 type: number,
                 version: number,
                 deadline: Deadline,
-                fee: UInt64,
+                maxFee: UInt64,
                 /**
                  * The array of innerTransactions included in the aggregate transaction.
                  */
@@ -60,7 +61,7 @@ export class AggregateTransaction extends Transaction {
                 signature?: string,
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
-        super(type, networkType, version, deadline, fee, signature, signer, transactionInfo);
+        super(type, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
     }
 
     /**
@@ -69,17 +70,19 @@ export class AggregateTransaction extends Transaction {
      * @param innerTransactions - The array of inner innerTransactions.
      * @param networkType - The network type.
      * @param cosignatures
+     * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {AggregateTransaction}
      */
     public static createComplete(deadline: Deadline,
                                  innerTransactions: InnerTransaction[],
                                  networkType: NetworkType,
-                                 cosignatures: AggregateTransactionCosignature[]): AggregateTransaction {
+                                 cosignatures: AggregateTransactionCosignature[],
+                                 maxFee: UInt64 = new UInt64([0, 0])): AggregateTransaction {
         return new AggregateTransaction(networkType,
             TransactionType.AGGREGATE_COMPLETE,
-            2,
+            TransactionVersion.AGGREGATE_COMPLETE,
             deadline,
-            new UInt64([0, 0]),
+            maxFee,
             innerTransactions,
             cosignatures,
         );
@@ -91,17 +94,19 @@ export class AggregateTransaction extends Transaction {
      * @param {InnerTransaction[]} innerTransactions
      * @param {NetworkType} networkType
      * @param {AggregateTransactionCosignature[]} cosignatures
+     * @param {UInt64} maxFee - (Optional) Max fee defined by the sender
      * @return {AggregateTransaction}
      */
     public static createBonded(deadline: Deadline,
                                innerTransactions: InnerTransaction[],
                                networkType: NetworkType,
-                               cosignatures: AggregateTransactionCosignature[] = []): AggregateTransaction {
+                               cosignatures: AggregateTransactionCosignature[] = [],
+                               maxFee: UInt64 = new UInt64([0, 0])): AggregateTransaction {
         return new AggregateTransaction(networkType,
             TransactionType.AGGREGATE_BONDED,
-            2,
+            TransactionVersion.AGGREGATE_BONDED,
             deadline,
-            new UInt64([0, 0]),
+            maxFee,
             innerTransactions,
             cosignatures,
         );
@@ -115,7 +120,7 @@ export class AggregateTransaction extends Transaction {
         return new AggregateTransactionLibrary.Builder()
             .addDeadline(this.deadline.toDTO())
             .addType(this.type)
-            .addFee(this.fee.toDTO())
+            .addFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addTransactions(this.innerTransactions.map((transaction) => {
                 return transaction.aggregateTransaction();
@@ -132,7 +137,8 @@ export class AggregateTransaction extends Transaction {
     public signTransactionWithCosignatories(initiatorAccount: Account, cosignatories: Account[]) {
         const aggregateTransaction = this.buildTransaction();
         const signedTransactionRaw = aggregateTransaction.signTransactionWithCosigners(initiatorAccount, cosignatories);
-        return new SignedTransaction(signedTransactionRaw.payload, signedTransactionRaw.hash, initiatorAccount.publicKey, this.type, this.networkType);
+        return new SignedTransaction(signedTransactionRaw.payload, signedTransactionRaw.hash, initiatorAccount.publicKey,
+                                     this.type, this.networkType);
     }
 
     /**
@@ -145,4 +151,24 @@ export class AggregateTransaction extends Transaction {
             || (this.signer !== undefined && this.signer.equals(publicAccount));
     }
 
+    /**
+     * @override Transaction.size()
+     * @description get the byte size of a AggregateTransaction
+     * @returns {number}
+     * @memberof AggregateTransaction
+     */
+    public get size(): number {
+        const byteSize = super.size;
+
+        // set static byte size fields
+        const byteTransactionsSize = 4;
+
+        // calculate each inner transaction's size
+        let byteTransactions = 0;
+        this.innerTransactions.map((transaction) => {
+            byteTransactions += transaction.size;
+        });
+
+        return byteSize + byteTransactionsSize + byteTransactions;
+    }
 }

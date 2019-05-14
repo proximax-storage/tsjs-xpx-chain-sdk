@@ -17,69 +17,139 @@ import {ChronoUnit} from 'js-joda';
 import {TransactionHttp} from '../../src/infrastructure/TransactionHttp';
 import {Account} from '../../src/model/account/Account';
 import {Address} from '../../src/model/account/Address';
+import { PublicAccount } from '../../src/model/account/PublicAccount';
 import {NetworkType} from '../../src/model/blockchain/NetworkType';
-import {XEM} from '../../src/model/mosaic/XEM';
 import {AggregateTransaction} from '../../src/model/transaction/AggregateTransaction';
 import {CosignatureTransaction} from '../../src/model/transaction/CosignatureTransaction';
 import {Deadline} from '../../src/model/transaction/Deadline';
+import { ModifyMultisigAccountTransaction } from '../../src/model/transaction/ModifyMultisigAccountTransaction';
+import { MultisigCosignatoryModification } from '../../src/model/transaction/MultisigCosignatoryModification';
+import { MultisigCosignatoryModificationType } from '../../src/model/transaction/MultisigCosignatoryModificationType';
 import {PlainMessage} from '../../src/model/transaction/PlainMessage';
 import {TransferTransaction} from '../../src/model/transaction/TransferTransaction';
-import {CosignatoryAccount, MultisigAccount, NIS2_URL, TestingAccount} from '../../test/conf/conf.spec';
+import {UInt64} from '../../src/model/UInt64';
+import {CosignatoryAccount, MultisigAccount, APIUrl, TestingAccount, TestingRecipient, ConfNetworkMosaic, Cosignatory3Account } from '../../e2e/conf/conf.spec';
+import { Mosaic, HashLockTransaction, TransactionInfo, TransactionType, LockFundsTransaction, NetworkCurrencyMosaic, AggregateTransactionCosignature } from '../../src/model/model';
+import { Listener } from '../../src/infrastructure/Listener';
+import { filter, mergeMap } from 'rxjs/operators';
 
 export class TransactionUtils {
 
-    public static createAndAnnounce(recipient: Address = Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC'),
-                                    transactionHttp: TransactionHttp = new TransactionHttp(NIS2_URL)) {
+    public static createAndAnnounce(recipient: Address = TestingRecipient.address,
+                                    transactionHttp: TransactionHttp = new TransactionHttp(APIUrl)) {
         const account = TestingAccount;
         const transferTransaction = TransferTransaction.create(
             Deadline.create(),
             recipient,
-            [],
+            [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(0))],
             PlainMessage.create('test-message'),
-            NetworkType.MIJIN_TEST,
+            account.address.networkType,
         );
         const signedTransaction = account.sign(transferTransaction);
+
         transactionHttp.announce(signedTransaction);
     }
 
-    public static createAndAnnounceWithInsufficientBalance(transactionHttp: TransactionHttp = new TransactionHttp(NIS2_URL)) {
+    public static createAndAnnounceWithInsufficientBalance(transactionHttp: TransactionHttp = new TransactionHttp(APIUrl)) {
         const account = TestingAccount;
         const transferTransaction = TransferTransaction.create(
             Deadline.create(),
-            Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC'),
-            [XEM.createRelative(100000000000)],
+            TestingRecipient.address,
+            [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(100000000000))],
             PlainMessage.create('test-message'),
-            NetworkType.MIJIN_TEST,
+            account.address.networkType,
         );
         const signedTransaction = account.sign(transferTransaction);
         transactionHttp.announce(signedTransaction);
     }
 
-    public static createAggregateBoundedTransactionAndAnnounce(transactionHttp: TransactionHttp = new TransactionHttp(NIS2_URL)) {
+    public static createAggregateBondedTransactionAndAnnounce(transactionHttp: TransactionHttp = new TransactionHttp(APIUrl)) {
+
         const transferTransaction = TransferTransaction.create(
             Deadline.create(),
-            Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC'),
-            [XEM.createRelative(100000000000)],
+            TestingRecipient.address,
+            [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(1000000))],
             PlainMessage.create('test-message'),
-            NetworkType.MIJIN_TEST,
+            TestingRecipient.address.networkType,
         );
 
         const aggregateTransaction = AggregateTransaction.createBonded(
-            Deadline.create(2, ChronoUnit.MINUTES),
+            Deadline.create(10, ChronoUnit.MINUTES),
             [transferTransaction.toAggregate(MultisigAccount.publicAccount)],
-            NetworkType.MIJIN_TEST,
-            [],
+            MultisigAccount.address.networkType
         );
 
-        const signedTransaction = CosignatoryAccount.sign(aggregateTransaction);
-        transactionHttp.announceAggregateBonded(signedTransaction);
+        const signedAggregateTransaction = CosignatoryAccount.sign(aggregateTransaction);
+
+        const lockFundTransaction = HashLockTransaction.create(
+            Deadline.create(),
+            new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10000000)),
+            UInt64.fromUint(120),
+            signedAggregateTransaction,
+            CosignatoryAccount.address.networkType);
+
+        const signedLockFundTransaction = CosignatoryAccount.sign(lockFundTransaction);
+
+        const listener = new Listener(APIUrl);
+
+        listener.open().then(() => {
+
+            listener.confirmed(CosignatoryAccount.address).pipe(
+                filter((transaction) => {
+                    return transaction.type === TransactionType.LOCK
+                    && (transaction as LockFundsTransaction).hash === lockFundTransaction.hash;
+                }),
+                mergeMap(unused => {
+                    return transactionHttp.announceAggregateBonded(signedAggregateTransaction)
+                })
+            ).subscribe(result => {
+                // console.log(result);
+                listener.close();
+            }, error => {
+                console.log(error);
+                listener.close();
+            });
+
+            transactionHttp.announce(signedLockFundTransaction).subscribe(result => {
+                // console.log(result);
+            }, error => {
+                console.log(error);
+            })
+        });
     }
 
     public static cosignTransaction(transaction: AggregateTransaction,
                                     account: Account,
-                                    transactionHttp: TransactionHttp = new TransactionHttp(NIS2_URL)) {
+                                    transactionHttp: TransactionHttp = new TransactionHttp(APIUrl)) {
         const cosignatureTransaction = CosignatureTransaction.create(transaction);
         const cosignatureSignedTransaction = account.signCosignatureTransaction(cosignatureTransaction);
         transactionHttp.announceAggregateBondedCosignature(cosignatureSignedTransaction);
+    }
+
+    public static createModifyMultisigAccountTransaction( account: PublicAccount, type: MultisigCosignatoryModificationType,
+                                                          transactionHttp: TransactionHttp = new TransactionHttp(APIUrl)) {
+        const modifyMultisig = ModifyMultisigAccountTransaction.create(
+            Deadline.create(),
+            0,
+            0,
+            [new MultisigCosignatoryModification(
+                type,
+                account,
+            )],
+            account.address.networkType,
+        );
+
+        const aggregate = modifyMultisig.toAggregate(MultisigAccount.publicAccount);
+
+        const aggregateTransaction = AggregateTransaction.createComplete(
+            Deadline.create(),
+            [aggregate],
+            account.address.networkType,
+            []
+        )
+
+        const signedTransaction = aggregateTransaction.signTransactionWithCosignatories(CosignatoryAccount, [Cosignatory3Account]);
+        
+        return transactionHttp.announce(signedTransaction);
     }
 }

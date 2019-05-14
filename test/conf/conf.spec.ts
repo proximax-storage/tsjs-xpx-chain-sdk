@@ -17,6 +17,8 @@
 import {Account} from '../../src/model/account/Account';
 import {NetworkType} from '../../src/model/blockchain/NetworkType';
 
+// TODO: configuration switch from command-line/npm "target"
+
 export const TestingAccount = Account.createFromPrivateKey(
     '26b64cb10f005e5988a36744ca19e20d835ccc7c105aaa5f3b212da593180930',
     NetworkType.MIJIN_TEST);
@@ -36,5 +38,3 @@ export const Cosignatory2Account = Account.createFromPrivateKey(
 export const Cosignatory3Account = Account.createFromPrivateKey(
     '111602be4d36f92dd60ca6a3c68478988578f26f6a02f8c72089839515ab603e',
     NetworkType.MIJIN_TEST);
-
-export const NIS2_URL = 'http://localhost:3000';

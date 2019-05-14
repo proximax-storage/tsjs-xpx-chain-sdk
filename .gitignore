@@ -25,6 +25,7 @@ typings/
 .yarn-integrity
 .env
 build/
+.vscode
 
 
 # Created by https://www.gitignore.io/api/intellij+iml

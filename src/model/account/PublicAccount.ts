@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { convert, KeyPair } from 'proximax-nem2-library';
+import { convert, KeyPair } from 'js-xpx-catapult-library';
 import { NetworkType } from '../blockchain/NetworkType';
 import { Address } from './Address';
 
@@ -95,4 +95,13 @@ export class PublicAccount {
         return this.publicKey === publicAccount.publicKey && this.address.plain() === publicAccount.address.plain();
     }
 
+    /**
+     * Create DTO object
+     */
+    toDTO() {
+        return {
+            publicKey: this.publicKey,
+            address: this.address.toDTO(),
+        };
+    }
 }

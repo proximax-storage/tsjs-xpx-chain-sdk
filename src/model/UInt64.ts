@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {uint64} from 'proximax-nem2-library';
+import {uint64} from 'js-xpx-catapult-library';
 
 /**
  * UInt64 data model
@@ -37,7 +37,20 @@ export class UInt64 {
      * @returns {UInt64}
      */
     public static fromUint(value: number): UInt64 {
+        if (value < 0) {
+            throw new Error('Unsigned integer cannot be negative');
+        }
         return new UInt64(uint64.fromUint(value));
+    }
+
+    /**
+     * Parses a hex string into a UInt64.
+     * @param {string} input A hex encoded string.
+     * @returns {module:coders/uint64~uint64} The uint64 representation of the input.
+     */
+    public static fromHex(input: string): UInt64 {
+        const dto = uint64.fromHex(input);
+        return new UInt64(dto);
     }
 
     /**
@@ -45,7 +58,14 @@ export class UInt64 {
      * @param uintArray
      */
     constructor(uintArray: number[]) {
-        if (uintArray.length !== 2 || uintArray[0] < 0 || uintArray[1] < 0) {
+        // TODO: temporary hack to get around maxFee as string ("0") in i.e. /block/1/transactions
+        if (typeof uintArray === 'string' || uintArray instanceof String) {
+            const i = UInt64.fromUint(Number.parseInt((uintArray as any)));
+            this.lower = i.lower;
+            this.higher = i.higher;
+            return;
+        }
+        if (!uintArray || uintArray.length !== 2 || uintArray[0] < 0 || uintArray[1] < 0) {
             throw new Error('uintArray must be be an array of two uint numbers');
         }
         this.lower = uintArray[0];
@@ -53,11 +73,22 @@ export class UInt64 {
     }
 
     /**
+     * Get DTO representation with format: `[lower, higher]`
+     *
      * @internal
      * @returns {[number,number]}
      */
     public toDTO(): number[] {
         return [this.lower, this.higher];
+    }
+
+    /**
+     * Get hexadecimal representation
+     *
+     * @return {string}
+     */
+    public toHex(): string {
+        return uint64.toHex(this.toDTO());
     }
 
     /**

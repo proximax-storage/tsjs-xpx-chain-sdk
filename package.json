@@ -1,7 +1,7 @@
 {
-  "name": "proximax-nem2-sdk",
-  "version": "0.10.16",
-  "description": "Proximax Nem2 sdk for typescript and javascript",
+  "name": "tsjs-xpx-catapult-sdk",
+  "version": "0.1.0",
+  "description": "Proximax catapult sdk for typescript and javascript",
   "scripts": {
     "pretest": "npm run build",
     "test": "mocha --ui bdd --recursive ./dist/test --timeout 90000",
@@ -12,22 +12,21 @@
     "test:coveralls": "npm run test:cov | coveralls"
   },
   "contributors": [
-    "Aleix <aleix@nemeurope.eu>",
-    "Guillem <guillem@nemeurope.eu>",
-    "Thomas Tran <tldinteractive@gmail.com>"
+    "Thomas Tran <tldinteractive@gmail.com>",
+    "Yaaccount <tnuoccaay@gmail.com>"
   ],
   "bugs": {
-    "url": "https://github.com/proximax-storage/proximax-nem2-sdk-ts-js/issues"
+    "url": "https://github.com/proximax-storage/tsjs-xpx-catapult-sdk/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/proximax-storage/proximax-nem2-sdk-ts-js.git"
+    "url": "git+https://github.com/proximax-storage/tsjs-xpx-catapult-sdk.git"
   },
   "publishConfig": {
     "registry": "https://nexus.internal.proximax.io/repository/npm-private/"
   },
   "license": "Apache-2.0",
-  "homepage": "https://github.com/proximax-storage/proximax-nem2-sdk-ts-jst#readme",
+  "homepage": "https://github.com/proximax-storage/tsjs-xpx-catapult-sdk#readme",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "devDependencies": {
@@ -40,18 +39,22 @@
     "@types/ws": "^3.2.0",
     "assert": "^1.4.1",
     "chai": "^4.1.2",
+    "config": "^3.1.0",
     "coveralls": "^3.0.0",
+    "js-sha3": "^0.8.0",
     "mocha": "^4.0.1",
     "nyc": "^11.3.0",
     "ts-mockito": "^2.2.7",
     "ts-node": "^5.0.1",
     "tslint": "^5.8.0",
-    "typescript": "^2.5.3",
+    "typescript": "^3.4.4",
     "typescript-require": "^0.2.9-1"
   },
   "dependencies": {
+    "@types/crypto-js": "^3.1.43",
+    "crypto-js": "^3.1.9-1",
     "js-joda": "^1.6.2",
-    "proximax-nem2-library": "^0.9.11",
+    "js-xpx-catapult-library": "^0.1.0",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5",
     "rxjs": "^6.2.1",
@@ -73,8 +76,9 @@
     "test": "test"
   },
   "keywords": [
-    "nem2",
+    "xpx",
+    "proximax",
     "sdk"
   ],
-  "author": "NEM"
+  "author": "Proximax"
 }
