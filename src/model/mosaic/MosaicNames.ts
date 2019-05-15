@@ -17,7 +17,7 @@ export class MosaicNames {
                 /**
                  * The array of mosaic names
                  */
-                public readonly names: string) {
+                public readonly names: string[]) {
     }
 
 }
