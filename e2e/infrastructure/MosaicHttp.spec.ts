@@ -51,4 +51,15 @@ describe('MosaicHttp', () => {
                 });
         });
     });
+
+    describe('getMosaicNames', () => {
+        it('should return mosaics names given array of mosaicIds', (done) => {
+            mosaicHttp.getMosaicNames([mosaicId])
+                .subscribe((mosaicNames) => {
+                    expect(mosaicNames[0].mosaicId.equals(mosaicId)).to.true;
+                    expect(mosaicNames[0].names[0]).not.to.be.undefined;
+                    done();
+                });
+        });
+    });
 });
