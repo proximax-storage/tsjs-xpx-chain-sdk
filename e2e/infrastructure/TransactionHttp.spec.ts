@@ -511,7 +511,7 @@ describe('TransactionHttp', () => {
                     validateTransactionAnnounceCorrectly(TestingAccount.address, done);
                     transactionHttp.announce(secretLockTransaction.signWith(TestingAccount));
                 });
-        
+
                 it('aggregate', (done) => {
                     const secretLockTransaction = SecretLockTransaction.create(
                         Deadline.create(),
@@ -529,8 +529,8 @@ describe('TransactionHttp', () => {
                     validateTransactionAnnounceCorrectly(TestingAccount.address, done);
                     transactionHttp.announce(aggregateSecretLockTransaction.signWith(TestingAccount));
                 });
-            });    
-        
+            });
+
             describe('HashType: Op_Hash_256', () => {
                 it('standalone', (done) => {
                     const secretLockTransaction = SecretLockTransaction.create(
@@ -687,11 +687,11 @@ describe('TransactionHttp', () => {
                 });
             });
 
-            xdescribe('HashType: Op_Hash_160', () => {
+            describe('HashType: Op_Hash_160', () => {
                 it('standalone', (done) => {
                     const secretSeed = nacl_catapult.randomBytes(20);
-                    const secret = CryptoJS.RIPEMD160(CryptoJS.SHA256(String.fromCharCode.apply(null, secretSeed)).toString(CryptoJS.enc.Hex)).toString(CryptoJS.enc.Hex);
                     const proof = convert.uint8ToHex(secretSeed);
+                    const secret = CryptoJS.RIPEMD160(CryptoJS.enc.Hex.parse(CryptoJS.SHA256(CryptoJS.enc.Hex.parse(proof)).toString(CryptoJS.enc.Hex))).toString(CryptoJS.enc.Hex);
                     const secretLockTransaction = SecretLockTransaction.create(
                         Deadline.create(),
                         new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
@@ -716,9 +716,9 @@ describe('TransactionHttp', () => {
                 });
 
                 it('aggregate', (done) => {
-                    const secretSeed = String.fromCharCode.apply(null, nacl_catapult.randomBytes(20));
-                    const secret = CryptoJS.RIPEMD160(CryptoJS.SHA256(secretSeed).toString(CryptoJS.enc.Hex)).toString(CryptoJS.enc.Hex);
+                    const secretSeed = nacl_catapult.randomBytes(20);
                     const proof = convert.uint8ToHex(secretSeed);
+                    const secret = CryptoJS.RIPEMD160(CryptoJS.enc.Hex.parse(CryptoJS.SHA256(CryptoJS.enc.Hex.parse(proof)).toString(CryptoJS.enc.Hex))).toString(CryptoJS.enc.Hex);
                     const secretLockTransaction = SecretLockTransaction.create(
                         Deadline.create(),
                         new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
@@ -747,12 +747,11 @@ describe('TransactionHttp', () => {
                 });
             });
 
-            xdescribe('HashType: Op_Hash_256', () => {
+            describe('HashType: Op_Hash_256', () => {
                 it('standalone', (done) => {
-                    const secretSeed = String.fromCharCode.apply(null, nacl_catapult.randomBytes(20));
-                    //const secret = CryptoJS.SHA256(CryptoJS.SHA256(secretSeed).toString(CryptoJS.enc.Hex)).toString(CryptoJS.enc.Hex);
-                    const secret = CryptoJS.SHA256(CryptoJS.SHA256(secretSeed).toString(CryptoJS.enc.Hex)).toString(CryptoJS.enc.Hex);
+                    const secretSeed = nacl_catapult.randomBytes(20);
                     const proof = convert.uint8ToHex(secretSeed);
+                    const secret = CryptoJS.SHA256(CryptoJS.enc.Hex.parse(CryptoJS.SHA256(CryptoJS.enc.Hex.parse(proof)).toString(CryptoJS.enc.Hex))).toString(CryptoJS.enc.Hex);
                     const secretLockTransaction = SecretLockTransaction.create(
                         Deadline.create(),
                         new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
@@ -777,9 +776,9 @@ describe('TransactionHttp', () => {
                 });
 
                 it('aggregate', (done) => {
-                    const secretSeed = String.fromCharCode.apply(null, nacl_catapult.randomBytes(20));
-                    const secret = CryptoJS.SHA256(CryptoJS.SHA256(secretSeed).toString(CryptoJS.enc.Hex)).toString(CryptoJS.enc.Hex);
+                    const secretSeed = nacl_catapult.randomBytes(20);
                     const proof = convert.uint8ToHex(secretSeed);
+                    const secret = CryptoJS.SHA256(CryptoJS.enc.Hex.parse(CryptoJS.SHA256(CryptoJS.enc.Hex.parse(proof)).toString(CryptoJS.enc.Hex))).toString(CryptoJS.enc.Hex);
                     const secretLockTransaction = SecretLockTransaction.create(
                         Deadline.create(),
                         new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),

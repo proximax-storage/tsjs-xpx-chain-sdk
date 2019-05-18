@@ -84,7 +84,7 @@ describe('NamespaceHttp', () => {
         });
     });
 
-    xdescribe('getLinkedAddress', () => {
+    describe('getLinkedAddress', () => {
         it('should return address given namespaceId', (done) => {
             GetNemesisBlockDataPromise().then(data => {
                 namespaceHttp.getLinkedAddress(data.testNamespace.Id)
