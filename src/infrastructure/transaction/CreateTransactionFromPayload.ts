@@ -282,7 +282,7 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                     new MosaicId(UInt64.fromHex(reverse(mosaic.substring(0, 16))).toDTO()),
                     UInt64.fromHex(reverse(mosaic.substring(16))),
                 )) : [],
-                transferMessageType === MessageType.PlainMessage ? PlainMessage.createFromPayload(transferMessage) : EncryptedMessage.createFromPayload(transferMessage),
+                extractMessage(transferMessageType, transferMessage),
                 networkType,
             );
         case TransactionType.SECRET_LOCK:
@@ -481,5 +481,22 @@ const decodeHex = (hex: string): string => {
         return decode(str);
     } catch (e) {
         return str;
+    }
+};
+
+
+/**
+ * @internal
+ * @param messageType - Message Type
+ * @param payload - Message Payload
+ * @returns {Message}
+ */
+const extractMessage = (messageType: MessageType, payload: string): Message => {
+    if (messageType === MessageType.PlainMessage) {
+        return PlainMessage.createFromPayload(payload);
+    } else if (messageType === MessageType.EncryptedMessage) {
+        return EncryptedMessage.createFromPayload(payload);
+    } else {
+        throw new Error('Invalid message type');
     }
 };
