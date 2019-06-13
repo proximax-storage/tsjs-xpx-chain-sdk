@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { MosaicAliasTransaction as MosaicAliasTransactionLibrary, VerifiableTransaction } from 'js-xpx-catapult-library';
+import { MosaicAliasTransaction as MosaicAliasTransactionLibrary, VerifiableTransaction } from 'js-xpx-chain-library';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { MosaicId } from '../mosaic/MosaicId';

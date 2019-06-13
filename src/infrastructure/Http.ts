@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {ApiClient} from 'js-xpx-catapult-library';
+import {ApiClient} from 'js-xpx-chain-library';
 import {Observable, of as observableOf} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {NetworkType} from '../model/blockchain/NetworkType';

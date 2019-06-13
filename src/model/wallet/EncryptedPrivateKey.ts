@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {crypto} from 'js-xpx-catapult-library';
+import {crypto} from 'js-xpx-chain-library';
 import {Password} from './Password';
 
 /**

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { AccountLinkTransaction as AccountLinkTransactionLibrary, VerifiableTransaction } from 'js-xpx-catapult-library';
+import { AccountLinkTransaction as AccountLinkTransactionLibrary, VerifiableTransaction } from 'js-xpx-chain-library';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';

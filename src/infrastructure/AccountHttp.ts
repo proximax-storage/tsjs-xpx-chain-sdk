@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {AccountRoutesApi} from 'js-xpx-catapult-library';
+import {AccountRoutesApi} from 'js-xpx-chain-library';
 import {from as observableFrom, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {AccountInfo} from '../model/account/AccountInfo';

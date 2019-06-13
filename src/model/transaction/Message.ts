@@ -15,7 +15,7 @@
  */
 
 import {decode} from 'utf8';
-import { convert } from 'js-xpx-catapult-library';
+import { convert } from 'js-xpx-chain-library';
 
 /**
  * An abstract message class that serves as the base class of all message types.

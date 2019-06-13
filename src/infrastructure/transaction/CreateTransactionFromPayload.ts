@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { convert } from 'js-xpx-catapult-library';
+import { convert } from 'js-xpx-chain-library';
 import {decode} from 'utf8';
 import { Address } from '../../model/account/Address';
 import { PublicAccount } from '../../model/account/PublicAccount';

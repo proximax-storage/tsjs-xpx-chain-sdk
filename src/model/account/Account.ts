@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {address as AddressLibrary, convert, KeyPair, nacl_catapult} from 'js-xpx-catapult-library';
+import {address as AddressLibrary, convert, KeyPair, nacl_catapult} from 'js-xpx-chain-library';
 import {NetworkType} from '../blockchain/NetworkType';
 import {AggregateTransaction} from '../transaction/AggregateTransaction';
 import {CosignatureSignedTransaction} from '../transaction/CosignatureSignedTransaction';

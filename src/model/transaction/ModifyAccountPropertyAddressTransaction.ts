@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { AccountPropertiesAddressTransaction as AccountPropertiesAddressTransactionLibrary, VerifiableTransaction } from 'js-xpx-catapult-library';
+import { AccountPropertiesAddressTransaction as AccountPropertiesAddressTransactionLibrary, VerifiableTransaction } from 'js-xpx-chain-library';
 import { PropertyType } from '../account/PropertyType';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';

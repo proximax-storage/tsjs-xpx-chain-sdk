@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {uint64} from 'js-xpx-catapult-library';
+import {uint64} from 'js-xpx-chain-library';
 
 /**
  * UInt64 data model

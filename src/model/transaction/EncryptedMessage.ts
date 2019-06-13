@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {crypto, convert} from 'js-xpx-catapult-library';
+import {crypto, convert} from 'js-xpx-chain-library';
 import {PublicAccount} from '../account/PublicAccount';
 import {Message} from './Message';
 import {MessageType} from './MessageType';

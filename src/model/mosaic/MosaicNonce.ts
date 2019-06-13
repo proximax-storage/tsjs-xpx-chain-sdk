@@ -16,7 +16,7 @@
 import {
     convert,
     nacl_catapult,
-} from 'js-xpx-catapult-library';
+} from 'js-xpx-chain-library';
 
 /**
  * The mosaic nonce structure

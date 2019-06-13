@@ -18,7 +18,7 @@ import {
     mosaicId as MosaicIdentifierGenerator,
     nacl_catapult,
     uint64 as uint64_t,
-} from 'js-xpx-catapult-library';
+} from 'js-xpx-chain-library';
 
 import {PublicAccount} from '../account/PublicAccount';
 import {Id} from '../Id';

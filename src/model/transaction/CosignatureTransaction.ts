@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {CosignatureTransaction as CosignaturetransactionLibrary} from 'js-xpx-catapult-library';
+import {CosignatureTransaction as CosignaturetransactionLibrary} from 'js-xpx-chain-library';
 import {Account} from '../account/Account';
 import {AggregateTransaction} from './AggregateTransaction';
 import {CosignatureSignedTransaction} from './CosignatureSignedTransaction';

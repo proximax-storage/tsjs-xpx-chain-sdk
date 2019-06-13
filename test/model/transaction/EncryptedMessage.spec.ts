@@ -25,7 +25,7 @@ describe('EncryptedMessage', () => {
     let recipient: Account;
 
     before(() => {
-        // Catapult-server-bootstrap generated account
+        // server-bootstrap generated account
         sender = Account.createFromPrivateKey('2602F4236B199B3DF762B2AAB46FC3B77D8DDB214F0B62538D3827576C46C108',
                                               NetworkType.MIJIN_TEST);
         recipient = Account.createFromPrivateKey('B72F2950498111BADF276D6D9D5E345F04E0D5C9B8342DA983C3395B4CF18F08',
@@ -51,7 +51,7 @@ describe('EncryptedMessage', () => {
     });
 
     it('should create an encrypted message from a DTO and decrypt it', () => {
-        // message payload generated from catapult-server
+        // message payload generated from cpp-xpx-chain-server
         const encryptMessage = EncryptedMessage.createFromPayload('EF6F9F6F8BEFD8BC1FAECD1E610CC195D87D667F401A5B4EA8F0398BDE0B0A2FA4543D7C5C2468D2' +
                         'D478347FB856243F66b3c55321afe7471862d93392a9c57ef0646a045c3e038706de519b8392f4a2');
         const plainMessage = recipient.decryptMessage(encryptMessage, sender.publicAccount);

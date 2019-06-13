@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { convert, SecretProofTransaction as SecretProofTransactionLibrary, VerifiableTransaction } from 'js-xpx-catapult-library';
+import { convert, SecretProofTransaction as SecretProofTransactionLibrary, VerifiableTransaction } from 'js-xpx-chain-library';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
