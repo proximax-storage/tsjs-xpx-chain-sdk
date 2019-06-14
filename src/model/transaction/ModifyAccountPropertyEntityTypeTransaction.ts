@@ -15,7 +15,7 @@
  */
 
 import { AccountPropertiesEntityTypeTransaction as AccountPropertiesEntityTypeTransactionLibrary,
-    VerifiableTransaction } from 'js-xpx-catapult-library';
+    VerifiableTransaction } from 'js-xpx-chain-library';
 import { PropertyType } from '../account/PropertyType';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';

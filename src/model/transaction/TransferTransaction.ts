@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { convert, TransferTransaction as TransferTransactionLibrary, VerifiableTransaction } from 'js-xpx-catapult-library';
+import { convert, TransferTransaction as TransferTransactionLibrary, VerifiableTransaction } from 'js-xpx-chain-library';
 import { Address } from '../account/Address';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';

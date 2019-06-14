@@ -15,7 +15,7 @@
  */
 import {expect} from 'chai';
 import {NamespaceHttp} from '../../src/infrastructure/NamespaceHttp';
-import {APIUrl, GetNemesisBlockDataPromise} from '../conf/conf.spec';
+import {APIUrl, GetNemesisBlockDataPromise, ConfTestingNamespace, TestingAccount} from '../conf/conf.spec';
 
 describe('NamespaceHttp', () => {
     const namespaceHttp = new NamespaceHttp(APIUrl);
@@ -87,9 +87,9 @@ describe('NamespaceHttp', () => {
     describe('getLinkedAddress', () => {
         it('should return address given namespaceId', (done) => {
             GetNemesisBlockDataPromise().then(data => {
-                namespaceHttp.getLinkedAddress(data.testNamespace.Id)
+                namespaceHttp.getLinkedAddress(ConfTestingNamespace)
                 .subscribe((address) => {
-                    expect(address).to.be.null;
+                    expect(address.plain()).to.be.equal(TestingAccount.address.plain());
                     done();
                 });
             });

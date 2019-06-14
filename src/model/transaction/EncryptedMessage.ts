@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {crypto, convert} from 'js-xpx-catapult-library';
+import {crypto, convert} from 'js-xpx-chain-library';
 import {PublicAccount} from '../account/PublicAccount';
 import {Message} from './Message';
 import {MessageType} from './MessageType';
@@ -41,7 +41,7 @@ export class EncryptedMessage extends Message {
      */
     public static create(message: string, recipientPublicAccount: PublicAccount, privateKey) {
         return new EncryptedMessage(
-            convert.ab2hex(crypto.nemencrypt(privateKey, recipientPublicAccount.publicKey, convert.hexToUint8(convert.utf8ToHex(message)))) 
+            crypto.encode(privateKey, recipientPublicAccount.publicKey, message)
         );
     }
 
@@ -60,7 +60,7 @@ export class EncryptedMessage extends Message {
      * @param recipientPublicAccount - Sender public account
      */
     public static decrypt(encryptMessage: EncryptedMessage, privateKey, recipientPublicAccount: PublicAccount): PlainMessage {
-        const decrypted = crypto.nemdecrypt(privateKey, recipientPublicAccount.publicKey, convert.hexToUint8(encryptMessage.payload));
-        return new PlainMessage(Message.decodeHex(convert.ab2hex(decrypted)));
+        const decrypted = crypto.decode(privateKey, recipientPublicAccount.publicKey, encryptMessage.payload);
+        return new PlainMessage(decrypted);
     }
 }

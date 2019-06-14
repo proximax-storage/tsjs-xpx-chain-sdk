@@ -30,7 +30,7 @@ export abstract class AliasTransaction extends Transaction {
     /**
      * Create an address alias transaction object
      * @param deadline - The deadline to include the transaction.
-     * @param aliasAction - The namespace id.
+     * @param aliasAction - The alias action type - link or unlink.
      * @param namespaceId - The namespace id.
      * @param address - The address.
      * @param networkType - The network type.
@@ -56,7 +56,7 @@ export abstract class AliasTransaction extends Transaction {
     /**
      * Create a mosaic alias transaction object
      * @param deadline - The deadline to include the transaction.
-     * @param aliasAction - The namespace id.
+     * @param aliasAction - The alias action type - link or unlink.
      * @param namespaceId - The namespace id.
      * @param mosaicId - The mosaic id.
      * @param networkType - The network type.

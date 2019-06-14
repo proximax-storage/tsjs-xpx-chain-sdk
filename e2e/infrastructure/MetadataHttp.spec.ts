@@ -55,20 +55,21 @@ describe('MetadataHttp', () => {
                 Deadline.create(),
                 undefined,
                 TestingAccount.address,
-                [new MetadataModification(MetadataModificationType.ADD, "key1", "some value")]
+                [new MetadataModification(MetadataModificationType.ADD, "key1", "x".repeat(256))]
             );
             it('standalone', (done) => {
                 const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount);
                 validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });
-                
+
         });
 
         describe('should get metadata given accountId', () => {
             it('standalone', (done) => {
                 metadataHttp.getAccountMetadata(TestingAccount.address.plain())
                 .subscribe((metadataInfo) => {
+                    expect(metadataInfo.fields[0].value.length).to.be.equal(256);
                     expect(metadataInfo).not.to.be.equal(undefined);
                     done();
                 });
@@ -88,7 +89,7 @@ describe('MetadataHttp', () => {
                 validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });
-                
+
         });
 
         describe('should add metadata to a namespace', () => {
@@ -104,7 +105,7 @@ describe('MetadataHttp', () => {
                 validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });
-                
+
         });
 
         describe('should get metadata given namespaceId', () => {
@@ -130,7 +131,7 @@ describe('MetadataHttp', () => {
                 validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });
-                
+
         });
 
         describe('should add metadata to a mosaic', () => {
@@ -146,7 +147,7 @@ describe('MetadataHttp', () => {
                 validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });
-                
+
         });
 
         describe('should get metadata given mosaicId', () => {
@@ -172,7 +173,7 @@ describe('MetadataHttp', () => {
                 validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });
-                
+
         });
     });
 });

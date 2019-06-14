@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { convert, KeyPair } from 'js-xpx-catapult-library';
+import { convert, KeyPair } from 'js-xpx-chain-library';
 import { NetworkType } from '../blockchain/NetworkType';
 import { Address } from './Address';
 

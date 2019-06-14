@@ -17,7 +17,7 @@ import {expect} from 'chai';
 import * as CryptoJS from 'crypto-js';
 import {ChronoUnit} from 'js-joda';
 import {keccak_256, sha3_256 } from 'js-sha3';
-import {convert, nacl_catapult} from 'js-xpx-catapult-library';
+import {convert, nacl_catapult} from 'js-xpx-chain-library';
 import {AccountHttp} from '../../src/infrastructure/AccountHttp';
 import {Listener} from '../../src/infrastructure/Listener';
 import {TransactionHttp} from '../../src/infrastructure/TransactionHttp';
@@ -50,22 +50,26 @@ import {TransactionType} from '../../src/model/transaction/TransactionType';
 import {TransferTransaction} from '../../src/model/transaction/TransferTransaction';
 import {UInt64} from '../../src/model/UInt64';
 import {APIUrl , ConfNetworkType, ConfNetworkMosaic,
-    SeedAccount, TestingAccount, TestingRecipient, MultisigAccount, CosignatoryAccount, Cosignatory2Account, Cosignatory3Account, GetNemesisBlockDataPromise} from '../conf/conf.spec';
-import { Mosaic } from '../../src/model/model';
+    SeedAccount, TestingAccount, TestingRecipient, MultisigAccount, CosignatoryAccount, Cosignatory2Account, Cosignatory3Account, GetNemesisBlockDataPromise, ConfNamespace, ConfTestingMosaic, ConfTestingNamespace, ConfAccountHttp, ConfTransactionHttp, ConfMosaicHttp} from '../conf/conf.spec';
+import { Mosaic, MosaicAliasTransaction, AliasActionType, AliasTransaction } from '../../src/model/model';
 import { ModifyMetadataTransaction, MetadataModification, MetadataModificationType } from '../../src/model/transaction/ModifyMetadataTransaction';
 import { MetadataHttp } from '../../src/infrastructure/MetadataHttp';
 import { ConfUtils } from '../conf/ConfUtils';
+import { MosaicHttp } from '../../src/infrastructure/MosaicHttp';
+import { fail } from 'assert';
 
 describe('TransactionHttp', () => {
     let transactionHttp: TransactionHttp;
     let accountHttp: AccountHttp;
+    let mosaicHttp: MosaicHttp;
     let namespaceName: string;
     let mosaicId: MosaicId;
     let listener: Listener;
 
     before(() => {
-        transactionHttp = new TransactionHttp(APIUrl);
-        accountHttp = new AccountHttp(APIUrl);
+        transactionHttp = ConfTransactionHttp;
+        accountHttp = ConfAccountHttp;
+        mosaicHttp = ConfMosaicHttp;
         listener = new Listener(APIUrl);
 
         return listener.open();
@@ -75,10 +79,26 @@ describe('TransactionHttp', () => {
         listener.close();
     })
 
-    const validateTransactionAnnounceCorrectly = (address: Address, done) => {
-        const sub = listener.confirmed(address).subscribe((transaction: Transaction) => {
+    const validateTransactionAnnounceCorrectly = (address: Address, done, hash?: string) => {
+        const status = listener.status(address).subscribe(error => {
+            console.error(error);
+            status.unsubscribe();
             sub.unsubscribe();
-            return done();
+            return fail("Status reported an error.");
+        });
+        const sub = listener.confirmed(address).subscribe((transaction: Transaction) => {
+            if (hash) {
+                if (transaction && transaction.transactionInfo && transaction.transactionInfo.hash === hash) {
+                    // console.log(transaction);
+                    status.unsubscribe();
+                    sub.unsubscribe();
+                    return done();
+                }
+            } else {
+                status.unsubscribe();
+                sub.unsubscribe();
+                return done();
+            }
         });
     };
 
@@ -269,6 +289,70 @@ describe('TransactionHttp', () => {
                     []);
                 const signedTransaction = aggregateTransaction.signWith(TestingAccount);
                 validateTransactionAnnounceCorrectly(TestingAccount.address, done);
+                transactionHttp.announce(signedTransaction);
+            });
+        });
+
+        describe('AccountAndMosaicAliasTransactions', () => {
+            it('should create an alias to an account', (done) => {
+                const addressAliasTransaction = AliasTransaction.createForAddress(
+                    Deadline.create(),
+                    AliasActionType.Link,
+                    ConfTestingNamespace,
+                    TestingAccount.address,
+                    ConfNetworkType
+                );
+                const signedTransaction = addressAliasTransaction.signWith(TestingAccount);
+                validateTransactionAnnounceCorrectly(TestingAccount.address, () => {
+                    done();
+                }, signedTransaction.hash);
+
+                transactionHttp.announce(signedTransaction);
+            });
+            it('should remove the alias from an account', (done) => {
+                const addressAliasTransaction = AliasTransaction.createForAddress(
+                    Deadline.create(),
+                    AliasActionType.Unlink,
+                    ConfTestingNamespace,
+                    TestingAccount.address,
+                    ConfNetworkType
+                );
+                const signedTransaction = addressAliasTransaction.signWith(TestingAccount);
+                validateTransactionAnnounceCorrectly(TestingAccount.address, () => {
+                    done();
+                }, signedTransaction.hash);
+
+                transactionHttp.announce(signedTransaction);
+            });
+            it('should create an alias to a mosaic', (done) => {
+                const mosaicAliasTransaction = AliasTransaction.createForMosaic(
+                    Deadline.create(),
+                    AliasActionType.Link,
+                    ConfTestingNamespace,
+                    ConfTestingMosaic,
+                    ConfNetworkType
+                );
+                console.log(mosaicAliasTransaction);
+                const signedTransaction = mosaicAliasTransaction.signWith(TestingAccount);
+                validateTransactionAnnounceCorrectly(TestingAccount.address, () => {
+                    done();
+                }, signedTransaction.hash);
+
+                transactionHttp.announce(signedTransaction);
+            });
+            it('should remove an alias from a mosaic', (done) => {
+                const mosaicAliasTransaction = AliasTransaction.createForMosaic(
+                    Deadline.create(),
+                    AliasActionType.Unlink,
+                    ConfTestingNamespace,
+                    ConfTestingMosaic,
+                    ConfNetworkType
+                );
+                const signedTransaction = mosaicAliasTransaction.signWith(TestingAccount);
+                validateTransactionAnnounceCorrectly(TestingAccount.address, () => {
+                    done();
+                }, signedTransaction.hash);
+
                 transactionHttp.announce(signedTransaction);
             });
         });

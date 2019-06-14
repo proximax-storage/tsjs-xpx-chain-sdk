@@ -1,4 +1,4 @@
-import { ModifyMetadataTransaction as ModifyMetadataTransactionLibrary, VerifiableTransaction } from 'js-xpx-catapult-library';
+import { ModifyMetadataTransaction as ModifyMetadataTransactionLibrary, VerifiableTransaction } from 'js-xpx-chain-library';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { NamespaceId } from '../namespace/NamespaceId';
@@ -20,7 +20,7 @@ export enum MetadataModificationType {
 
 /**
  * Represents single metadata modification - add/remove of the key/value pair
- * 
+ *
  * @param type
  * @param key
  * @param value

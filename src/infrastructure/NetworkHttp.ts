@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {NetworkRoutesApi} from 'js-xpx-catapult-library';
+import {NetworkRoutesApi} from 'js-xpx-chain-library';
 import {from as observableFrom, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {NetworkType} from '../model/blockchain/NetworkType';

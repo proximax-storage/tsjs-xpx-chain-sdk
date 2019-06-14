@@ -53,8 +53,8 @@ describe('Account', () => {
                 NetworkType.MIJIN_TEST,
             );
             const publicAccount = account.publicAccount;
-            const signed = account.signData('catapult rocks!');
-            expect(publicAccount.verifySignature('catapult rocks!', signed))
+            const signed = account.signData('ProximaX rocks!');
+            expect(publicAccount.verifySignature('ProximaX rocks!', signed))
                 .to.be.true;
         });
 

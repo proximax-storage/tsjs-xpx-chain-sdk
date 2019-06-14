@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { HashLockTransaction, VerifiableTransaction } from 'js-xpx-catapult-library';
+import { HashLockTransaction, VerifiableTransaction } from 'js-xpx-chain-library';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { Mosaic } from '../mosaic/Mosaic';

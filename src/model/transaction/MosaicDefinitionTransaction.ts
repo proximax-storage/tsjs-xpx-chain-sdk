@@ -18,7 +18,7 @@ import {
     MosaicCreationTransaction as MosaicDefinitionTransactionLibrary,
     mosaicId as mosaicIdLibrary,
     VerifiableTransaction,
-} from 'js-xpx-catapult-library';
+} from 'js-xpx-chain-library';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { MosaicId } from '../mosaic/MosaicId';

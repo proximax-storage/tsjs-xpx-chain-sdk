@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {convert, namespaceId as NamespaceIdGenerator} from 'js-xpx-catapult-library';
+import {convert, namespaceId as NamespaceIdGenerator} from 'js-xpx-chain-library';
 import {Id} from '../Id';
 
 /**

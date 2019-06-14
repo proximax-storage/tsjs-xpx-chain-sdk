@@ -1,7 +1,7 @@
 {
-  "name": "tsjs-xpx-catapult-sdk",
-  "version": "0.1.0",
-  "description": "Proximax catapult sdk for typescript and javascript",
+  "name": "tsjs-xpx-chain-sdk",
+  "version": "0.2.0",
+  "description": "Proximax Blockchain sdk for typescript and javascript",
   "scripts": {
     "pretest": "npm run build",
     "test": "mocha --ui bdd --recursive ./dist/test --timeout 90000",
@@ -16,17 +16,17 @@
     "Yaaccount <tnuoccaay@gmail.com>"
   ],
   "bugs": {
-    "url": "https://github.com/proximax-storage/tsjs-xpx-catapult-sdk/issues"
+    "url": "https://github.com/proximax-storage/tsjs-xpx-chain-sdk/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/proximax-storage/tsjs-xpx-catapult-sdk.git"
+    "url": "git+https://github.com/proximax-storage/tsjs-xpx-chain-sdk.git"
   },
   "publishConfig": {
     "registry": "https://nexus.internal.proximax.io/repository/npm-private/"
   },
   "license": "Apache-2.0",
-  "homepage": "https://github.com/proximax-storage/tsjs-xpx-catapult-sdk#readme",
+  "homepage": "https://github.com/proximax-storage/tsjs-xpx-chain-sdk#readme",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "devDependencies": {
@@ -45,7 +45,7 @@
     "mocha": "^4.0.1",
     "nyc": "^11.3.0",
     "ts-mockito": "^2.2.7",
-    "ts-node": "^5.0.1",
+    "ts-node": "^8.2.0",
     "tslint": "^5.8.0",
     "typescript": "^3.4.4",
     "typescript-require": "^0.2.9-1"
@@ -54,7 +54,7 @@
     "@types/crypto-js": "^3.1.43",
     "crypto-js": "^3.1.9-1",
     "js-joda": "^1.6.2",
-    "js-xpx-catapult-library": "^0.1.0",
+    "js-xpx-chain-library": "^0.3.0",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5",
     "rxjs": "^6.2.1",

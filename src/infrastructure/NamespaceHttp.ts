@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {address as AddressLibrary, convert, NamespaceRoutesApi} from 'js-xpx-catapult-library';
+import {address as AddressLibrary, convert, NamespaceRoutesApi} from 'js-xpx-chain-library';
 import {from as observableFrom, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {Address} from '../model/account/Address';
@@ -177,7 +177,7 @@ export class NamespaceHttp extends Http implements NamespaceRepository {
                 map((namespaceInfoDTO) => {
 
                     if (namespaceInfoDTO.namespace === undefined) {
-                        // forward catapult-rest error
+                        // forward js-xpx-chain-rest error
                         throw namespaceInfoDTO;
                     }
 
@@ -202,7 +202,7 @@ export class NamespaceHttp extends Http implements NamespaceRepository {
                 map((namespaceInfoDTO) => {
 
                     if (namespaceInfoDTO.namespace === undefined) {
-                        // forward catapult-rest error
+                        // forward js-xpx-chain-rest error
                         throw namespaceInfoDTO;
                     }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {MosaicRoutesApi} from 'js-xpx-catapult-library';
+import {MosaicRoutesApi} from 'js-xpx-chain-library';
 import {from as observableFrom, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {PublicAccount} from '../model/account/PublicAccount';

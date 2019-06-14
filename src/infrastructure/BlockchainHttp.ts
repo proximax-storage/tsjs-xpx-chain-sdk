@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {BlockchainRoutesApi} from 'js-xpx-catapult-library';
+import {BlockchainRoutesApi} from 'js-xpx-chain-library';
 import {from as observableFrom, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {PublicAccount} from '../model/account/PublicAccount';

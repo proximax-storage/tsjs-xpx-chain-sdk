@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-The official ProximaX Blockchain SDK for TypeScript and JavaScript, available for browsers, mobile applications and NodeJS, to work with the ProximaX Sirius Blockchain (a.k.a Catapult)
+The official ProximaX Blockchain SDK for TypeScript and JavaScript, available for browsers, mobile applications and NodeJS, to work with the ProximaX Sirius Blockchain
 
 ## Requirements
 
@@ -14,20 +14,20 @@ The official ProximaX Blockchain SDK for TypeScript and JavaScript, available fo
 
 ## Installation
 
-```npm install tsjs-xpx-catapult-sdk rxjs```
+```npm install tsjs-xpx-chain-sdk rxjs```
 
 ## Documentation and Getting Started
 
 - check out [wiki][wiki]
 - browse [examples][examples]
 
-## tsjs-xpx-catapult-sdk Releases
+## tsjs-xpx-chain-sdk Releases
 
-The release notes for the tsjs-xpx-catapult-sdk can be found [here](CHANGELOG.md).
+The release notes for the tsjs-xpx-chain-sdk can be found [here](CHANGELOG.md).
 
 ## Contributing
 
-This project is developed and maintained by ProximaX. Contributions are welcome and appreciated. You can find [tsjs-xpx-catapult-sdk on GitHub][self]; 
+This project is developed and maintained by ProximaX. Contributions are welcome and appreciated. You can find [tsjs-xpx-chain-sdk on GitHub][self];
 Feel free to start an issue or create a pull request. Check [CONTRIBUTING](CONTRIBUTING.md) before start.
 
 ## Getting help
@@ -46,10 +46,10 @@ Important versions listed below. Refer to the [Changelog](CHANGELOG.md) for a fu
 Copyright (c) 2018-2019 NEM
 Licensed under the [Apache License 2.0](LICENSE)
 
-[self]: https://github.com/proximax-storage/tsjs-xpx-catapult-sdk
-[issues]: https://github.com/proximax-storage/tsjs-xpx-catapult-sdk/issues
-[wiki]: https://github.com/proximax-storage/tsjs-xpx-catapult-sdk/wiki
-[examples]: https://github.com/proximax-storage/tsjs-xpx-catapult-sdk/wiki/Examples
+[self]: https://github.com/proximax-storage/tsjs-xpx-chain-sdk
+[issues]: https://github.com/proximax-storage/tsjs-xpx-chain-sdk/issues
+[wiki]: https://github.com/proximax-storage/tsjs-xpx-chain-sdk/wiki
+[examples]: https://github.com/proximax-storage/tsjs-xpx-chain-sdk/wiki/Examples
 
 ## Acknowledgments
 * Hat tips
