@@ -193,7 +193,7 @@ export class Listener {
      */
     public terminate(): void {
         if (this.webSocket) {
-            this.webSocket.terminate();
+            this.webSocket.close();
         }
     }
 

@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    MosaicCreationTransaction as MosaicDefinitionTransactionLibrary,
-    mosaicId as mosaicIdLibrary,
-    VerifiableTransaction,
-} from 'js-xpx-chain-library';
+import { Builder } from '../../infrastructure/builders/MosaicCreationTransaction';
+import {VerifiableTransaction} from '../../infrastructure/builders/VerifiableTransaction';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { MosaicId } from '../mosaic/MosaicId';
@@ -123,7 +120,7 @@ export class MosaicDefinitionTransaction extends Transaction {
      * @returns {VerifiableTransaction}
      */
     protected buildTransaction(): VerifiableTransaction {
-        let mosaicDefinitionTransaction = new MosaicDefinitionTransactionLibrary.Builder()
+        let mosaicDefinitionTransaction = new Builder()
             .addDeadline(this.deadline.toDTO())
             .addFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
@@ -138,10 +135,6 @@ export class MosaicDefinitionTransaction extends Transaction {
 
         if (this.mosaicProperties.transferable === true) {
             mosaicDefinitionTransaction = mosaicDefinitionTransaction.addTransferability();
-        }
-
-        if (this.mosaicProperties.levyMutable === true) {
-            mosaicDefinitionTransaction = mosaicDefinitionTransaction.addLevyMutable();
         }
 
         return mosaicDefinitionTransaction.build();

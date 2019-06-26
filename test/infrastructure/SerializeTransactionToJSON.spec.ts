@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import {deepEqual} from 'assert';
 import { expect } from 'chai';
 import { sha3_256 } from 'js-sha3';
-import { convert } from 'js-xpx-chain-library';
-import { TransactionMapping } from '../../src/core/utils/TransactionMapping';
+import {Convert as convert} from '../../src/core/format';
 import { Account } from '../../src/model/account/Account';
 import { Address } from '../../src/model/account/Address';
 import { PropertyModificationType } from '../../src/model/account/PropertyModificationType';
@@ -32,7 +30,6 @@ import { MosaicSupplyType } from '../../src/model/mosaic/MosaicSupplyType';
 import { NetworkCurrencyMosaic } from '../../src/model/mosaic/NetworkCurrencyMosaic';
 import { AliasActionType } from '../../src/model/namespace/AliasActionType';
 import { NamespaceId } from '../../src/model/namespace/NamespaceId';
-import { NamespaceType } from '../../src/model/namespace/NamespaceType';
 import { AccountLinkTransaction } from '../../src/model/transaction/AccountLinkTransaction';
 import { AccountPropertyModification } from '../../src/model/transaction/AccountPropertyModification';
 import { AccountPropertyTransaction } from '../../src/model/transaction/AccountPropertyTransaction';
@@ -42,7 +39,6 @@ import { Deadline } from '../../src/model/transaction/Deadline';
 import { HashType } from '../../src/model/transaction/HashType';
 import { LinkAction } from '../../src/model/transaction/LinkAction';
 import { LockFundsTransaction } from '../../src/model/transaction/LockFundsTransaction';
-import { ModifyAccountPropertyAddressTransaction } from '../../src/model/transaction/ModifyAccountPropertyAddressTransaction';
 import { ModifyMultisigAccountTransaction } from '../../src/model/transaction/ModifyMultisigAccountTransaction';
 import { MosaicAliasTransaction } from '../../src/model/transaction/MosaicAliasTransaction';
 import { MosaicDefinitionTransaction } from '../../src/model/transaction/MosaicDefinitionTransaction';
@@ -76,7 +72,7 @@ describe('SerializeTransactionToJSON', () => {
         const json = accountLinkTransaction.toJSON();
 
         expect(json.transaction.remoteAccountKey).to.be.equal(account.publicKey);
-        expect(json.transaction.linkAction).to.be.equal(LinkAction.Link);
+        expect(json.transaction.action).to.be.equal(LinkAction.Link);
     });
 
     it('should create AccountPropertyAddressTransaction', () => {
@@ -153,7 +149,7 @@ describe('SerializeTransactionToJSON', () => {
         const json = addressAliasTransaction.toJSON();
 
         expect(json.transaction.type).to.be.equal(TransactionType.ADDRESS_ALIAS);
-        expect(json.transaction.aliasAction).to.be.equal(AliasActionType.Link);
+        expect(json.transaction.action).to.be.equal(AliasActionType.Link);
     });
 
     it('should create MosaicAliasTransaction', () => {
@@ -169,7 +165,7 @@ describe('SerializeTransactionToJSON', () => {
         const json = mosaicAliasTransaction.toJSON();
 
         expect(json.transaction.type).to.be.equal(TransactionType.MOSAIC_ALIAS);
-        expect(json.transaction.aliasAction).to.be.equal(AliasActionType.Link);
+        expect(json.transaction.action).to.be.equal(AliasActionType.Link);
 
     });
 
@@ -181,7 +177,6 @@ describe('SerializeTransactionToJSON', () => {
             MosaicProperties.create({
                 supplyMutable: false,
                 transferable: false,
-                levyMutable: false,
                 divisibility: 3,
                 duration: UInt64.fromUint(1000),
             }),
@@ -206,7 +201,6 @@ describe('SerializeTransactionToJSON', () => {
             MosaicProperties.create({
                 supplyMutable: false,
                 transferable: false,
-                levyMutable: false,
                 divisibility: 3,
             }),
             NetworkType.MIJIN_TEST,
@@ -281,6 +275,7 @@ describe('SerializeTransactionToJSON', () => {
             Deadline.create(),
             HashType.Op_Sha3_256,
             sha3_256.create().update(convert.hexToUint8(proof)).hex(),
+            account.address,
             proof,
             NetworkType.MIJIN_TEST,
         );
@@ -357,13 +352,14 @@ describe('SerializeTransactionToJSON', () => {
     });
 
     it('should create LockFundTransaction', () => {
+        const generationHash = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
         const aggregateTransaction = AggregateTransaction.createBonded(
             Deadline.create(),
             [],
             NetworkType.MIJIN_TEST,
             [],
         );
-        const signedTransaction = account.sign(aggregateTransaction);
+        const signedTransaction = account.sign(aggregateTransaction, generationHash);
         const lockTransaction = LockFundsTransaction.create(Deadline.create(),
             NetworkCurrencyMosaic.createRelative(10),
             UInt64.fromUint(10),

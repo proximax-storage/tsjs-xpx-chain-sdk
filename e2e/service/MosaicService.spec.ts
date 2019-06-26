@@ -8,6 +8,9 @@ import { APIUrl, GetNemesisBlockDataPromise, SeedAccount } from '../conf/conf.sp
 import { MosaicId, MosaicView, MosaicAmountView, MosaicInfo, UInt64, Mosaic } from '../../src/model/model';
 
 describe('MosaicService', () => {
+    let accountAddress: Address;
+    let accountHttp: AccountHttp;
+    let mosaicHttp: MosaicHttp;
 
     it('mosaicsView', () => {
         const mosaicId = new MosaicId([3294802500, 2243684972]);
@@ -59,17 +62,14 @@ describe('MosaicService', () => {
     });
 
     it('should return the mosaic list skipping the expired mosaics', () => {
-        const mosaicService = new MosaicService(
-            new AccountHttp(APIUrl),
-            new MosaicHttp(APIUrl),
-        );
+        const mosaicService = new MosaicService(accountHttp, mosaicHttp);
 
         return GetNemesisBlockDataPromise().then(data => {
             return mosaicService.mosaicsAmountViewFromAddress(SeedAccount.address).pipe(
                 mergeMap((_) => _),
                 map((mosaic) => console.log('You have', mosaic.relativeAmount(), mosaic.fullName())),
                 toArray(),
-            ).toPromise();    
+            ).toPromise();
         });
 
     });

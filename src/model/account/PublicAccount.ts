@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { convert, KeyPair } from 'js-xpx-chain-library';
+import { KeyPair } from '../../core/crypto';
+import { Convert as convert} from '../../core/format';
 import { NetworkType } from '../blockchain/NetworkType';
 import { Address } from './Address';
 

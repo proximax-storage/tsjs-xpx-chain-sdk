@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import {address as AddressLibrary, convert, KeyPair, nacl_catapult} from 'js-xpx-chain-library';
+import {Crypto, KeyPair} from '../../core/crypto';
+import {Convert as convert, RawAddress as AddressLibrary} from '../../core/format';
 import {NetworkType} from '../blockchain/NetworkType';
 import {AggregateTransaction} from '../transaction/AggregateTransaction';
 import {CosignatureSignedTransaction} from '../transaction/CosignatureSignedTransaction';
@@ -70,7 +71,7 @@ export class Account {
 
     public static generateNewAccount(networkType: NetworkType): Account {
         // Create random bytes
-        const randomBytesArray = nacl_catapult.randomBytes(32);
+        const randomBytesArray = Crypto.randomBytes(32);
         // Hash random bytes with entropy seed
         // Finalize and keep only 32 bytes
         const hashKey = convert.uint8ToHex(randomBytesArray); // TODO: derive private key correctly
@@ -83,8 +84,8 @@ export class Account {
     }
     /**
      * Create a new encrypted Message
-     * @param message
-     * @param recipientPublicAccount
+     * @param message - Plain message to be encrypted
+     * @param recipientPublicAccount - Recipient public account
      * @returns {EncryptedMessage}
      */
     public encryptMessage(message: string, recipientPublicAccount: PublicAccount): EncryptedMessage {
@@ -93,12 +94,12 @@ export class Account {
 
     /**
      * Decrypts an encrypted message
-     * @param encryptedMessage
-     * @param senderPublicAccount
+     * @param encryptedMessage - Encrypted message
+     * @param publicAccount - The public account originally encrypted the message
      * @returns {PlainMessage}
      */
-    public decryptMessage(encryptedMessage: EncryptedMessage, senderPublicAccount: PublicAccount): PlainMessage {
-        return EncryptedMessage.decrypt(encryptedMessage, this.privateKey, senderPublicAccount);
+    public decryptMessage(encryptedMessage: EncryptedMessage, publicAccount: PublicAccount): PlainMessage {
+        return EncryptedMessage.decrypt(encryptedMessage, this.privateKey, publicAccount);
     }
     /**
      * Account public key.
@@ -127,20 +128,24 @@ export class Account {
     /**
      * Sign a transaction
      * @param transaction - The transaction to be signed.
+     * @param generationHash - Network generation hash hex
      * @return {SignedTransaction}
      */
-    public sign(transaction: Transaction): SignedTransaction {
-        return transaction.signWith(this);
+    public sign(transaction: Transaction, generationHash): SignedTransaction {
+        return transaction.signWith(this, generationHash);
     }
 
     /**
      * Sign transaction with cosignatories creating a new SignedTransaction
      * @param transaction - The aggregate transaction to be signed.
      * @param cosignatories - The array of accounts that will cosign the transaction
+     * @param generationHash - Network generation hash hex
      * @return {SignedTransaction}
      */
-    public signTransactionWithCosignatories(transaction: AggregateTransaction, cosignatories: Account[]): SignedTransaction {
-        return transaction.signTransactionWithCosignatories(this, cosignatories);
+    public signTransactionWithCosignatories(transaction: AggregateTransaction,
+                                            cosignatories: Account[],
+                                            generationHash: string): SignedTransaction {
+    return transaction.signTransactionWithCosignatories(this, cosignatories, generationHash);
     }
 
     /**

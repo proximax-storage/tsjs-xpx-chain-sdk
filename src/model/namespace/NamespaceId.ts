@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {convert, namespaceId as NamespaceIdGenerator} from 'js-xpx-chain-library';
+import {Convert as convert} from '../../core/format';
+import {NamespaceMosaicIdGenerator} from '../../infrastructure/transaction/NamespaceMosaicIdGenerator';
 import {Id} from '../Id';
 
 /**
@@ -44,7 +45,7 @@ export class NamespaceId {
             this.id = new Id(id);
         } else if (typeof id === 'string') {
             this.fullName = id;
-            this.id = new Id(NamespaceIdGenerator(id));
+            this.id = new Id(NamespaceMosaicIdGenerator.namespaceId(id));
         }
     }
 

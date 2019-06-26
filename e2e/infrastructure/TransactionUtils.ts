@@ -19,17 +19,22 @@ import {Account} from '../../src/model/account/Account';
 import {Address} from '../../src/model/account/Address';
 import { PublicAccount } from '../../src/model/account/PublicAccount';
 import {NetworkType} from '../../src/model/blockchain/NetworkType';
+import { Mosaic } from '../../src/model/mosaic/Mosaic';
+import { MosaicId } from '../../src/model/mosaic/MosaicId';
+import {NetworkCurrencyMosaic} from '../../src/model/mosaic/NetworkCurrencyMosaic';
 import {AggregateTransaction} from '../../src/model/transaction/AggregateTransaction';
 import {CosignatureTransaction} from '../../src/model/transaction/CosignatureTransaction';
 import {Deadline} from '../../src/model/transaction/Deadline';
+import { LockFundsTransaction } from '../../src/model/transaction/LockFundsTransaction';
 import { ModifyMultisigAccountTransaction } from '../../src/model/transaction/ModifyMultisigAccountTransaction';
 import { MultisigCosignatoryModification } from '../../src/model/transaction/MultisigCosignatoryModification';
 import { MultisigCosignatoryModificationType } from '../../src/model/transaction/MultisigCosignatoryModificationType';
 import {PlainMessage} from '../../src/model/transaction/PlainMessage';
+import { SignedTransaction } from '../../src/model/transaction/SignedTransaction';
 import {TransferTransaction} from '../../src/model/transaction/TransferTransaction';
 import {UInt64} from '../../src/model/UInt64';
 import {CosignatoryAccount, MultisigAccount, APIUrl, TestingAccount, TestingRecipient, ConfNetworkMosaic, Cosignatory3Account } from '../../e2e/conf/conf.spec';
-import { Mosaic, HashLockTransaction, TransactionInfo, TransactionType, LockFundsTransaction, NetworkCurrencyMosaic, AggregateTransactionCosignature } from '../../src/model/model';
+import { HashLockTransaction, TransactionInfo, TransactionType, AggregateTransactionCosignature } from '../../src/model/model';
 import { Listener } from '../../src/infrastructure/Listener';
 import { filter, mergeMap } from 'rxjs/operators';
 
@@ -78,6 +83,8 @@ export class TransactionUtils {
             [transferTransaction.toAggregate(MultisigAccount.publicAccount)],
             MultisigAccount.address.networkType
         );
+        return signer.sign(aggregateTransaction, generationHash);
+    }
 
         const signedAggregateTransaction = CosignatoryAccount.sign(aggregateTransaction);
 
@@ -149,7 +156,7 @@ export class TransactionUtils {
         )
 
         const signedTransaction = aggregateTransaction.signTransactionWithCosignatories(CosignatoryAccount, [Cosignatory3Account]);
-        
+
         return transactionHttp.announce(signedTransaction);
     }
 }

@@ -38,8 +38,7 @@ describe('NamespaceHttp', () => {
             GetNemesisBlockDataPromise().then(data => {
                 namespaceHttp.getNamespacesFromAccount(data.nemesisBlockInfo.signer.address)
                 .subscribe((namespaces) => {
-                    expect(namespaces[0].startHeight.lower).to.be.equal(1);
-                    expect(namespaces[0].startHeight.higher).to.be.equal(0);
+                    deepEqual(namespaces[0].owner, account.publicAccount);
                     done();
                 });
             });
@@ -51,8 +50,7 @@ describe('NamespaceHttp', () => {
             GetNemesisBlockDataPromise().then(data => {
                 namespaceHttp.getNamespacesFromAccounts([data.nemesisBlockInfo.signer.address])
                 .subscribe((namespaces) => {
-                    expect(namespaces[0].startHeight.lower).to.be.equal(1);
-                    expect(namespaces[0].startHeight.higher).to.be.equal(0);
+                    deepEqual(namespaces[0].owner, account.publicAccount);
                     done();
                 });
             });

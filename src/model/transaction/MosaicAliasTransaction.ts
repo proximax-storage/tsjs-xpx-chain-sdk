@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { MosaicAliasTransaction as MosaicAliasTransactionLibrary, VerifiableTransaction } from 'js-xpx-chain-library';
+import { Builder } from '../../infrastructure/builders/MosaicAliasTransaction';
+import {VerifiableTransaction} from '../../infrastructure/builders/VerifiableTransaction';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { MosaicId } from '../mosaic/MosaicId';
@@ -111,7 +112,7 @@ export class MosaicAliasTransaction extends Transaction {
      * @returns {VerifiableTransaction}
      */
     protected buildTransaction(): VerifiableTransaction {
-        return new MosaicAliasTransactionLibrary.Builder()
+        return new Builder()
             .addDeadline(this.deadline.toDTO())
             .addFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())

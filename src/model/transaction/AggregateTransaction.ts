@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { AggregateTransaction as AggregateTransactionLibrary } from 'js-xpx-chain-library';
+import { Builder } from '../../infrastructure/builders/AggregateTransaction';
+import { AggregateTransaction as AggregatedTransactionCore} from '../../infrastructure/builders/AggregateTransaction';
 import { Account } from '../account/Account';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
@@ -116,8 +117,8 @@ export class AggregateTransaction extends Transaction {
      * @internal
      * @returns {AggregateTransaction}
      */
-    public buildTransaction(): AggregateTransactionLibrary {
-        return new AggregateTransactionLibrary.Builder()
+    public buildTransaction(): AggregatedTransactionCore {
+        return new Builder()
             .addDeadline(this.deadline.toDTO())
             .addType(this.type)
             .addFee(this.maxFee.toDTO())
@@ -132,11 +133,12 @@ export class AggregateTransaction extends Transaction {
      * Sign transaction with cosignatories creating a new SignedTransaction
      * @param initiatorAccount - Initiator account
      * @param cosignatories - The array of accounts that will cosign the transaction
+     * @param generationHash - Network generation hash hex
      * @returns {SignedTransaction}
      */
-    public signTransactionWithCosignatories(initiatorAccount: Account, cosignatories: Account[]) {
+    public signTransactionWithCosignatories(initiatorAccount: Account, cosignatories: Account[], generationHash: string) {
         const aggregateTransaction = this.buildTransaction();
-        const signedTransactionRaw = aggregateTransaction.signTransactionWithCosigners(initiatorAccount, cosignatories);
+        const signedTransactionRaw = aggregateTransaction.signTransactionWithCosigners(initiatorAccount, cosignatories, generationHash);
         return new SignedTransaction(signedTransactionRaw.payload, signedTransactionRaw.hash, initiatorAccount.publicKey,
                                      this.type, this.networkType);
     }

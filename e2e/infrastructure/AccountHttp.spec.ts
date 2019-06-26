@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import {expect} from 'chai';
+import {deepEqual} from 'assert';
+import {assert, expect} from 'chai';
 import {AccountHttp} from '../../src/infrastructure/AccountHttp';
 import {QueryParams} from '../../src/infrastructure/QueryParams';
 
@@ -29,7 +30,7 @@ describe('AccountHttp', () => {
         it('should return account data given a NEM Address', (done) => {
             accountHttp.getAccountInfo(TestingAccount.address)
                 .subscribe((accountInfo) => {
-                    expect(accountInfo.publicKey).to.be.equal(TestingAccount.publicKey);       
+                    expect(accountInfo.publicKey).to.be.equal(TestingAccount.publicKey);
                     done();
             });
         });
@@ -71,6 +72,7 @@ describe('AccountHttp', () => {
             });
         });
     });
+
     describe('getMultisigAccountGraphInfo', () => {
         it('should call getMultisigAccountGraphInfo successfully', (done) => {
             accountHttp.getMultisigAccountGraphInfo(MultisigAccount.address).subscribe((multisigAccountGraphInfo) => {
@@ -90,9 +92,6 @@ describe('AccountHttp', () => {
     });
 
     describe('outgoingTransactions', () => {
-        let nextId: string;
-        let lastId: string;
-
         it('should call outgoingTransactions successfully', (done) => {
             accountHttp.outgoingTransactions(TestingAccount.publicAccount).subscribe((transactions) => {
                 expect(transactions.length).to.be.equal(10);
@@ -122,6 +121,9 @@ describe('AccountHttp', () => {
             accountHttp.aggregateBondedTransactions(TestingAccount.publicAccount).subscribe((transactions) => {
                 expect(transactions.length).to.be.equal(0);
                 done();
+            }, (error) => {
+                console.log('Error:', error);
+                assert(false);
             });
         });
     });

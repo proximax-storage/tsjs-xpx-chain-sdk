@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {crypto, convert} from 'js-xpx-chain-library';
+import {Crypto} from '../../core/crypto';
 import {PublicAccount} from '../account/PublicAccount';
 import {Message} from './Message';
 import {MessageType} from './MessageType';
@@ -25,12 +25,8 @@ import {PlainMessage} from './PlainMessage';
  */
 export class EncryptedMessage extends Message {
 
-    public readonly recipientPublicAccount?: PublicAccount;
-
-    constructor(payload: string,
-                recipientPublicAccount?: PublicAccount) {
+    constructor(payload: string) {
         super(MessageType.EncryptedMessage, payload);
-        this.recipientPublicAccount = recipientPublicAccount;
     }
 
     /**
@@ -41,7 +37,7 @@ export class EncryptedMessage extends Message {
      */
     public static create(message: string, recipientPublicAccount: PublicAccount, privateKey) {
         return new EncryptedMessage(
-            crypto.encode(privateKey, recipientPublicAccount.publicKey, message)
+            Crypto.encode(privateKey, recipientPublicAccount.publicKey, message).toUpperCase()
         );
     }
 
@@ -60,7 +56,6 @@ export class EncryptedMessage extends Message {
      * @param recipientPublicAccount - Sender public account
      */
     public static decrypt(encryptMessage: EncryptedMessage, privateKey, recipientPublicAccount: PublicAccount): PlainMessage {
-        const decrypted = crypto.decode(privateKey, recipientPublicAccount.publicKey, encryptMessage.payload);
-        return new PlainMessage(decrypted);
+        return new PlainMessage(Crypto.decode(privateKey, recipientPublicAccount.publicKey, encryptMessage.payload));
     }
 }

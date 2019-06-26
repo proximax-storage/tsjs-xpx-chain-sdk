@@ -1,13 +1,14 @@
 {
   "name": "tsjs-xpx-chain-sdk",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Proximax Blockchain sdk for typescript and javascript",
   "scripts": {
     "pretest": "npm run build",
     "test": "mocha --ui bdd --recursive ./dist/test --timeout 90000",
-    "test:e2e": "mocha --ui bdd --recursive ./dist/e2e --timeout 90000",
+    "e2econfigcopy": "gulp",
+    "test:e2e": "npm run build && mocha --ui bdd --recursive ./dist/e2e --timeout 90000",
     "test:all": "mocha --ui bdd --recursive ./dist/ --timeout 90000",
-    "build": "rm -rf dist/ && tsc",
+    "build": "rm -rf dist/ && tsc && npm run e2econfigcopy",
     "test:cov": "nyc --reporter=lcov --reporter=text-lcov npm t && nyc report --reporter=text-lcov",
     "test:coveralls": "npm run test:cov | coveralls"
   },
@@ -31,6 +32,7 @@
   "typings": "dist/index.d.ts",
   "devDependencies": {
     "@types/chai": "^4.0.4",
+    "@types/crypto-js": "^3.1.43",
     "@types/lodash": "^4.14.85",
     "@types/mocha": "^2.2.44",
     "@types/request": "^2.47.0",
@@ -41,9 +43,11 @@
     "chai": "^4.1.2",
     "config": "^3.1.0",
     "coveralls": "^3.0.0",
-    "js-sha3": "^0.8.0",
+    "gulp": "^4.0.2",
+    "gulp-typescript": "^5.0.1",
     "mocha": "^4.0.1",
     "nyc": "^11.3.0",
+    "secure-random": "^1.1.1",
     "ts-mockito": "^2.2.7",
     "ts-node": "^8.2.0",
     "tslint": "^5.8.0",
@@ -51,10 +55,13 @@
     "typescript-require": "^0.2.9-1"
   },
   "dependencies": {
-    "@types/crypto-js": "^3.1.43",
+    "bluebird": "^3.5.5",
     "crypto-js": "^3.1.9-1",
+    "flatbuffers": "^1.11.0",
     "js-joda": "^1.6.2",
-    "js-xpx-chain-library": "^0.3.0",
+    "js-sha256": "^0.9.0",
+    "js-sha3": "^0.8.0",
+    "ripemd160": "^2.0.2",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5",
     "rxjs": "^6.2.1",
@@ -62,11 +69,7 @@
     "utf8": "^2.1.2",
     "ws": "^5.2.0"
   },
-  "peerDependencies": {
-    "js-joda": "^1.6.2",
-    "utf8": "^2.1.2",
-    "rxjs": "^6.2.1"
-  },
+  "peerDependencies": {},
   "nyc": {
     "exclude": [
       "**/*.spec.js"

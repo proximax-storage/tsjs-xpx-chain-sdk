@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { VerifiableTransaction } from 'js-xpx-chain-library';
 import { expect } from 'chai';
+import { VerifiableTransaction } from '../../../src/infrastructure/builders/VerifiableTransaction';
 import { Account } from '../../../src/model/account/Account';
+import { Address } from '../../../src/model/account/Address';
 import { NetworkType } from '../../../src/model/blockchain/NetworkType';
 import { AggregateTransaction } from '../../../src/model/transaction/AggregateTransaction';
-import { Address } from '../../../src/model/account/Address';
 import { Deadline } from '../../../src/model/transaction/Deadline';
 import { PlainMessage } from '../../../src/model/transaction/PlainMessage';
 import { SignedTransaction } from '../../../src/model/transaction/SignedTransaction';

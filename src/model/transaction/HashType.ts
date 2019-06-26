@@ -21,7 +21,7 @@
  * 2: Op_Hash_160 (first with SHA-256 and then with RIPEMD-160 (BTC compatibility))
  * 3: Op_Hash_256: input is hashed twice with SHA-256 (BTC compatibility)
  */
-import {convert} from 'js-xpx-chain-library';
+import {Convert as convert} from '../../core/format';
 
 export enum HashType {
     Op_Sha3_256 = 0,
@@ -38,7 +38,7 @@ export function HashTypeLengthValidator(hashType: HashType, input: string): bool
             case HashType.Op_Keccak_256:
                 return input.length === 64;
             case HashType.Op_Hash_160:
-                return input.length === 40;
+                return input.length === 40 || input.length === 64;
             default:
                 break;
         }

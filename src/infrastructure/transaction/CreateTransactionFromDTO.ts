@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {uint64 as UInt64Library, convert} from 'js-xpx-chain-library';
+import {Convert as convert} from '../../core/format';
+import {RawUInt64 as UInt64Library} from '../../core/format';
 import {Address} from '../../model/account/Address';
 import {PublicAccount} from '../../model/account/PublicAccount';
 import {NetworkType} from '../../model/blockchain/NetworkType';
@@ -21,6 +22,7 @@ import {Id} from '../../model/Id';
 import {Mosaic} from '../../model/mosaic/Mosaic';
 import {MosaicId} from '../../model/mosaic/MosaicId';
 import {MosaicProperties} from '../../model/mosaic/MosaicProperties';
+import { MosaicPropertyType } from '../../model/mosaic/MosaicPropertyType';
 import {NamespaceId} from '../../model/namespace/NamespaceId';
 import { AccountLinkTransaction } from '../../model/transaction/AccountLinkTransaction';
 import {AccountPropertyModification} from '../../model/transaction/AccountPropertyModification';
@@ -170,10 +172,10 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             transactionDTO.nonce,
             new MosaicId(transactionDTO.mosaicId),
             new MosaicProperties(
-                new UInt64(transactionDTO.properties[0].value),
-                (new UInt64(transactionDTO.properties[1].value)).compact(),
-                transactionDTO.properties.length === 3 &&  transactionDTO.properties[2].value ?
-                    new UInt64(transactionDTO.properties[2].value) : undefined,
+                new UInt64(transactionDTO.properties[MosaicPropertyType.MosaicFlags].value),
+                (new UInt64(transactionDTO.properties[MosaicPropertyType.Divisibility].value)).compact(),
+                transactionDTO.properties.length === 3 &&  transactionDTO.properties[MosaicPropertyType.Duration].value ?
+                    new UInt64(transactionDTO.properties[MosaicPropertyType.Duration].value) : undefined,
             ),
             transactionDTO.signature,
             transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
@@ -251,6 +253,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             new UInt64(transactionDTO.maxFee || [0, 0]),
             transactionDTO.hashAlgorithm,
             (transactionDTO.hashAlgorithm === 2 ? transactionDTO.secret.substr(0, 40) : transactionDTO.secret),
+            transactionDTO.recipient,
             transactionDTO.proof,
             transactionDTO.signature,
             transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
@@ -263,7 +266,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             extractTransactionVersion(transactionDTO.version),
             Deadline.createFromDTO(transactionDTO.deadline),
             new UInt64(transactionDTO.maxFee || [0, 0]),
-            transactionDTO.aliasAction,
+            transactionDTO.action,
             new NamespaceId(transactionDTO.namespaceId),
             new MosaicId(transactionDTO.mosaicId),
             transactionDTO.signature,
@@ -277,7 +280,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             extractTransactionVersion(transactionDTO.version),
             Deadline.createFromDTO(transactionDTO.deadline),
             new UInt64(transactionDTO.maxFee || [0, 0]),
-            transactionDTO.aliasAction,
+            transactionDTO.action,
             new NamespaceId(transactionDTO.namespaceId),
             extractRecipient(transactionDTO.address) as Address,
             transactionDTO.signature,
@@ -293,7 +296,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             new UInt64(transactionDTO.maxFee || [0, 0]),
             transactionDTO.propertyType,
             transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountPropertyModification(
-                modificationDTO.modificationType,
+                modificationDTO.type,
                 modificationDTO.value,
             )) : [],
             transactionDTO.signature,
@@ -309,7 +312,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             new UInt64(transactionDTO.maxFee || [0, 0]),
             transactionDTO.propertyType,
             transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountPropertyModification(
-                modificationDTO.modificationType,
+                modificationDTO.type,
                 modificationDTO.value,
             )) : [],
             transactionDTO.signature,
@@ -325,7 +328,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             new UInt64(transactionDTO.maxFee || [0, 0]),
             transactionDTO.propertyType,
             transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountPropertyModification(
-                modificationDTO.modificationType,
+                modificationDTO.type,
                 modificationDTO.value,
             )) : [],
             transactionDTO.signature,
@@ -340,7 +343,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             Deadline.createFromDTO(transactionDTO.deadline),
             new UInt64(transactionDTO.maxFee || [0, 0]),
             transactionDTO.remoteAccountKey,
-            transactionDTO.linkAction,
+            transactionDTO.action,
             transactionDTO.signature,
             transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
                     extractNetworkType(transactionDTO.version)) : undefined,

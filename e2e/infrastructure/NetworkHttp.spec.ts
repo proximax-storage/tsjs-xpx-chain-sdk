@@ -15,11 +15,21 @@
  */
 import {expect} from 'chai';
 import {NetworkHttp} from '../../src/infrastructure/NetworkHttp';
-import {NetworkType} from '../../src/model/blockchain/NetworkType';
-import {APIUrl, ConfNetworkType} from '../conf/conf.spec';
+import {ConfNetworkType} from '../conf/conf.spec';
 
 describe('NetworkHttp', () => {
-    const networkHttp = new NetworkHttp(APIUrl);
+    let networkHttp: NetworkHttp;
+    before((done) => {
+        const path = require('path');
+        require('fs').readFile(path.resolve(__dirname, '../conf/network.conf'), (err, data) => {
+            if (err) {
+                throw err;
+            }
+            const json = JSON.parse(data);
+            networkHttp = new NetworkHttp(json.apiUrl);
+            done();
+        });
+    });
 
     describe('getNetworkType', () => {
         it('should return network type', (done) => {

@@ -1,4 +1,6 @@
 # CHANGELOG
+## v0.3.0
+- integrated js-xpx-chain-library (dependency removed)
 
 ## v0.2.0
 - renamed to tsjs-xpx-chain-sdk

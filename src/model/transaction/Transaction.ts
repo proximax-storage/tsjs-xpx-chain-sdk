@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { VerifiableTransaction } from 'js-xpx-chain-library';
+import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
 import { SerializeTransactionToJSON } from '../../infrastructure/transaction/SerializeTransactionToJSON';
 import { Account } from '../account/Account';
 import { PublicAccount } from '../account/PublicAccount';
@@ -82,11 +82,12 @@ export abstract class Transaction {
      * @internal
      * Serialize and sign transaction creating a new SignedTransaction
      * @param account - The account to sign the transaction
+     * @param generationHash - Network generation hash hex
      * @returns {SignedTransaction}
      */
-    public signWith(account: Account): SignedTransaction {
+    public signWith(account: Account, generationHash: string): SignedTransaction {
         const transaction = this.buildTransaction();
-        const signedTransactionRaw = transaction.signTransaction(account);
+        const signedTransactionRaw = transaction.signTransaction(account, generationHash);
         return new SignedTransaction(
             signedTransactionRaw.payload,
             signedTransactionRaw.hash,
