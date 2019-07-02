@@ -17,6 +17,7 @@
 import { WalletAlgorithm } from '../../model/wallet/WalletAlgorithm';
 import { Convert as convert } from '../format/Convert';
 import { KeyPair } from './KeyPair';
+import { encode as utf8encode } from 'utf8';
 import * as utility from './Utilities';
 const CryptoJS = require('crypto-js');
 export class Crypto {
@@ -302,7 +303,7 @@ export class Crypto {
         const salt = new Uint8Array(binPayload.buffer, 0, 32);
         const iv = new Uint8Array(binPayload.buffer, 32, 16);
         const decoded = Crypto._decode(recipientPrivate, senderPublic, payload, iv, salt);
-        return decoded;
+        return utf8encode(String.fromCharCode.apply(null, convert.hexToUint8(decoded)));
     }
 
     /**

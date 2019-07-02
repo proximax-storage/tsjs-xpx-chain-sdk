@@ -55,18 +55,18 @@ describe('AccountHttp', () => {
         });
     });
 
-    describe('getAccountProperty', () => {
-        it('should call getAccountProperty successfully', (done) => {
-            accountHttp.getAccountProperty(TestingAccount.publicAccount).subscribe((accountProperty) => {
+    describe('getAccountProperties', () => {
+        it('should call getAccountProperties successfully', (done) => {
+            accountHttp.getAccountProperties(TestingAccount.publicAccount.address).subscribe((accountProperty) => {
                 expect(accountProperty.accountProperties!.address).not.to.be.equal(undefined);
                 done();
             });
         });
     });
 
-    describe('getAccountProperties', () => {
-        it('should call getAccountProperties successfully', (done) => {
-            accountHttp.getAccountProperties([TestingAccount.address]).subscribe((accountProperties) => {
+    describe('getAccountPropertiesFromAccounts', () => {
+        it('should call getAccountPropertiesFromAccounts successfully', (done) => {
+            accountHttp.getAccountPropertiesFromAccounts([TestingAccount.address]).subscribe((accountProperties) => {
                 expect(accountProperties[0]!.accountProperties!.address).not.to.be.equal(undefined);
                 done();
             });
@@ -92,12 +92,16 @@ describe('AccountHttp', () => {
     });
 
     describe('outgoingTransactions', () => {
+        let nextId;
+        let lastId;
+
         it('should call outgoingTransactions successfully', (done) => {
             accountHttp.outgoingTransactions(TestingAccount.publicAccount).subscribe((transactions) => {
                 expect(transactions.length).to.be.equal(10);
                 done();
             });
         });
+
         it('should call outgoingTransactions successfully pageSize 11', (done) => {
             accountHttp.outgoingTransactions(TestingAccount.publicAccount, new QueryParams(22)).subscribe((transactions) => {
                 expect(transactions.length).to.be.equal(22);

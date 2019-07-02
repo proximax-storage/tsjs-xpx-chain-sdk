@@ -414,7 +414,7 @@ describe('key pair', () => {
             }, publicKey, salt);
 
             // Assert:
-            expect(convert.uint8ToHex(sharedKey)).to.equal('FF9623D28FBC13B6F0E0659117FC7BE294DB3385C046055A6BAC39EDF198D50D');
+            expect(convert.uint8ToHex(sharedKey)).to.equal('007FD607264C64C7BB83509E7CFA96E0FEAF34A373CDA75FACAA4DE9E141257B');
         });
     });
 });

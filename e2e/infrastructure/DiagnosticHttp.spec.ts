@@ -16,19 +16,9 @@
 
 import {expect} from 'chai';
 import {DiagnosticHttp} from '../../src/infrastructure/DiagnosticHttp';
+import { APIUrl } from '../conf/conf.spec';
 describe('DiagnosticHttp', () => {
-    let diagnosticHttp: DiagnosticHttp;
-    before((done) => {
-        const path = require('path');
-        require('fs').readFile(path.resolve(__dirname, '../conf/network.conf'), (err, data) => {
-            if (err) {
-                throw err;
-            }
-            const json = JSON.parse(data);
-            diagnosticHttp = new DiagnosticHttp(json.apiUrl);
-            done();
-        });
-    });
+    let diagnosticHttp = new DiagnosticHttp(APIUrl);
 
     describe('getDiagnosticStorage', () => {
         it('should return diagnostic storage', (done) => {

@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {APIUrl, TestingAccount, ConfNetworkType, ConfTestingNamespace, ConfTestingMosaic} from '../conf/conf.spec';
+import {APIUrl, TestingAccount, ConfNetworkType, ConfTestingNamespace, ConfTestingMosaic, NemesisBlockInfo} from '../conf/conf.spec';
 import { MetadataHttp } from '../../src/infrastructure/MetadataHttp';
 import { MosaicId, NamespaceId, Deadline, Address, Transaction, SignedTransaction } from '../../src/model/model';
 import { ModifyMetadataTransaction, MetadataModification, MetadataModificationType } from '../../src/model/transaction/ModifyMetadataTransaction';
@@ -9,13 +9,18 @@ import { ConfUtils } from '../conf/ConfUtils';
 let listener: Listener;
 let metadataHttp: MetadataHttp;
 let transactionHttp: TransactionHttp;
+let generationHash: string;
 
 before(() => {
     metadataHttp = new MetadataHttp(APIUrl);
     transactionHttp = new TransactionHttp(APIUrl);
 
     listener = new Listener(APIUrl);
-    return listener.open();
+    return listener.open().then(() => {
+        return NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
+            generationHash = nemesisBlockInfo.generationHash;
+        })
+    });
 });
 
 after(() => {
@@ -58,7 +63,7 @@ describe('MetadataHttp', () => {
                 [new MetadataModification(MetadataModificationType.ADD, "key1", "x".repeat(256))]
             );
             it('standalone', (done) => {
-                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount);
+                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount, generationHash);
                 validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });
@@ -85,7 +90,7 @@ describe('MetadataHttp', () => {
                 [new MetadataModification(MetadataModificationType.REMOVE, "key1")]
             );
             it('standalone', (done) => {
-                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount);
+                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount, generationHash);
                 validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });
@@ -101,7 +106,7 @@ describe('MetadataHttp', () => {
                 [new MetadataModification(MetadataModificationType.ADD, "key1", "some value")]
             );
             it('standalone', (done) => {
-                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount);
+                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount, generationHash);
                 validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });
@@ -127,7 +132,7 @@ describe('MetadataHttp', () => {
                 [new MetadataModification(MetadataModificationType.REMOVE, "key1")]
             );
             it('standalone', (done) => {
-                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount);
+                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount, generationHash);
                 validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });
@@ -143,7 +148,7 @@ describe('MetadataHttp', () => {
                 [new MetadataModification(MetadataModificationType.ADD, "key1", "some value")]
             );
             it('standalone', (done) => {
-                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount);
+                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount, generationHash);
                 validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });
@@ -169,7 +174,7 @@ describe('MetadataHttp', () => {
                 [new MetadataModification(MetadataModificationType.REMOVE, "key1")]
             );
             it('standalone', (done) => {
-                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount);
+                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount, generationHash);
                 validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });

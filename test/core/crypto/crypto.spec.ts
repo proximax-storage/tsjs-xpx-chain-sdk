@@ -346,7 +346,7 @@ describe('crypto tests', () => {
         const expectedMessage = 'NEM is awesome !';
         const decrypted = Crypto.decode(recipientPriv, senderPublic, encryptedMessage);
 
-        expect(decrypted).equal(convert.utf8ToHex(expectedMessage));
+        expect(decrypted).equal(expectedMessage);
     });
 
     it('Can encode a message and failed decode with wrong key', () => {
@@ -359,7 +359,7 @@ describe('crypto tests', () => {
         const expectedMessage = 'NEM is awesome !';
         const decrypted = Crypto.decode(recipientPriv, senderPublic, encryptedMessage);
 
-        expect(decrypted).not.equal(convert.utf8ToHex(expectedMessage));
+        expect(decrypted).not.equal(expectedMessage);
     });
 
     describe('Encode & decode message edge-cases', () => {

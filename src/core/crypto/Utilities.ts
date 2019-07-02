@@ -209,7 +209,8 @@ export const catapult_crypto = (function() {
             const q = [c.gf(), c.gf(), c.gf(), c.gf()];
             const p = [c.gf(), c.gf(), c.gf(), c.gf()];
             const sharedKey = new Uint8Array(Key_Size);
-            c.unpackneg(q, pk);
+            // c.unpackneg(q, pk);
+            c.unpack(q, pk); // unpackneg/unpack call here is the only difference between xpx and nem regarding shared key derivation
             c.scalarmult(p, q, d);
             c.pack(sharedKey, p);
 

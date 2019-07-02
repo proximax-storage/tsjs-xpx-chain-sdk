@@ -46,44 +46,9 @@ describe('Listener', () => {
         return listener.open();
     });
 
-    let accountHttp: AccountHttp;
-    let apiUrl: string;
-    let transactionHttp: TransactionHttp;
-    let account: Account;
-    let account2: Account;
-    let cosignAccount1: Account;
-    let cosignAccount2: Account;
-    let cosignAccount3: Account;
-    let cosignAccount4: Account;
-    let multisigAccount: Account;
-    let networkCurrencyMosaicId: MosaicId;
-    let namespaceHttp: NamespaceHttp;
-    let generationHash: string;
-    let config;
-
-    before((done) => {
-        const path = require('path');
-        require('fs').readFile(path.resolve(__dirname, '../conf/network.conf'), (err, data) => {
-            if (err) {
-                throw err;
-            }
-            const json = JSON.parse(data);
-            config = json;
-            apiUrl = json.apiUrl;
-            account = Account.createFromPrivateKey(json.testAccount.privateKey, NetworkType.MIJIN_TEST);
-            account2 = Account.createFromPrivateKey(json.testAccount2.privateKey, NetworkType.MIJIN_TEST);
-            multisigAccount = Account.createFromPrivateKey(json.multisigAccount.privateKey, NetworkType.MIJIN_TEST);
-            cosignAccount1 = Account.createFromPrivateKey(json.cosignatoryAccount.privateKey, NetworkType.MIJIN_TEST);
-            cosignAccount2 = Account.createFromPrivateKey(json.cosignatory2Account.privateKey, NetworkType.MIJIN_TEST);
-            cosignAccount3 = Account.createFromPrivateKey(json.cosignatory3Account.privateKey, NetworkType.MIJIN_TEST);
-            cosignAccount4 = Account.createFromPrivateKey(json.cosignatory4Account.privateKey, NetworkType.MIJIN_TEST);
-            transactionHttp = new TransactionHttp(json.apiUrl);
-            accountHttp = new AccountHttp(json.apiUrl);
-            namespaceHttp = new NamespaceHttp(json.apiUrl);
-            generationHash = json.generationHash;
-            done();
-        });
-    });
+    after(() => {
+        listener.close();
+    })
 
     it('newBlock', (done) => {
         const sub = listener.newBlock().subscribe(res => {

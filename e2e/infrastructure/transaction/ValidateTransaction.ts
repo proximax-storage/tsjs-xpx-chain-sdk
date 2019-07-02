@@ -101,7 +101,7 @@ const ValidateTransaction = {
                 deepEqual(mosaicDefinitionTransaction.parentId,
                     new MosaicId(mosaicDefinitionTransactionDTO.transaction.parentId));
             }
-        deepEqual(mosaicDefinitionTransaction.mosaicId.id,
+        deepEqual(mosaicDefinitionTransaction.mosaicId,
             new MosaicId(mosaicDefinitionTransactionDTO.transaction.mosaicId));
         expect(mosaicDefinitionTransaction.mosaicName)
             .to.be.equal(mosaicDefinitionTransactionDTO.transaction.name);

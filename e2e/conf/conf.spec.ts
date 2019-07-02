@@ -3,9 +3,10 @@ const conf = require("config");
 import { Account } from '../../src/model/account/Account';
 import { NetworkType } from '../../src/model/blockchain/NetworkType';
 import { MosaicId, NamespaceId, TransactionType, RegisterNamespaceTransaction, MosaicDefinitionTransaction,
-    TransferTransaction, TransactionInfo, MosaicNonce, MosaicProperties, UInt64 } from '../../src/model/model';
+    TransferTransaction, TransactionInfo, MosaicNonce, MosaicProperties, UInt64, BlockInfo } from '../../src/model/model';
 import { ConfUtils } from './ConfUtils';
-import { BlockchainHttp } from '../../src/infrastructure/BlockchainHttp';
+import { BlockHttp } from '../../src/infrastructure/BlockHttp';
+import { ChainHttp } from '../../src/infrastructure/ChainHttp';
 import { QueryParams } from '../../src/infrastructure/QueryParams';
 import { AccountHttp, TransactionHttp, NamespaceHttp, MosaicHttp } from '../../src/infrastructure/infrastructure';
 
@@ -146,6 +147,7 @@ Array.from(AllTestingAccounts.entries()).forEach(e => {
 const ConfNamespace = new NamespaceId(getNsId("prx"));
 const ConfNamespace2 = new NamespaceId(getNsId("xpx"));
 const ConfNetworkMosaic = new MosaicId(getMosId("xpx"));
+const ConfNetworkMosaicDivisibility = 6;
 const ConfNetworkMosaicName = "xpx";
 
 const ConfTestingMosaicNonce = new MosaicNonce(new Uint8Array([0x01, 0x02, 0x03, 0x04]));
@@ -153,16 +155,27 @@ const ConfTestingMosaic = MosaicId.createFromNonce(ConfTestingMosaicNonce,Testin
 const ConfTestingMosaicProperties = MosaicProperties.create({
     supplyMutable: true,
     transferable: true,
-    levyMutable: true,
     divisibility: 3,
     duration: UInt64.fromUint(1000)},
 );
 const ConfTestingNamespace = new NamespaceId('testing');
 
+class NemesisBlockInfo {
+    private static instance: BlockInfo;
+    private constructor() {}
+    static async getInstance(): Promise<BlockInfo> {
+        if (!NemesisBlockInfo.instance) {
+            const blockHttp = new BlockHttp(APIUrl);
+            NemesisBlockInfo.instance = await blockHttp.getBlockByHeight(1).toPromise();
+        }
+        return NemesisBlockInfo.instance;
+    }
+}
+
 const GetNemesisBlockDataPromise = () => {
-    const blockchainHttp = new BlockchainHttp(APIUrl);
-    return blockchainHttp.getBlockByHeight(1).toPromise().then((nemesisBlockInfo) => {
-        return new BlockchainHttp(APIUrl).getBlockTransactions(1, new QueryParams(100)).toPromise()
+    const blockHttp = new BlockHttp(APIUrl);
+    return NemesisBlockInfo.getInstance().then((nemesisBlockInfo) => {
+        return blockHttp.getBlockTransactions(1, new QueryParams(100)).toPromise()
         .then(txs => {
             const regNamespaceTxs = txs.filter(tx => tx.type === TransactionType.REGISTER_NAMESPACE) as RegisterNamespaceTransaction[];
             const currencyNamespace = regNamespaceTxs.find(tx => tx.namespaceName === "currency");
@@ -198,6 +211,7 @@ describe("Prepare environment.", () => {
 export {
     TestAccount,
     GetNemesisBlockDataPromise,
+    NemesisBlockInfo,
 
     APIUrl,
     ConfAccountHttp,
@@ -225,4 +239,5 @@ export {
     ConfNamespace2,
     ConfNetworkMosaic,
     ConfNetworkMosaicName,
+    ConfNetworkMosaicDivisibility
 };

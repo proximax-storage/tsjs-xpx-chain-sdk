@@ -18,77 +18,76 @@ import {assert, expect} from 'chai';
 import {BlockHttp} from '../../src/infrastructure/BlockHttp';
 import { Listener, TransactionHttp } from '../../src/infrastructure/infrastructure';
 import {QueryParams} from '../../src/infrastructure/QueryParams';
-import { Account } from '../../src/model/account/Account';
-import { NetworkType } from '../../src/model/blockchain/NetworkType';
 import { NetworkCurrencyMosaic } from '../../src/model/mosaic/NetworkCurrencyMosaic';
 import { Deadline } from '../../src/model/transaction/Deadline';
 import { PlainMessage } from '../../src/model/transaction/PlainMessage';
 import { Transaction } from '../../src/model/transaction/Transaction';
 import { TransferTransaction } from '../../src/model/transaction/TransferTransaction';
+import { APIUrl, ConfNetworkType, TestingRecipient, NemesisBlockInfo, TestingAccount } from '../conf/conf.spec';
+import { Address } from '../../src/model/model';
+import { fail } from 'assert';
 
 describe('BlockHttp', () => {
-    let account: Account;
-    let account2: Account;
-    let blockHttp: BlockHttp;
-    let transactionHttp: TransactionHttp;
-    let blockReceiptHash = '';
-    let blockTransactionHash = '';
-    let config;
-    let chainHeight;
+    const blockHttp = new BlockHttp(APIUrl);
+    const transactionHttp = new TransactionHttp(APIUrl);
     let generationHash: string;
-    before((done) => {
-        const path = require('path');
-        require('fs').readFile(path.resolve(__dirname, '../conf/network.conf'), (err, data) => {
-            if (err) {
-                throw err;
-            }
-            const json = JSON.parse(data);
-            config = json;
-            account = Account.createFromPrivateKey(json.testAccount.privateKey, NetworkType.MIJIN_TEST);
-            account2 = Account.createFromPrivateKey(json.testAccount2.privateKey, NetworkType.MIJIN_TEST);
-            blockHttp = new BlockHttp(json.apiUrl);
-            transactionHttp = new TransactionHttp(json.apiUrl);
-            generationHash = json.generationHash;
-            done();
+    let listener: Listener;
+    let blockReceiptHash: string;
+    let blockTransactionHash: string;
+    const chainHeight = 2;
+    before (() => {
+        listener = new Listener(APIUrl);
+        return listener.open().then(() => {
+            NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
+                generationHash = nemesisBlockInfo.generationHash;
+            })
         });
     });
+    after(() => {
+        return listener.close();
+    });
+
+    const validateTransactionAnnounceCorrectly = (address: Address, done, hash?: string) => {
+        const status = listener.status(address).subscribe(error => {
+            console.error(error);
+            status.unsubscribe();
+            sub.unsubscribe();
+            return fail("Status reported an error.");
+        });
+        const sub = listener.confirmed(address).subscribe((transaction: Transaction) => {
+            if (hash) {
+                if (transaction && transaction.transactionInfo && transaction.transactionInfo.hash === hash) {
+                    // console.log(transaction);
+                    status.unsubscribe();
+                    sub.unsubscribe();
+                    return done();
+                }
+            } else {
+                status.unsubscribe();
+                sub.unsubscribe();
+                return done();
+            }
+        });
+    }
 
     /**
      * =========================
      * Setup Test Data
      * =========================
      */
-
     describe('Setup Test Data', () => {
-        let listener: Listener;
-        before (() => {
-            listener = new Listener(config.apiUrl);
-            return listener.open();
-        });
-        after(() => {
-            return listener.close();
-        });
-
         it('Announce TransferTransaction', (done) => {
             const transferTransaction = TransferTransaction.create(
                 Deadline.create(),
-                account2.address,
+                TestingRecipient.address,
                 [NetworkCurrencyMosaic.createAbsolute(1)],
                 PlainMessage.create('test-message'),
-                NetworkType.MIJIN_TEST,
+                ConfNetworkType,
             );
-            const signedTransaction = transferTransaction.signWith(account, generationHash);
+            const signedTransaction = transferTransaction.signWith(TestingAccount, generationHash);
 
-            listener.confirmed(account.address).subscribe((transaction: Transaction) => {
+            validateTransactionAnnounceCorrectly(TestingRecipient.address, done, signedTransaction.hash);
 
-                chainHeight = transaction.transactionInfo!.height.lower;
-                done();
-            });
-            listener.status(account.address).subscribe((error) => {
-                console.log('Error:', error);
-                assert(false);
-                done();
-            });
             transactionHttp.announce(signedTransaction);
         });
     });
@@ -97,12 +96,22 @@ describe('BlockHttp', () => {
         it('should return block info given height', (done) => {
             blockHttp.getBlockByHeight(1)
                 .subscribe((blockInfo) => {
-                    blockReceiptHash = blockInfo.blockReceiptsHash;
-                    blockTransactionHash = blockInfo.blockTransactionsHash;
                     expect(blockInfo.height.lower).to.be.equal(1);
                     expect(blockInfo.height.higher).to.be.equal(0);
                     expect(blockInfo.timestamp.lower).to.be.equal(0);
                     expect(blockInfo.timestamp.higher).to.be.equal(0);
+                    done();
+                });
+        });
+        it('should return block info given height 2', (done) => {
+            blockHttp.getBlockByHeight(chainHeight)
+                .subscribe((blockInfo) => {
+                    blockReceiptHash = blockInfo.blockReceiptsHash;
+                    blockTransactionHash = blockInfo.blockTransactionsHash;
+                    expect(blockInfo.height.lower).to.be.equal(chainHeight);
+                    expect(blockInfo.height.higher).to.be.equal(0);
+                    expect(blockInfo.timestamp.lower).not.to.be.equal(0);
+                    expect(blockInfo.timestamp.higher).not.to.be.equal(0);
                     done();
                 });
         });

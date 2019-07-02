@@ -15,7 +15,7 @@
  */
 
 import {decode} from 'utf8';
-import { convert } from 'js-xpx-chain-library';
+import {Convert as convert} from '../../core/format'
 
 /**
  * An abstract message class that serves as the base class of all message types.

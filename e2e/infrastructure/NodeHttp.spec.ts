@@ -16,19 +16,9 @@
 
 import {expect} from 'chai';
 import {NodeHttp} from '../../src/infrastructure/NodeHttp';
+import { APIUrl } from '../conf/conf.spec';
 describe('NodeHttp', () => {
-    let nodeHttp: NodeHttp;
-    before((done) => {
-        const path = require('path');
-        require('fs').readFile(path.resolve(__dirname, '../conf/network.conf'), (err, data) => {
-            if (err) {
-                throw err;
-            }
-            const json = JSON.parse(data);
-            nodeHttp = new NodeHttp(json.apiUrl);
-            done();
-        });
-    });
+    const nodeHttp: NodeHttp = new NodeHttp(APIUrl);
 
     describe('getNodeInfo', () => {
         it('should return node info', (done) => {

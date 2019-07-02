@@ -5,10 +5,9 @@
   "scripts": {
     "pretest": "npm run build",
     "test": "mocha --ui bdd --recursive ./dist/test --timeout 90000",
-    "e2econfigcopy": "gulp",
     "test:e2e": "npm run build && mocha --ui bdd --recursive ./dist/e2e --timeout 90000",
     "test:all": "mocha --ui bdd --recursive ./dist/ --timeout 90000",
-    "build": "rm -rf dist/ && tsc && npm run e2econfigcopy",
+    "build": "rm -rf dist/ && tsc",
     "test:cov": "nyc --reporter=lcov --reporter=text-lcov npm t && nyc report --reporter=text-lcov",
     "test:coveralls": "npm run test:cov | coveralls"
   },
@@ -35,6 +34,7 @@
     "@types/crypto-js": "^3.1.43",
     "@types/lodash": "^4.14.85",
     "@types/mocha": "^2.2.44",
+    "@types/node": "^8.0.0",
     "@types/request": "^2.47.0",
     "@types/request-promise-native": "^1.0.14",
     "@types/utf8": "^2.1.6",
@@ -43,8 +43,6 @@
     "chai": "^4.1.2",
     "config": "^3.1.0",
     "coveralls": "^3.0.0",
-    "gulp": "^4.0.2",
-    "gulp-typescript": "^5.0.1",
     "mocha": "^4.0.1",
     "nyc": "^11.3.0",
     "secure-random": "^1.1.1",

@@ -17,19 +17,9 @@
 import {expect} from 'chai';
 import {ChainHttp} from '../../src/infrastructure/ChainHttp';
 import {QueryParams} from '../../src/infrastructure/QueryParams';
+import { APIUrl } from '../conf/conf.spec';
 describe('ChainHttp', () => {
-    let chainHttp: ChainHttp;
-    before((done) => {
-        const path = require('path');
-        require('fs').readFile(path.resolve(__dirname, '../conf/network.conf'), (err, data) => {
-            if (err) {
-                throw err;
-            }
-            const json = JSON.parse(data);
-            chainHttp = new ChainHttp(json.apiUrl);
-            done();
-        });
-    });
+    let chainHttp = new ChainHttp(APIUrl);
 
     describe('getBlockchainHeight', () => {
         it('should return blockchain height', (done) => {

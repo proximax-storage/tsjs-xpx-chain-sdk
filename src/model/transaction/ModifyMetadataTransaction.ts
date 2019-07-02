@@ -1,4 +1,3 @@
-import { ModifyMetadataTransaction as ModifyMetadataTransactionLibrary, VerifiableTransaction } from 'js-xpx-chain-library';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { NamespaceId } from '../namespace/NamespaceId';
@@ -12,6 +11,8 @@ import { AggregateTransactionInfo } from './AggregateTransactionInfo';
 import { MosaicId } from '../mosaic/MosaicId';
 import { Address } from '../account/Address';
 import { MetadataType } from '../metadata/MetadataType';
+import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
+import { Builder } from '../../infrastructure/builders/ModifyMetadataTransaction';
 
 export enum MetadataModificationType {
     ADD = 0,
@@ -158,7 +159,7 @@ export class ModifyMetadataTransaction extends Transaction {
      * @returns {VerifiableTransaction}
      */
     protected buildTransaction(): VerifiableTransaction {
-        return new ModifyMetadataTransactionLibrary.Builder()
+        return new Builder()
             .addType(this.type)
             .addVersion(this.versionToDTO())
             .addDeadline(this.deadline.toDTO())
