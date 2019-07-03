@@ -40,8 +40,20 @@ export * from './blockchain/MerklePathItem';
 export * from './blockchain/MerkleProofInfo';
 export * from './blockchain/MerkleProofInfoPayload';
 
+// Contract
+export * from './contract/Contract';
+
 // Diagnostic
 export * from './diagnostic/ServerInfo';
+
+// Metadata
+export * from './metadata/Metadata';
+export * from './metadata/MosaicMetadata';
+export * from './metadata/NamespaceMetadata';
+export * from './metadata/AddressMetadata';
+export * from './metadata/Field';
+export * from './metadata/MetadataInfo';
+export * from './metadata/MetadataType';
 
 // Mosaic
 export * from './mosaic/Mosaic';

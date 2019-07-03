@@ -54,6 +54,7 @@ import {TransferTransaction} from '../../model/transaction/TransferTransaction';
 import {UInt64} from '../../model/UInt64';
 import { ModifyMetadataTransaction, MetadataModification } from '../../model/transaction/ModifyMetadataTransaction';
 import { MetadataType } from '../../model/metadata/MetadataType';
+import { ModifyContractTransaction } from '../../model/transaction/ModifyContractTransaction';
 
 /**
  * @internal
@@ -409,6 +410,40 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
                 throw new Error('Unimplemented modify metadata transaction with type ' + metadataType);
             }
         }
+    } else if (transactionDTO.type === TransactionType.MODIFY_CONTRACT) {
+        const networkType = extractNetworkType(transactionDTO.version);
+        const transactionVersion = extractTransactionVersion(transactionDTO.version);
+        const deadline = Deadline.createFromDTO(transactionDTO.deadline);
+        const maxFee = new UInt64(transactionDTO.maxFee || [0, 0]);
+        const durationDelta = new UInt64(transactionDTO.duration || [0, 0]);
+        const hash = transactionDTO.hash;
+        const customers =
+            transactionDTO.customers ?
+            transactionDTO.customers.map(c => new MultisigCosignatoryModification(c.type, PublicAccount.createFromPublicKey(c.cosignatoryPublicKey, networkType))) :
+            undefined;
+        const executors =
+            transactionDTO.executors ?
+            transactionDTO.executors.map(e => new MultisigCosignatoryModification(e.type, PublicAccount.createFromPublicKey(e.cosignatoryPublicKey, networkType))) :
+            undefined;
+        const verifiers =
+            transactionDTO.verifiers ?
+            transactionDTO.verifiers.map(v => new MultisigCosignatoryModification(v.type, PublicAccount.createFromPublicKey(v.cosignatoryPublicKey, networkType))) :
+            undefined;
+        return ModifyContractTransaction.create(
+            networkType,
+            deadline,
+            durationDelta,
+            hash,
+            customers,
+            executors,
+            verifiers,
+            maxFee,
+            transactionDTO.signature,
+            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                    extractNetworkType(transactionDTO.version)) : undefined,
+            transactionInfo
+        );
+
     }
 
     throw new Error('Unimplemented transaction with type ' + transactionDTO.type);

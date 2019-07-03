@@ -31,8 +31,8 @@ export enum ContractRoutesApiApiKeys {
 
 export class ContractRoutesApi {
     protected _basePath = defaultBasePath;
-    protected defaultHeaders: any = {};
-    protected _useQuerystring: boolean = false;
+    protected defaultHeaders : any = {};
+    protected _useQuerystring : boolean = false;
 
     protected authentications = {
         'default': <Authentication>new VoidAuth(),
@@ -72,11 +72,11 @@ export class ContractRoutesApi {
     }
 
     /**
-     * Gets the contract for a given publicKey.
-     * @summary Get contract of account
+     * Gets all contracts where this account is involved.
+     * @summary Get contracts of account
      * @param publicKey The public key of the account.
      */
-    public async getAccountContract(publicKey: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: ContractInfoDTO; }> {
+    public async getAccountContract (publicKey: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.ClientResponse; body: Array<ContractInfoDTO>;  }> {
         const localVarPath = this.basePath + '/account/{publicKey}/contracts'
             .replace('{' + 'publicKey' + '}', encodeURIComponent(String(publicKey)));
         let localVarQueryParameters: any = {};
@@ -110,12 +110,12 @@ export class ContractRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: ContractInfoDTO; }>((resolve, reject) => {
+        return new Promise<{ response: http.ClientResponse; body: Array<ContractInfoDTO>;  }>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    body = ObjectSerializer.deserialize(body, "ContractInfoDTO");
+                    body = ObjectSerializer.deserialize(body, "Array<ContractInfoDTO>");
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve(body);
                     } else {
@@ -130,10 +130,10 @@ export class ContractRoutesApi {
     }
     /**
      * Gets an array of contracts.
-     * @summary Get contracts for an array of publicKeys
+     * @summary Get contracts for an array of contract\'s publicKeys
      * @param publicKeys
      */
-    public async getAccountContracts(publicKeys?: PublicKeys, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<ContractInfoDTO>; }> {
+    public async getAccountContracts (publicKeys?: PublicKeys, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.ClientResponse; body: Array<ContractInfoDTO>;  }> {
         const localVarPath = this.basePath + '/account/contracts';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -162,7 +162,7 @@ export class ContractRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<ContractInfoDTO>; }>((resolve, reject) => {
+        return new Promise<{ response: http.ClientResponse; body: Array<ContractInfoDTO>;  }>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -181,20 +181,20 @@ export class ContractRoutesApi {
         });
     }
     /**
-     * Gets the contract for a given accountId.
-     * @summary Get contract of account
-     * @param accountId The account identifier.
+     * Gets the contract for a given contractId.
+     * @summary Get contract by contractId
+     * @param contractId The account identifier.
      */
-    public async getContract(accountId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: ContractInfoDTO; }> {
-        const localVarPath = this.basePath + '/contract/{accountId}'
-            .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
+    public async getContract (contractId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.ClientResponse; body: ContractInfoDTO;  }> {
+        const localVarPath = this.basePath + '/contract/{contractId}'
+            .replace('{' + 'contractId' + '}', encodeURIComponent(String(contractId)));
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
 
-        // verify required parameter 'accountId' is not null or undefined
-        if (accountId === null || accountId === undefined) {
-            throw new Error('Required parameter accountId was null or undefined when calling getContract.');
+        // verify required parameter 'contractId' is not null or undefined
+        if (contractId === null || contractId === undefined) {
+            throw new Error('Required parameter contractId was null or undefined when calling getContract.');
         }
 
         (<any>Object).assign(localVarHeaderParams, options.headers);
@@ -219,7 +219,7 @@ export class ContractRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: ContractInfoDTO; }>((resolve, reject) => {
+        return new Promise<{ response: http.ClientResponse; body: ContractInfoDTO;  }>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -242,7 +242,7 @@ export class ContractRoutesApi {
      * @summary Get contracts for an array of publicKeys or addresses
      * @param accountIds
      */
-    public async getContracts(accountIds: AccountIds, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<ContractInfoDTO>; }> {
+    public async getContracts (accountIds: AccountIds, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.ClientResponse; body: Array<ContractInfoDTO>;  }> {
         const localVarPath = this.basePath + '/contract';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -276,7 +276,7 @@ export class ContractRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<ContractInfoDTO>; }>((resolve, reject) => {
+        return new Promise<{ response: http.ClientResponse; body: Array<ContractInfoDTO>;  }>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);

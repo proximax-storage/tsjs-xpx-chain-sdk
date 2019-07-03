@@ -135,7 +135,7 @@ export class Builder {
 
         const bytes = builder.asUint8Array();
         if (bytes.length !== size) {
-            //throw new Error("Declared size differs from actual bytes.length during ModifyMetadataTransaction serialization")
+            // throw new Error("Declared size differs from actual bytes.length during ModifyMetadataTransaction serialization")
         }
         return new ModifyMetadataTransaction(bytes);
     }

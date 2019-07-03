@@ -131,4 +131,9 @@ export class TransactionType {
      * @type {number}
      */
     public static readonly MODIFY_NAMESPACE_METADATA = 0x433D;
+
+    /**
+     * Modify contract transaction type
+     */
+    public static readonly MODIFY_CONTRACT = 0x4157;
 }

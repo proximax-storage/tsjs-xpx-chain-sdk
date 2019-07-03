@@ -25,6 +25,7 @@
  * Do not edit the class manually.
  */
 
+import { AccountLinkTypeEnum } from './accountLinkTypeEnum';
 import { MosaicDTO } from './mosaicDTO';
 
 export class AccountDTO {
@@ -42,8 +43,11 @@ export class AccountDTO {
     * The list of mosaics the account owns. The amount is represented in absolute amount. Thus a balance of 123456789 for a mosaic with divisibility 6 (absolute) means the account owns 123.456789 instead. 
     */
     'mosaics': Array<MosaicDTO>;
-    'importance': Array<number>;
-    'importanceHeight': Array<number>;
+    'accountType': AccountLinkTypeEnum;
+    /**
+    * The public key of a linked account. The linked account can use|provide balance for delegated harvesting. 
+    */
+    'linkedAccountKey': string;
 
     static discriminator: string | undefined = undefined;
 
@@ -74,14 +78,14 @@ export class AccountDTO {
             "type": "Array<MosaicDTO>"
         },
         {
-            "name": "importance",
-            "baseName": "importance",
-            "type": "Array<number>"
+            "name": "accountType",
+            "baseName": "accountType",
+            "type": "AccountLinkTypeEnum"
         },
         {
-            "name": "importanceHeight",
-            "baseName": "importanceHeight",
-            "type": "Array<number>"
+            "name": "linkedAccountKey",
+            "baseName": "linkedAccountKey",
+            "type": "string"
         }    ];
 
     static getAttributeTypeMap() {

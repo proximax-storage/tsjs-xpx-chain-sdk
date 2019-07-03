@@ -73,9 +73,9 @@ describe('MetadataHttp', () => {
         describe('should get metadata given accountId', () => {
             it('standalone', (done) => {
                 metadataHttp.getAccountMetadata(TestingAccount.address.plain())
-                .subscribe((metadataInfo) => {
-                    expect(metadataInfo.fields[0].value.length).to.be.equal(256);
-                    expect(metadataInfo).not.to.be.equal(undefined);
+                .subscribe((addressMetadata) => {
+                    expect(addressMetadata.fields[0].value.length).to.be.equal(256);
+                    expect(addressMetadata).not.to.be.equal(undefined);
                     done();
                 });
             });

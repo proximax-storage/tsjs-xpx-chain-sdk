@@ -48,3 +48,4 @@ import { NodeRoutesApi } from './nodeRoutesApi';
 export * from './transactionRoutesApi';
 import { TransactionRoutesApi } from './transactionRoutesApi';
 export const APIS = [AccountRoutesApi, BlockRoutesApi, ChainRoutesApi, ContractRoutesApi, DiagnosticRoutesApi, MetadataRoutesApi, MosaicRoutesApi, NamespaceRoutesApi, NetworkRoutesApi, NodeRoutesApi, TransactionRoutesApi];
+
