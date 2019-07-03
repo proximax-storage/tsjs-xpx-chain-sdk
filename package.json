@@ -1,6 +1,6 @@
 {
   "name": "tsjs-xpx-chain-sdk",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Proximax Blockchain sdk for typescript and javascript",
   "scripts": {
     "pretest": "npm run build",
@@ -73,9 +73,10 @@
       "**/*.spec.js"
     ]
   },
-  "directories": {
-    "test": "test"
-  },
+  "files": [
+    "dist/index*",
+    "dist/src"
+  ],
   "keywords": [
     "xpx",
     "proximax",
