@@ -9,30 +9,30 @@ export declare class ReceiptVersion {
      * Balance transfer receipt version.
      * @type {number}
      */
-    static readonly BALANCE_TRANSFER = 1;
+    static readonly BALANCE_TRANSFER;
     /**
      * Balance change receipt version
      * @type {number}
      */
-    static readonly BALANCE_CHANGE = 1;
+    static readonly BALANCE_CHANGE;
     /**
      * Artifact expiry receipt version
      * @type {number}
      */
-    static readonly ARTIFACT_EXPIRY = 1;
+    static readonly ARTIFACT_EXPIRY;
     /**
      * Transaction statement version
      * @type {number}
      */
-    static readonly TRANSACTION_STATEMENT = 1;
+    static readonly TRANSACTION_STATEMENT;
     /**
      * Resolution statement version
      * @type {number}
      */
-    static readonly RESOLUTION_STATEMENT = 1;
+    static readonly RESOLUTION_STATEMENT;
     /**
      * Resolution statement version
      * @type {number}
      */
-    static readonly INFLATION_RECEIPT = 1;
+    static readonly INFLATION_RECEIPT;
 }
