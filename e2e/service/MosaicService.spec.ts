@@ -62,7 +62,8 @@ describe('MosaicService', () => {
     });
 
     it('should return the mosaic list skipping the expired mosaics', () => {
-        const mosaicService = new MosaicService(accountHttp, mosaicHttp);
+        const mosaicService = new MosaicService(
+            new AccountHttp(APIUrl), new MosaicHttp(APIUrl));
 
         return GetNemesisBlockDataPromise().then(data => {
             return mosaicService.mosaicsAmountViewFromAddress(SeedAccount.address).pipe(
