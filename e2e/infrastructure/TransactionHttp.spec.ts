@@ -179,6 +179,21 @@ describe('TransactionHttp', () => {
     });
 
     describe('AccountPropertyTransaction - EntityType', () => {
+        it('standalone', (done) => {
+            const entityTypePropertyFilter = AccountPropertyModification.createForEntityType(
+                PropertyModificationType.Add,
+                TransactionType.LINK_ACCOUNT,
+            );
+            const addressModification = AccountPropertyTransaction.createEntityTypePropertyModificationTransaction(
+                Deadline.create(),
+                PropertyType.BlockTransaction,
+                [entityTypePropertyFilter],
+                ConfNetworkType,
+            );
+            const signedTransaction = addressModification.signWith(TestingRecipient, generationHash);
+            validateTransactionAnnounceCorrectly(TestingRecipient.address, done, signedTransaction.hash);
+            transactionHttp.announce(signedTransaction);
+        });
         it('aggregate', (done) => {
             const entityTypePropertyFilter = AccountPropertyModification.createForEntityType(
                 PropertyModificationType.Remove,
