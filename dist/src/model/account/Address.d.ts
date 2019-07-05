@@ -1,3 +1,4 @@
+import { SignSchema } from '../../core/crypto';
 import { NetworkType } from '../blockchain/NetworkType';
 /**
  * The address structure describes an address with its network
@@ -12,9 +13,10 @@ export declare class Address {
      * Create from private key
      * @param publicKey - The account public key.
      * @param networkType - The NEM network type.
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {Address}
      */
-    static createFromPublicKey(publicKey: string, networkType: NetworkType): Address;
+    static createFromPublicKey(publicKey: string, networkType: NetworkType, signSchema?: SignSchema): Address;
     /**
      * Create an Address from a given raw address.
      * @param rawAddress - Address in string format.

@@ -18,11 +18,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @module transactions/AccountPropertiesEntityTypeTransaction
  */
+const TransactionType_1 = require("../../model/transaction/TransactionType");
 const AccountPropertiesEntityTypeTransactionBuffer_1 = require("../buffers/AccountPropertiesEntityTypeTransactionBuffer");
 const AccountPropertiesEntityTypeModificationTransactionSchema_1 = require("../schemas/AccountPropertiesEntityTypeModificationTransactionSchema");
 const VerifiableTransaction_1 = require("./VerifiableTransaction");
 const { AccountPropertiesEntityTypeTransactionBuffer, PropertyEntityTypeModificationBuffer, } = AccountPropertiesEntityTypeTransactionBuffer_1.default.Buffers;
-const { flatbuffers } = require('flatbuffers');
+const flatbuffers_1 = require("flatbuffers");
 class AccountPropertiesEntityTypeTransaction extends VerifiableTransaction_1.VerifiableTransaction {
     constructor(bytes) {
         super(bytes, AccountPropertiesEntityTypeModificationTransactionSchema_1.default);
@@ -32,12 +33,11 @@ exports.default = AccountPropertiesEntityTypeTransaction;
 // tslint:disable-next-line:max-classes-per-file
 class Builder {
     constructor() {
-        this.fee = [0, 0];
-        this.version = 36865;
-        this.type = 0x4350;
+        this.maxFee = [0, 0];
+        this.type = TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_ENTITY_TYPE;
     }
-    addFee(fee) {
-        this.fee = fee;
+    addFee(maxFee) {
+        this.maxFee = maxFee;
         return this;
     }
     addVersion(version) {
@@ -61,10 +61,10 @@ class Builder {
         return this;
     }
     build() {
-        const builder = new flatbuffers.Builder(1);
+        const builder = new flatbuffers_1.flatbuffers.Builder(1);
         // Create modifications
         const modificationsArray = [];
-        this.modifications.forEach(modification => {
+        this.modifications.forEach((modification) => {
             PropertyEntityTypeModificationBuffer.startPropertyEntityTypeModificationBuffer(builder);
             PropertyEntityTypeModificationBuffer.addModificationType(builder, modification.type);
             PropertyEntityTypeModificationBuffer.addValue(builder, modification.value);
@@ -78,7 +78,7 @@ class Builder {
         const deadlineVector = AccountPropertiesEntityTypeTransactionBuffer
             .createDeadlineVector(builder, this.deadline);
         const feeVector = AccountPropertiesEntityTypeTransactionBuffer
-            .createFeeVector(builder, this.fee);
+            .createFeeVector(builder, this.maxFee);
         const modificationVector = AccountPropertiesEntityTypeTransactionBuffer
             .createModificationsVector(builder, modificationsArray);
         AccountPropertiesEntityTypeTransactionBuffer.startAccountPropertiesEntityTypeTransactionBuffer(builder);

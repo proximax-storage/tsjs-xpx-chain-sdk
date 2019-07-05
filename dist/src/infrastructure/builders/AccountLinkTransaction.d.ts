@@ -3,14 +3,14 @@ export declare class AccountLinkTransaction extends VerifiableTransaction {
     constructor(bytes: any);
 }
 export declare class Builder {
-    fee: any;
+    maxFee: any;
     version: any;
     type: any;
     deadline: any;
     remoteAccountKey: any;
     linkAction: any;
     constructor();
-    addFee(fee: any): this;
+    addFee(maxFee: any): this;
     addVersion(version: any): this;
     addType(type: any): this;
     addDeadline(deadline: any): this;

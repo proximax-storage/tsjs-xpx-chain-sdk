@@ -52,7 +52,7 @@ describe('MosaicService', () => {
         });
     });
     it('should return the mosaic list skipping the expired mosaics', () => {
-        const mosaicService = new MosaicService_1.MosaicService(accountHttp, mosaicHttp);
+        const mosaicService = new MosaicService_1.MosaicService(new AccountHttp_1.AccountHttp(conf_spec_1.APIUrl), new MosaicHttp_1.MosaicHttp(conf_spec_1.APIUrl));
         return conf_spec_1.GetNemesisBlockDataPromise().then(data => {
             return mosaicService.mosaicsAmountViewFromAddress(conf_spec_1.SeedAccount.address).pipe(operators_1.mergeMap((_) => _), operators_1.map((mosaic) => console.log('You have', mosaic.relativeAmount(), mosaic.fullName())), operators_1.toArray()).toPromise();
         });

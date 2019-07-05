@@ -47,16 +47,17 @@ class SimpleWallet extends Wallet_1.Wallet {
      * @param name - Wallet name
      * @param password - Password to encrypt wallet
      * @param network - Network id
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {SimpleWallet}
      */
-    static create(name, password, network) {
+    static create(name, password, network, signSchema = crypto_1.SignSchema.SHA3) {
         // Create random bytes
         const randomBytesArray = crypto_1.Crypto.randomBytes(32);
         // Hash random bytes with entropy seed
         // Finalize and keep only 32 bytes
         const hashKey = format_1.Convert.uint8ToHex(randomBytesArray); // TODO: derive private key correctly
         // Create KeyPair from hash key
-        const keyPair = crypto_1.KeyPair.createKeyPairFromPrivateKeyString(hashKey);
+        const keyPair = crypto_1.KeyPair.createKeyPairFromPrivateKeyString(hashKey, signSchema);
         // Create address from public key
         const address = Address_1.Address.createFromPublicKey(format_1.Convert.uint8ToHex(keyPair.publicKey), network);
         // Encrypt private key using password
@@ -70,13 +71,14 @@ class SimpleWallet extends Wallet_1.Wallet {
      * @param password - Password to encrypt wallet
      * @param privateKey - Wallet private key
      * @param network - Network id
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {SimpleWallet}
      */
-    static createFromPrivateKey(name, password, privateKey, network) {
+    static createFromPrivateKey(name, password, privateKey, network, signSchema = crypto_1.SignSchema.SHA3) {
         // Create KeyPair from hash key
-        const keyPair = crypto_1.KeyPair.createKeyPairFromPrivateKeyString(privateKey);
+        const keyPair = crypto_1.KeyPair.createKeyPairFromPrivateKeyString(privateKey, signSchema);
         // Create address from public key
-        const address = Address_1.Address.createFromPublicKey(format_1.Convert.uint8ToHex(keyPair.publicKey), network);
+        const address = Address_1.Address.createFromPublicKey(format_1.Convert.uint8ToHex(keyPair.publicKey), network, signSchema);
         // Encrypt private key using password
         const encrypted = crypto_1.Crypto.encodePrivateKey(privateKey, password.value);
         const encryptedPrivateKey = new EncryptedPrivateKey_1.EncryptedPrivateKey(encrypted.ciphertext, encrypted.iv);
@@ -85,10 +87,11 @@ class SimpleWallet extends Wallet_1.Wallet {
     /**
      * Open a wallet and generate an Account
      * @param password - Password to decrypt private key
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {Account}
      */
-    open(password) {
-        return Account_1.Account.createFromPrivateKey(this.encryptedPrivateKey.decrypt(password), this.network);
+    open(password, signSchema = crypto_1.SignSchema.SHA3) {
+        return Account_1.Account.createFromPrivateKey(this.encryptedPrivateKey.decrypt(password), this.network, signSchema);
     }
 }
 exports.SimpleWallet = SimpleWallet;

@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+const crypto_1 = require("../../core/crypto");
 const CosignatureTransaction_1 = require("../../infrastructure/builders/CosignatureTransaction");
 const CosignatureSignedTransaction_1 = require("./CosignatureSignedTransaction");
+const VerifiableTransaction_1 = require("../../infrastructure/builders/VerifiableTransaction");
 /**
  * Cosignature transaction is used to sign an aggregate transactions with missing cosignatures.
  */
@@ -41,14 +43,32 @@ class CosignatureTransaction {
         return new CosignatureTransaction(transactionToCosign);
     }
     /**
+     * Co-sign transaction with transaction payload (off chain)
+     * Creating a new CosignatureSignedTransaction
+     * @param account - The signing account
+     * @param payload - off transaction payload (aggregated transaction is unannounced)
+     * @param gernationHash - Network generation hash
+     * @returns {CosignatureSignedTransaction}
+     */
+    static signTransactionPayload(account, payload, gernationHash) {
+        /**
+         * For aggregated complete transaction, cosignatories are gathered off chain announced.
+         */
+        const transactionHash = VerifiableTransaction_1.VerifiableTransaction.createTransactionHash(payload, gernationHash);
+        const aggregateSignatureTransaction = new CosignatureTransaction_1.CosignatureTransaction(transactionHash);
+        const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account);
+        return new CosignatureSignedTransaction_1.CosignatureSignedTransaction(signedTransactionRaw.parentHash, signedTransactionRaw.signature, signedTransactionRaw.signer);
+    }
+    /**
      * @internal
      * Serialize and sign transaction creating a new SignedTransaction
      * @param account
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {CosignatureSignedTransaction}
      */
-    signWith(account) {
+    signWith(account, signSchema = crypto_1.SignSchema.SHA3) {
         const aggregateSignatureTransaction = new CosignatureTransaction_1.CosignatureTransaction(this.transactionToCosign.transactionInfo.hash);
-        const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account);
+        const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account, signSchema);
         return new CosignatureSignedTransaction_1.CosignatureSignedTransaction(signedTransactionRaw.parentHash, signedTransactionRaw.signature, signedTransactionRaw.signer);
     }
 }

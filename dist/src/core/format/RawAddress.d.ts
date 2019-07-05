@@ -1,3 +1,4 @@
+import { SignSchema } from '../crypto';
 export declare class RawAddress {
     static readonly constants: {
         sizes: {
@@ -30,15 +31,17 @@ export declare class RawAddress {
      * Converts a public key to a decoded address for a specific network.
      * @param {Uint8Array} publicKey The public key.
      * @param {number} networkIdentifier The network identifier.
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {Uint8Array} The decoded address corresponding to the inputs.
      */
-    static publicKeyToAddress: (publicKey: Uint8Array, networkIdentifier: number) => Uint8Array;
+    static publicKeyToAddress: (publicKey: Uint8Array, networkIdentifier: number, signSchema?: SignSchema) => Uint8Array;
     /**
      * Determines the validity of a decoded address.
      * @param {Uint8Array} decoded The decoded address.
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {boolean} true if the decoded address is valid, false otherwise.
      */
-    static isValidAddress: (decoded: Uint8Array) => boolean;
+    static isValidAddress: (decoded: Uint8Array, signSchema?: SignSchema) => boolean;
     /**
      * Determines the validity of an encoded address string.
      * @param {string} encoded The encoded address string.

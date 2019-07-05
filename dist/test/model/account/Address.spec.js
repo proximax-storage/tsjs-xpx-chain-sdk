@@ -18,8 +18,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = require("chai");
 const Address_1 = require("../../../src/model/account/Address");
 const NetworkType_1 = require("../../../src/model/blockchain/NetworkType");
+const crypto_1 = require("../../../src/core/crypto");
 describe('Address', () => {
     const publicKey = 'c2f93346e27ce6ad1a9f8f5e3066f8326593a406bdf357acb041e2f9ab402efe'.toUpperCase();
+    const NIS_PublicKey = 'c5f54ba980fcbb657dbaaa42700539b207873e134d2375efeab5f1ab52f87844';
     it('createComplete an address given publicKey + NetworkType.MIJIN_TEST', () => {
         const address = Address_1.Address.createFromPublicKey(publicKey, NetworkType_1.NetworkType.MIJIN_TEST);
         chai_1.expect(address.plain()).to.be.equal('SCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPRLIKCF2');
@@ -53,6 +55,30 @@ describe('Address', () => {
         const address = Address_1.Address.createFromPublicKey(publicKey, NetworkType_1.NetworkType.PRIVATE_TEST);
         chai_1.expect(address.plain()).to.be.equal('WCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPSIBCI5Q');
         chai_1.expect(address.networkType).to.be.equal(NetworkType_1.NetworkType.PRIVATE_TEST);
+    });
+    /**
+     * @see https://raw.githubusercontent.com/nemtech/test-vectors/master/1.test-address-nis1.json
+     */
+    it('createComplete an address given publicKey + NetworkType.MIJIN using NIS1 schema', () => {
+        const address = Address_1.Address.createFromPublicKey(NIS_PublicKey, NetworkType_1.NetworkType.MIJIN, crypto_1.SignSchema.KECCAK_REVERSED_KEY);
+        chai_1.expect(address.plain()).to.be.equal('MDD2CT6LQLIYQ56KIXI3ENTM6EK3D44P5LDT7JHT');
+        chai_1.expect(address.networkType).to.be.equal(NetworkType_1.NetworkType.MIJIN);
+    });
+    /**
+     * @see https://raw.githubusercontent.com/nemtech/test-vectors/master/1.test-address-nis1.json
+     */
+    it('createComplete an address given publicKey + NetworkType.MAIN_NET using NIS1 schema', () => {
+        const address = Address_1.Address.createFromPublicKey(NIS_PublicKey, NetworkType_1.NetworkType.MAIN_NET, crypto_1.SignSchema.KECCAK_REVERSED_KEY);
+        chai_1.expect(address.plain()).to.be.equal('XDD2CT6LQLIYQ56KIXI3ENTM6EK3D44P5ITPFYGC');
+        chai_1.expect(address.networkType).to.be.equal(NetworkType_1.NetworkType.MAIN_NET);
+    });
+    /**
+     * @see https://raw.githubusercontent.com/nemtech/test-vectors/master/1.test-address-nis1.json
+     */
+    it('createComplete an address given publicKey + NetworkType.TEST_NET using NIS1 schema', () => {
+        const address = Address_1.Address.createFromPublicKey(NIS_PublicKey, NetworkType_1.NetworkType.TEST_NET, crypto_1.SignSchema.KECCAK_REVERSED_KEY);
+        chai_1.expect(address.plain()).to.be.equal('VDD2CT6LQLIYQ56KIXI3ENTM6EK3D44P5IJ2HFJB');
+        chai_1.expect(address.networkType).to.be.equal(NetworkType_1.NetworkType.TEST_NET);
     });
     it('createComplete an address given SCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPRLIKCF2', () => {
         const address = Address_1.Address.createFromRawAddress('SCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPRLIKCF2');

@@ -16,6 +16,7 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = require("chai");
+const crypto_1 = require("../../../src/core/crypto");
 const Account_1 = require("../../../src/model/account/Account");
 const NetworkType_1 = require("../../../src/model/blockchain/NetworkType");
 describe('Account', () => {
@@ -30,6 +31,15 @@ describe('Account', () => {
         chai_1.expect(account.privateKey).to.be.equal(accountInformation.privateKey);
         chai_1.expect(account.address.plain()).to.be.equal(accountInformation.address);
     });
+    /**
+     * @see https://raw.githubusercontent.com/nemtech/test-vectors/master/1.test-keys-nis1.json
+     */
+    it('should be created via private key using NIS1 schema', () => {
+        const account = Account_1.Account.createFromPrivateKey('575dbb3062267eff57c970a336ebbc8fbcfe12c5bd3ed7bc11eb0481d7704ced', NetworkType_1.NetworkType.MIJIN_TEST, crypto_1.SignSchema.KECCAK_REVERSED_KEY);
+        chai_1.expect(account.publicKey.toUpperCase()).to.be.
+            equal('c5f54ba980fcbb657dbaaa42700539b207873e134d2375efeab5f1ab52f87844'.toUpperCase());
+        chai_1.expect(account.address.plain()).to.be.equal('SDD2CT6LQLIYQ56KIXI3ENTM6EK3D44P5JGDTV3S');
+    });
     it('should throw exception when the private key is not valid', () => {
         chai_1.expect(() => {
             Account_1.Account.createFromPrivateKey('', NetworkType_1.NetworkType.MIJIN_TEST);
@@ -37,6 +47,12 @@ describe('Account', () => {
     });
     it('should generate a new account', () => {
         const account = Account_1.Account.generateNewAccount(NetworkType_1.NetworkType.MIJIN_TEST);
+        chai_1.expect(account.publicKey).to.not.be.equal(undefined);
+        chai_1.expect(account.privateKey).to.not.be.equal(undefined);
+        chai_1.expect(account.address).to.not.be.equal(undefined);
+    });
+    it('should generate a new account using NIS1 schema', () => {
+        const account = Account_1.Account.generateNewAccount(NetworkType_1.NetworkType.MIJIN_TEST, crypto_1.SignSchema.KECCAK_REVERSED_KEY);
         chai_1.expect(account.publicKey).to.not.be.equal(undefined);
         chai_1.expect(account.privateKey).to.not.be.equal(undefined);
         chai_1.expect(account.address).to.not.be.equal(undefined);
@@ -54,6 +70,20 @@ describe('Account', () => {
             const publicAccount = account.publicAccount;
             const signed = account.signData('0xAA');
             chai_1.expect(publicAccount.verifySignature('0xAA', signed))
+                .to.be.true;
+        });
+        it('utf-8 - NIS1', () => {
+            const account = Account_1.Account.createFromPrivateKey('AB860ED1FE7C91C02F79C02225DAC708D7BD13369877C1F59E678CC587658C47', NetworkType_1.NetworkType.MIJIN_TEST, crypto_1.SignSchema.KECCAK_REVERSED_KEY);
+            const publicAccount = account.publicAccount;
+            const signed = account.signData('catapult rocks!', crypto_1.SignSchema.KECCAK_REVERSED_KEY);
+            chai_1.expect(publicAccount.verifySignature('catapult rocks!', signed, crypto_1.SignSchema.KECCAK_REVERSED_KEY))
+                .to.be.true;
+        });
+        it('hexa - NIS1', () => {
+            const account = Account_1.Account.createFromPrivateKey('AB860ED1FE7C91C02F79C02225DAC708D7BD13369877C1F59E678CC587658C47', NetworkType_1.NetworkType.MIJIN_TEST, crypto_1.SignSchema.KECCAK_REVERSED_KEY);
+            const publicAccount = account.publicAccount;
+            const signed = account.signData('0xAA', crypto_1.SignSchema.KECCAK_REVERSED_KEY);
+            chai_1.expect(publicAccount.verifySignature('0xAA', signed, crypto_1.SignSchema.KECCAK_REVERSED_KEY))
                 .to.be.true;
         });
     });

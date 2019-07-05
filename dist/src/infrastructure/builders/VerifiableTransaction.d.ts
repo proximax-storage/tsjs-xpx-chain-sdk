@@ -1,3 +1,4 @@
+import { SignSchema } from '../../core/crypto';
 /**
  * VerifiableTransaction
  * @module transactions/VerifiableTransaction
@@ -21,9 +22,10 @@ export declare class VerifiableTransaction {
     /**
      * @param {KeyPair } keyPair KeyPair instance
      * @param {string} generationHash Network generation hash hex
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {module:model/TransactionPayload} - Signed Transaction Payload
      */
-    signTransaction(keyPair: any, generationHash: any): {
+    signTransaction(keyPair: any, generationHash: any, signSchema?: SignSchema): {
         payload: string;
         hash: string;
     };
@@ -34,9 +36,10 @@ export declare class VerifiableTransaction {
     serializeUnsignedTransaction(): string;
     /**
      * @param {KeyPair} keyPair KeyPair instance
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {module:model/TransactionPayload} Returns TransactionPayload instance
      */
-    signCosignatoriesTransaction(keyPair: any): {
+    signCosignatoriesTransaction(keyPair: any, signSchema?: SignSchema): {
         parentHash: string;
         signature: string;
         signer: any;

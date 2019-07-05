@@ -28,6 +28,7 @@ class Account {
      * @internal
      * @param address
      * @param keyPair
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      */
     constructor(
     /**
@@ -37,49 +38,62 @@ class Account {
     /**
      * The account keyPair, public and private key.
      */
-    keyPair) {
+    keyPair, 
+    /**
+     * The Sign Schema (KECCAK_REVERSED_KEY / SHA3).
+     */
+    signSchema = crypto_1.SignSchema.SHA3) {
         this.address = address;
         this.keyPair = keyPair;
+        this.signSchema = signSchema;
     }
     /**
      * Create an Account from a given private key
      * @param privateKey - Private key from an account
      * @param networkType - Network type
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @return {Account}
      */
-    static createFromPrivateKey(privateKey, networkType) {
-        const keyPair = crypto_1.KeyPair.createKeyPairFromPrivateKeyString(privateKey);
-        const address = format_1.RawAddress.addressToString(format_1.RawAddress.publicKeyToAddress(keyPair.publicKey, networkType));
-        return new Account(Address_1.Address.createFromRawAddress(address), keyPair);
+    static createFromPrivateKey(privateKey, networkType, signSchema = crypto_1.SignSchema.SHA3) {
+        const keyPair = crypto_1.KeyPair.createKeyPairFromPrivateKeyString(privateKey, signSchema);
+        const address = format_1.RawAddress.addressToString(format_1.RawAddress.publicKeyToAddress(keyPair.publicKey, networkType, signSchema));
+        return new Account(Address_1.Address.createFromRawAddress(address), keyPair, signSchema);
     }
-    static generateNewAccount(networkType) {
+    /**
+     * Generate a new account
+     * @param networkType - Network type
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     */
+    static generateNewAccount(networkType, signSchema = crypto_1.SignSchema.SHA3) {
         // Create random bytes
         const randomBytesArray = crypto_1.Crypto.randomBytes(32);
         // Hash random bytes with entropy seed
         // Finalize and keep only 32 bytes
-        const hashKey = format_1.Convert.uint8ToHex(randomBytesArray); // TODO: derive private key correctly
+        const hashKey = format_1.Convert.uint8ToHex(randomBytesArray);
         // Create KeyPair from hash key
-        const keyPair = crypto_1.KeyPair.createKeyPairFromPrivateKeyString(hashKey);
-        const address = Address_1.Address.createFromPublicKey(format_1.Convert.uint8ToHex(keyPair.publicKey), networkType);
-        return new Account(address, keyPair);
+        const keyPair = crypto_1.KeyPair.createKeyPairFromPrivateKeyString(hashKey, signSchema);
+        const address = Address_1.Address.createFromPublicKey(format_1.Convert.uint8ToHex(keyPair.publicKey), networkType, signSchema);
+        return new Account(address, keyPair, signSchema);
     }
     /**
      * Create a new encrypted Message
      * @param message - Plain message to be encrypted
      * @param recipientPublicAccount - Recipient public account
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {EncryptedMessage}
      */
-    encryptMessage(message, recipientPublicAccount) {
-        return EncryptedMessage_1.EncryptedMessage.create(message, recipientPublicAccount, this.privateKey);
+    encryptMessage(message, recipientPublicAccount, signSchema = crypto_1.SignSchema.SHA3) {
+        return EncryptedMessage_1.EncryptedMessage.create(message, recipientPublicAccount, this.privateKey, signSchema);
     }
     /**
      * Decrypts an encrypted message
      * @param encryptedMessage - Encrypted message
      * @param publicAccount - The public account originally encrypted the message
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {PlainMessage}
      */
-    decryptMessage(encryptedMessage, publicAccount) {
-        return EncryptedMessage_1.EncryptedMessage.decrypt(encryptedMessage, this.privateKey, publicAccount);
+    decryptMessage(encryptedMessage, publicAccount, signSchema = crypto_1.SignSchema.SHA3) {
+        return EncryptedMessage_1.EncryptedMessage.decrypt(encryptedMessage, this.privateKey, publicAccount, signSchema);
     }
     /**
      * Account public key.
@@ -93,7 +107,7 @@ class Account {
      * @return {PublicAccount}
      */
     get publicAccount() {
-        return PublicAccount_1.PublicAccount.createFromPublicKey(this.publicKey, this.address.networkType);
+        return PublicAccount_1.PublicAccount.createFromPublicKey(this.publicKey, this.address.networkType, this.signSchema);
     }
     /**
      * Account private key.
@@ -106,36 +120,40 @@ class Account {
      * Sign a transaction
      * @param transaction - The transaction to be signed.
      * @param generationHash - Network generation hash hex
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @return {SignedTransaction}
      */
-    sign(transaction, generationHash) {
-        return transaction.signWith(this, generationHash);
+    sign(transaction, generationHash, signSchema = crypto_1.SignSchema.SHA3) {
+        return transaction.signWith(this, generationHash, signSchema);
     }
     /**
      * Sign transaction with cosignatories creating a new SignedTransaction
      * @param transaction - The aggregate transaction to be signed.
      * @param cosignatories - The array of accounts that will cosign the transaction
      * @param generationHash - Network generation hash hex
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @return {SignedTransaction}
      */
-    signTransactionWithCosignatories(transaction, cosignatories, generationHash) {
-        return transaction.signTransactionWithCosignatories(this, cosignatories, generationHash);
+    signTransactionWithCosignatories(transaction, cosignatories, generationHash, signSchema = crypto_1.SignSchema.SHA3) {
+        return transaction.signTransactionWithCosignatories(this, cosignatories, generationHash, signSchema);
     }
     /**
      * Sign aggregate signature transaction
      * @param cosignatureTransaction - The aggregate signature transaction.
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @return {CosignatureSignedTransaction}
      */
-    signCosignatureTransaction(cosignatureTransaction) {
-        return cosignatureTransaction.signWith(this);
+    signCosignatureTransaction(cosignatureTransaction, signSchema = crypto_1.SignSchema.SHA3) {
+        return cosignatureTransaction.signWith(this, signSchema);
     }
     /**
      * Sign raw data
      * @param data - Data to be signed
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @return {string} - Signed data result
      */
-    signData(data) {
-        return format_1.Convert.uint8ToHex(crypto_1.KeyPair.sign(this.keyPair, format_1.Convert.hexToUint8(format_1.Convert.utf8ToHex(data))));
+    signData(data, signSchema = crypto_1.SignSchema.SHA3) {
+        return format_1.Convert.uint8ToHex(crypto_1.KeyPair.sign(this.keyPair, format_1.Convert.hexToUint8(format_1.Convert.utf8ToHex(data)), signSchema));
     }
 }
 exports.Account = Account;

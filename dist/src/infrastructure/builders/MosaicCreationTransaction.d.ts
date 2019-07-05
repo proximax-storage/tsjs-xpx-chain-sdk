@@ -3,7 +3,7 @@ export default class MosaicCreationTransaction extends VerifiableTransaction {
     constructor(bytes: any, schema: any);
 }
 export declare class Builder {
-    fee: any;
+    maxFee: any;
     version: any;
     type: any;
     deadline: any;
@@ -13,7 +13,7 @@ export declare class Builder {
     divisibility: any;
     duration: any;
     constructor();
-    addFee(fee: any): this;
+    addFee(maxFee: any): this;
     addVersion(version: any): this;
     addType(type: any): this;
     addNonce(nonce: any): this;

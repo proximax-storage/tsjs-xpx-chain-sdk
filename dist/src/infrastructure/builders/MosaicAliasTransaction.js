@@ -15,11 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const TransactionType_1 = require("../../model/transaction/TransactionType");
 const MosaicAliasTransactionBuffer_1 = require("../buffers/MosaicAliasTransactionBuffer");
 const MosaicAliasTransactionSchema_1 = require("../schemas/MosaicAliasTransactionSchema");
 const VerifiableTransaction_1 = require("./VerifiableTransaction");
 const { MosaicAliasTransactionBuffer, } = MosaicAliasTransactionBuffer_1.default.Buffers;
-const { flatbuffers, } = require('flatbuffers');
+const flatbuffers_1 = require("flatbuffers");
 /**
  * @module transactions/MosaicAliasTransaction
  */
@@ -32,12 +33,11 @@ exports.default = MosaicAliasTransaction;
 // tslint:disable-next-line:max-classes-per-file
 class Builder {
     constructor() {
-        this.fee = [0, 0];
-        this.version = 36865;
-        this.type = 0x434E;
+        this.maxFee = [0, 0];
+        this.type = TransactionType_1.TransactionType.MOSAIC_ALIAS;
     }
-    addFee(fee) {
-        this.fee = fee;
+    addFee(maxFee) {
+        this.maxFee = maxFee;
         return this;
     }
     addVersion(version) {
@@ -65,7 +65,7 @@ class Builder {
         return this;
     }
     build() {
-        const builder = new flatbuffers.Builder(1);
+        const builder = new flatbuffers_1.flatbuffers.Builder(1);
         // Create vectors
         const signatureVector = MosaicAliasTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
@@ -74,7 +74,7 @@ class Builder {
         const deadlineVector = MosaicAliasTransactionBuffer
             .createDeadlineVector(builder, this.deadline);
         const feeVector = MosaicAliasTransactionBuffer
-            .createFeeVector(builder, this.fee);
+            .createFeeVector(builder, this.maxFee);
         const namespaceIdVector = MosaicAliasTransactionBuffer
             .createNamespaceIdVector(builder, this.namespaceId);
         const mosaicIdVector = MosaicAliasTransactionBuffer

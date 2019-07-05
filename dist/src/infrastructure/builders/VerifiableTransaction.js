@@ -54,14 +54,15 @@ class VerifiableTransaction {
     /**
      * @param {KeyPair } keyPair KeyPair instance
      * @param {string} generationHash Network generation hash hex
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {module:model/TransactionPayload} - Signed Transaction Payload
      */
-    signTransaction(keyPair, generationHash) {
+    signTransaction(keyPair, generationHash, signSchema = crypto_1.SignSchema.SHA3) {
         const generationHashBytes = Array.from(format_1.Convert.hexToUint8(generationHash));
         const byteBuffer = this.serialize();
         const signingBytes = generationHashBytes.concat(byteBuffer.slice(4 + 64 + 32));
-        const keyPairEncoded = crypto_1.KeyPair.createKeyPairFromPrivateKeyString(keyPair.privateKey);
-        const signature = Array.from(crypto_1.KeyPair.sign(keyPair, new Uint8Array(signingBytes)));
+        const keyPairEncoded = crypto_1.KeyPair.createKeyPairFromPrivateKeyString(keyPair.privateKey, signSchema);
+        const signature = Array.from(crypto_1.KeyPair.sign(keyPair, new Uint8Array(signingBytes), signSchema));
         const signedTransactionBuffer = byteBuffer
             .splice(0, 4)
             .concat(signature)
@@ -85,10 +86,11 @@ class VerifiableTransaction {
     }
     /**
      * @param {KeyPair} keyPair KeyPair instance
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {module:model/TransactionPayload} Returns TransactionPayload instance
      */
-    signCosignatoriesTransaction(keyPair) {
-        const signature = crypto_1.KeyPair.sign(keyPair, new Uint8Array(this.bytes));
+    signCosignatoriesTransaction(keyPair, signSchema = crypto_1.SignSchema.SHA3) {
+        const signature = crypto_1.KeyPair.sign(keyPair, new Uint8Array(this.bytes), signSchema);
         return {
             parentHash: format_1.Convert.uint8ToHex(this.bytes),
             signature: format_1.Convert.uint8ToHex(signature),

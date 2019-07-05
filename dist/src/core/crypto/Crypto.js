@@ -20,6 +20,7 @@ const Convert_1 = require("../format/Convert");
 const KeyPair_1 = require("./KeyPair");
 const utf8_1 = require("utf8");
 const utility = require("./Utilities");
+const SignSchema_1 = require("./SignSchema");
 const CryptoJS = require('crypto-js');
 class Crypto {
 }
@@ -234,18 +235,18 @@ Crypto.encodePrivateKey = (privateKey, password) => {
  * @param {string} msg - A text message
  * @param {Uint8Array} iv - An initialization vector
  * @param {Uint8Array} salt - A salt
- *
+ * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
  * @return {string} - The encoded message
  */
-Crypto._encode = function (senderPriv, recipientPub, msg, iv, salt) {
+Crypto._encode = (senderPriv, recipientPub, msg, iv, salt, signSchema = SignSchema_1.SignSchema.SHA3) => {
     // Errors
     if (!senderPriv || !recipientPub || !msg || !iv || !salt) {
         throw new Error('Missing argument !');
     }
     // Processing
-    const keyPair = KeyPair_1.KeyPair.createKeyPairFromPrivateKeyString(senderPriv);
+    const keyPair = KeyPair_1.KeyPair.createKeyPairFromPrivateKeyString(senderPriv, signSchema);
     const pk = Convert_1.Convert.hexToUint8(recipientPub);
-    const encKey = utility.ua2words(KeyPair_1.KeyPair.deriveSharedKey(keyPair, pk, salt), 32);
+    const encKey = utility.ua2words(KeyPair_1.KeyPair.deriveSharedKey(keyPair, pk, salt, signSchema), 32);
     const encIv = {
         iv: utility.ua2words(iv, 16),
     };
@@ -260,10 +261,10 @@ Crypto._encode = function (senderPriv, recipientPub, msg, iv, salt) {
  * @param {string} senderPriv - A sender private key
  * @param {string} recipientPub - A recipient public key
  * @param {string} msg - A text message
- *
+ * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
  * @return {string} - The encoded message
  */
-Crypto.encode = (senderPriv, recipientPub, msg) => {
+Crypto.encode = (senderPriv, recipientPub, msg, signSchema = SignSchema_1.SignSchema.SHA3) => {
     // Errors
     if (!senderPriv || !recipientPub || !msg) {
         throw new Error('Missing argument !');
@@ -271,7 +272,7 @@ Crypto.encode = (senderPriv, recipientPub, msg) => {
     // Processing
     const iv = Crypto.randomBytes(16);
     const salt = Crypto.randomBytes(32);
-    const encoded = Crypto._encode(senderPriv, recipientPub, msg, iv, salt);
+    const encoded = Crypto._encode(senderPriv, recipientPub, msg, iv, salt, signSchema);
     // Result
     return encoded;
 };
@@ -281,18 +282,18 @@ Crypto.encode = (senderPriv, recipientPub, msg) => {
  * @param {string} recipientPrivate - A recipient private key
  * @param {string} senderPublic - A sender public key
  * @param {Uint8Array} _payload - An encrypted message payload in bytes
- *
+ * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
  * @return {string} - The decoded payload as hex
  */
-Crypto._decode = (recipientPrivate, senderPublic, payload, iv, salt) => {
+Crypto._decode = (recipientPrivate, senderPublic, payload, iv, salt, signSchema = SignSchema_1.SignSchema.SHA3) => {
     // Error
     if (!recipientPrivate || !senderPublic || !payload) {
         throw new Error('Missing argument !');
     }
     // Processing
-    const keyPair = KeyPair_1.KeyPair.createKeyPairFromPrivateKeyString(recipientPrivate);
+    const keyPair = KeyPair_1.KeyPair.createKeyPairFromPrivateKeyString(recipientPrivate, signSchema);
     const pk = Convert_1.Convert.hexToUint8(senderPublic);
-    const encKey = utility.ua2words(KeyPair_1.KeyPair.deriveSharedKey(keyPair, pk, salt), 32);
+    const encKey = utility.ua2words(KeyPair_1.KeyPair.deriveSharedKey(keyPair, pk, salt, signSchema), 32);
     const encIv = {
         iv: utility.ua2words(iv, 16),
     };
@@ -309,10 +310,10 @@ Crypto._decode = (recipientPrivate, senderPublic, payload, iv, salt) => {
  * @param {string} recipientPrivate - A recipient private key
  * @param {string} senderPublic - A sender public key
  * @param {string} _payload - An encrypted message payload
- *
+ * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
  * @return {string} - The decoded payload as hex
  */
-Crypto.decode = (recipientPrivate, senderPublic, _payload) => {
+Crypto.decode = (recipientPrivate, senderPublic, _payload, signSchema = SignSchema_1.SignSchema.SHA3) => {
     // Error
     if (!recipientPrivate || !senderPublic || !_payload) {
         throw new Error('Missing argument !');
@@ -322,7 +323,7 @@ Crypto.decode = (recipientPrivate, senderPublic, _payload) => {
     const payload = new Uint8Array(binPayload.buffer, 48);
     const salt = new Uint8Array(binPayload.buffer, 0, 32);
     const iv = new Uint8Array(binPayload.buffer, 32, 16);
-    const decoded = Crypto._decode(recipientPrivate, senderPublic, payload, iv, salt);
+    const decoded = Crypto._decode(recipientPrivate, senderPublic, payload, iv, salt, signSchema);
     return utf8_1.encode(String.fromCharCode.apply(null, Convert_1.Convert.hexToUint8(decoded)));
 };
 /**

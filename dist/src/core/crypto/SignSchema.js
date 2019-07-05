@@ -1,6 +1,5 @@
 "use strict";
 /*
-import { SHA3Hasher } from './SHA3Hasher';
  * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,13 +14,14 @@ import { SHA3Hasher } from './SHA3Hasher';
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(require("./Crypto"));
-__export(require("./KeyPair"));
-__export(require("./SHA3Hasher"));
-__export(require("./nacl_catapult"));
-__export(require("./SignSchema"));
-//# sourceMappingURL=index.js.map
+/**
+ * [KECCAK_REVERSED_KEY]: Keccak hash algorithm with reversed private keys.
+ * [SHA3]: SHA3 hash algorithm without key reversal
+ */
+var SignSchema;
+(function (SignSchema) {
+    SignSchema[SignSchema["KECCAK_REVERSED_KEY"] = 1] = "KECCAK_REVERSED_KEY";
+    SignSchema[SignSchema["SHA3"] = 2] = "SHA3";
+})(SignSchema = exports.SignSchema || (exports.SignSchema = {}));
+//# sourceMappingURL=SignSchema.js.map

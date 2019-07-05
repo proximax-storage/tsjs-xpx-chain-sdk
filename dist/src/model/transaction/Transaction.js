@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+const crypto_1 = require("../../core/crypto");
 const SerializeTransactionToJSON_1 = require("../../infrastructure/transaction/SerializeTransactionToJSON");
 const Deadline_1 = require("./Deadline");
 const SignedTransaction_1 = require("./SignedTransaction");
@@ -80,11 +81,12 @@ class Transaction {
      * Serialize and sign transaction creating a new SignedTransaction
      * @param account - The account to sign the transaction
      * @param generationHash - Network generation hash hex
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {SignedTransaction}
      */
-    signWith(account, generationHash) {
+    signWith(account, generationHash, signSchema = crypto_1.SignSchema.SHA3) {
         const transaction = this.buildTransaction();
-        const signedTransactionRaw = transaction.signTransaction(account, generationHash);
+        const signedTransactionRaw = transaction.signTransaction(account, generationHash, signSchema);
         return new SignedTransaction_1.SignedTransaction(signedTransactionRaw.payload, signedTransactionRaw.hash, account.publicKey, this.type, this.networkType);
     }
     /**
@@ -139,8 +141,13 @@ class Transaction {
      * @internal
      */
     versionToDTO() {
-        const versionDTO = this.networkType.toString(16) + '0' + this.version.toString(16);
-        return parseInt(versionDTO, 16);
+        return (this.networkType << 8) + this.version;
+    }
+    /**
+     * @internal
+     */
+    versionToHex() {
+        return '0x' + this.versionToDTO().toString(16);
     }
     /**
      * @description reapply a given value to the transaction in an immutable way

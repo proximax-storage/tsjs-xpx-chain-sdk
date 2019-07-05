@@ -1,3 +1,4 @@
+import { SignSchema } from '../../core/crypto';
 import { NetworkType } from '../blockchain/NetworkType';
 import { Address } from './Address';
 /**
@@ -16,18 +17,19 @@ export declare class PublicAccount {
      * Create a PublicAccount from a public key and network type.
      * @param publicKey Public key
      * @param networkType Network type
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {PublicAccount}
      */
-    static createFromPublicKey(publicKey: string, networkType: NetworkType): PublicAccount;
+    static createFromPublicKey(publicKey: string, networkType: NetworkType, signSchema?: SignSchema): PublicAccount;
     /**
      * Verify a signature.
      *
      * @param {string} data - The data to verify.
      * @param {string} signature - The signature to verify.
-     *
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @return {boolean}  - True if the signature is valid, false otherwise.
      */
-    verifySignature(data: string, signature: string): boolean;
+    verifySignature(data: string, signature: string, signSchema?: SignSchema): boolean;
     /**
      * Compares public accounts for equality.
      * @param publicAccount

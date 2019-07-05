@@ -17,6 +17,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const js_sha3_1 = require("js-sha3");
 const format_1 = require("../format");
+const SignSchema_1 = require("./SignSchema");
 class SHA3Hasher {
 }
 /**
@@ -24,22 +25,24 @@ class SHA3Hasher {
  * @param {Uint8Array} dest The computed hash destination.
  * @param {Uint8Array} data The data to hash.
  * @param {numeric} length The hash length in bytes.
+ * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
  */
-SHA3Hasher.func = (dest, data, length) => {
-    const hasher = SHA3Hasher.getHasher(length);
+SHA3Hasher.func = (dest, data, length, signSchema = SignSchema_1.SignSchema.SHA3) => {
+    const hasher = SHA3Hasher.getHasher(length, signSchema);
     const hash = hasher.arrayBuffer(data);
     format_1.RawArray.copy(dest, format_1.RawArray.uint8View(hash));
 };
 /**
  * Creates a hasher object.
  * @param {numeric} length The hash length in bytes.
+ * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
  * @returns {object} The hasher.
  */
-SHA3Hasher.createHasher = (length = 64) => {
+SHA3Hasher.createHasher = (length = 64, signSchema = SignSchema_1.SignSchema.SHA3) => {
     let hash;
     return {
         reset: () => {
-            hash = SHA3Hasher.getHasher(length).create();
+            hash = SHA3Hasher.getHasher(length, signSchema).create();
         },
         update: (data) => {
             if (data instanceof Uint8Array) {
@@ -60,12 +63,13 @@ SHA3Hasher.createHasher = (length = 64) => {
 /**
  * Get a hasher instance.
  * @param {numeric} length The hash length in bytes.
+ * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
  * @returns {object} The hasher.
  */
-SHA3Hasher.getHasher = (length = 64) => {
+SHA3Hasher.getHasher = (length = 64, signSchema = SignSchema_1.SignSchema.SHA3) => {
     return {
-        32: js_sha3_1.sha3_256,
-        64: js_sha3_1.sha3_512,
+        32: signSchema === SignSchema_1.SignSchema.SHA3 ? js_sha3_1.sha3_256 : js_sha3_1.keccak256,
+        64: signSchema === SignSchema_1.SignSchema.SHA3 ? js_sha3_1.sha3_512 : js_sha3_1.keccak512,
     }[length];
 };
 exports.SHA3Hasher = SHA3Hasher;

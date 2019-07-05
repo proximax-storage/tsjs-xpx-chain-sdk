@@ -17,6 +17,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = require("chai");
 const js_joda_1 = require("js-joda");
+const TransactionMapping_1 = require("../../../src/core/utils/TransactionMapping");
 const CreateTransactionFromDTO_1 = require("../../../src/infrastructure/transaction/CreateTransactionFromDTO");
 const Address_1 = require("../../../src/model/account/Address");
 const PublicAccount_1 = require("../../../src/model/account/PublicAccount");
@@ -27,6 +28,8 @@ const MosaicProperties_1 = require("../../../src/model/mosaic/MosaicProperties")
 const MosaicSupplyType_1 = require("../../../src/model/mosaic/MosaicSupplyType");
 const NetworkCurrencyMosaic_1 = require("../../../src/model/mosaic/NetworkCurrencyMosaic");
 const AggregateTransaction_1 = require("../../../src/model/transaction/AggregateTransaction");
+const CosignatureSignedTransaction_1 = require("../../../src/model/transaction/CosignatureSignedTransaction");
+const CosignatureTransaction_1 = require("../../../src/model/transaction/CosignatureTransaction");
 const Deadline_1 = require("../../../src/model/transaction/Deadline");
 const ModifyMultisigAccountTransaction_1 = require("../../../src/model/transaction/ModifyMultisigAccountTransaction");
 const MosaicDefinitionTransaction_1 = require("../../../src/model/transaction/MosaicDefinitionTransaction");
@@ -35,6 +38,7 @@ const MultisigCosignatoryModification_1 = require("../../../src/model/transactio
 const MultisigCosignatoryModificationType_1 = require("../../../src/model/transaction/MultisigCosignatoryModificationType");
 const PlainMessage_1 = require("../../../src/model/transaction/PlainMessage");
 const RegisterNamespaceTransaction_1 = require("../../../src/model/transaction/RegisterNamespaceTransaction");
+const TransactionType_1 = require("../../../src/model/transaction/TransactionType");
 const TransferTransaction_1 = require("../../../src/model/transaction/TransferTransaction");
 const UInt64_1 = require("../../../src/model/UInt64");
 const conf_spec_1 = require("../../conf/conf.spec");
@@ -170,12 +174,12 @@ describe('AggregateTransaction', () => {
                             ],
                             signer: 'B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF',
                             type: 16725,
-                            version: 36867,
+                            version: 36865,
                         },
                     },
                 ],
                 type: 16705,
-                version: 36867,
+                version: 36865,
             },
         };
         const aggregateTransaction = CreateTransactionFromDTO_1.CreateTransactionFromDTO(aggregateTransactionDTO);
@@ -197,6 +201,39 @@ describe('AggregateTransaction', () => {
         chai_1.expect(() => {
             AggregateTransaction_1.AggregateTransaction.createComplete(Deadline_1.Deadline.create(), [aggregateTransaction.toAggregate(account.publicAccount)], NetworkType_1.NetworkType.MIJIN_TEST, []);
         }).to.throw(Error, 'Inner transaction cannot be an aggregated transaction.');
+    });
+    it('Should create signed transaction with cosignatories - Aggregated Complete', () => {
+        /**
+         * https://github.com/nemtech/nem2-sdk-typescript-javascript/issues/112
+         */
+        const accountAlice = conf_spec_1.TestingAccount;
+        const accountBob = conf_spec_1.CosignatoryAccount;
+        const accountCarol = conf_spec_1.Cosignatory2Account;
+        const AtoBTx = TransferTransaction_1.TransferTransaction.create(Deadline_1.Deadline.create(), accountBob.address, [], PlainMessage_1.PlainMessage.create('a to b'), NetworkType_1.NetworkType.MIJIN_TEST);
+        const BtoATx = TransferTransaction_1.TransferTransaction.create(Deadline_1.Deadline.create(), accountAlice.address, [], PlainMessage_1.PlainMessage.create('b to a'), NetworkType_1.NetworkType.MIJIN_TEST);
+        const CtoATx = TransferTransaction_1.TransferTransaction.create(Deadline_1.Deadline.create(), accountAlice.address, [], PlainMessage_1.PlainMessage.create('c to a'), NetworkType_1.NetworkType.MIJIN_TEST);
+        // 01. Alice creates the aggregated tx and serialize it, Then payload send to Bob & Carol
+        const aggregateTransactionPayload = AggregateTransaction_1.AggregateTransaction.createComplete(Deadline_1.Deadline.create(), [
+            AtoBTx.toAggregate(accountAlice.publicAccount),
+            BtoATx.toAggregate(accountBob.publicAccount),
+            CtoATx.toAggregate(accountCarol.publicAccount)
+        ], NetworkType_1.NetworkType.MIJIN_TEST, []).serialize();
+        // 02.1 Bob cosigns the tx and sends it back to Alice
+        const signedTxBob = CosignatureTransaction_1.CosignatureTransaction.signTransactionPayload(accountBob, aggregateTransactionPayload, generationHash);
+        // 02.2 Carol cosigns the tx and sends it back to Alice
+        const signedTxCarol = CosignatureTransaction_1.CosignatureTransaction.signTransactionPayload(accountCarol, aggregateTransactionPayload, generationHash);
+        // 03. Alice collects the cosignatures, recreate, sign, and announces the transaction
+        // First Alice need to append cosignatories to current transaction.
+        const cosignatureSignedTransactions = [
+            new CosignatureSignedTransaction_1.CosignatureSignedTransaction(signedTxBob.parentHash, signedTxBob.signature, signedTxBob.signer),
+            new CosignatureSignedTransaction_1.CosignatureSignedTransaction(signedTxCarol.parentHash, signedTxCarol.signature, signedTxCarol.signer),
+        ];
+        const recreatedTx = TransactionMapping_1.TransactionMapping.createFromPayload(aggregateTransactionPayload);
+        const signedTransaction = recreatedTx.signTransactionGivenSignatures(accountAlice, cosignatureSignedTransactions, generationHash);
+        chai_1.expect(signedTransaction.type).to.be.equal(TransactionType_1.TransactionType.AGGREGATE_COMPLETE);
+        chai_1.expect(signedTransaction.signer).to.be.equal(accountAlice.publicKey);
+        chai_1.expect(signedTransaction.payload.indexOf(accountBob.publicKey) > -1).to.be.true;
+        chai_1.expect(signedTransaction.payload.indexOf(accountCarol.publicKey) > -1).to.be.true;
     });
     describe('size', () => {
         it('should return 282 for AggregateTransaction byte size with TransferTransaction with 1 mosaic and message NEM', () => {

@@ -22,7 +22,8 @@ const format_1 = require("../../core/format");
 const HashLockTransactionBufferPackage = require("../buffers/HashLockTransactionBuffer");
 const HashLockTransactionSchema_1 = require("../schemas/HashLockTransactionSchema");
 const VerifiableTransaction_1 = require("./VerifiableTransaction");
-const { flatbuffers, } = require('flatbuffers');
+const TransactionType_1 = require("../../model/transaction/TransactionType");
+const flatbuffers_1 = require("flatbuffers");
 const { HashLockTransactionBuffer, } = HashLockTransactionBufferPackage.default.Buffers;
 class HashLockTransaction extends VerifiableTransaction_1.VerifiableTransaction {
     constructor(bytes) {
@@ -33,12 +34,11 @@ exports.default = HashLockTransaction;
 // tslint:disable-next-line:max-classes-per-file
 class Builder {
     constructor() {
-        this.fee = [0, 0];
-        this.version = 36867;
-        this.type = 0x414C;
+        this.maxFee = [0, 0];
+        this.type = TransactionType_1.TransactionType.LOCK;
     }
-    addFee(fee) {
-        this.fee = fee;
+    addFee(maxFee) {
+        this.maxFee = maxFee;
         return this;
     }
     addVersion(version) {
@@ -70,13 +70,13 @@ class Builder {
         return this;
     }
     build() {
-        const builder = new flatbuffers.Builder(1);
+        const builder = new flatbuffers_1.flatbuffers.Builder(1);
         // Create vectors
         const signatureVector = HashLockTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
         const signerVector = HashLockTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
         const deadlineVector = HashLockTransactionBuffer.createDeadlineVector(builder, this.deadline);
-        const feeVector = HashLockTransactionBuffer.createFeeVector(builder, this.fee);
+        const feeVector = HashLockTransactionBuffer.createFeeVector(builder, this.maxFee);
         const mosaicIdVector = HashLockTransactionBuffer.createMosaicIdVector(builder, this.mosaicId);
         const mosaicAmountVector = HashLockTransactionBuffer.createMosaicAmountVector(builder, this.mosaicAmount);
         const durationVector = HashLockTransactionBuffer.createDurationVector(builder, this.duration);

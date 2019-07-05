@@ -19,10 +19,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module transactions/AccountLinkTransaction
  */
 const format_1 = require("../../core/format");
+const TransactionType_1 = require("../../model/transaction/TransactionType");
 const AccountLinkTransactionBuffer_1 = require("../buffers/AccountLinkTransactionBuffer");
 const AccountLinkTransactionSchema_1 = require("../schemas/AccountLinkTransactionSchema");
 const VerifiableTransaction_1 = require("./VerifiableTransaction");
-const { flatbuffers, } = require('flatbuffers');
+const flatbuffers_1 = require("flatbuffers");
 const { AccountLinkTransactionBuffer, } = AccountLinkTransactionBuffer_1.default.Buffers;
 class AccountLinkTransaction extends VerifiableTransaction_1.VerifiableTransaction {
     constructor(bytes) {
@@ -33,12 +34,11 @@ exports.AccountLinkTransaction = AccountLinkTransaction;
 // tslint:disable-next-line:max-classes-per-file
 class Builder {
     constructor() {
-        this.fee = [0, 0];
-        this.version = 36867;
-        this.type = 0x414C;
+        this.maxFee = [0, 0];
+        this.type = TransactionType_1.TransactionType.LINK_ACCOUNT;
     }
-    addFee(fee) {
-        this.fee = fee;
+    addFee(maxFee) {
+        this.maxFee = maxFee;
         return this;
     }
     addVersion(version) {
@@ -62,13 +62,13 @@ class Builder {
         return this;
     }
     build() {
-        const builder = new flatbuffers.Builder(1);
+        const builder = new flatbuffers_1.flatbuffers.Builder(1);
         // Create vectors
         const signatureVector = AccountLinkTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
         const signerVector = AccountLinkTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
         const deadlineVector = AccountLinkTransactionBuffer.createDeadlineVector(builder, this.deadline);
-        const feeVector = AccountLinkTransactionBuffer.createFeeVector(builder, this.fee);
+        const feeVector = AccountLinkTransactionBuffer.createFeeVector(builder, this.maxFee);
         const remoteAccountKeyVector = AccountLinkTransactionBuffer.createRemoteAccountKeyVector(builder, this.remoteAccountKey);
         AccountLinkTransactionBuffer.startAccountLinkTransactionBuffer(builder);
         AccountLinkTransactionBuffer.addSize(builder, 153);

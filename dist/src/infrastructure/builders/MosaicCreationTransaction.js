@@ -18,10 +18,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @module transactions/MosaicCreationTransaction
  */
+const TransactionType_1 = require("../../model/transaction/TransactionType");
 const MosaicCreationTransactionBuffer_1 = require("../buffers/MosaicCreationTransactionBuffer");
 const MosaicCreationTransactionSchema_1 = require("../schemas/MosaicCreationTransactionSchema");
 const VerifiableTransaction_1 = require("./VerifiableTransaction");
-const { flatbuffers, } = require('flatbuffers');
+const flatbuffers_1 = require("flatbuffers");
 const { MosaicCreationTransactionBuffer, } = MosaicCreationTransactionBuffer_1.default.Buffers;
 class MosaicCreationTransaction extends VerifiableTransaction_1.VerifiableTransaction {
     constructor(bytes, schema) {
@@ -33,13 +34,12 @@ exports.default = MosaicCreationTransaction;
 class Builder {
     constructor() {
         this.flags = 0;
-        this.fee = [0, 0];
-        this.version = 36867;
-        this.type = 0x414d;
+        this.maxFee = [0, 0];
+        this.type = TransactionType_1.TransactionType.MOSAIC_DEFINITION;
         this.nonce = 0;
     }
-    addFee(fee) {
-        this.fee = fee;
+    addFee(maxFee) {
+        this.maxFee = maxFee;
         return this;
     }
     addVersion(version) {
@@ -83,7 +83,7 @@ class Builder {
         return this;
     }
     build() {
-        const builder = new flatbuffers.Builder(1);
+        const builder = new flatbuffers_1.flatbuffers.Builder(1);
         // Create vectors
         const signatureVector = MosaicCreationTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
@@ -92,7 +92,7 @@ class Builder {
         const deadlineVector = MosaicCreationTransactionBuffer
             .createDeadlineVector(builder, this.deadline);
         const feeVector = MosaicCreationTransactionBuffer
-            .createFeeVector(builder, this.fee);
+            .createFeeVector(builder, this.maxFee);
         const nonceVector = MosaicCreationTransactionBuffer
             .createNonceVector(builder, this.nonce);
         const mosaicIdVector = MosaicCreationTransactionBuffer

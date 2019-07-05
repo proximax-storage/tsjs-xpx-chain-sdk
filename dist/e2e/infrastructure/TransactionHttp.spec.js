@@ -134,6 +134,13 @@ describe('TransactionHttp', () => {
         });
     });
     describe('AccountPropertyTransaction - EntityType', () => {
+        it('standalone', (done) => {
+            const entityTypePropertyFilter = AccountPropertyModification_1.AccountPropertyModification.createForEntityType(PropertyModificationType_1.PropertyModificationType.Add, TransactionType_1.TransactionType.LINK_ACCOUNT);
+            const addressModification = AccountPropertyTransaction_1.AccountPropertyTransaction.createEntityTypePropertyModificationTransaction(Deadline_1.Deadline.create(), PropertyType_1.PropertyType.BlockTransaction, [entityTypePropertyFilter], conf_spec_1.ConfNetworkType);
+            const signedTransaction = addressModification.signWith(conf_spec_1.TestingRecipient, generationHash);
+            validateTransactionAnnounceCorrectly(conf_spec_1.TestingRecipient.address, done, signedTransaction.hash);
+            transactionHttp.announce(signedTransaction);
+        });
         it('aggregate', (done) => {
             const entityTypePropertyFilter = AccountPropertyModification_1.AccountPropertyModification.createForEntityType(PropertyModificationType_1.PropertyModificationType.Remove, TransactionType_1.TransactionType.LINK_ACCOUNT);
             const addressModification = AccountPropertyTransaction_1.AccountPropertyTransaction.createEntityTypePropertyModificationTransaction(Deadline_1.Deadline.create(), PropertyType_1.PropertyType.BlockTransaction, [entityTypePropertyFilter], conf_spec_1.ConfNetworkType);

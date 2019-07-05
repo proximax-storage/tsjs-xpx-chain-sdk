@@ -22,7 +22,9 @@ const format_1 = require("../../core/format");
 const TransferTransactionBufferPackage = require("../../infrastructure/buffers/TransferTransactionBuffer");
 const VerifiableTransaction_1 = require("../../infrastructure/builders/VerifiableTransaction");
 const TransferTransactionSchema_1 = require("../../infrastructure/schemas/TransferTransactionSchema");
-const { flatbuffers, } = require('flatbuffers');
+const TransactionType_1 = require("../../model/transaction/TransactionType");
+const flatbuffers_1 = require("flatbuffers");
+const MessageType_1 = require("../../model/transaction/MessageType");
 const { TransferTransactionBuffer, MessageBuffer, MosaicBuffer, } = TransferTransactionBufferPackage.default.Buffers;
 class TransferTransaction extends VerifiableTransaction_1.VerifiableTransaction {
     constructor(bytes) {
@@ -33,12 +35,11 @@ exports.default = TransferTransaction;
 // tslint:disable-next-line:max-classes-per-file
 class Builder {
     constructor() {
-        this.fee = [0, 0];
-        this.version = 36867;
-        this.type = 0x4154;
+        this.maxFee = [0, 0];
+        this.type = TransactionType_1.TransactionType.TRANSFER;
     }
-    addFee(fee) {
-        this.fee = fee;
+    addFee(maxFee) {
+        this.maxFee = maxFee;
         return this;
     }
     addVersion(version) {
@@ -81,10 +82,16 @@ class Builder {
         return this;
     }
     build() {
-        const builder = new flatbuffers.Builder(1);
+        const builder = new flatbuffers_1.flatbuffers.Builder(1);
         // Constants
         // Create message
-        const bytePayload = format_1.Convert.hexToUint8(format_1.Convert.utf8ToHex(this.message.payload));
+        let bytePayload;
+        if (this.message.type === MessageType_1.MessageType.EncryptedMessage) {
+            bytePayload = format_1.Convert.hexToUint8(this.message.payload);
+        }
+        else {
+            bytePayload = format_1.Convert.hexToUint8(format_1.Convert.utf8ToHex(this.message.payload));
+        }
         const payload = MessageBuffer.createPayloadVector(builder, bytePayload);
         MessageBuffer.startMessageBuffer(builder);
         MessageBuffer.addType(builder, this.message.type);
@@ -105,7 +112,7 @@ class Builder {
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
         const signerVector = TransferTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
         const deadlineVector = TransferTransactionBuffer.createDeadlineVector(builder, this.deadline);
-        const feeVector = TransferTransactionBuffer.createFeeVector(builder, this.fee);
+        const feeVector = TransferTransactionBuffer.createFeeVector(builder, this.maxFee);
         const recipientVector = TransferTransactionBuffer.createRecipientVector(builder, this.recipient);
         const mosaicsVector = TransferTransactionBuffer.createMosaicsVector(builder, mosaics);
         TransferTransactionBuffer.startTransferTransactionBuffer(builder);

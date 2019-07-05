@@ -1,3 +1,4 @@
+import { SignSchema } from './SignSchema';
 export declare class Crypto {
     /**
      * Encrypt a private key for mobile apps (AES_PBKF2)
@@ -79,40 +80,40 @@ export declare class Crypto {
      * @param {string} msg - A text message
      * @param {Uint8Array} iv - An initialization vector
      * @param {Uint8Array} salt - A salt
-     *
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @return {string} - The encoded message
      */
-    static _encode: (senderPriv: any, recipientPub: any, msg: any, iv: any, salt: any) => string;
+    static _encode: (senderPriv: any, recipientPub: any, msg: any, iv: any, salt: any, signSchema?: SignSchema) => string;
     /**
      * Encode a message
      *
      * @param {string} senderPriv - A sender private key
      * @param {string} recipientPub - A recipient public key
      * @param {string} msg - A text message
-     *
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @return {string} - The encoded message
      */
-    static encode: (senderPriv: any, recipientPub: any, msg: any) => string;
+    static encode: (senderPriv: any, recipientPub: any, msg: any, signSchema?: SignSchema) => string;
     /**
      * Decode an encrypted message payload
      *
      * @param {string} recipientPrivate - A recipient private key
      * @param {string} senderPublic - A sender public key
      * @param {Uint8Array} _payload - An encrypted message payload in bytes
-     *
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @return {string} - The decoded payload as hex
      */
-    static _decode: (recipientPrivate: any, senderPublic: any, payload: any, iv: any, salt: any) => any;
+    static _decode: (recipientPrivate: any, senderPublic: any, payload: any, iv: any, salt: any, signSchema?: SignSchema) => any;
     /**
      * Decode an encrypted message payload
      *
      * @param {string} recipientPrivate - A recipient private key
      * @param {string} senderPublic - A sender public key
      * @param {string} _payload - An encrypted message payload
-     *
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @return {string} - The decoded payload as hex
      */
-    static decode: (recipientPrivate: any, senderPublic: any, _payload: any) => string;
+    static decode: (recipientPrivate: any, senderPublic: any, _payload: any, signSchema?: SignSchema) => string;
     /**
      * Generate random bytes by length
      * @param {number} length - The length of the random bytes

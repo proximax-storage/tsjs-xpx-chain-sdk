@@ -16,10 +16,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * limitations under the License.
  */
 const format_1 = require("../../core/format");
+const TransactionType_1 = require("../../model/transaction/TransactionType");
 const MultisigModificationTransactionBuffer_1 = require("../buffers/MultisigModificationTransactionBuffer");
 const MultisigModificationTransactionSchema_1 = require("../schemas/MultisigModificationTransactionSchema");
 const VerifiableTransaction_1 = require("./VerifiableTransaction");
-const { flatbuffers } = require('flatbuffers');
+const flatbuffers_1 = require("flatbuffers");
 const { MultisigModificationTransactionBuffer, CosignatoryModificationBuffer, } = MultisigModificationTransactionBuffer_1.default.Buffers;
 /**
  * @module transactions/MultisigModificationTransaction
@@ -33,12 +34,11 @@ exports.default = MultisigModificationTransaction;
 // tslint:disable-next-line:max-classes-per-file
 class Builder {
     constructor() {
-        this.fee = [0, 0];
-        this.version = 36867;
-        this.type = 0x4155;
+        this.maxFee = [0, 0];
+        this.type = TransactionType_1.TransactionType.MODIFY_MULTISIG_ACCOUNT;
     }
-    addFee(fee) {
-        this.fee = fee;
+    addFee(maxFee) {
+        this.maxFee = maxFee;
         return this;
     }
     addVersion(version) {
@@ -66,10 +66,10 @@ class Builder {
         return this;
     }
     build() {
-        const builder = new flatbuffers.Builder(1);
+        const builder = new flatbuffers_1.flatbuffers.Builder(1);
         // Create modifications
         const modificationsArray = [];
-        this.modifications.forEach(modification => {
+        this.modifications.forEach((modification) => {
             const cosignatoryPublicKeyVector = CosignatoryModificationBuffer
                 .createCosignatoryPublicKeyVector(builder, format_1.Convert.hexToUint8(modification.cosignatoryPublicKey));
             CosignatoryModificationBuffer.startCosignatoryModificationBuffer(builder);
@@ -85,7 +85,7 @@ class Builder {
         const deadlineVector = MultisigModificationTransactionBuffer
             .createDeadlineVector(builder, this.deadline);
         const feeVector = MultisigModificationTransactionBuffer
-            .createFeeVector(builder, this.fee);
+            .createFeeVector(builder, this.maxFee);
         const modificationsVector = MultisigModificationTransactionBuffer
             .createModificationsVector(builder, modificationsArray);
         MultisigModificationTransactionBuffer.startMultisigModificationTransactionBuffer(builder);

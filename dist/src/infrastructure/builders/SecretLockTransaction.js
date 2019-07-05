@@ -22,7 +22,8 @@ const format_1 = require("../../core/format");
 const SecretLockTransactionBufferPackage = require("../../infrastructure/buffers/SecretLockTransactionBuffer");
 const VerifiableTransaction_1 = require("../../infrastructure/builders/VerifiableTransaction");
 const SecretLockTransactionSchema_1 = require("../../infrastructure/schemas/SecretLockTransactionSchema");
-const { flatbuffers, } = require('flatbuffers');
+const TransactionType_1 = require("../../model/transaction/TransactionType");
+const flatbuffers_1 = require("flatbuffers");
 const { SecretLockTransactionBuffer, } = SecretLockTransactionBufferPackage.default.Buffers;
 class SecretLockTransaction extends VerifiableTransaction_1.VerifiableTransaction {
     constructor(bytes) {
@@ -33,12 +34,11 @@ exports.default = SecretLockTransaction;
 // tslint:disable-next-line:max-classes-per-file
 class Builder {
     constructor() {
-        this.fee = [0, 0];
-        this.version = 36865;
-        this.type = 0x424C;
+        this.maxFee = [0, 0];
+        this.type = TransactionType_1.TransactionType.SECRET_LOCK;
     }
-    addFee(fee) {
-        this.fee = fee;
+    addFee(maxFee) {
+        this.maxFee = maxFee;
         return this;
     }
     addVersion(version) {
@@ -78,13 +78,13 @@ class Builder {
         return this;
     }
     build() {
-        const builder = new flatbuffers.Builder(1);
+        const builder = new flatbuffers_1.flatbuffers.Builder(1);
         // Create vectors
         const signatureVector = SecretLockTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
         const signerVector = SecretLockTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
         const deadlineVector = SecretLockTransactionBuffer.createDeadlineVector(builder, this.deadline);
-        const feeVector = SecretLockTransactionBuffer.createFeeVector(builder, this.fee);
+        const feeVector = SecretLockTransactionBuffer.createFeeVector(builder, this.maxFee);
         const mosaicIdVector = SecretLockTransactionBuffer.createMosaicIdVector(builder, this.mosaicId);
         const mosaicAmountVector = SecretLockTransactionBuffer.createMosaicAmountVector(builder, this.mosaicAmount);
         const durationVector = SecretLockTransactionBuffer.createDurationVector(builder, this.duration);

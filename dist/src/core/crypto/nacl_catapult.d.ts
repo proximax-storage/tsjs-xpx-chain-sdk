@@ -1,6 +1,6 @@
 export declare const gf: (init?: any) => Float64Array;
 export declare const cleanup: (arr: any) => void;
-export declare const crypto_shared_key_hash: (shared: any, pk: any, sk: any, hashfunc: any) => void;
+export declare const crypto_shared_key_hash: (shared: any, pk: any, sk: any, hashfunc: any, signSchema: any) => void;
 export declare const crypto_verify_32: (x: any, xi: any, y: any, yi: any) => number;
 export declare const add: (p: any, q: any) => void;
 export declare const modL: (r: any, x: any) => void;

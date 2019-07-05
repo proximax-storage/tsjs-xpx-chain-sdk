@@ -17,10 +17,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = require("chai");
 const CreateTransactionFromDTO_1 = require("../../../src/infrastructure/transaction/CreateTransactionFromDTO");
+const NetworkType_1 = require("../../../src/model/blockchain/NetworkType");
 const CosignatureTransaction_1 = require("../../../src/model/transaction/CosignatureTransaction");
+const Deadline_1 = require("../../../src/model/transaction/Deadline");
+const PlainMessage_1 = require("../../../src/model/transaction/PlainMessage");
+const TransferTransaction_1 = require("../../../src/model/transaction/TransferTransaction");
 const conf_spec_1 = require("../../conf/conf.spec");
 describe('CosignatureTransaction', () => {
     let account;
+    const generationHash = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
     before(() => {
         account = conf_spec_1.TestingAccount;
     });
@@ -87,12 +92,12 @@ describe('CosignatureTransaction', () => {
                             recipient: '9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142',
                             signer: 'B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF',
                             type: 16724,
-                            version: 36867,
+                            version: 36865,
                         },
                     },
                 ],
                 type: 16705,
-                version: 36867,
+                version: 36865,
             },
         };
         const aggregateTransferTransaction = CreateTransactionFromDTO_1.CreateTransactionFromDTO(aggregateTransferTransactionDTO);
@@ -102,6 +107,12 @@ describe('CosignatureTransaction', () => {
         chai_1.expect(cosignatureSignedTransaction.signature).to.be.equal('BF3BC39F2292C028CB0FFA438A9F567A7C4D7' +
             '93D2F8522C8DEAC74BEFBCB61AF6414ADF27B2176D6A24FEF612AA6DB2F562176A11C46BA6D5E05430042CB5705');
         chai_1.expect(cosignatureSignedTransaction.signer).to.be.equal(account.publicKey);
+    });
+    it('should sign a transaction with transaction payload', () => {
+        const txPayload = TransferTransaction_1.TransferTransaction.create(Deadline_1.Deadline.create(), account.address, [], PlainMessage_1.PlainMessage.create('a to b'), NetworkType_1.NetworkType.MIJIN_TEST).serialize();
+        const signedTx = CosignatureTransaction_1.CosignatureTransaction.signTransactionPayload(account, txPayload, generationHash);
+        chai_1.expect(signedTx.signer).to.be.equal('C2F93346E27CE6AD1A9F8F5E3066F8326593A406BDF357ACB041E2F9AB402EFE');
+        chai_1.expect(signedTx.signer).to.be.equal(account.publicKey);
     });
 });
 //# sourceMappingURL=CosignatureTransaction.spec.js.map

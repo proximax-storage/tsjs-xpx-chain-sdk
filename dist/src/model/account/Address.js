@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+const crypto_1 = require("../../core/crypto");
 const format_1 = require("../../core/format");
 const NetworkType_1 = require("../blockchain/NetworkType");
 /**
@@ -40,12 +41,13 @@ class Address {
      * Create from private key
      * @param publicKey - The account public key.
      * @param networkType - The NEM network type.
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {Address}
      */
-    static createFromPublicKey(publicKey, networkType) {
+    static createFromPublicKey(publicKey, networkType, signSchema = crypto_1.SignSchema.SHA3) {
         const publicKeyUint8 = format_1.Convert.hexToUint8(publicKey);
         const address = format_1.RawAddress
-            .addressToString(format_1.RawAddress.publicKeyToAddress(publicKeyUint8, networkType));
+            .addressToString(format_1.RawAddress.publicKeyToAddress(publicKeyUint8, networkType, signSchema));
         return new Address(address, networkType);
     }
     /**

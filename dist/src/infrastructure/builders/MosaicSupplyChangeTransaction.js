@@ -15,11 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const TransactionType_1 = require("../../model/transaction/TransactionType");
 const MosaicSupplyChangeTransactionBuffer_1 = require("../buffers/MosaicSupplyChangeTransactionBuffer");
 const MosaicSupplyChangeTransactionSchema_1 = require("../schemas/MosaicSupplyChangeTransactionSchema");
 const VerifiableTransaction_1 = require("./VerifiableTransaction");
 const { MosaicSupplyChangeTransactionBuffer, } = MosaicSupplyChangeTransactionBuffer_1.default.Buffers;
-const { flatbuffers, } = require('flatbuffers');
+const flatbuffers_1 = require("flatbuffers");
 /**
  * @module transactions/MosaicSupplyChangeTransaction
  */
@@ -32,12 +33,11 @@ exports.default = MosaicSupplyChangeTransaction;
 // tslint:disable-next-line:max-classes-per-file
 class Builder {
     constructor() {
-        this.fee = [0, 0];
-        this.version = 36867;
-        this.type = 0x424d;
+        this.maxFee = [0, 0];
+        this.type = TransactionType_1.TransactionType.MOSAIC_SUPPLY_CHANGE;
     }
-    addFee(fee) {
-        this.fee = fee;
+    addFee(maxFee) {
+        this.maxFee = maxFee;
         return this;
     }
     addVersion(version) {
@@ -65,7 +65,7 @@ class Builder {
         return this;
     }
     build() {
-        const builder = new flatbuffers.Builder(1);
+        const builder = new flatbuffers_1.flatbuffers.Builder(1);
         // Create vectors
         const signatureVector = MosaicSupplyChangeTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
@@ -74,7 +74,7 @@ class Builder {
         const deadlineVector = MosaicSupplyChangeTransactionBuffer
             .createDeadlineVector(builder, this.deadline);
         const feeVector = MosaicSupplyChangeTransactionBuffer
-            .createFeeVector(builder, this.fee);
+            .createFeeVector(builder, this.maxFee);
         const mosaicIdVector = MosaicSupplyChangeTransactionBuffer
             .createFeeVector(builder, this.mosaicId);
         const deltaVector = MosaicSupplyChangeTransactionBuffer

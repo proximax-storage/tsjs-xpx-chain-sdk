@@ -19,11 +19,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module transactions/AccountPropertiesAddressTransaction
  */
 const format_1 = require("../../core/format");
+const TransactionType_1 = require("../../model/transaction/TransactionType");
 const AccountPropertiesAddressTransactionBuffer_1 = require("../buffers/AccountPropertiesAddressTransactionBuffer");
 const AccountPropertiesAddressModificationTransactionSchema_1 = require("../schemas/AccountPropertiesAddressModificationTransactionSchema");
 const VerifiableTransaction_1 = require("./VerifiableTransaction");
 const { AccountPropertiesAddressTransactionBuffer, PropertyAddressModificationBuffer, } = AccountPropertiesAddressTransactionBuffer_1.default.Buffers;
-const { flatbuffers } = require('flatbuffers');
+const flatbuffers_1 = require("flatbuffers");
 class AccountPropertiesAddressTransaction extends VerifiableTransaction_1.VerifiableTransaction {
     constructor(bytes) {
         super(bytes, AccountPropertiesAddressModificationTransactionSchema_1.default);
@@ -33,12 +34,11 @@ exports.default = AccountPropertiesAddressTransaction;
 // tslint:disable-next-line:max-classes-per-file
 class Builder {
     constructor() {
-        this.fee = [0, 0];
-        this.version = 36865;
-        this.type = 0x4150;
+        this.maxFee = [0, 0];
+        this.type = TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_ADDRESS;
     }
-    addFee(fee) {
-        this.fee = fee;
+    addFee(maxFee) {
+        this.maxFee = maxFee;
         return this;
     }
     addVersion(version) {
@@ -62,10 +62,10 @@ class Builder {
         return this;
     }
     build() {
-        const builder = new flatbuffers.Builder(1);
+        const builder = new flatbuffers_1.flatbuffers.Builder(1);
         // Create modifications
         const modificationsArray = [];
-        this.modifications.forEach(modification => {
+        this.modifications.forEach((modification) => {
             const addressModificationVector = PropertyAddressModificationBuffer
                 .createValueVector(builder, format_1.RawAddress.stringToAddress(modification.value));
             PropertyAddressModificationBuffer.startPropertyAddressModificationBuffer(builder);
@@ -81,7 +81,7 @@ class Builder {
         const deadlineVector = AccountPropertiesAddressTransactionBuffer
             .createDeadlineVector(builder, this.deadline);
         const feeVector = AccountPropertiesAddressTransactionBuffer
-            .createFeeVector(builder, this.fee);
+            .createFeeVector(builder, this.maxFee);
         const modificationVector = AccountPropertiesAddressTransactionBuffer
             .createModificationsVector(builder, modificationsArray);
         AccountPropertiesAddressTransactionBuffer.startAccountPropertiesAddressTransactionBuffer(builder);

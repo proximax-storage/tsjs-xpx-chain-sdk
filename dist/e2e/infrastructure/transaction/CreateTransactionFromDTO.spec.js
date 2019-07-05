@@ -38,7 +38,7 @@ describe('CreateTransactionFromDTO', () => {
                     // tslint:disable-next-line:max-line-length
                     signature: '7442156D839A3AC900BC0299E8701ECDABA674DCF91283223450953B005DE72C538EA54236F5E089530074CE78067CD3325CF53750B9118154C08B20A5CDC00D',
                     signer: '2FC3872A792933617D70E02AFF8FBDE152821A0DF0CA5FB04CB56FC3D21C8863',
-                    version: 36867,
+                    version: 36865,
                     type: 16724,
                     maxFee: [0, 0],
                     deadline: [3362498678, 22],
@@ -75,7 +75,7 @@ describe('CreateTransactionFromDTO', () => {
                     // tslint:disable-next-line:max-line-length
                     signature: '7442156D839A3AC900BC0299E8701ECDABA674DCF91283223450953B005DE72C538EA54236F5E089530074CE78067CD3325CF53750B9118154C08B20A5CDC00D',
                     signer: '2FC3872A792933617D70E02AFF8FBDE152821A0DF0CA5FB04CB56FC3D21C8863',
-                    version: 36867,
+                    version: 36865,
                     type: 16724,
                     maxFee: [0, 0],
                     deadline: [3362498678, 22],
@@ -155,12 +155,12 @@ describe('CreateTransactionFromDTO', () => {
                                 recipient: '9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142',
                                 signer: 'B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF',
                                 type: 16724,
-                                version: 36867,
+                                version: 36865,
                             },
                         },
                     ],
                     type: 16705,
-                    version: 36866,
+                    version: 36865,
                 },
             };
             const aggregateTransferTransaction = CreateTransactionFromDTO_1.CreateTransactionFromDTO(aggregateTransferTransactionDTO);
@@ -204,7 +204,7 @@ describe('CreateTransactionFromDTO', () => {
                             '2F6EE63025FEEBCED3293B622AF8581334D0BDAB7541A9E7411E7EE4EF0BC5D0E',
                         signer: 'B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF',
                         type: 16718,
-                        version: 36867,
+                        version: 36865,
                     },
                 };
                 const transferTransaction = CreateTransactionFromDTO_1.CreateTransactionFromDTO(registerNamespaceTransactionDTO);
@@ -266,12 +266,12 @@ describe('CreateTransactionFromDTO', () => {
                                     namespaceType: 0,
                                     signer: 'B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF',
                                     type: 16718,
-                                    version: 36867,
+                                    version: 36865,
                                 },
                             },
                         ],
                         type: 16705,
-                        version: 36867,
+                        version: 36865,
                     },
                 };
                 const aggregateRegisterNamespaceTransaction = CreateTransactionFromDTO_1.CreateTransactionFromDTO(aggregateRegisterNamespaceTransactionDTO);
@@ -314,7 +314,7 @@ describe('CreateTransactionFromDTO', () => {
                             'E02F6EE63025FEEBCED3293B622AF8581334D0BDAB7541A9E7411E7EE4EF0BC5D0E',
                         signer: 'B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF',
                         type: 16718,
-                        version: 36867,
+                        version: 36865,
                     },
                 };
                 const transferTransaction = CreateTransactionFromDTO_1.CreateTransactionFromDTO(registerNamespaceTransactionDTO);
@@ -376,12 +376,12 @@ describe('CreateTransactionFromDTO', () => {
                                     ],
                                     signer: 'B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF',
                                     type: 16718,
-                                    version: 36867,
+                                    version: 36865,
                                 },
                             },
                         ],
                         type: 16705,
-                        version: 36867,
+                        version: 36865,
                     },
                 };
                 const aggregateRegisterNamespaceTransaction = CreateTransactionFromDTO_1.CreateTransactionFromDTO(aggregateRegisterNamespaceTransactionDTO);
@@ -446,7 +446,7 @@ describe('CreateTransactionFromDTO', () => {
                         'EBCED3293B622AF8581334D0BDAB7541A9E7411E7EE4EF0BC5D0E',
                     signer: 'B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF',
                     type: 16717,
-                    version: 36867,
+                    version: 36865,
                 },
             };
             const mosaicDefinitionTransaction = CreateTransactionFromDTO_1.CreateTransactionFromDTO(mosaicDefinitionTransactionDTO);
@@ -529,12 +529,12 @@ describe('CreateTransactionFromDTO', () => {
                                 ],
                                 signer: 'B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF',
                                 type: 16717,
-                                version: 36867,
+                                version: 36865,
                             },
                         },
                     ],
                     type: 16705,
-                    version: 36867,
+                    version: 36865,
                 },
             };
             const aggregateRegisterNamespaceTransaction = CreateTransactionFromDTO_1.CreateTransactionFromDTO(aggregateMosaicDefinitionTransactionDTO);
@@ -576,7 +576,7 @@ describe('CreateTransactionFromDTO', () => {
                         '2F6EE63025FEEBCED3293B622AF8581334D0BDAB7541A9E7411E7EE4EF0BC5D0E',
                     signer: 'B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF',
                     type: 16973,
-                    version: 36867,
+                    version: 36865,
                 },
             };
             const mosaicSupplyChangeTransaction = CreateTransactionFromDTO_1.CreateTransactionFromDTO(mosaicSupplyChangeTransactionDTO);
@@ -637,12 +637,12 @@ describe('CreateTransactionFromDTO', () => {
                                 ],
                                 signer: 'B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF',
                                 type: 16973,
-                                version: 36867,
+                                version: 36865,
                             },
                         },
                     ],
                     type: 16705,
-                    version: 36867,
+                    version: 36865,
                 },
             };
             const aggregateMosaicSupplyChangeTransaction = CreateTransactionFromDTO_1.CreateTransactionFromDTO(aggregateMosaicSupplyChangeTransactionDTO);
@@ -683,7 +683,7 @@ describe('CreateTransactionFromDTO', () => {
                         '2F6EE63025FEEBCED3293B622AF8581334D0BDAB7541A9E7411E7EE4EF0BC5D0E',
                     signer: 'B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF',
                     type: 16725,
-                    version: 36867,
+                    version: 36865,
                 },
             };
             const modifyMultisigAccountTransaction = CreateTransactionFromDTO_1.CreateTransactionFromDTO(modifyMultisigAccountTransactionDTO);
@@ -744,12 +744,12 @@ describe('CreateTransactionFromDTO', () => {
                                 ],
                                 signer: 'B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF',
                                 type: 16725,
-                                version: 36867,
+                                version: 36865,
                             },
                         },
                     ],
                     type: 16705,
-                    version: 36867,
+                    version: 36865,
                 },
             };
             const aggregateModifyMultisigAccountTransaction = CreateTransactionFromDTO_1.CreateTransactionFromDTO(aggregateModifyMultisigAccountTransactionDTO);

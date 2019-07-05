@@ -1,3 +1,4 @@
+import { SignSchema } from './SignSchema';
 export declare const CryptoJS: any;
 export declare const Key_Size = 32;
 export declare const Signature_Size = 64;
@@ -23,16 +24,16 @@ export declare const ua2words: (ua: any, uaLength: any) => any;
  */
 export declare const words2ua: (destUa: any, cryptoWords: any) => any;
 export declare const catapult_hash: {
-    func: (dest: any, data: any, length: any) => void;
-    createHasher: (length?: number) => {
+    func: (dest: any, data: any, length: any, signSchema?: SignSchema) => void;
+    createHasher: (length?: number, signSchema?: SignSchema) => {
         reset: () => void;
         update: (data: any) => void;
         finalize: (result: any) => void;
     };
 };
 export declare const catapult_crypto: {
-    extractPublicKey: (sk: any, hashfunc: any) => Uint8Array;
+    extractPublicKey: (sk: any, hashfunc: any, signSchema: SignSchema) => Uint8Array;
     sign: (m: any, pk: any, sk: any, hasher: any) => Uint8Array;
     verify: (pk: any, m: any, signature: any, hasher: any) => boolean;
-    deriveSharedKey: (salt: any, sk: any, pk: any, hashfunc: any) => Uint8Array;
+    deriveSharedKey: (salt: any, sk: any, pk: any, hashfunc: any, signSchema: SignSchema) => Uint8Array;
 };

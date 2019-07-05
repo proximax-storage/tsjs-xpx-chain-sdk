@@ -18,21 +18,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @module transactions/AggregateTransaction
  */
+const crypto_1 = require("../../core/crypto");
+const TransactionType_1 = require("../../model/transaction/TransactionType");
 const AggregateTransactionBuffer_1 = require("../buffers/AggregateTransactionBuffer");
 const AggregateTransactionSchema_1 = require("../schemas/AggregateTransactionSchema");
 const CosignatureTransaction_1 = require("./CosignatureTransaction");
 const VerifiableTransaction_1 = require("./VerifiableTransaction");
-const { flatbuffers, } = require('flatbuffers');
+const flatbuffers_1 = require("flatbuffers");
 const { AggregateTransactionBuffer, } = AggregateTransactionBuffer_1.default.Buffers;
 class AggregateTransaction extends VerifiableTransaction_1.VerifiableTransaction {
     constructor(bytes) {
         super(bytes, AggregateTransactionSchema_1.default);
     }
-    signTransactionWithCosigners(initializer, cosigners, generationHash) {
-        const signedTransaction = this.signTransaction(initializer, generationHash);
+    signTransactionWithCosigners(initializer, cosigners, generationHash, signSchema = crypto_1.SignSchema.SHA3) {
+        const signedTransaction = this.signTransaction(initializer, generationHash, signSchema);
         cosigners.forEach((cosigner) => {
             const signatureTransaction = new CosignatureTransaction_1.CosignatureTransaction(signedTransaction.hash);
-            const signatureCosignTransaction = signatureTransaction.signCosignatoriesTransaction(cosigner);
+            const signatureCosignTransaction = signatureTransaction.signCosignatoriesTransaction(cosigner, signSchema);
             signedTransaction.payload = signedTransaction.payload +
                 signatureCosignTransaction.signer + signatureCosignTransaction.signature;
         });
@@ -45,8 +47,8 @@ class AggregateTransaction extends VerifiableTransaction_1.VerifiableTransaction
             signedTransaction.payload.substr(8, signedTransaction.payload.length - 8);
         return signedTransaction;
     }
-    signTransactionGivenSignatures(initializer, cosignedSignedTransactions, generationHash) {
-        const signedTransaction = this.signTransaction(initializer, generationHash);
+    signTransactionGivenSignatures(initializer, cosignedSignedTransactions, generationHash, signSchema) {
+        const signedTransaction = this.signTransaction(initializer, generationHash, signSchema);
         cosignedSignedTransactions.forEach((cosignedTransaction) => {
             signedTransaction.payload = signedTransaction.payload + cosignedTransaction.signer + cosignedTransaction.signature;
         });
@@ -64,12 +66,11 @@ exports.AggregateTransaction = AggregateTransaction;
 // tslint:disable-next-line:max-classes-per-file
 class Builder {
     constructor() {
-        this.fee = [0, 0];
-        this.version = 36867;
-        this.type = 0x4141;
+        this.maxFee = [0, 0];
+        this.type = TransactionType_1.TransactionType.AGGREGATE_COMPLETE;
     }
-    addFee(fee) {
-        this.fee = fee;
+    addFee(maxFee) {
+        this.maxFee = maxFee;
         return this;
     }
     addVersion(version) {
@@ -93,7 +94,7 @@ class Builder {
         return this;
     }
     build() {
-        const builder = new flatbuffers.Builder(1);
+        const builder = new flatbuffers_1.flatbuffers.Builder(1);
         // Create vectors
         const signatureVector = AggregateTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64))
@@ -102,7 +103,7 @@ class Builder {
             .createSignerVector(builder, Array(...Array(32))
             .map(Number.prototype.valueOf, 0));
         const deadlineVector = AggregateTransactionBuffer.createDeadlineVector(builder, this.deadline);
-        const feeVector = AggregateTransactionBuffer.createFeeVector(builder, this.fee);
+        const feeVector = AggregateTransactionBuffer.createFeeVector(builder, this.maxFee);
         const modificationsVector = AggregateTransactionBuffer.createTransactionsVector(builder, this.transactions);
         AggregateTransactionBuffer.startAggregateTransactionBuffer(builder);
         AggregateTransactionBuffer.addSize(builder, 120 + 4 + this.transactions.length);

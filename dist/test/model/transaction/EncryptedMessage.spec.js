@@ -16,16 +16,20 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = require("chai");
+const crypto_1 = require("../../../src/core/crypto");
 const Account_1 = require("../../../src/model/account/Account");
 const model_1 = require("../../../src/model/model");
 const EncryptedMessage_1 = require("../../../src/model/transaction/EncryptedMessage");
 describe('EncryptedMessage', () => {
     let sender;
     let recipient;
+    let sender_nis;
+    let recipient_nis;
     before(() => {
-        // server-bootstrap generated account
         sender = Account_1.Account.createFromPrivateKey('2602F4236B199B3DF762B2AAB46FC3B77D8DDB214F0B62538D3827576C46C108', model_1.NetworkType.MIJIN_TEST);
         recipient = Account_1.Account.createFromPrivateKey('B72F2950498111BADF276D6D9D5E345F04E0D5C9B8342DA983C3395B4CF18F08', model_1.NetworkType.MIJIN_TEST);
+        sender_nis = Account_1.Account.createFromPrivateKey('2602F4236B199B3DF762B2AAB46FC3B77D8DDB214F0B62538D3827576C46C108', model_1.NetworkType.MIJIN_TEST, crypto_1.SignSchema.KECCAK_REVERSED_KEY);
+        recipient_nis = Account_1.Account.createFromPrivateKey('B72F2950498111BADF276D6D9D5E345F04E0D5C9B8342DA983C3395B4CF18F08', model_1.NetworkType.MIJIN_TEST, crypto_1.SignSchema.KECCAK_REVERSED_KEY);
     });
     it('should create a encrypted message from a DTO', () => {
         const encryptedMessage = EncryptedMessage_1.EncryptedMessage.createFromPayload('test transaction');
@@ -42,10 +46,12 @@ describe('EncryptedMessage', () => {
         const plainMessage = recipient.decryptMessage(new EncryptedMessage_1.EncryptedMessage(payload), sender.publicAccount);
         chai_1.expect(plainMessage.payload).to.be.equal('Testing simple transfer');
     });
-    it('should create an encrypted message from a DTO and decrypt it', () => {
-        // message payload generated from cpp-xpx-chain-server
-        const encryptMessage = EncryptedMessage_1.EncryptedMessage.createFromPayload('EF6F9F6F8BEFD8BC1FAECD1E610CC195D87D667F401A5B4EA8F0398BDE0B0A2FA4543D7C5C2468D2' +
-            'D478347FB856243F66b3c55321afe7471862d93392a9c57ef0646a045c3e038706de519b8392f4a2');
+    it('should return should return decrepted message reading from message payload', () => {
+        const generationHash = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
+        const transferTransaction = model_1.TransferTransaction.create(model_1.Deadline.create(), recipient.address, [model_1.NetworkCurrencyMosaic.createAbsolute(1)], sender.encryptMessage('Testing simple transfer', recipient.publicAccount), model_1.NetworkType.MIJIN_TEST);
+        const signedTransaction = transferTransaction.signWith(sender, generationHash);
+        const encryptMessage = EncryptedMessage_1.EncryptedMessage
+            .createFromPayload(signedTransaction.payload.substring(298, signedTransaction.payload.length - 32));
         const plainMessage = recipient.decryptMessage(encryptMessage, sender.publicAccount);
         chai_1.expect(plainMessage.payload).to.be.equal('Testing simple transfer');
     });
@@ -116,6 +122,12 @@ describe('EncryptedMessage', () => {
         const secureMessage = new EncryptedMessage_1.EncryptedMessage(payload);
         const decodedMessagePayload = EncryptedMessage_1.EncryptedMessage.decrypt(secureMessage, privateKey, publicAccount).payload;
         chai_1.expect(decodedMessagePayload).to.be.equal(expectedPayload);
+    });
+    it('should encrypt and decrypt message using NIS1 schema', () => {
+        const encryptedMessage = sender_nis.encryptMessage('Testing simple transfer', recipient_nis.publicAccount, crypto_1.SignSchema.KECCAK_REVERSED_KEY);
+        const payload = encryptedMessage.payload;
+        const plainMessage = recipient_nis.decryptMessage(new EncryptedMessage_1.EncryptedMessage(payload), sender_nis.publicAccount, crypto_1.SignSchema.KECCAK_REVERSED_KEY);
+        chai_1.expect(plainMessage.payload).to.be.equal('Testing simple transfer');
     });
 });
 //# sourceMappingURL=EncryptedMessage.spec.js.map

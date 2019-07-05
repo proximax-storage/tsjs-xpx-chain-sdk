@@ -72,9 +72,9 @@ exports.catapult_crypto = (function () {
         d[31] &= 127;
         d[31] |= 64;
     }
-    function prepareForScalarMult(sk, hashfunc) {
+    function prepareForScalarMult(sk, hashfunc, signSchema) {
         const d = new Uint8Array(exports.Hash_Size);
-        hashfunc(d, sk);
+        hashfunc(d, sk, exports.Hash_Size, signSchema);
         clamp(d);
         return d;
     }
@@ -100,9 +100,9 @@ exports.catapult_crypto = (function () {
         };
     })();
     return {
-        extractPublicKey: (sk, hashfunc) => {
+        extractPublicKey: (sk, hashfunc, signSchema) => {
             const c = nacl;
-            const d = prepareForScalarMult(sk, hashfunc);
+            const d = prepareForScalarMult(sk, hashfunc, signSchema);
             const p = [c.gf(), c.gf(), c.gf(), c.gf()];
             const pk = new Uint8Array(exports.Key_Size);
             c.scalarbase(p, d);
@@ -174,15 +174,14 @@ exports.catapult_crypto = (function () {
             c.pack(t, p);
             return 0 === c.crypto_verify_32(signature, 0, t, 0);
         },
-        deriveSharedKey: (salt, sk, pk, hashfunc) => {
+        deriveSharedKey: (salt, sk, pk, hashfunc, signSchema) => {
             const c = nacl;
-            const d = prepareForScalarMult(sk, hashfunc);
+            const d = prepareForScalarMult(sk, hashfunc, signSchema);
             // sharedKey = pack(p = d (derived from sk) * q (derived from pk))
             const q = [c.gf(), c.gf(), c.gf(), c.gf()];
             const p = [c.gf(), c.gf(), c.gf(), c.gf()];
             const sharedKey = new Uint8Array(exports.Key_Size);
-            // c.unpackneg(q, pk);
-            c.unpack(q, pk); // unpackneg/unpack call here is the only difference between xpx and nem regarding shared key derivation
+            c.unpack(q, pk);
             c.scalarmult(p, q, d);
             c.pack(sharedKey, p);
             // salt the shared key
@@ -191,7 +190,7 @@ exports.catapult_crypto = (function () {
             }
             // return the hash of the result
             const sharedKeyHash = new Uint8Array(exports.Key_Size);
-            hashfunc(sharedKeyHash, sharedKey, exports.Key_Size);
+            hashfunc(sharedKeyHash, sharedKey, exports.Key_Size, signSchema);
             return sharedKeyHash;
         },
     };

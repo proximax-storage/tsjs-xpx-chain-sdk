@@ -18,11 +18,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @module transactions/AccountPropertiesMosaicTransaction
  */
+const TransactionType_1 = require("../../model/transaction/TransactionType");
 const AccountPropertiesMosaicTransactionBuffer_1 = require("../buffers/AccountPropertiesMosaicTransactionBuffer");
 const AccountPropertiesMosaicModificationTransactionSchema_1 = require("../schemas/AccountPropertiesMosaicModificationTransactionSchema");
 const VerifiableTransaction_1 = require("./VerifiableTransaction");
 const { AccountPropertiesMosaicTransactionBuffer, PropertyMosaicModificationBuffer, } = AccountPropertiesMosaicTransactionBuffer_1.default.Buffers;
-const { flatbuffers, } = require('flatbuffers');
+const flatbuffers_1 = require("flatbuffers");
 class AccountPropertiesMosaicTransaction extends VerifiableTransaction_1.VerifiableTransaction {
     constructor(bytes) {
         super(bytes, AccountPropertiesMosaicModificationTransactionSchema_1.default);
@@ -32,12 +33,11 @@ exports.default = AccountPropertiesMosaicTransaction;
 // tslint:disable-next-line:max-classes-per-file
 class Builder {
     constructor() {
-        this.fee = [0, 0];
-        this.version = 36865;
-        this.type = 0x4250;
+        this.maxFee = [0, 0];
+        this.type = TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_MOSAIC;
     }
-    addFee(fee) {
-        this.fee = fee;
+    addFee(maxFee) {
+        this.maxFee = maxFee;
         return this;
     }
     addVersion(version) {
@@ -61,10 +61,10 @@ class Builder {
         return this;
     }
     build() {
-        const builder = new flatbuffers.Builder(1);
+        const builder = new flatbuffers_1.flatbuffers.Builder(1);
         // Create modifications
         const modificationsArray = [];
-        this.modifications.forEach(modification => {
+        this.modifications.forEach((modification) => {
             const addressModificationVector = PropertyMosaicModificationBuffer
                 .createValueVector(builder, modification.value);
             PropertyMosaicModificationBuffer.startPropertyMosaicModificationBuffer(builder);
@@ -80,7 +80,7 @@ class Builder {
         const deadlineVector = AccountPropertiesMosaicTransactionBuffer
             .createDeadlineVector(builder, this.deadline);
         const feeVector = AccountPropertiesMosaicTransactionBuffer
-            .createFeeVector(builder, this.fee);
+            .createFeeVector(builder, this.maxFee);
         const modificationVector = AccountPropertiesMosaicTransactionBuffer
             .createModificationsVector(builder, modificationsArray);
         AccountPropertiesMosaicTransactionBuffer.startAccountPropertiesMosaicTransactionBuffer(builder);

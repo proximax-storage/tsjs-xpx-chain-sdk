@@ -16,14 +16,23 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = require("chai");
+const crypto_1 = require("../../../src/core/crypto");
 const PublicAccount_1 = require("../../../src/model/account/PublicAccount");
 const NetworkType_1 = require("../../../src/model/blockchain/NetworkType");
+const Account_1 = require("../../../src/model/account/Account");
 describe('PublicAccount', () => {
     const publicKey = 'b4f12e7c9f6946091e2cb8b6d3a12b50d17ccbbf646386ea27ce2946a7423dcf';
     it('should createComplete a public account from public key', () => {
         const publicAccount = PublicAccount_1.PublicAccount.createFromPublicKey(publicKey, NetworkType_1.NetworkType.MIJIN_TEST);
         chai_1.expect(publicAccount.publicKey).to.be.equal(publicKey);
         chai_1.expect(publicAccount.address.plain()).to.be.equal('SARNASAS2BIAB6LMFA3FPMGBPGIJGK6IJETM3ZSP');
+    });
+    /**
+     * @see https://raw.githubusercontent.com/nemtech/test-vectors/master/1.test-address-nis1.json
+     */
+    it('should createComplete a public account from public key using NIS1', () => {
+        const publicAccount = PublicAccount_1.PublicAccount.createFromPublicKey('c5f54ba980fcbb657dbaaa42700539b207873e134d2375efeab5f1ab52f87844', NetworkType_1.NetworkType.MIJIN, crypto_1.SignSchema.KECCAK_REVERSED_KEY);
+        chai_1.expect(publicAccount.address.plain()).to.be.equal('MDD2CT6LQLIYQ56KIXI3ENTM6EK3D44P5LDT7JHT');
     });
 });
 describe('Signature verification', () => {
@@ -34,6 +43,14 @@ describe('Signature verification', () => {
         const signature = '2092660F5BD4AE832B2E290F34A76B41506EE473B02FD7FD468B32C80C945CF60A0D60D005FA9B2DB3AD3212F8028C1449D3DCF81C9FAB3EB4975A7409D8D802'; // tslint:disable-line
         // Act & Assert:
         chai_1.expect(signerPublicAccount.verifySignature(data, signature)).to.be.true;
+    });
+    it('Verify a signature using NIS1 schema', () => {
+        // Arrange:'
+        const account = Account_1.Account.createFromPrivateKey('AB860ED1FE7C91C02F79C02225DAC708D7BD13369877C1F59E678CC587658C47', NetworkType_1.NetworkType.MIJIN_TEST, crypto_1.SignSchema.KECCAK_REVERSED_KEY);
+        const publicAccount = account.publicAccount;
+        const signed = account.signData('catapult rocks!', crypto_1.SignSchema.KECCAK_REVERSED_KEY);
+        chai_1.expect(publicAccount.verifySignature('catapult rocks!', signed, crypto_1.SignSchema.KECCAK_REVERSED_KEY))
+            .to.be.true;
     });
     it('Throw error if signature has invalid length', () => {
         // Arrange:

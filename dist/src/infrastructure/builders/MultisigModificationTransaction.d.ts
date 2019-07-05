@@ -6,7 +6,7 @@ export default class MultisigModificationTransaction extends VerifiableTransacti
     constructor(bytes: any);
 }
 export declare class Builder {
-    fee: any;
+    maxFee: any;
     version: any;
     type: any;
     deadline: any;
@@ -14,7 +14,7 @@ export declare class Builder {
     minApprovalDelta: any;
     modifications: any;
     constructor();
-    addFee(fee: any): this;
+    addFee(maxFee: any): this;
     addVersion(version: any): this;
     addType(type: any): this;
     addDeadline(deadline: any): this;

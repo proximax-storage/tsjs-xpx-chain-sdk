@@ -16,11 +16,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * limitations under the License.
  */
 const format_1 = require("../../core/format");
+const TransactionType_1 = require("../../model/transaction/TransactionType");
 const AddressAliasTransactionBuffer_1 = require("../buffers/AddressAliasTransactionBuffer");
 const AddressAliasTransactionSchema_1 = require("../schemas/AddressAliasTransactionSchema");
 const VerifiableTransaction_1 = require("./VerifiableTransaction");
 const { AddressAliasTransactionBuffer, } = AddressAliasTransactionBuffer_1.default.Buffers;
-const { flatbuffers, } = require('flatbuffers');
+const flatbuffers_1 = require("flatbuffers");
 /**
  * @module transactions/AddressAliasTransaction
  */
@@ -33,12 +34,11 @@ exports.AddressAliasTransaction = AddressAliasTransaction;
 // tslint:disable-next-line:max-classes-per-file
 class Builder {
     constructor() {
-        this.fee = [0, 0];
-        this.version = 36865;
-        this.type = 0x424E;
+        this.maxFee = [0, 0];
+        this.type = TransactionType_1.TransactionType.ADDRESS_ALIAS;
     }
-    addFee(fee) {
-        this.fee = fee;
+    addFee(maxFee) {
+        this.maxFee = maxFee;
         return this;
     }
     addVersion(version) {
@@ -66,7 +66,7 @@ class Builder {
         return this;
     }
     build() {
-        const builder = new flatbuffers.Builder(1);
+        const builder = new flatbuffers_1.flatbuffers.Builder(1);
         // Create vectors
         const signatureVector = AddressAliasTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
@@ -75,7 +75,7 @@ class Builder {
         const deadlineVector = AddressAliasTransactionBuffer
             .createDeadlineVector(builder, this.deadline);
         const feeVector = AddressAliasTransactionBuffer
-            .createFeeVector(builder, this.fee);
+            .createFeeVector(builder, this.maxFee);
         const namespaceIdVector = AddressAliasTransactionBuffer
             .createNamespaceIdVector(builder, this.namespaceId);
         const addressVector = AddressAliasTransactionBuffer

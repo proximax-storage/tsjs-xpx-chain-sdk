@@ -16,7 +16,7 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * SignedTransaction object is used to transfer the transaction data and the signature to NIS
+ * SignedTransaction object is used to transfer the transaction data and the signature to the server
  * in order to initiate and broadcast a transaction.
  */
 class SignedTransaction {

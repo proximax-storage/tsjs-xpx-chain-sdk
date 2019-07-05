@@ -19,11 +19,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module transactions/NamespaceCreationTransaction
  */
 const format_1 = require("../../core/format");
+const TransactionType_1 = require("../../model/transaction/TransactionType");
 const NamespaceCreationTransactionBufferPackage = require("../buffers/NamespaceCreationTransactionBuffer");
 const NamespaceCreationTransactionSchema_1 = require("../schemas/NamespaceCreationTransactionSchema");
 const VerifiableTransaction_1 = require("./VerifiableTransaction");
 const { NamespaceCreationTransactionBuffer, } = NamespaceCreationTransactionBufferPackage.default.Buffers;
-const { flatbuffers, } = require('flatbuffers');
+const flatbuffers_1 = require("flatbuffers");
 class NamespaceCreationTransaction extends VerifiableTransaction_1.VerifiableTransaction {
     constructor(bytes) {
         super(bytes, NamespaceCreationTransactionSchema_1.default);
@@ -33,12 +34,11 @@ exports.default = NamespaceCreationTransaction;
 // tslint:disable-next-line:max-classes-per-file
 class Builder {
     constructor() {
-        this.fee = [0, 0];
-        this.version = 36867;
-        this.type = 0x414e;
+        this.maxFee = [0, 0];
+        this.type = TransactionType_1.TransactionType.REGISTER_NAMESPACE;
     }
-    addFee(fee) {
-        this.fee = fee;
+    addFee(maxFee) {
+        this.maxFee = maxFee;
         return this;
     }
     addVersion(version) {
@@ -74,7 +74,7 @@ class Builder {
         return this;
     }
     build() {
-        const builder = new flatbuffers.Builder(1);
+        const builder = new flatbuffers_1.flatbuffers.Builder(1);
         const namespaceNameLength = format_1.Convert.utf8ToHex(this.namespaceName).length / 2;
         // create vectors
         const signatureVector = NamespaceCreationTransactionBuffer
@@ -84,7 +84,7 @@ class Builder {
         const deadlineVector = NamespaceCreationTransactionBuffer
             .createDeadlineVector(builder, this.deadline);
         const feeVector = NamespaceCreationTransactionBuffer
-            .createFeeVector(builder, this.fee);
+            .createFeeVector(builder, this.maxFee);
         const parentIdVector = 1 === this.namespaceType ? this.parentId : this.duration;
         const durationParentIdVector = NamespaceCreationTransactionBuffer
             .createDurationParentIdVector(builder, parentIdVector);

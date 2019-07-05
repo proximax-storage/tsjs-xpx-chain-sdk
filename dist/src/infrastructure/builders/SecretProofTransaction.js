@@ -19,10 +19,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module transactions/SecretProofTransaction
  */
 const format_1 = require("../../core/format");
+const TransactionType_1 = require("../../model/transaction/TransactionType");
 const SecretProofTransactionBufferPackage = require("../buffers/SecretProofTransactionBuffer");
 const SecretProofTransactionSchema_1 = require("../schemas/SecretProofTransactionSchema");
 const VerifiableTransaction_1 = require("./VerifiableTransaction");
-const { flatbuffers, } = require('flatbuffers');
+const flatbuffers_1 = require("flatbuffers");
 const { SecretProofTransactionBuffer, } = SecretProofTransactionBufferPackage.default.Buffers;
 class SecretProofTransaction extends VerifiableTransaction_1.VerifiableTransaction {
     constructor(bytes) {
@@ -33,12 +34,11 @@ exports.default = SecretProofTransaction;
 // tslint:disable-next-line:max-classes-per-file
 class Builder {
     constructor() {
-        this.fee = [0, 0];
-        this.version = 36865;
-        this.type = 0x434C;
+        this.maxFee = [0, 0];
+        this.type = TransactionType_1.TransactionType.SECRET_PROOF;
     }
-    addFee(fee) {
-        this.fee = fee;
+    addFee(maxFee) {
+        this.maxFee = maxFee;
         return this;
     }
     addVersion(version) {
@@ -70,13 +70,13 @@ class Builder {
         return this;
     }
     build() {
-        const builder = new flatbuffers.Builder(1);
+        const builder = new flatbuffers_1.flatbuffers.Builder(1);
         // Create vectors
         const signatureVector = SecretProofTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
         const signerVector = SecretProofTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
         const deadlineVector = SecretProofTransactionBuffer.createDeadlineVector(builder, this.deadline);
-        const feeVector = SecretProofTransactionBuffer.createFeeVector(builder, this.fee);
+        const feeVector = SecretProofTransactionBuffer.createFeeVector(builder, this.maxFee);
         const byteSecret = format_1.Convert.hexToUint8(64 > this.secret.length ? this.secret + '0'.repeat(64 - this.secret.length) : this.secret);
         const secretVector = SecretProofTransactionBuffer.createSecretVector(builder, byteSecret);
         const recipientVector = SecretProofTransactionBuffer.createRecipientVector(builder, this.recipient);

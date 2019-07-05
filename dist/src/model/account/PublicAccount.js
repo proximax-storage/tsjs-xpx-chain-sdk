@@ -44,13 +44,14 @@ class PublicAccount {
      * Create a PublicAccount from a public key and network type.
      * @param publicKey Public key
      * @param networkType Network type
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {PublicAccount}
      */
-    static createFromPublicKey(publicKey, networkType) {
+    static createFromPublicKey(publicKey, networkType, signSchema = crypto_1.SignSchema.SHA3) {
         if (publicKey == null || (publicKey.length !== 64 && publicKey.length !== 66)) {
             throw new Error('Not a valid public key');
         }
-        const address = Address_1.Address.createFromPublicKey(publicKey, networkType);
+        const address = Address_1.Address.createFromPublicKey(publicKey, networkType, signSchema);
         return new PublicAccount(publicKey, address);
     }
     /**
@@ -58,10 +59,10 @@ class PublicAccount {
      *
      * @param {string} data - The data to verify.
      * @param {string} signature - The signature to verify.
-     *
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @return {boolean}  - True if the signature is valid, false otherwise.
      */
-    verifySignature(data, signature) {
+    verifySignature(data, signature, signSchema = crypto_1.SignSchema.SHA3) {
         if (!signature) {
             throw new Error('Missing argument');
         }
@@ -75,7 +76,7 @@ class PublicAccount {
         const convertedSignature = format_1.Convert.hexToUint8(signature);
         // Convert to Uint8Array
         const convertedData = format_1.Convert.hexToUint8(format_1.Convert.utf8ToHex(data));
-        return crypto_1.KeyPair.verify(format_1.Convert.hexToUint8(this.publicKey), convertedData, convertedSignature);
+        return crypto_1.KeyPair.verify(format_1.Convert.hexToUint8(this.publicKey), convertedData, convertedSignature, signSchema);
     }
     /**
      * Compares public accounts for equality.

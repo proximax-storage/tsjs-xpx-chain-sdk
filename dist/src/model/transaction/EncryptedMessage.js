@@ -31,9 +31,11 @@ class EncryptedMessage extends Message_1.Message {
      * @param message - Plain message to be encrypted
      * @param recipientPublicAccount - Recipient public account
      * @param privateKey - Sender private key
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @return {EncryptedMessage}
      */
-    static create(message, recipientPublicAccount, privateKey) {
-        return new EncryptedMessage(crypto_1.Crypto.encode(privateKey, recipientPublicAccount.publicKey, message).toUpperCase());
+    static create(message, recipientPublicAccount, privateKey, signSchema = crypto_1.SignSchema.SHA3) {
+        return new EncryptedMessage(crypto_1.Crypto.encode(privateKey, recipientPublicAccount.publicKey, message, signSchema).toUpperCase());
     }
     /**
      *
@@ -47,9 +49,11 @@ class EncryptedMessage extends Message_1.Message {
      * @param encryptMessage - Encrypted message to be decrypted
      * @param privateKey - Recipient private key
      * @param recipientPublicAccount - Sender public account
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @return {PlainMessage}
      */
-    static decrypt(encryptMessage, privateKey, recipientPublicAccount) {
-        return new PlainMessage_1.PlainMessage(crypto_1.Crypto.decode(privateKey, recipientPublicAccount.publicKey, encryptMessage.payload));
+    static decrypt(encryptMessage, privateKey, recipientPublicAccount, signSchema = crypto_1.SignSchema.SHA3) {
+        return new PlainMessage_1.PlainMessage(crypto_1.Crypto.decode(privateKey, recipientPublicAccount.publicKey, encryptMessage.payload, signSchema));
     }
 }
 exports.EncryptedMessage = EncryptedMessage;
