@@ -1,3 +1,6 @@
+import { SignSchema } from '../../core/crypto';
+import { Account } from '../../model/account/Account';
+import { SignedTransaction } from '../../model/transaction/SignedTransaction';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
@@ -5,6 +8,7 @@ import { AggregateTransactionInfo } from './AggregateTransactionInfo';
 import { Deadline } from './Deadline';
 import { InnerTransaction } from './InnerTransaction';
 import { TransactionInfo } from './TransactionInfo';
+
 /**
  * An abstract transaction class that serves as the base class of all NEM transactions.
  */
@@ -82,6 +86,15 @@ export declare abstract class Transaction {
      * Transactions meta data object contains additional information about the transaction.
      */
     transactionInfo?: TransactionInfo | AggregateTransactionInfo | undefined);
+    /**
+     * @internal
+     * Serialize and sign transaction creating a new SignedTransaction
+     * @param account - The account to sign the transaction
+     * @param generationHash - Network generation hash hex
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @returns {SignedTransaction}
+     */
+    public signWith(account: Account, generationHash: string, signSchema?: SignSchema): SignedTransaction
     /**
      * Convert an aggregate transaction to an inner transaction including transaction signer.
      * @param signer - Transaction signer.
