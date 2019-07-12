@@ -1,3 +1,4 @@
+import { SignSchema } from '../../core/crypto';
 import { Account } from '../account/Account';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
@@ -7,6 +8,7 @@ import { Deadline } from './Deadline';
 import { InnerTransaction } from './InnerTransaction';
 import { Transaction } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
+
 /**
  * Aggregate innerTransactions contain multiple innerTransactions that can be initiated by different accounts.
  */
