@@ -48,6 +48,7 @@ class PublicAccount {
      * @returns {PublicAccount}
      */
     static createFromPublicKey(publicKey, networkType, signSchema = crypto_1.SignSchema.SHA3) {
+        publicKey = typeof publicKey === 'object' ? publicKey['publicKey'] : publicKey;
         if (publicKey == null || (publicKey.length !== 64 && publicKey.length !== 66)) {
             throw new Error('Not a valid public key');
         }

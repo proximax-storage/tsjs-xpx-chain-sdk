@@ -66,6 +66,16 @@ export declare class AggregateTransaction extends Transaction {
      */
     signedByAccount(publicAccount: PublicAccount): boolean;
     /**
+     * @internal
+     * Sign transaction with cosignatories creating a new SignedTransaction
+     * @param initiatorAccount - Initiator account
+     * @param cosignatories - The array of accounts that will cosign the transaction
+     * @param generationHash - Network generation hash hex
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @returns {SignedTransaction}
+     */
+    public signTransactionWithCosignatories(initiatorAccount: Account, cosignatories: Account[], generationHash: string, signSchema?: SignSchema)
+    /**
      * @override Transaction.size()
      * @description get the byte size of a AggregateTransaction
      * @returns {number}
