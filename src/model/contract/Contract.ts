@@ -1,6 +1,14 @@
+// Copyright 2019 ProximaX Limited. All rights reserved.
+// Use of this source code is governed by the Apache 2.0
+// license that can be found in the LICENSE file
+
 import { UInt64 } from "../UInt64";
 import { ContractDTO } from "../../infrastructure/model/contractDTO";
 
+/**
+ * The contract structure stores a supercontract definition as returned from http contractApi.
+ * The contract can be created on blockachain using ModifyContractTransaction
+ */
 export class Contract {
     constructor(
         public readonly multisig: string,

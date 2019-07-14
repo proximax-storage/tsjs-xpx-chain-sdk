@@ -29,7 +29,7 @@ import {NetworkRepository} from './NetworkRepository';
 export class NetworkHttp extends Http implements NetworkRepository {
     /**
      * @internal
-     * Nem2 Library account routes api
+     * xpx chain Library account routes api
      */
     private networkRoutesApi: NetworkRoutesApi;
 

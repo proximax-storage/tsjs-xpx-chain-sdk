@@ -58,7 +58,7 @@ export enum LimitType {
 export class BlockHttp extends Http implements BlockRepository {
     /**
      * @internal
-     * Nem2 Library block routes api
+     * xpx chain Library block routes api
      */
     private blockRoutesApi: BlockRoutesApi;
 

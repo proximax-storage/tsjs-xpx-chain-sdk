@@ -38,7 +38,7 @@ import {NetworkHttp} from './NetworkHttp';
 export class MosaicHttp extends Http implements MosaicRepository {
     /**
      * @internal
-     * Nem2 Library mosaic routes api
+     * xpx chain Library mosaic routes api
      */
     private mosaicRoutesApi: MosaicRoutesApi;
 

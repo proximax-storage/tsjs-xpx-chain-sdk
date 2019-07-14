@@ -36,13 +36,14 @@ export class PlainMessage extends Message {
         return new PlainMessage(this.decodeHex(payload));
     }
 
-  /**
-   * @internal
-   * @param payload
-   */
+    /**
+     * @internal
+     * @param payload
+     */
     constructor(payload: string) {
         super(MessageType.PlainMessage, payload);
     }
+
 }
 
 /**

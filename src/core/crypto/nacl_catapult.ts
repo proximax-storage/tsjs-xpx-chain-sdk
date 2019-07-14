@@ -682,8 +682,7 @@ export const crypto_shared_key_hash = (shared, pk, sk, hashfunc, signSchema) => 
     d[31] |= 64;
 
     let q = [gf(), gf(), gf(), gf()];
-    // unpackneg(q, pk);
-    unpack(q, pk); // unpackneg/unpack call here is the only difference between xpx and nem regarding shared key derivation
+    unpackneg(q, pk);
     scalarmult(p, q, d);
     pack(shared, p);
 };

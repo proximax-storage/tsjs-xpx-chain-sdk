@@ -42,7 +42,7 @@ import {QueryParams} from './QueryParams';
 export class NamespaceHttp extends Http implements NamespaceRepository {
     /**
      * @internal
-     * Nem2 Library namespace routes api
+     * xpx chain Library namespace routes api
      */
     private namespaceRoutesApi: NamespaceRoutesApi;
 

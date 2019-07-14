@@ -24,10 +24,8 @@ import { NamespaceHttp } from '../../src/infrastructure/infrastructure';
 import {Listener} from '../../src/infrastructure/Listener';
 import {TransactionHttp} from '../../src/infrastructure/TransactionHttp';
 import {Account} from '../../src/model/account/Account';
-import {Address} from '../../src/model/account/Address';
-import { PropertyModificationType } from '../../src/model/account/PropertyModificationType';
-import { PropertyType } from '../../src/model/account/PropertyType';
-import {PublicAccount} from '../../src/model/account/PublicAccount';
+import { RestrictionModificationType } from '../../src/model/account/RestrictionModificationType';
+import { RestrictionType } from '../../src/model/account/RestrictionType';
 import {NetworkType} from '../../src/model/blockchain/NetworkType';
 import { Mosaic } from '../../src/model/mosaic/Mosaic';
 import {MosaicId} from '../../src/model/mosaic/MosaicId';
@@ -37,39 +35,34 @@ import {MosaicSupplyType} from '../../src/model/mosaic/MosaicSupplyType';
 import {NetworkCurrencyMosaic} from '../../src/model/mosaic/NetworkCurrencyMosaic';
 import { AliasActionType } from '../../src/model/namespace/AliasActionType';
 import { NamespaceId } from '../../src/model/namespace/NamespaceId';
+import { AccountAddressRestrictionModificationTransaction } from '../../src/model/transaction/AccountAddressRestrictionModificationTransaction';
 import { AccountLinkTransaction } from '../../src/model/transaction/AccountLinkTransaction';
-import { AccountPropertyModification } from '../../src/model/transaction/AccountPropertyModification';
-import { AccountPropertyTransaction } from '../../src/model/transaction/AccountPropertyTransaction';
+import { AccountMosaicRestrictionModificationTransaction } from '../../src/model/transaction/AccountMosaicRestrictionModificationTransaction';
+import { AccountOperationRestrictionModificationTransaction } from '../../src/model/transaction/AccountOperationRestrictionModificationTransaction';
+import { AccountRestrictionModification } from '../../src/model/transaction/AccountRestrictionModification';
+import { AccountRestrictionTransaction } from '../../src/model/transaction/AccountRestrictionTransaction';
 import { AddressAliasTransaction } from '../../src/model/transaction/AddressAliasTransaction';
 import {AggregateTransaction} from '../../src/model/transaction/AggregateTransaction';
 import {CosignatureSignedTransaction} from '../../src/model/transaction/CosignatureSignedTransaction';
-import {CosignatureTransaction} from '../../src/model/transaction/CosignatureTransaction';
 import {Deadline} from '../../src/model/transaction/Deadline';
 import { HashLockTransaction } from '../../src/model/transaction/HashLockTransaction';
 import {HashType} from '../../src/model/transaction/HashType';
 import { LinkAction } from '../../src/model/transaction/LinkAction';
 import {LockFundsTransaction} from '../../src/model/transaction/LockFundsTransaction';
-import { ModifyAccountPropertyAddressTransaction } from '../../src/model/transaction/ModifyAccountPropertyAddressTransaction';
-import { ModifyAccountPropertyEntityTypeTransaction } from '../../src/model/transaction/ModifyAccountPropertyEntityTypeTransaction';
-import { ModifyAccountPropertyMosaicTransaction } from '../../src/model/transaction/ModifyAccountPropertyMosaicTransaction';
-import {ModifyMultisigAccountTransaction} from '../../src/model/transaction/ModifyMultisigAccountTransaction';
 import { MosaicAliasTransaction } from '../../src/model/transaction/MosaicAliasTransaction';
 import {MosaicDefinitionTransaction} from '../../src/model/transaction/MosaicDefinitionTransaction';
 import {MosaicSupplyChangeTransaction} from '../../src/model/transaction/MosaicSupplyChangeTransaction';
-import {MultisigCosignatoryModification} from '../../src/model/transaction/MultisigCosignatoryModification';
-import {MultisigCosignatoryModificationType} from '../../src/model/transaction/MultisigCosignatoryModificationType';
-import {EmptyMessage, PlainMessage} from '../../src/model/transaction/PlainMessage';
+import { PlainMessage, EmptyMessage } from '../../src/model/transaction/PlainMessage';
 import {RegisterNamespaceTransaction} from '../../src/model/transaction/RegisterNamespaceTransaction';
 import {SecretLockTransaction} from '../../src/model/transaction/SecretLockTransaction';
 import {SecretProofTransaction} from '../../src/model/transaction/SecretProofTransaction';
-import {SignedTransaction} from '../../src/model/transaction/SignedTransaction';
 import {Transaction} from '../../src/model/transaction/Transaction';
 import {TransactionType} from '../../src/model/transaction/TransactionType';
 import {TransferTransaction} from '../../src/model/transaction/TransferTransaction';
 import {UInt64} from '../../src/model/UInt64';
 import {APIUrl , ConfNetworkType, ConfNetworkMosaic,
-    SeedAccount, TestingAccount, TestingRecipient, MultisigAccount, CosignatoryAccount, Cosignatory2Account, Cosignatory3Account, GetNemesisBlockDataPromise, ConfNamespace, ConfTestingMosaic, ConfTestingNamespace, ConfAccountHttp, ConfTransactionHttp, ConfMosaicHttp, NemesisBlockInfo} from '../conf/conf.spec';
-import { AliasTransaction } from '../../src/model/model';
+    SeedAccount, TestingAccount, TestingRecipient, MultisigAccount, CosignatoryAccount, Cosignatory2Account, Cosignatory3Account, GetNemesisBlockDataPromise, ConfNamespace, ConfTestingMosaic, ConfTestingNamespace, ConfAccountHttp, ConfTransactionHttp, ConfMosaicHttp, NemesisBlockInfo, Customer1Account} from '../conf/conf.spec';
+import { AliasTransaction, Address, SignedTransaction } from '../../src/model/model';
 import { ModifyMetadataTransaction, MetadataModification, MetadataModificationType } from '../../src/model/transaction/ModifyMetadataTransaction';
 import { MetadataHttp } from '../../src/infrastructure/MetadataHttp';
 import { ConfUtils } from '../conf/ConfUtils';
@@ -158,11 +151,10 @@ describe('TransactionHttp', () => {
                 TestingRecipient.address,
                 [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10))],
                 PlainMessage.create('test-message'),
-                ConfNetworkType,
-            );
+                ConfNetworkType);
             it('standalone', (done) => {
                 const signedTransaction = transferTransaction.signWith(TestingAccount, generationHash);
-                validateTransactionAnnounceCorrectly(TestingAccount.address, done);
+                validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });
             it('aggregate', (done) => {
@@ -172,53 +164,14 @@ describe('TransactionHttp', () => {
                     [],
                 );
                 const signedTransaction = aggregateTransaction.signWith(TestingAccount, generationHash);
-                validateTransactionAnnounceCorrectly(TestingAccount.address, done);
+                validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });
         });
     });
 
-    describe('AccountPropertyTransaction - EntityType', () => {
-        it('standalone', (done) => {
-            const entityTypePropertyFilter = AccountPropertyModification.createForEntityType(
-                PropertyModificationType.Add,
-                TransactionType.LINK_ACCOUNT,
-            );
-            const addressModification = AccountPropertyTransaction.createEntityTypePropertyModificationTransaction(
-                Deadline.create(),
-                PropertyType.BlockTransaction,
-                [entityTypePropertyFilter],
-                ConfNetworkType,
-            );
-            const signedTransaction = addressModification.signWith(TestingRecipient, generationHash);
-            validateTransactionAnnounceCorrectly(TestingRecipient.address, done, signedTransaction.hash);
-            transactionHttp.announce(signedTransaction);
-        });
-        it('aggregate', (done) => {
-            const entityTypePropertyFilter = AccountPropertyModification.createForEntityType(
-                PropertyModificationType.Remove,
-                TransactionType.LINK_ACCOUNT,
-            );
-            const addressModification = AccountPropertyTransaction.createEntityTypePropertyModificationTransaction(
-                Deadline.create(),
-                PropertyType.BlockTransaction,
-                [entityTypePropertyFilter],
-                ConfNetworkType,
-            );
-            const aggregateTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                [addressModification.toAggregate(TestingRecipient.publicAccount)],
-                ConfNetworkType,
-                [],
-            );
-            const signedTransaction = aggregateTransaction.signWith(TestingRecipient, generationHash);
-            validateTransactionAnnounceCorrectly(TestingRecipient.address, done, signedTransaction.hash);
-            transactionHttp.announce(signedTransaction);
-        });
-    });
-
     describe('AccountLinkTransaction', () => {
         describe('RegisterNamespaceTransaction', () => {
-
             it('standalone', (done) => {
                 namespaceName = 'root-test-namespace-' + Math.floor(Math.random() * 10000);
                 const registerNamespaceTransaction = RegisterNamespaceTransaction.createRootNamespace(
@@ -448,7 +401,128 @@ describe('TransactionHttp', () => {
             });
         });
     });
-/*
+
+    describe('AccountRestrictionTransaction - Address', () => {
+        it('standalone', (done) => {
+            const addressRestrictionFilter = AccountRestrictionModification.createForAddress(
+                RestrictionModificationType.Add,
+                Customer1Account.address,
+            );
+            const addressModification = AccountRestrictionTransaction.createAddressRestrictionModificationTransaction(
+                Deadline.create(),
+                RestrictionType.BlockAddress,
+                [addressRestrictionFilter],
+                ConfNetworkType,
+            );
+            const signedTransaction = addressModification.signWith(TestingAccount, generationHash);
+            validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
+            transactionHttp.announce(signedTransaction);
+        });
+
+        it('aggregate', (done) => {
+            const addressRestrictionFilter = AccountRestrictionModification.createForAddress(
+                RestrictionModificationType.Remove,
+                Customer1Account.address,
+            );
+            const addressModification = AccountRestrictionTransaction.createAddressRestrictionModificationTransaction(
+                Deadline.create(),
+                RestrictionType.BlockAddress,
+                [addressRestrictionFilter],
+                ConfNetworkType,
+            );
+            const aggregateTransaction = AggregateTransaction.createComplete(Deadline.create(),
+                [addressModification.toAggregate(TestingAccount.publicAccount)],
+                ConfNetworkType,
+                [],
+            );
+            const signedTransaction = aggregateTransaction.signWith(TestingAccount, generationHash);
+            validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
+            transactionHttp.announce(signedTransaction);
+        });
+
+    });
+
+    describe('AccountRestrictionTransaction - Mosaic', () => {
+        it('standalone', (done) => {
+            const mosaicRestrictionFilter = AccountRestrictionModification.createForMosaic(
+                RestrictionModificationType.Add,
+                mosaicId,
+            );
+            const addressModification = AccountRestrictionTransaction.createMosaicRestrictionModificationTransaction(
+                Deadline.create(),
+                RestrictionType.BlockMosaic,
+                [mosaicRestrictionFilter],
+                ConfNetworkType,
+            );
+            const signedTransaction = addressModification.signWith(TestingAccount, generationHash);
+            validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
+            transactionHttp.announce(signedTransaction);
+        });
+
+        it('aggregate', (done) => {
+            const mosaicRestrictionFilter = AccountRestrictionModification.createForMosaic(
+                RestrictionModificationType.Remove,
+                mosaicId,
+            );
+            const addressModification = AccountRestrictionTransaction.createMosaicRestrictionModificationTransaction(
+                Deadline.create(),
+                RestrictionType.BlockMosaic,
+                [mosaicRestrictionFilter],
+                ConfNetworkType,
+            );
+            const aggregateTransaction = AggregateTransaction.createComplete(Deadline.create(),
+                [addressModification.toAggregate(TestingAccount.publicAccount)],
+                ConfNetworkType,
+                [],
+            );
+            const signedTransaction = aggregateTransaction.signWith(TestingAccount, generationHash);
+            validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
+            transactionHttp.announce(signedTransaction);
+        });
+    });
+
+    describe('AccountRestrictionTransaction - Operation', () => {
+        it('standalone', (done) => {
+            const operationRestrictionFilter = AccountRestrictionModification.createForOperation(
+                RestrictionModificationType.Add,
+                TransactionType.LINK_ACCOUNT,
+            );
+            const addressModification = AccountRestrictionTransaction.createOperationRestrictionModificationTransaction(
+                Deadline.create(),
+                RestrictionType.BlockTransaction,
+                [operationRestrictionFilter],
+                ConfNetworkType,
+            );
+            const signedTransaction = addressModification.signWith(Cosignatory2Account, generationHash);
+
+            validateTransactionAnnounceCorrectly(Cosignatory2Account.address, done, signedTransaction.hash);
+
+            transactionHttp.announce(signedTransaction);
+        });
+
+        it('aggregate', (done) => {
+            const operationRestrictionFilter = AccountRestrictionModification.createForOperation(
+                RestrictionModificationType.Remove,
+                TransactionType.LINK_ACCOUNT,
+            );
+            const addressModification = AccountRestrictionTransaction.createOperationRestrictionModificationTransaction(
+                Deadline.create(),
+                RestrictionType.BlockTransaction,
+                [operationRestrictionFilter],
+                ConfNetworkType,
+            );
+            const aggregateTransaction = AggregateTransaction.createComplete(Deadline.create(),
+                [addressModification.toAggregate(Cosignatory2Account.publicAccount)],
+                ConfNetworkType,
+                [],
+            );
+            const signedTransaction = aggregateTransaction.signWith(Cosignatory2Account, generationHash);
+            validateTransactionAnnounceCorrectly(Cosignatory2Account.address, done, signedTransaction.hash);
+            transactionHttp.announce(signedTransaction);
+        });
+    });
+
+    /*
     describe('HashLockTransaction - MosaicAlias', () => {
         it('standalone', (done) => {
             const aggregateTransaction = AggregateTransaction.createBonded(

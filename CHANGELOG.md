@@ -1,6 +1,7 @@
 # CHANGELOG
 ## v0.4.0
 - Support for supercontracts added
+- Dragon compatible
 
 ## v0.3.0
 - integrated js-xpx-chain-library (dependency removed)

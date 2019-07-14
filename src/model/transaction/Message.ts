@@ -47,7 +47,6 @@ export abstract class Message {
                  * Message type
                  */
                 public readonly type: number,
-
                 /**
                  * Message payload
                  */

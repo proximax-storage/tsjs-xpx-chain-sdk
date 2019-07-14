@@ -30,7 +30,7 @@ import {Http} from './Http';
 export class DiagnosticHttp extends Http implements DiagnosticRepository {
     /**
      * @internal
-     * Nem2 Library diagnostic routes api
+     * xpx chain Library diagnostic routes api
      */
     private diagnosticRoutesApi: DiagnosticRoutesApi;
 

@@ -64,7 +64,7 @@ describe('NamespaceHttp', () => {
             GetNemesisBlockDataPromise().then(data => {
                 namespaceHttp.getNamespacesName([data.testNamespace.Id])
                 .subscribe((namespaceNames) => {
-                    expect(namespaceNames[0].name).to.be.equal(data.testNamespace.Name);
+                    expect(namespaceNames[0].name.endsWith(data.testNamespace.Name)).to.be.equal(true);
                     done();
                 });
             });

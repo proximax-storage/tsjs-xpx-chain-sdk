@@ -40,9 +40,13 @@ Use the following available resources to get help:
 
 - If you found a bug, [open a new issue][issues]
 
+## Changelog
+
+Important versions listed below. Refer to the [Changelog](CHANGELOG.md) for a full history of the project.
+
 ## Contributing
 
-This project is developed and maintained by NEM Foundation. Contributions are welcome and appreciated. You can find [nem2-sdk on GitHub][self].
+This project is developed and maintained by ProximaX. Contributions are welcome and appreciated. You can find [tsjs-xpx-chain-sdk on GitHub][self].
 
 Feel free to start an issue or create a pull request. Check [CONTRIBUTING](CONTRIBUTING.md) before start.
 

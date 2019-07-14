@@ -32,7 +32,7 @@ import {Http} from './Http';
 export class ChainHttp extends Http implements ChainRepository {
     /**
      * @internal
-     * Nem2 Library chain routes api
+     * xpx chain Library chain routes api
      */
     private chainRoutesApi: ChainRoutesApi;
 

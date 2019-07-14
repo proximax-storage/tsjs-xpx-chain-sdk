@@ -1,9 +1,10 @@
 import { SeedAccount, APIUrl, ConfNetworkMosaic, AllTestingAccounts, TestAccount, ConfNetworkType, TestingAccount, ConfTestingNamespace, ConfTestingMosaic, ConfTestingMosaicNonce, ConfTestingMosaicProperties, TestingRecipient, ConfAccountHttp, ConfTransactionHttp, ConfNamespaceHttp, ConfMosaicHttp, GetNemesisBlockDataPromise, NemesisBlockInfo } from "./conf.spec";
-import { Account, TransferTransaction, PublicAccount, Deadline, PlainMessage, UInt64, MultisigCosignatoryModification, ModifyAccountPropertyAddressTransaction, PropertyModificationType, AccountPropertyModification, MultisigCosignatoryModificationType, ModifyMultisigAccountTransaction, Address, PropertyType, Mosaic, MosaicId, TransactionType, AccountInfo, SignedTransaction, MosaicDefinitionTransaction, MosaicNonce, MosaicProperties, NamespaceId, RegisterNamespaceTransaction, AggregateTransaction, AggregateTransactionCosignature, InnerTransaction, LockFundsTransaction, NetworkCurrencyMosaic } from "../../src/model/model";
+import { Account, TransferTransaction, PublicAccount, Deadline, PlainMessage, UInt64, MultisigCosignatoryModification, MultisigCosignatoryModificationType, ModifyMultisigAccountTransaction, Address, Mosaic, MosaicId, TransactionType, AccountInfo, SignedTransaction, MosaicDefinitionTransaction, MosaicNonce, MosaicProperties, NamespaceId, RegisterNamespaceTransaction, AggregateTransaction, AggregateTransactionCosignature, InnerTransaction, LockFundsTransaction, NetworkCurrencyMosaic, HashLockTransaction, CosignatureSignedTransaction, CosignatureTransaction, AccountRestrictionTransaction, AccountRestrictionModification, RestrictionModificationType, RestrictionType } from "../../src/model/model";
 import { TransactionHttp, Listener, AccountHttp, NamespaceHttp, MosaicHttp } from "../../src/infrastructure/infrastructure";
 import { forkJoin } from "rxjs";
 import { ChronoUnit } from "js-joda";
 import { CreateTransactionFromDTO } from "../../src/infrastructure/transaction/CreateTransactionFromDTO";
+import { SignSchema } from "../../src/core/crypto";
 
 export class ConfUtils {
 
@@ -49,7 +50,7 @@ export class ConfUtils {
         }).then(() => {
             return ConfUtils.checkOrCreateMosaic(ConfTestingMosaic)
         }).then(() => {
-            return ConfUtils.simplePropertyModificationBLockAddress(TestingAccount, TestingRecipient.address);
+            return ConfUtils.simpleAccountRestrictionBLockAddress(TestingAccount, TestingRecipient.address);
         });
     }
 
@@ -186,39 +187,77 @@ export class ConfUtils {
                         ta.cosignatories.map(cos => new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, cos.acc.publicAccount)),
                         ta.acc.address.networkType);
 
-                    const aggregateBonded = AggregateTransaction.createComplete(
+                    const aggregateBonded = AggregateTransaction.createBonded(
                         Deadline.create(),
                         [convertIntoMultisigTransaction.toAggregate(ta.acc.publicAccount)],
                         ConfNetworkType,
                         []
                     )
 
-                    const signedAggregateBondedComplete = aggregateBonded.signTransactionWithCosignatories(ta.acc, ta.cosignatories.map(ta => ta.acc), nemesisBlockInfo.generationHash);
+                    const signedAggregateBonded = aggregateBonded.signWith(ta.acc, nemesisBlockInfo.generationHash);
+
+                    const lockFunds = HashLockTransaction.create(
+                        Deadline.create(),
+                        new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
+                        UInt64.fromUint(50),
+                        signedAggregateBonded,
+                        ConfNetworkType
+                    )
+
+                    const signedLockFunds = lockFunds.signWith(ta.acc, nemesisBlockInfo.generationHash);
+                    listener.cosignatureAdded(ta.acc.address).subscribe(tx => {
+                        console.log(tx);
+                    });
+
+                    listener.aggregateBondedAdded(ta.acc.address).subscribe(aggtx => {
+                        console.log(aggtx);
+                        //for (const a of ta.cosignatories) {
+                        //    if (! aggtx.signedByAccount(a.acc.publicAccount)) {
+                        //        const cosTx = CosignatureTransaction.create(aggtx);
+                        //        const signedCosTx = a.acc.signCosignatureTransaction(cosTx);
+                        //        transactionHttp.announceAggregateBondedCosignature(signedCosTx);
+                        //    }
+                        //}
+                        const accountHttp = new AccountHttp(APIUrl);
+                        accountHttp.aggregateBondedTransactions(ta.acc.publicAccount).subscribe(aggTxs => {
+                            aggTxs.forEach(aggTx => {
+                                const cosTx = CosignatureTransaction.create(aggTx);
+                                ta.cosignatories.forEach(c => {
+                                    if (! aggTx.signedByAccount(c.acc.publicAccount)) {
+                                        const signedCosTx = c.acc.signCosignatureTransaction(cosTx);
+                                        transactionHttp.announceAggregateBondedCosignature(signedCosTx);
+                                    }
+                                });
+                            });
+                        });
+                    })
 
                     this.waitForConfirmation(listener, ta.acc.address, () => {
-                        listener.close();
-                        resolve();
-                    }, signedAggregateBondedComplete.hash);
-
-                    transactionHttp.announce(signedAggregateBondedComplete);
+                        this.waitForConfirmation(listener, ta.acc.address, () => {
+                            console.log("Converted to msig.");
+                            resolve();
+                        }, signedAggregateBonded.hash);
+                        transactionHttp.announceAggregateBonded(signedAggregateBonded);
+                    }, signedLockFunds.hash);
+                    transactionHttp.announce(signedLockFunds);
                 });
             });
         });
     }
 
-    public static simplePropertyModificationBLockAddress(account: Account, blockAddress: Address, transactionHttp: TransactionHttp = new TransactionHttp(APIUrl)) {
+    public static simpleAccountRestrictionBLockAddress(account: Account, blockAddress: Address, transactionHttp: TransactionHttp = new TransactionHttp(APIUrl)) {
         return NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
             return new Promise((resolve, reject) => {
                 const listener = new Listener(APIUrl);
                 listener.open().then(() => {
-                    const modifyAccountPropertyAddressTransaction = ModifyAccountPropertyAddressTransaction.create(
+                    const modifyAccountRestrictionAddressTransaction = AccountRestrictionTransaction.createAddressRestrictionModificationTransaction(
                         Deadline.create(23, ChronoUnit.HOURS),
-                        PropertyType.BlockAddress,
-                        [new AccountPropertyModification(PropertyModificationType.Add, blockAddress.plain())],
+                        RestrictionType.BlockAddress,
+                        [new AccountRestrictionModification(RestrictionModificationType.Add, blockAddress.plain())],
                         account.address.networkType,
                     )
 
-                    const signedTransaction = account.sign(modifyAccountPropertyAddressTransaction, nemesisBlockInfo.generationHash);
+                    const signedTransaction = account.sign(modifyAccountRestrictionAddressTransaction, nemesisBlockInfo.generationHash);
 
                     this.waitForConfirmation(listener, account.address, () => {
                         listener.close();

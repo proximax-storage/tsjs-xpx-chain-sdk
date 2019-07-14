@@ -14,7 +14,7 @@ const { CosignatoryModificationBuffer, ModifyContractTransactionBuffer } = Modif
 
 const { flatbuffers } = require('flatbuffers');
 
-export default class ModifyMetadataTransaction extends VerifiableTransaction {
+export default class ModifyContractTransaction extends VerifiableTransaction {
     constructor(bytes) {
         super(bytes, ModifyContractTransactionSchema);
     }
@@ -159,6 +159,6 @@ export class Builder {
         if (bytes.length !== size) {
             // throw new Error("Declared size differs from actual bytes.length during ModifyContractTransaction serialization")
         }
-        return new ModifyMetadataTransaction(bytes);
+        return new ModifyContractTransaction(bytes);
     }
 }

@@ -45,13 +45,13 @@ import {TransactionRepository} from './TransactionRepository';
 export class TransactionHttp extends Http implements TransactionRepository {
     /**
      * @internal
-     * Nem2 Library transaction routes api
+     * xpx chain Library transaction routes api
      */
     private transactionRoutesApi: TransactionRoutesApi;
 
     /**
      * @internal
-     * Nem2 Library blockchain routes api
+     * xpx chain Library blockchain routes api
      */
     private blockRoutesApi: BlockRoutesApi;
 

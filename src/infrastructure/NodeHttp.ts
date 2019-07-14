@@ -30,7 +30,7 @@ import {NodeRepository} from './NodeRepository';
 export class NodeHttp extends Http implements NodeRepository {
     /**
      * @internal
-     * Nem2 Library account routes api
+     * xpx chain Library account routes api
      */
     private nodeRoutesApi: NodeRoutesApi;
 
