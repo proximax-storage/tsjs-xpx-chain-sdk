@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {convert, mosaicId as MosaicIdGenerator} from 'js-xpx-chain-library';
-import {PublicAccount} from '../account/PublicAccount';
 import {NamespaceId} from '../namespace/NamespaceId';
 import {UInt64} from '../UInt64';
 import {Mosaic} from './Mosaic';
@@ -23,10 +21,10 @@ import {MosaicId} from './MosaicId';
 
 /**
  * NetworkCurrencyMosaic mosaic
- *
+ * 
  * This represents the per-network currency mosaic. This mosaicId is aliased
  * with namespace name `cat.currency`.
- *
+ * 
  * @since 0.10.2
  */
 export class NetworkCurrencyMosaic extends Mosaic {
@@ -61,12 +59,6 @@ export class NetworkCurrencyMosaic extends Mosaic {
      * @type {boolean}
      */
     public static SUPPLY_MUTABLE = false;
-
-    /**
-     * Is Levy mutable
-     * @type {boolean}
-     */
-    public static LEVY_MUTABLE = false;
 
     /**
      * constructor

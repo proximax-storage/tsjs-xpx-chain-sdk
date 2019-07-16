@@ -1,8 +1,10 @@
-import { SeedAccount, APIUrl, ConfNetworkMosaic, AllTestingAccounts, TestAccount, ConfNetworkType, TestingAccount, ConfTestingNamespace, ConfTestingMosaic, ConfTestingMosaicNonce, ConfTestingMosaicProperties, TestingRecipient, ConfAccountHttp, ConfTransactionHttp, ConfNamespaceHttp, ConfMosaicHttp } from "./conf.spec";
-import { Account, TransferTransaction, PublicAccount, Deadline, PlainMessage, UInt64, MultisigCosignatoryModification, ModifyAccountPropertyAddressTransaction, PropertyModificationType, AccountPropertyModification, MultisigCosignatoryModificationType, ModifyMultisigAccountTransaction, Address, PropertyType, Mosaic, MosaicId, TransactionType, AccountInfo, SignedTransaction, MosaicDefinitionTransaction, MosaicNonce, MosaicProperties, NamespaceId, RegisterNamespaceTransaction } from "../../src/model/model";
+import { SeedAccount, APIUrl, ConfNetworkMosaic, AllTestingAccounts, TestAccount, ConfNetworkType, TestingAccount, ConfTestingNamespace, ConfTestingMosaic, ConfTestingMosaicNonce, ConfTestingMosaicProperties, TestingRecipient, ConfAccountHttp, ConfTransactionHttp, ConfNamespaceHttp, ConfMosaicHttp, GetNemesisBlockDataPromise, NemesisBlockInfo } from "./conf.spec";
+import { Account, TransferTransaction, PublicAccount, Deadline, PlainMessage, UInt64, MultisigCosignatoryModification, MultisigCosignatoryModificationType, ModifyMultisigAccountTransaction, Address, Mosaic, MosaicId, TransactionType, AccountInfo, SignedTransaction, MosaicDefinitionTransaction, MosaicNonce, MosaicProperties, NamespaceId, RegisterNamespaceTransaction, AggregateTransaction, AggregateTransactionCosignature, InnerTransaction, LockFundsTransaction, NetworkCurrencyMosaic, HashLockTransaction, CosignatureSignedTransaction, CosignatureTransaction, AccountRestrictionTransaction, AccountRestrictionModification, RestrictionModificationType, RestrictionType } from "../../src/model/model";
 import { TransactionHttp, Listener, AccountHttp, NamespaceHttp, MosaicHttp } from "../../src/infrastructure/infrastructure";
 import { forkJoin } from "rxjs";
 import { ChronoUnit } from "js-joda";
+import { CreateTransactionFromDTO } from "../../src/infrastructure/transaction/CreateTransactionFromDTO";
+import { SignSchema } from "../../src/core/crypto";
 
 export class ConfUtils {
 
@@ -48,7 +50,7 @@ export class ConfUtils {
         }).then(() => {
             return ConfUtils.checkOrCreateMosaic(ConfTestingMosaic)
         }).then(() => {
-            return ConfUtils.simplePropertyModificationBLockAddress(TestingAccount, TestingRecipient.address);
+            return ConfUtils.simpleAccountRestrictionBLockAddress(TestingAccount, TestingRecipient.address);
         });
     }
 
@@ -141,78 +143,129 @@ export class ConfUtils {
 
     public static simpleCreateAndAnnounceWaitForConfirmation(address: Address, absoluteAmount: number, from: Account = SeedAccount, message = '') {
         const transactionHttp = ConfTransactionHttp;
-        return new Promise((resolve, reject) => {
-            const listener = new Listener(APIUrl);
-            listener.open().then(() => {
+        return NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
+            return new Promise<void>((resolve, reject) => {
+                const listener = new Listener(APIUrl);
+                listener.open().then(() => {
 
-                const transferTransaction = TransferTransaction.create(
-                    Deadline.create(),
-                    address,
-                    [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(absoluteAmount))],
-                    PlainMessage.create(message),
-                    address.networkType,
-                );
+                    const transferTransaction = TransferTransaction.create(
+                        Deadline.create(),
+                        address,
+                        [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(absoluteAmount))],
+                        PlainMessage.create(message),
+                        address.networkType,
+                    );
 
-                const signedTransaction = from.sign(transferTransaction);
+                    const signedTransaction = from.sign(transferTransaction, nemesisBlockInfo.generationHash);
 
-                this.waitForConfirmation(listener, address, () => {
-                    listener.close();
-                    resolve();
-                }, signedTransaction.hash);
+                    this.waitForConfirmation(listener, address, () => {
+                        listener.close();
+                        resolve();
+                    }, signedTransaction.hash);
 
-                transactionHttp.announce(signedTransaction).subscribe(result => {
-                    console.log(result);
-                }, error => {
-                    console.error(error);
+                    transactionHttp.announce(signedTransaction).subscribe(result => {
+                        console.log(result);
+                    }, error => {
+                        console.error(error);
+                    });
                 });
             });
         });
     }
 
-     public static convertToMultisig(ta: TestAccount) {
+    public static convertToMultisig(ta: TestAccount) {
         const transactionHttp = ConfTransactionHttp;
-        return new Promise<void>((resolve, reject) => {
-            const listener = new Listener(APIUrl);
-            listener.open().then(() => {
+        return NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
+            return new Promise<void>((resolve, reject) => {
+                const listener = new Listener(APIUrl);
+                listener.open().then(() => {
 
-                const convertIntoMultisigTransaction = ModifyMultisigAccountTransaction.create(
-                    Deadline.create(),
-                    ta.cosignatories.length<=1 ? 1 : ta.cosignatories.length - 1,
-                    1,
-                    ta.cosignatories.map(cos => new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, cos.acc.publicAccount)),
-                    ta.acc.address.networkType);
+                    const convertIntoMultisigTransaction = ModifyMultisigAccountTransaction.create(
+                        Deadline.create(),
+                        ta.cosignatories.length<=1 ? 1 : ta.cosignatories.length - 1,
+                        1,
+                        ta.cosignatories.map(cos => new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, cos.acc.publicAccount)),
+                        ta.acc.address.networkType);
 
-                const signedTransaction = ta.acc.sign(convertIntoMultisigTransaction);
+                    const aggregateBonded = AggregateTransaction.createBonded(
+                        Deadline.create(),
+                        [convertIntoMultisigTransaction.toAggregate(ta.acc.publicAccount)],
+                        ConfNetworkType,
+                        []
+                    )
 
-                this.waitForConfirmation(listener, ta.acc.address, () => {
-                    listener.close();
-                    resolve();
-                }, signedTransaction.hash);
+                    const signedAggregateBonded = aggregateBonded.signWith(ta.acc, nemesisBlockInfo.generationHash);
 
-                return transactionHttp.announce(signedTransaction);
+                    const lockFunds = HashLockTransaction.create(
+                        Deadline.create(),
+                        new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
+                        UInt64.fromUint(50),
+                        signedAggregateBonded,
+                        ConfNetworkType
+                    )
+
+                    const signedLockFunds = lockFunds.signWith(ta.acc, nemesisBlockInfo.generationHash);
+                    listener.cosignatureAdded(ta.acc.address).subscribe(tx => {
+                        console.log(tx);
+                    });
+
+                    listener.aggregateBondedAdded(ta.acc.address).subscribe(aggtx => {
+                        console.log(aggtx);
+                        //for (const a of ta.cosignatories) {
+                        //    if (! aggtx.signedByAccount(a.acc.publicAccount)) {
+                        //        const cosTx = CosignatureTransaction.create(aggtx);
+                        //        const signedCosTx = a.acc.signCosignatureTransaction(cosTx);
+                        //        transactionHttp.announceAggregateBondedCosignature(signedCosTx);
+                        //    }
+                        //}
+                        const accountHttp = new AccountHttp(APIUrl);
+                        accountHttp.aggregateBondedTransactions(ta.acc.publicAccount).subscribe(aggTxs => {
+                            aggTxs.forEach(aggTx => {
+                                const cosTx = CosignatureTransaction.create(aggTx);
+                                ta.cosignatories.forEach(c => {
+                                    if (! aggTx.signedByAccount(c.acc.publicAccount)) {
+                                        const signedCosTx = c.acc.signCosignatureTransaction(cosTx);
+                                        transactionHttp.announceAggregateBondedCosignature(signedCosTx);
+                                    }
+                                });
+                            });
+                        });
+                    })
+
+                    this.waitForConfirmation(listener, ta.acc.address, () => {
+                        this.waitForConfirmation(listener, ta.acc.address, () => {
+                            console.log("Converted to msig.");
+                            resolve();
+                        }, signedAggregateBonded.hash);
+                        transactionHttp.announceAggregateBonded(signedAggregateBonded);
+                    }, signedLockFunds.hash);
+                    transactionHttp.announce(signedLockFunds);
+                });
             });
         });
     }
 
-    public static simplePropertyModificationBLockAddress(account: Account, blockAddress: Address, transactionHttp: TransactionHttp = new TransactionHttp(APIUrl)) {
-        return new Promise((resolve, reject) => {
-            const listener = new Listener(APIUrl);
-            listener.open().then(() => {
-                const modifyAccountPropertyAddressTransaction = ModifyAccountPropertyAddressTransaction.create(
-                    Deadline.create(23, ChronoUnit.HOURS),
-                    PropertyType.BlockAddress,
-                    [new AccountPropertyModification(PropertyModificationType.Add, blockAddress.plain())],
-                    account.address.networkType,
-                )
+    public static simpleAccountRestrictionBLockAddress(account: Account, blockAddress: Address, transactionHttp: TransactionHttp = new TransactionHttp(APIUrl)) {
+        return NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
+            return new Promise((resolve, reject) => {
+                const listener = new Listener(APIUrl);
+                listener.open().then(() => {
+                    const modifyAccountRestrictionAddressTransaction = AccountRestrictionTransaction.createAddressRestrictionModificationTransaction(
+                        Deadline.create(23, ChronoUnit.HOURS),
+                        RestrictionType.BlockAddress,
+                        [new AccountRestrictionModification(RestrictionModificationType.Add, blockAddress.plain())],
+                        account.address.networkType,
+                    )
 
-                const signedTransaction = account.sign(modifyAccountPropertyAddressTransaction);
+                    const signedTransaction = account.sign(modifyAccountRestrictionAddressTransaction, nemesisBlockInfo.generationHash);
 
-                this.waitForConfirmation(listener, account.address, () => {
-                    listener.close();
-                    resolve();
-                }, signedTransaction.hash);
+                    this.waitForConfirmation(listener, account.address, () => {
+                        listener.close();
+                        resolve();
+                    }, signedTransaction.hash);
 
-                return transactionHttp.announce(signedTransaction);
+                    return transactionHttp.announce(signedTransaction);
+                });
             });
         });
     }
@@ -220,25 +273,27 @@ export class ConfUtils {
     public static checkOrCreateRootNamespace(namespaceId: NamespaceId) {
         const namespaceHttp = ConfNamespaceHttp;
         const transactionHttp = ConfTransactionHttp;
-        return new Promise((resolve, reject) => {
-            namespaceHttp.getNamespace(namespaceId).subscribe(namespaceInfo => {
-                resolve();
-            }, error => {
-                const listener = new Listener(APIUrl);
-                listener.open().then(() => {
-                    RegisterNamespaceTransaction
-                    const registerNamespaceTransaction = RegisterNamespaceTransaction.createRootNamespace(
-                        Deadline.create(),
-                        'testing',
-                        UInt64.fromUint(1000),
-                        ConfNetworkType
-                    )
-                    const signedRegisterNamespaceTransaction = registerNamespaceTransaction.signWith(TestingAccount);
-                    this.waitForConfirmation(listener, TestingAccount.address, () => {
-                        listener.close();
-                        resolve();
-                    }, signedRegisterNamespaceTransaction.hash);
-                    transactionHttp.announce(signedRegisterNamespaceTransaction);
+        return NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
+            return new Promise((resolve, reject) => {
+                namespaceHttp.getNamespace(namespaceId).subscribe(namespaceInfo => {
+                    resolve();
+                }, error => {
+                    const listener = new Listener(APIUrl);
+                    listener.open().then(() => {
+                        RegisterNamespaceTransaction
+                        const registerNamespaceTransaction = RegisterNamespaceTransaction.createRootNamespace(
+                            Deadline.create(),
+                            'testing',
+                            UInt64.fromUint(1000),
+                            ConfNetworkType
+                        )
+                        const signedRegisterNamespaceTransaction = registerNamespaceTransaction.signWith(TestingAccount, nemesisBlockInfo.generationHash);
+                        this.waitForConfirmation(listener, TestingAccount.address, () => {
+                            listener.close();
+                            resolve();
+                        }, signedRegisterNamespaceTransaction.hash);
+                        transactionHttp.announce(signedRegisterNamespaceTransaction);
+                    });
                 });
             });
         });
@@ -247,29 +302,29 @@ export class ConfUtils {
     public static checkOrCreateMosaic(mosaicId: MosaicId) {
         const mosaicHttp = ConfMosaicHttp;
         const transactionHttp = ConfTransactionHttp;
-
-        return new Promise((resolve, reject) => {
-            mosaicHttp.getMosaic(mosaicId).subscribe(mosaicInfo => {
-                resolve();
-            }, error => {
-                const listener = new Listener(APIUrl);
-                listener.open().then(() => {
-                    const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
-                        Deadline.create(),
-                        ConfTestingMosaicNonce,
-                        ConfTestingMosaic,
-                        ConfTestingMosaicProperties,
-                        ConfNetworkType
-                    );
-                    const signedRegisterNamespaceTransaction = mosaicDefinitionTransaction.signWith(TestingAccount);
-                    this.waitForConfirmation(listener, TestingAccount.address, () => {
-                        listener.close();
-                        resolve();
-                    }, signedRegisterNamespaceTransaction.hash);
-                    transactionHttp.announce(signedRegisterNamespaceTransaction);
+        return NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
+            return new Promise((resolve, reject) => {
+                mosaicHttp.getMosaic(mosaicId).subscribe(mosaicInfo => {
+                    resolve();
+                }, error => {
+                    const listener = new Listener(APIUrl);
+                    listener.open().then(() => {
+                        const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
+                            Deadline.create(),
+                            ConfTestingMosaicNonce,
+                            ConfTestingMosaic,
+                            ConfTestingMosaicProperties,
+                            ConfNetworkType
+                        );
+                        const signedRegisterNamespaceTransaction = mosaicDefinitionTransaction.signWith(TestingAccount, nemesisBlockInfo.generationHash);
+                        this.waitForConfirmation(listener, TestingAccount.address, () => {
+                            listener.close();
+                            resolve();
+                        }, signedRegisterNamespaceTransaction.hash);
+                        transactionHttp.announce(signedRegisterNamespaceTransaction);
+                    });
                 });
             });
         });
-    }
-
+    };
 }

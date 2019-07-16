@@ -1,23 +1,39 @@
-import {MosaicId} from './MosaicId';
+/*
+ * Copyright 2019 NEM
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { NamespaceName } from '../namespace/NamespaceName';
+import { MosaicId } from './MosaicId';
 
 /**
- * The mosaic names structure stores array of names for a mosaic
+ * Mosaic with linked names
  */
 export class MosaicNames {
 
     /**
-     * Constructor.
-     * @param mosaicId
-     * @param names
+     *
      */
-    constructor(/**
-                 * The mosaic id.
-                 */
-                public readonly mosaicId: MosaicId,
-                /**
-                 * The array of mosaic names
-                 */
-                public readonly names: string[]) {
-    }
+    constructor(
+        /**
+         * Mosaic Id
+         */
+        public readonly mosaicId: MosaicId,
+        /**
+         * Address linked namespace names
+         */
+        public readonly names: NamespaceName[]) {
 
+    }
 }

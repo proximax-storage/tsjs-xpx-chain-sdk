@@ -13,14 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { assert, expect } from 'chai';
 import { AccountHttp } from '../../src/infrastructure/AccountHttp';
+import { NamespaceHttp } from '../../src/infrastructure/infrastructure';
 import { Listener } from '../../src/infrastructure/Listener';
 import { APIUrl, Cosignatory2Account, Cosignatory3Account, CosignatoryAccount,
     MultisigAccount, TestingAccount, TestingRecipient
 } from '../conf/conf.spec';
+import { TransactionHttp } from '../../src/infrastructure/TransactionHttp';
+import { Account } from '../../src/model/account/Account';
+import { NetworkType } from '../../src/model/blockchain/NetworkType';
+import { Mosaic, UInt64 } from '../../src/model/model';
+import { MosaicId } from '../../src/model/mosaic/MosaicId';
+import { NetworkCurrencyMosaic } from '../../src/model/mosaic/NetworkCurrencyMosaic';
+import { NamespaceId } from '../../src/model/namespace/NamespaceId';
+import { AggregateTransaction } from '../../src/model/transaction/AggregateTransaction';
+import { Deadline } from '../../src/model/transaction/Deadline';
+import { ModifyMultisigAccountTransaction } from '../../src/model/transaction/ModifyMultisigAccountTransaction';
+import { MultisigCosignatoryModification } from '../../src/model/transaction/MultisigCosignatoryModification';
+import { MultisigCosignatoryModificationType } from '../../src/model/transaction/MultisigCosignatoryModificationType';
+import { PlainMessage } from '../../src/model/transaction/PlainMessage';
+import { TransferTransaction } from '../../src/model/transaction/TransferTransaction';
 import { TransactionUtils } from './TransactionUtils';
 import { ConfUtils } from '../conf/ConfUtils';
-import { MultisigCosignatoryModificationType } from '../../src/model/model';
 import { fail } from 'assert';
 
 describe('Listener', () => {
@@ -33,7 +48,7 @@ describe('Listener', () => {
 
     after(() => {
         listener.close();
-    });
+    })
 
     it('newBlock', (done) => {
         const sub = listener.newBlock().subscribe(res => {

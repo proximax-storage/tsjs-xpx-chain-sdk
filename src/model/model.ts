@@ -24,17 +24,36 @@ export * from './account/Address';
 export * from './account/MultisigAccountGraphInfo';
 export * from './account/MultisigAccountInfo';
 export * from './account/PublicAccount';
-export * from './account/AccountProperties';
-export * from './account/AccountPropertiesInfo';
-export * from './account/AccountProperty';
-export * from './account/PropertyModificationType';
-export * from './account/PropertyType';
+export * from './account/AccountRestrictions';
+export * from './account/AccountRestrictionsInfo';
+export * from './account/AccountRestriction';
+export * from './account/RestrictionModificationType';
+export * from './account/RestrictionType';
+export * from './account/AccountNames';
 
 // Blockchain
 export * from './blockchain/BlockchainScore';
 export * from './blockchain/BlockchainStorageInfo';
 export * from './blockchain/BlockInfo';
 export * from './blockchain/NetworkType';
+export * from './blockchain/MerklePathItem';
+export * from './blockchain/MerkleProofInfo';
+export * from './blockchain/MerkleProofInfoPayload';
+
+// Contract
+export * from './contract/Contract';
+
+// Diagnostic
+export * from './diagnostic/ServerInfo';
+
+// Metadata
+export * from './metadata/Metadata';
+export * from './metadata/MosaicMetadata';
+export * from './metadata/NamespaceMetadata';
+export * from './metadata/AddressMetadata';
+export * from './metadata/Field';
+export * from './metadata/MetadataInfo';
+export * from './metadata/MetadataType';
 
 // Mosaic
 export * from './mosaic/Mosaic';
@@ -47,6 +66,8 @@ export * from '../service/MosaicView';
 export * from '../service/MosaicAmountView';
 export * from './mosaic/NetworkCurrencyMosaic';
 export * from './mosaic/NetworkHarvestMosaic';
+export * from './mosaic/MosaicNames';
+export * from './mosaic/MosaicPropertyType';
 
 // Namespace
 export * from '../service/Namespace';
@@ -60,13 +81,33 @@ export * from './namespace/NamespaceName';
 export * from './namespace/NamespaceType';
 export * from './namespace/AliasActionType';
 
+// Node
+export * from './node/NodeInfo';
+export * from './node/NodeTime';
+export * from './node/RoleType';
+
+// Receipt
+export * from './receipt/ArtifactExpiryReceipt';
+export * from './receipt/BalanceChangeReceipt';
+export * from './receipt/BalanceTransferReceipt';
+export * from './receipt/Receipt';
+export * from './receipt/ReceiptSource';
+export * from './receipt/ReceiptType';
+export * from './receipt/ReceiptVersion';
+export * from './receipt/ResolutionEntry';
+export * from './receipt/ResolutionStatement';
+export * from './receipt/TransactionStatement';
+export * from './receipt/ResolutionType';
+export * from './receipt/InflationReceipt';
+export * from './receipt/Statement';
+
 // Transaction
 export * from './transaction/AccountLinkTransaction';
-export * from './transaction/AccountPropertyTransaction';
-export * from './transaction/ModifyAccountPropertyAddressTransaction';
-export * from './transaction/ModifyAccountPropertyEntityTypeTransaction';
-export * from './transaction/ModifyAccountPropertyMosaicTransaction';
-export * from './transaction/AccountPropertyModification';
+export * from './transaction/AccountRestrictionTransaction';
+export * from './transaction/AccountAddressRestrictionModificationTransaction';
+export * from './transaction/AccountOperationRestrictionModificationTransaction';
+export * from './transaction/AccountMosaicRestrictionModificationTransaction';
+export * from './transaction/AccountRestrictionModification';
 export * from './transaction/AddressAliasTransaction';
 export * from './transaction/AggregateTransaction';
 export * from './transaction/AggregateTransactionCosignature';
@@ -107,3 +148,4 @@ export * from './wallet/EncryptedPrivateKey';
 export * from './wallet/Password';
 export * from './wallet/SimpleWallet';
 export * from './wallet/Wallet';
+export * from './wallet/WalletAlgorithm';

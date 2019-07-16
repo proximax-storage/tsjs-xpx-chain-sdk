@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { VerifiableTransaction } from 'js-xpx-chain-library';
 import { expect } from 'chai';
+import { VerifiableTransaction } from '../../../src/infrastructure/builders/VerifiableTransaction';
 import { Account } from '../../../src/model/account/Account';
+import { Address } from '../../../src/model/account/Address';
 import { NetworkType } from '../../../src/model/blockchain/NetworkType';
 import { AggregateTransaction } from '../../../src/model/transaction/AggregateTransaction';
-import { Address } from '../../../src/model/account/Address';
 import { Deadline } from '../../../src/model/transaction/Deadline';
 import { PlainMessage } from '../../../src/model/transaction/PlainMessage';
 import { SignedTransaction } from '../../../src/model/transaction/SignedTransaction';
@@ -211,6 +211,21 @@ describe('Transaction', () => {
                 new TransactionInfo(UInt64.fromUint(100), 1, 'id_hash', 'hash', 'hash'),
             );
             expect(transaction.size).to.be.equal(120);
+        });
+    });
+
+    describe('version', () => {
+        it('should return version in hex format', () => {
+            const transaction = new FakeTransaction(TransactionType.TRANSFER,
+                NetworkType.MIJIN_TEST,
+                1,
+                Deadline.create(),
+                UInt64.fromUint(0),
+                undefined,
+                undefined,
+                new TransactionInfo(UInt64.fromUint(100), 1, 'id_hash', 'hash', 'hash'),
+            );
+            expect(transaction.versionToHex()).to.be.equal('0x9001');
         });
     });
 });

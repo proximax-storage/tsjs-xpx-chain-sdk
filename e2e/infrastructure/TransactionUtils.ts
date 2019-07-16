@@ -19,17 +19,22 @@ import {Account} from '../../src/model/account/Account';
 import {Address} from '../../src/model/account/Address';
 import { PublicAccount } from '../../src/model/account/PublicAccount';
 import {NetworkType} from '../../src/model/blockchain/NetworkType';
+import { Mosaic } from '../../src/model/mosaic/Mosaic';
+import { MosaicId } from '../../src/model/mosaic/MosaicId';
+import {NetworkCurrencyMosaic} from '../../src/model/mosaic/NetworkCurrencyMosaic';
 import {AggregateTransaction} from '../../src/model/transaction/AggregateTransaction';
 import {CosignatureTransaction} from '../../src/model/transaction/CosignatureTransaction';
 import {Deadline} from '../../src/model/transaction/Deadline';
+import { LockFundsTransaction } from '../../src/model/transaction/LockFundsTransaction';
 import { ModifyMultisigAccountTransaction } from '../../src/model/transaction/ModifyMultisigAccountTransaction';
 import { MultisigCosignatoryModification } from '../../src/model/transaction/MultisigCosignatoryModification';
 import { MultisigCosignatoryModificationType } from '../../src/model/transaction/MultisigCosignatoryModificationType';
 import {PlainMessage} from '../../src/model/transaction/PlainMessage';
+import { SignedTransaction } from '../../src/model/transaction/SignedTransaction';
 import {TransferTransaction} from '../../src/model/transaction/TransferTransaction';
 import {UInt64} from '../../src/model/UInt64';
-import {CosignatoryAccount, MultisigAccount, APIUrl, TestingAccount, TestingRecipient, ConfNetworkMosaic, Cosignatory3Account } from '../../e2e/conf/conf.spec';
-import { Mosaic, HashLockTransaction, TransactionInfo, TransactionType, LockFundsTransaction, NetworkCurrencyMosaic, AggregateTransactionCosignature } from '../../src/model/model';
+import {CosignatoryAccount, MultisigAccount, APIUrl, TestingAccount, TestingRecipient, ConfNetworkMosaic, Cosignatory3Account, NemesisBlockInfo } from '../../e2e/conf/conf.spec';
+import { HashLockTransaction, TransactionInfo, TransactionType, AggregateTransactionCosignature } from '../../src/model/model';
 import { Listener } from '../../src/infrastructure/Listener';
 import { filter, mergeMap } from 'rxjs/operators';
 
@@ -37,84 +42,93 @@ export class TransactionUtils {
 
     public static createAndAnnounce(recipient: Address = TestingRecipient.address,
                                     transactionHttp: TransactionHttp = new TransactionHttp(APIUrl)) {
-        const account = TestingAccount;
-        const transferTransaction = TransferTransaction.create(
-            Deadline.create(),
-            recipient,
-            [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(0))],
-            PlainMessage.create('test-message'),
-            account.address.networkType,
-        );
-        const signedTransaction = account.sign(transferTransaction);
+        return NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
+            const account = TestingAccount;
+            const transferTransaction = TransferTransaction.create(
+                Deadline.create(),
+                recipient,
+                [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(0))],
+                PlainMessage.create('test-message'),
+                account.address.networkType,
+            );
+            const signedTransaction = account.sign(transferTransaction, nemesisBlockInfo.generationHash);
 
-        transactionHttp.announce(signedTransaction);
+            return transactionHttp.announce(signedTransaction).toPromise();
+        });
     }
 
     public static createAndAnnounceWithInsufficientBalance(transactionHttp: TransactionHttp = new TransactionHttp(APIUrl)) {
-        const account = TestingAccount;
-        const transferTransaction = TransferTransaction.create(
-            Deadline.create(),
-            TestingRecipient.address,
-            [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(100000000000))],
-            PlainMessage.create('test-message'),
-            account.address.networkType,
-        );
-        const signedTransaction = account.sign(transferTransaction);
-        transactionHttp.announce(signedTransaction);
+        return NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
+            const account = TestingAccount;
+            const transferTransaction = TransferTransaction.create(
+                Deadline.create(),
+                TestingRecipient.address,
+                [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(100000000000))],
+                PlainMessage.create('test-message'),
+                account.address.networkType,
+            );
+            const signedTransaction = account.sign(transferTransaction, nemesisBlockInfo.generationHash);
+            return transactionHttp.announce(signedTransaction);
+        });
     }
 
     public static createAggregateBondedTransactionAndAnnounce(transactionHttp: TransactionHttp = new TransactionHttp(APIUrl)) {
+        return NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
+            const transferTransaction = TransferTransaction.create(
+                Deadline.create(),
+                TestingRecipient.address,
+                [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(1000000))],
+                PlainMessage.create('test-message'),
+                TestingRecipient.address.networkType,
+            );
 
-        const transferTransaction = TransferTransaction.create(
-            Deadline.create(),
-            TestingRecipient.address,
-            [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(1000000))],
-            PlainMessage.create('test-message'),
-            TestingRecipient.address.networkType,
-        );
+            const aggregateTransaction = AggregateTransaction.createBonded(
+                Deadline.create(10, ChronoUnit.MINUTES),
+                [transferTransaction.toAggregate(MultisigAccount.publicAccount)],
+                MultisigAccount.address.networkType
+            );
 
-        const aggregateTransaction = AggregateTransaction.createBonded(
-            Deadline.create(10, ChronoUnit.MINUTES),
-            [transferTransaction.toAggregate(MultisigAccount.publicAccount)],
-            MultisigAccount.address.networkType
-        );
+            const signedAggregateTransaction = CosignatoryAccount.sign(aggregateTransaction, nemesisBlockInfo.generationHash);
 
-        const signedAggregateTransaction = CosignatoryAccount.sign(aggregateTransaction);
+            const lockFundTransaction = HashLockTransaction.create(
+                Deadline.create(),
+                new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10000000)),
+                UInt64.fromUint(120),
+                signedAggregateTransaction,
+                CosignatoryAccount.address.networkType);
 
-        const lockFundTransaction = HashLockTransaction.create(
-            Deadline.create(),
-            new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10000000)),
-            UInt64.fromUint(120),
-            signedAggregateTransaction,
-            CosignatoryAccount.address.networkType);
+            const signedLockFundTransaction = CosignatoryAccount.sign(lockFundTransaction, nemesisBlockInfo.generationHash);
 
-        const signedLockFundTransaction = CosignatoryAccount.sign(lockFundTransaction);
+            const listener = new Listener(APIUrl);
 
-        const listener = new Listener(APIUrl);
+            return new Promise((resolve, reject) => {
+                listener.open().then(() => {
+                    listener.confirmed(CosignatoryAccount.address).pipe(
+                        filter((transaction) => {
+                            return transaction.type === TransactionType.LOCK
+                            && (transaction as LockFundsTransaction).hash === lockFundTransaction.hash;
+                        }),
+                        mergeMap(unused => {
+                            return transactionHttp.announceAggregateBonded(signedAggregateTransaction)
+                        })
+                    ).subscribe(result => {
+                        // console.log(result);
+                        listener.close();
+                        resolve(result);
+                    }, error => {
+                        console.log(error);
+                        listener.close();
+                        reject(error);
+                    });
 
-        listener.open().then(() => {
-
-            listener.confirmed(CosignatoryAccount.address).pipe(
-                filter((transaction) => {
-                    return transaction.type === TransactionType.LOCK
-                    && (transaction as LockFundsTransaction).hash === lockFundTransaction.hash;
-                }),
-                mergeMap(unused => {
-                    return transactionHttp.announceAggregateBonded(signedAggregateTransaction)
-                })
-            ).subscribe(result => {
-                // console.log(result);
-                listener.close();
-            }, error => {
-                console.log(error);
-                listener.close();
+                    transactionHttp.announce(signedLockFundTransaction).subscribe(result => {
+                        // console.log(result);
+                    }, error => {
+                        console.log(error);
+                        reject(error);
+                    })
+                });
             });
-
-            transactionHttp.announce(signedLockFundTransaction).subscribe(result => {
-                // console.log(result);
-            }, error => {
-                console.log(error);
-            })
         });
     }
 
@@ -128,28 +142,31 @@ export class TransactionUtils {
 
     public static createModifyMultisigAccountTransaction( account: PublicAccount, type: MultisigCosignatoryModificationType,
                                                           transactionHttp: TransactionHttp = new TransactionHttp(APIUrl)) {
-        const modifyMultisig = ModifyMultisigAccountTransaction.create(
-            Deadline.create(),
-            0,
-            0,
-            [new MultisigCosignatoryModification(
-                type,
-                account,
-            )],
-            account.address.networkType,
-        );
 
-        const aggregate = modifyMultisig.toAggregate(MultisigAccount.publicAccount);
+        return NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
+            const modifyMultisig = ModifyMultisigAccountTransaction.create(
+                Deadline.create(),
+                0,
+                0,
+                [new MultisigCosignatoryModification(
+                    type,
+                    account,
+                )],
+                account.address.networkType,
+            );
 
-        const aggregateTransaction = AggregateTransaction.createComplete(
-            Deadline.create(),
-            [aggregate],
-            account.address.networkType,
-            []
-        )
+            const aggregate = modifyMultisig.toAggregate(MultisigAccount.publicAccount);
 
-        const signedTransaction = aggregateTransaction.signTransactionWithCosignatories(CosignatoryAccount, [Cosignatory3Account]);
-        
-        return transactionHttp.announce(signedTransaction);
+            const aggregateTransaction = AggregateTransaction.createComplete(
+                Deadline.create(),
+                [aggregate],
+                account.address.networkType,
+                []
+            )
+
+            const signedTransaction = aggregateTransaction.signTransactionWithCosignatories(CosignatoryAccount, [Cosignatory3Account], nemesisBlockInfo.generationHash);
+
+            return transactionHttp.announce(signedTransaction);
+        });
     }
 }

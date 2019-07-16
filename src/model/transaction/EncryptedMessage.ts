@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {crypto, convert} from 'js-xpx-chain-library';
+import {Crypto, SignSchema} from '../../core/crypto';
 import {PublicAccount} from '../account/PublicAccount';
 import {Message} from './Message';
 import {MessageType} from './MessageType';
@@ -25,12 +25,8 @@ import {PlainMessage} from './PlainMessage';
  */
 export class EncryptedMessage extends Message {
 
-    public readonly recipientPublicAccount?: PublicAccount;
-
-    constructor(payload: string,
-                recipientPublicAccount?: PublicAccount) {
+    constructor(payload: string) {
         super(MessageType.EncryptedMessage, payload);
-        this.recipientPublicAccount = recipientPublicAccount;
     }
 
     /**
@@ -38,10 +34,12 @@ export class EncryptedMessage extends Message {
      * @param message - Plain message to be encrypted
      * @param recipientPublicAccount - Recipient public account
      * @param privateKey - Sender private key
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @return {EncryptedMessage}
      */
-    public static create(message: string, recipientPublicAccount: PublicAccount, privateKey) {
+    public static create(message: string, recipientPublicAccount: PublicAccount, privateKey, signSchema: SignSchema = SignSchema.SHA3) {
         return new EncryptedMessage(
-            crypto.encode(privateKey, recipientPublicAccount.publicKey, message)
+            Crypto.encode(privateKey, recipientPublicAccount.publicKey, message, signSchema).toUpperCase()
         );
     }
 
@@ -58,9 +56,13 @@ export class EncryptedMessage extends Message {
      * @param encryptMessage - Encrypted message to be decrypted
      * @param privateKey - Recipient private key
      * @param recipientPublicAccount - Sender public account
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @return {PlainMessage}
      */
-    public static decrypt(encryptMessage: EncryptedMessage, privateKey, recipientPublicAccount: PublicAccount): PlainMessage {
-        const decrypted = crypto.decode(privateKey, recipientPublicAccount.publicKey, encryptMessage.payload);
-        return new PlainMessage(decrypted);
+    public static decrypt(encryptMessage: EncryptedMessage,
+                          privateKey,
+                          recipientPublicAccount: PublicAccount,
+                          signSchema: SignSchema = SignSchema.SHA3): PlainMessage {
+        return new PlainMessage(Crypto.decode(privateKey, recipientPublicAccount.publicKey, encryptMessage.payload, signSchema));
     }
 }

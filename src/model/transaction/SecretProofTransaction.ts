@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { convert, SecretProofTransaction as SecretProofTransactionLibrary, VerifiableTransaction } from 'js-xpx-chain-library';
+
+import { Convert as convert } from '../../core/format';
+import { Builder } from '../../infrastructure/builders/SecretProofTransaction';
+import {VerifiableTransaction} from '../../infrastructure/builders/VerifiableTransaction';
+import { Address } from '../account/Address';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
@@ -32,6 +36,7 @@ export class SecretProofTransaction extends Transaction {
      * @param deadline - The deadline to include the transaction.
      * @param hashType - The hash algorithm secret is generated with.
      * @param secret - The seed proof hashed.
+     * @param recipient - UnresolvedAddress
      * @param proof - The seed proof.
      * @param networkType - The network type.
      * @param maxFee - (Optional) Max fee defined by the sender
@@ -41,6 +46,7 @@ export class SecretProofTransaction extends Transaction {
     public static create(deadline: Deadline,
                          hashType: HashType,
                          secret: string,
+                         recipient: Address,
                          proof: string,
                          networkType: NetworkType,
                          maxFee: UInt64 = new UInt64([0, 0])): SecretProofTransaction {
@@ -51,6 +57,7 @@ export class SecretProofTransaction extends Transaction {
             maxFee,
             hashType,
             secret,
+            recipient,
             proof,
         );
     }
@@ -62,6 +69,7 @@ export class SecretProofTransaction extends Transaction {
      * @param maxFee
      * @param hashType
      * @param secret
+     * @param recipient
      * @param proof
      * @param signature
      * @param signer
@@ -73,6 +81,7 @@ export class SecretProofTransaction extends Transaction {
                 maxFee: UInt64,
                 public readonly hashType: HashType,
                 public readonly secret: string,
+                public readonly recipient: Address,
                 public readonly proof: string,
                 signature?: string,
                 signer?: PublicAccount,
@@ -95,12 +104,13 @@ export class SecretProofTransaction extends Transaction {
         // hash algorithm and proof size static byte size
         const byteAlgorithm = 1;
         const byteProofSize = 2;
+        const byteRecipient = 25;
 
         // convert secret and proof to uint8
         const byteSecret = convert.hexToUint8(this.secret).length;
         const byteProof = convert.hexToUint8(this.proof).length;
 
-        return byteSize + byteAlgorithm + byteSecret + byteProofSize + byteProof;
+        return byteSize + byteAlgorithm + byteSecret + byteRecipient + byteProofSize + byteProof;
     }
 
     /**
@@ -108,13 +118,14 @@ export class SecretProofTransaction extends Transaction {
      * @returns {VerifiableTransaction}
      */
     protected buildTransaction(): VerifiableTransaction {
-        return new SecretProofTransactionLibrary.Builder()
+        return new Builder()
             .addDeadline(this.deadline.toDTO())
             .addType(this.type)
             .addFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addHashAlgorithm(this.hashType)
             .addSecret(this.secret)
+            .addRecipient(this.recipient.plain())
             .addProof(this.proof)
             .build();
     }

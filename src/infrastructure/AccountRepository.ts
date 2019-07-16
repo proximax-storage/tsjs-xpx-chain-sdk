@@ -23,7 +23,8 @@ import {PublicAccount} from '../model/account/PublicAccount';
 import {AggregateTransaction} from '../model/transaction/AggregateTransaction';
 import {Transaction} from '../model/transaction/Transaction';
 import {QueryParams} from './QueryParams';
-import {AccountPropertiesInfo} from "../model/account/AccountPropertiesInfo";
+import {AccountRestrictionsInfo} from "../model/account/AccountRestrictionsInfo";
+import { AccountNames } from '../model/account/AccountNames';
 
 /**
  * Account interface repository.
@@ -47,18 +48,26 @@ export interface AccountRepository {
     getAccountsInfo(addresses: Address[]): Observable<AccountInfo[]>;
 
     /**
-     * Gets Account property.
-     * @param publicAccount public account
-     * @returns Observable<AccountPropertiesInfo>
+     * Get readable names for a set of accountIds.
+     * Returns friendly names for accounts.
+     * @param accountIds List of Address
+     * @return Observable<AccountNames>
      */
-    getAccountProperty(publicAccount: PublicAccount): Observable<AccountPropertiesInfo>;
+    getAccountsNames(accountIds: Address[]): Observable<AccountNames[]>;
 
     /**
-     * Gets Account properties.
-     * @param address list of addresses
-     * @returns Observable<AccountPropertiesInfo[]>
+     * Gets Account restrictions.
+     * @param publicAccount public account
+     * @returns Observable<AccountRestrictionsInfo>
      */
-    getAccountProperties(addresses: Address[]): Observable<AccountPropertiesInfo[]>;
+    getAccountRestrictions(address: Address): Observable<AccountRestrictionsInfo>;
+
+    /**
+     * Gets Account restrictions.
+     * @param address list of addresses
+     * @returns Observable<AccountRestrictionsInfo[]>
+     */
+    getAccountRestrictionsFromAccounts(addresses: Address[]): Observable<AccountRestrictionsInfo[]>;
 
     /**
      * Gets a MultisigAccountInfo for an account.

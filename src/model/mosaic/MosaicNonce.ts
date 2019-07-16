@@ -13,11 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-    convert,
-    nacl_catapult,
-} from 'js-xpx-chain-library';
-
+import {Crypto} from '../../core/crypto';
+import { Convert as convert} from '../../core/format';
 /**
  * The mosaic nonce structure
  *
@@ -36,7 +33,7 @@ export class MosaicNonce {
      * @return  {MosaicNonce}
      */
     public static createRandom(): MosaicNonce {
-        const bytes = nacl_catapult.randomBytes(4);
+        const bytes = Crypto.randomBytes(4);
         const nonce = new Uint8Array(bytes);
         return new MosaicNonce(nonce);
     }

@@ -15,11 +15,10 @@
  */
 import {expect} from 'chai';
 import {NetworkHttp} from '../../src/infrastructure/NetworkHttp';
-import {NetworkType} from '../../src/model/blockchain/NetworkType';
-import {APIUrl, ConfNetworkType} from '../conf/conf.spec';
+import {ConfNetworkType, APIUrl} from '../conf/conf.spec';
 
 describe('NetworkHttp', () => {
-    const networkHttp = new NetworkHttp(APIUrl);
+    let networkHttp: NetworkHttp = new NetworkHttp(APIUrl);
 
     describe('getNetworkType', () => {
         it('should return network type', (done) => {

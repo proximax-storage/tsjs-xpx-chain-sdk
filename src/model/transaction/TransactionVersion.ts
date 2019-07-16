@@ -99,22 +99,22 @@ export class TransactionVersion {
     public static readonly MOSAIC_ALIAS = 1;
 
     /**
-     * Account Property address transaction version
+     * Account Restriction address transaction version
      * @type {number}
      */
-    public static readonly MODIFY_ACCOUNT_PROPERTY_ADDRESS = 1;
+    public static readonly MODIFY_ACCOUNT_RESTRICTION_ADDRESS = 1;
 
     /**
-     * Account Property mosaic transaction version
+     * Account Restriction mosaic transaction version
      * @type {number}
      */
-    public static readonly MODIFY_ACCOUNT_PROPERTY_MOSAIC = 1;
+    public static readonly MODIFY_ACCOUNT_RESTRICTION_MOSAIC = 1;
 
     /**
-     * Account Property entity type transaction version
+     * Account Restriction operation transaction version
      * @type {number}
      */
-    public static readonly MODIFY_ACCOUNT_PROPERTY_ENTITY_TYPE = 1;
+    public static readonly MODIFY_ACCOUNT_RESTRICTION_ENTITY_TYPE = 1;
 
     /**
      * Link account transaction version
@@ -127,5 +127,11 @@ export class TransactionVersion {
      * @type {number}
      */
     public static readonly MODIFY_METADATA = 1;
+
+    /**
+     * Modify contract transaction version
+     * @type {number}
+     */
+    public static readonly MODIFY_CONTRACT = 3;
 
 }

@@ -48,6 +48,31 @@
                 "alias": "cosignatory3",
                 "pk": "4b10401ddbd46c835b852b9d17433ab453499b239b9ee07d4406da48f0e3cf07",
                 "seed": 100
+            },
+            {
+                "alias": "customer1",
+                "pk": "2ace55b30200ac3b097c6ba0bd6b8401bc457990e8b0cbb9772599ab9b3eb9ac",
+                "seed": 100
+            },
+            {
+                "alias": "executor1",
+                "pk": "9972ea278c107b253d07467b65666548730e07c858c72620a7508852ca420527",
+                "seed": 100
+            },
+            {
+                "alias": "executor2",
+                "pk": "0dab2ac5b1222072cb05329e60a70940750216c3e593dd546ba20bb0b00907b1",
+                "seed": 100
+            },
+            {
+                "alias": "verifier1",
+                "pk": "834d0c7a4d6ed90d31634dd6d4e64351d9930ac5cb6591a742945445e1a0cdb2",
+                "seed": 100
+            },
+            {
+                "alias": "verifier2",
+                "pk": "07e07dee766b602b4e7ae7b3534b14a1c7aa68b7906dc5e304ede00184891c89",
+                "seed": 100
             }
         ],
         "namespaces": [

@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import {PublicAccount} from '../account/PublicAccount';
 import {NamespaceId} from '../namespace/NamespaceId';
 import {UInt64} from '../UInt64';
 import {Mosaic} from './Mosaic';
@@ -60,12 +58,6 @@ export class NetworkHarvestMosaic extends Mosaic {
      * @type {boolean}
      */
     public static SUPPLY_MUTABLE = true;
-
-    /**
-     * Is Levy mutable
-     * @type {boolean}
-     */
-    public static LEVY_MUTABLE = false;
 
     /**
      * constructor

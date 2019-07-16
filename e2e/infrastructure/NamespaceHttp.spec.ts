@@ -16,6 +16,7 @@
 import {expect} from 'chai';
 import {NamespaceHttp} from '../../src/infrastructure/NamespaceHttp';
 import {APIUrl, GetNemesisBlockDataPromise, ConfTestingNamespace, TestingAccount} from '../conf/conf.spec';
+import { deepEqual } from 'assert';
 
 describe('NamespaceHttp', () => {
     const namespaceHttp = new NamespaceHttp(APIUrl);
@@ -38,8 +39,7 @@ describe('NamespaceHttp', () => {
             GetNemesisBlockDataPromise().then(data => {
                 namespaceHttp.getNamespacesFromAccount(data.nemesisBlockInfo.signer.address)
                 .subscribe((namespaces) => {
-                    expect(namespaces[0].startHeight.lower).to.be.equal(1);
-                    expect(namespaces[0].startHeight.higher).to.be.equal(0);
+                    deepEqual(namespaces[0].owner, data.nemesisBlockInfo.signer);
                     done();
                 });
             });
@@ -51,8 +51,7 @@ describe('NamespaceHttp', () => {
             GetNemesisBlockDataPromise().then(data => {
                 namespaceHttp.getNamespacesFromAccounts([data.nemesisBlockInfo.signer.address])
                 .subscribe((namespaces) => {
-                    expect(namespaces[0].startHeight.lower).to.be.equal(1);
-                    expect(namespaces[0].startHeight.higher).to.be.equal(0);
+                    deepEqual(namespaces[0].owner, data.nemesisBlockInfo.signer);
                     done();
                 });
             });
@@ -65,7 +64,7 @@ describe('NamespaceHttp', () => {
             GetNemesisBlockDataPromise().then(data => {
                 namespaceHttp.getNamespacesName([data.testNamespace.Id])
                 .subscribe((namespaceNames) => {
-                    expect(namespaceNames[0].name).to.be.equal(data.testNamespace.Name);
+                    expect(namespaceNames[0].name.endsWith(data.testNamespace.Name)).to.be.equal(true);
                     done();
                 });
             });

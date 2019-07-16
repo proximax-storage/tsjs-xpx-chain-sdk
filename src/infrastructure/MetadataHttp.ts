@@ -1,5 +1,7 @@
+// Copyright 2019 ProximaX Limited. All rights reserved.
+// Use of this source code is governed by the Apache 2.0
+// license that can be found in the LICENSE file
 
-import {MetadataRoutesApi} from 'js-xpx-chain-library';
 import {from as observableFrom, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {PublicAccount} from '../model/account/PublicAccount';
@@ -20,6 +22,7 @@ import { AddressMetadata } from '../model/metadata/AddressMetadata';
 import { Address } from '../model/model';
 import { NamespaceMetadata } from '../model/metadata/NamespaceMetadata';
 import { MosaicMetadata } from '../model/metadata/MosaicMetadata';
+import { MetadataRoutesApi } from './api/metadataRoutesApi';
 
 /**
  export declare class MetadataRoutesApi {
@@ -55,7 +58,7 @@ import { MosaicMetadata } from '../model/metadata/MosaicMetadata';
 export class MetadataHttp extends Http implements MetadataRepository {
     /**
      * @internal
-     * Nem2 Library mosaic routes api
+     * xpx chain Library mosaic routes api
      */
     private metadataRoutesApi: MetadataRoutesApi;
 
@@ -66,8 +69,8 @@ export class MetadataHttp extends Http implements MetadataRepository {
      */
     constructor(url: string, networkHttp?: NetworkHttp) {
         networkHttp = networkHttp == null ? new NetworkHttp(url) : networkHttp;
-        super(url, networkHttp);
-        this.metadataRoutesApi = new MetadataRoutesApi(this.apiClient);
+        super(networkHttp);
+        this.metadataRoutesApi = new MetadataRoutesApi(url);
     }
 
     /**
@@ -78,7 +81,7 @@ export class MetadataHttp extends Http implements MetadataRepository {
     public getAccountMetadata(accountId: string): Observable<AddressMetadata> {
         return this.getNetworkTypeObservable().pipe(
             mergeMap((networkType) => observableFrom(
-                this.metadataRoutesApi.getAccountMetadata(accountId)).pipe(map((addressMetadataInfoDTO) => {
+                this.metadataRoutesApi.getAccountMetadata(accountId)).pipe(map((addressMetadataInfoDTO: any) => {
                 return new AddressMetadata(
                     Address.createFromEncoded(addressMetadataInfoDTO.metadata.metadataId),
                     addressMetadataInfoDTO.metadata.metadataType,
@@ -89,7 +92,7 @@ export class MetadataHttp extends Http implements MetadataRepository {
     public getNamespaceMetadata(namespaceId: NamespaceId): Observable<NamespaceMetadata> {
         return this.getNetworkTypeObservable().pipe(
             mergeMap((networkType) => observableFrom(
-                this.metadataRoutesApi.getNamespaceMetadata(namespaceId.id.toHex())).pipe(map((namespaceMetadataInfoDTO) => {
+                this.metadataRoutesApi.getNamespaceMetadata(namespaceId.id.toHex())).pipe(map((namespaceMetadataInfoDTO: any) => {
                     return new NamespaceMetadata(
                         new NamespaceId(namespaceMetadataInfoDTO.metadata.metadataId),
                         namespaceMetadataInfoDTO.metadata.metadataType,
@@ -100,7 +103,7 @@ export class MetadataHttp extends Http implements MetadataRepository {
     public getMosaicMetadata(mosaicId: MosaicId): Observable<MosaicMetadata> {
         return this.getNetworkTypeObservable().pipe(
             mergeMap((networkType) => observableFrom(
-                this.metadataRoutesApi.getMosaicMetadata(mosaicId.id.toHex())).pipe(map((mosaicMetadataInfoDTO) => {
+                this.metadataRoutesApi.getMosaicMetadata(mosaicId.id.toHex())).pipe(map((mosaicMetadataInfoDTO: any) => {
                     return new MosaicMetadata(
                         new MosaicId(mosaicMetadataInfoDTO.metadata.metadataId),
                         mosaicMetadataInfoDTO.metadata.metadataType,

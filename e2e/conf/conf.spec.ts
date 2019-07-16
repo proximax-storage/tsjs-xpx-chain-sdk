@@ -3,9 +3,10 @@ const conf = require("config");
 import { Account } from '../../src/model/account/Account';
 import { NetworkType } from '../../src/model/blockchain/NetworkType';
 import { MosaicId, NamespaceId, TransactionType, RegisterNamespaceTransaction, MosaicDefinitionTransaction,
-    TransferTransaction, TransactionInfo, MosaicNonce, MosaicProperties, UInt64 } from '../../src/model/model';
+    TransferTransaction, TransactionInfo, MosaicNonce, MosaicProperties, UInt64, BlockInfo } from '../../src/model/model';
 import { ConfUtils } from './ConfUtils';
-import { BlockchainHttp } from '../../src/infrastructure/BlockchainHttp';
+import { BlockHttp } from '../../src/infrastructure/BlockHttp';
+import { ChainHttp } from '../../src/infrastructure/ChainHttp';
 import { QueryParams } from '../../src/infrastructure/QueryParams';
 import { AccountHttp, TransactionHttp, NamespaceHttp, MosaicHttp } from '../../src/infrastructure/infrastructure';
 
@@ -50,6 +51,11 @@ interface ConfEnv {
     TEST_TEST_ACCOUNT4_KEY: string;
     TEST_TEST_ACCOUNT5_KEY: string;
     TEST_TEST_ACCOUNT6_KEY: string;
+    TEST_TEST_ACCOUNT7_KEY: string;
+    TEST_TEST_ACCOUNT8_KEY: string;
+    TEST_TEST_ACCOUNT9_KEY: string;
+    TEST_TEST_ACCOUNT10_KEY: string;
+    TEST_TEST_ACCOUNT11_KEY: string;
 }
 
 const api = conf.get('api') as ConfApi;
@@ -95,6 +101,11 @@ const loadEnvKeys = () => {
         ["cosignatory1", systemEnv.TEST_TEST_ACCOUNT4_KEY],
         ["cosignatory2", systemEnv.TEST_TEST_ACCOUNT5_KEY],
         ["cosignatory3", systemEnv.TEST_TEST_ACCOUNT6_KEY],
+        ["customer1", systemEnv.TEST_TEST_ACCOUNT7_KEY],
+        ["executor1", systemEnv.TEST_TEST_ACCOUNT8_KEY],
+        ["executor2", systemEnv.TEST_TEST_ACCOUNT9_KEY],
+        ["verifier1", systemEnv.TEST_TEST_ACCOUNT10_KEY],
+        ["verifier2", systemEnv.TEST_TEST_ACCOUNT11_KEY],
     ])
 }
 const loadBlockchainConfAccouns = (conf: ConfBlockchain) => {
@@ -135,6 +146,11 @@ const MultisigAccount = (accounts.get("multisig") as unknown as TestAccount).acc
 const CosignatoryAccount = (accounts.get("cosignatory1") as unknown as TestAccount).acc;
 const Cosignatory2Account = (accounts.get("cosignatory2") as unknown as TestAccount).acc;
 const Cosignatory3Account = (accounts.get("cosignatory3") as unknown as TestAccount).acc;
+const Customer1Account = (accounts.get("customer1") as unknown as TestAccount).acc;
+const Executor1Account = (accounts.get("executor1") as unknown as TestAccount).acc;
+const Executor2Account = (accounts.get("executor2") as unknown as TestAccount).acc;
+const Verifier1Account = (accounts.get("verifier1") as unknown as TestAccount).acc;
+const Verifier2Account = (accounts.get("verifier2") as unknown as TestAccount).acc;
 
 const AllTestingAccounts = accounts;
 
@@ -146,6 +162,7 @@ Array.from(AllTestingAccounts.entries()).forEach(e => {
 const ConfNamespace = new NamespaceId(getNsId("prx"));
 const ConfNamespace2 = new NamespaceId(getNsId("xpx"));
 const ConfNetworkMosaic = new MosaicId(getMosId("xpx"));
+const ConfNetworkMosaicDivisibility = 6;
 const ConfNetworkMosaicName = "xpx";
 
 const ConfTestingMosaicNonce = new MosaicNonce(new Uint8Array([0x01, 0x02, 0x03, 0x04]));
@@ -153,16 +170,27 @@ const ConfTestingMosaic = MosaicId.createFromNonce(ConfTestingMosaicNonce,Testin
 const ConfTestingMosaicProperties = MosaicProperties.create({
     supplyMutable: true,
     transferable: true,
-    levyMutable: true,
     divisibility: 3,
     duration: UInt64.fromUint(1000)},
 );
 const ConfTestingNamespace = new NamespaceId('testing');
 
+class NemesisBlockInfo {
+    private static instance: BlockInfo;
+    private constructor() {}
+    static async getInstance(): Promise<BlockInfo> {
+        if (!NemesisBlockInfo.instance) {
+            const blockHttp = new BlockHttp(APIUrl);
+            NemesisBlockInfo.instance = await blockHttp.getBlockByHeight(1).toPromise();
+        }
+        return NemesisBlockInfo.instance;
+    }
+}
+
 const GetNemesisBlockDataPromise = () => {
-    const blockchainHttp = new BlockchainHttp(APIUrl);
-    return blockchainHttp.getBlockByHeight(1).toPromise().then((nemesisBlockInfo) => {
-        return new BlockchainHttp(APIUrl).getBlockTransactions(1, new QueryParams(100)).toPromise()
+    const blockHttp = new BlockHttp(APIUrl);
+    return NemesisBlockInfo.getInstance().then((nemesisBlockInfo) => {
+        return blockHttp.getBlockTransactions(1, new QueryParams(100)).toPromise()
         .then(txs => {
             const regNamespaceTxs = txs.filter(tx => tx.type === TransactionType.REGISTER_NAMESPACE) as RegisterNamespaceTransaction[];
             const currencyNamespace = regNamespaceTxs.find(tx => tx.namespaceName === "currency");
@@ -198,6 +226,7 @@ describe("Prepare environment.", () => {
 export {
     TestAccount,
     GetNemesisBlockDataPromise,
+    NemesisBlockInfo,
 
     APIUrl,
     ConfAccountHttp,
@@ -213,6 +242,11 @@ export {
     CosignatoryAccount,
     Cosignatory2Account,
     Cosignatory3Account,
+    Customer1Account,
+    Executor1Account,
+    Executor2Account,
+    Verifier1Account,
+    Verifier2Account,
 
     AllTestingAccounts,
 
@@ -225,4 +259,5 @@ export {
     ConfNamespace2,
     ConfNetworkMosaic,
     ConfNetworkMosaicName,
+    ConfNetworkMosaicDivisibility
 };
