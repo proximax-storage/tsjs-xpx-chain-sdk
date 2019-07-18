@@ -30,9 +30,15 @@ class NetworkHttp extends Http_1.Http {
      * Constructor
      * @param url
      */
-    constructor(url) {
+    constructor(url, auth, headers) {
         super();
         this.networkRoutesApi = new api_1.NetworkRoutesApi(url);
+        if (auth) {
+            this.networkRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.networkRoutesApi.setHeaders(headers);
+        }
     }
     /**
      * Get current network type.

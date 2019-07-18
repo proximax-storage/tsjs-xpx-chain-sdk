@@ -12,6 +12,7 @@ import { AccountRepository } from './AccountRepository';
 import { Http } from './Http';
 import { NetworkHttp } from './NetworkHttp';
 import { QueryParams } from './QueryParams';
+import { Authentication } from './model/models';
 /**
  * Account http repository.
  *
@@ -23,7 +24,7 @@ export declare class AccountHttp extends Http implements AccountRepository {
      * @param url
      * @param networkHttp
      */
-    constructor(url: string, networkHttp?: NetworkHttp);
+    constructor(url: string, networkHttp?: NetworkHttp, auth?: Authentication, headers?: {});
     /**
      * Gets an AccountInfo for an account.
      * @param address Address

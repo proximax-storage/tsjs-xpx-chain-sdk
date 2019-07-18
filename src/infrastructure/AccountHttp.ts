@@ -45,6 +45,7 @@ import {Http} from './Http';
 import {NetworkHttp} from './NetworkHttp';
 import {QueryParams} from './QueryParams';
 import {CreateTransactionFromDTO} from './transaction/CreateTransactionFromDTO';
+import { Authentication } from './model/models';
 
 /**
  * Account http repository.
@@ -63,10 +64,16 @@ export class AccountHttp extends Http implements AccountRepository {
      * @param url
      * @param networkHttp
      */
-    constructor(url: string, networkHttp?: NetworkHttp) {
+    constructor(url: string, networkHttp?: NetworkHttp, auth?: Authentication, headers?: {}) {
         networkHttp = networkHttp == null ? new NetworkHttp(url) : networkHttp;
         super(networkHttp);
         this.accountRoutesApi = new AccountRoutesApi(url);
+        if (auth) {
+            this.accountRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.accountRoutesApi.setHeaders(headers);
+        }
     }
 
     /**

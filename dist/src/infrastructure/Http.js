@@ -26,9 +26,15 @@ class Http {
      * @param url
      * @param networkHttp
      */
-    constructor(networkHttp) {
+    constructor(networkHttp, auth, headers) {
         if (networkHttp) {
             this.networkHttp = networkHttp;
+        }
+        if (auth) {
+            this.auth = auth;
+        }
+        if (headers) {
+            this.headers = headers;
         }
     }
     getNetworkTypeObservable() {

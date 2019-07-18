@@ -80,6 +80,10 @@ export class NetworkRoutesApi {
         this.authentications.default = auth;
     }
 
+    public setHeaders(headers: {}) {
+        this.defaultHeaders = headers;
+    }
+
     public setApiKey(key: NetworkRoutesApiApiKeys, value: string) {
         (this.authentications as any)[NetworkRoutesApiApiKeys[key]].apiKey = value;
     }

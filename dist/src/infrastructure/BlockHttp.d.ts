@@ -5,6 +5,7 @@ import { Statement } from '../model/receipt/Statement';
 import { Transaction } from '../model/transaction/Transaction';
 import { BlockRepository } from './BlockRepository';
 import { Http } from './Http';
+import { Authentication } from './model/models';
 import { NetworkHttp } from './NetworkHttp';
 import { QueryParams } from './QueryParams';
 /**
@@ -31,7 +32,7 @@ export declare class BlockHttp extends Http implements BlockRepository {
      * @param url
      * @param networkHttp
      */
-    constructor(url: string, networkHttp?: NetworkHttp);
+    constructor(url: string, networkHttp?: NetworkHttp, auth?: Authentication, headers?: {});
     /**
      * Gets a BlockInfo for a given block height
      * @param height - Block height

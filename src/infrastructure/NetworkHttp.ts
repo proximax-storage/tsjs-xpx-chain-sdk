@@ -19,6 +19,7 @@ import {map} from 'rxjs/operators';
 import {NetworkType} from '../model/blockchain/NetworkType';
 import { NetworkRoutesApi, NetworkTypeDTO } from './api';
 import {Http} from './Http';
+import { Authentication } from './model/models';
 import {NetworkRepository} from './NetworkRepository';
 
 /**
@@ -37,10 +38,15 @@ export class NetworkHttp extends Http implements NetworkRepository {
      * Constructor
      * @param url
      */
-    constructor(url: string) {
+    constructor(url: string, auth?: Authentication, headers?: {}) {
         super();
         this.networkRoutesApi = new NetworkRoutesApi(url);
-
+        if (auth) {
+          this.networkRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.networkRoutesApi.setHeaders(headers);
+        }
     }
 
     /**

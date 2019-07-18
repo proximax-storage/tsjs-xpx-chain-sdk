@@ -74,6 +74,9 @@ class BlockRoutesApi {
     setDefaultAuthentication(auth) {
         this.authentications.default = auth;
     }
+    setHeaders(headers) {
+        this.defaultHeaders = headers;
+    }
     setApiKey(key, value) {
         this.authentications[BlockRoutesApiApiKeys[key]].apiKey = value;
     }

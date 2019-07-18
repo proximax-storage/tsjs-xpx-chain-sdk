@@ -27,6 +27,7 @@ export declare class NodeRoutesApi {
     useQuerystring: boolean;
     basePath: string;
     setDefaultAuthentication(auth: Authentication): void;
+    setHeaders(headers: {}): void;
     setApiKey(key: NodeRoutesApiApiKeys, value: string): void;
     /**
      * Supplies additional information about the application running on a node.

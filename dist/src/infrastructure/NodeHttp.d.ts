@@ -2,6 +2,7 @@ import { Observable } from 'rxjs';
 import { NodeInfo } from '../model/node/NodeInfo';
 import { NodeTime } from '../model/node/NodeTime';
 import { Http } from './Http';
+import { Authentication } from './model/models';
 import { NodeRepository } from './NodeRepository';
 /**
  * Node http repository.
@@ -13,7 +14,7 @@ export declare class NodeHttp extends Http implements NodeRepository {
      * Constructor
      * @param url
      */
-    constructor(url: string);
+    constructor(url: string, auth?: Authentication, headers?: {});
     /**
      * Supplies additional information about the application running on a node.
      * @summary Get the node information

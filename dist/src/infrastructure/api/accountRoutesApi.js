@@ -74,6 +74,9 @@ class AccountRoutesApi {
     setDefaultAuthentication(auth) {
         this.authentications.default = auth;
     }
+    setHeaders(headers) {
+        this.defaultHeaders = headers;
+    }
     setApiKey(key, value) {
         this.authentications[AccountRoutesApiApiKeys[key]].apiKey = value;
     }

@@ -29,6 +29,7 @@ export declare class NamespaceRoutesApi {
     useQuerystring: boolean;
     basePath: string;
     setDefaultAuthentication(auth: Authentication): void;
+    setHeaders(headers: {}): void;
     setApiKey(key: NamespaceRoutesApiApiKeys, value: string): void;
     /**
      * Gets the namespace for a given namespaceId.

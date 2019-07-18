@@ -82,6 +82,10 @@ export class MosaicRoutesApi {
         this.authentications.default = auth;
     }
 
+    public setHeaders(headers: {}) {
+        this.defaultHeaders = headers;
+    }
+
     public setApiKey(key: MosaicRoutesApiApiKeys, value: string) {
         (this.authentications as any)[MosaicRoutesApiApiKeys[key]].apiKey = value;
     }

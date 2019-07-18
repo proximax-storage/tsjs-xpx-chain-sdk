@@ -74,6 +74,9 @@ class NetworkRoutesApi {
     setDefaultAuthentication(auth) {
         this.authentications.default = auth;
     }
+    setHeaders(headers) {
+        this.defaultHeaders = headers;
+    }
     setApiKey(key, value) {
         this.authentications[NetworkRoutesApiApiKeys[key]].apiKey = value;
     }

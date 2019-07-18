@@ -32,6 +32,7 @@ export declare class AccountRoutesApi {
     useQuerystring: boolean;
     basePath: string;
     setDefaultAuthentication(auth: Authentication): void;
+    setHeaders(headers: {}): void;
     setApiKey(key: AccountRoutesApiApiKeys, value: string): void;
     /**
      * Returns the account information.

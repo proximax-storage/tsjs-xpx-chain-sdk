@@ -29,6 +29,7 @@ export declare class MetadataRoutesApi {
     useQuerystring: boolean;
     basePath: string;
     setDefaultAuthentication(auth: Authentication): void;
+    setHeaders(headers: {}): void;
     setApiKey(key: MetadataRoutesApiApiKeys, value: string): void;
     /**
      * Gets the metadata for a given accountId.

@@ -32,6 +32,7 @@ export declare class TransactionRoutesApi {
     useQuerystring: boolean;
     basePath: string;
     setDefaultAuthentication(auth: Authentication): void;
+    setHeaders(headers: {}): void;
     setApiKey(key: TransactionRoutesApiApiKeys, value: string): void;
     /**
      * Announces a [cosignature transaction](https://nemtech.github.io/concepts/aggregate-transaction.html#cosignature-transaction) to the network.

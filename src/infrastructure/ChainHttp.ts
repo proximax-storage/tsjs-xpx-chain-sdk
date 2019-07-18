@@ -23,6 +23,7 @@ import { BlockchainScoreDTO,
          HeightInfoDTO } from './api';
 import { ChainRepository } from './ChainRepository';
 import {Http} from './Http';
+import { Authentication } from './model/models';
 
 /**
  * Chian http repository.
@@ -40,9 +41,15 @@ export class ChainHttp extends Http implements ChainRepository {
      * Constructor
      * @param url
      */
-    constructor(url: string) {
+    constructor(url: string, auth?: Authentication, headers?: {}) {
         super();
         this.chainRoutesApi = new ChainRoutesApi(url);
+        if (auth) {
+            this.chainRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.chainRoutesApi.setHeaders(headers);
+        }
     }
 
     /**

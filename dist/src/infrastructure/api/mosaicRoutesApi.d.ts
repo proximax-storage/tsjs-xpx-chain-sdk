@@ -28,6 +28,7 @@ export declare class MosaicRoutesApi {
     useQuerystring: boolean;
     basePath: string;
     setDefaultAuthentication(auth: Authentication): void;
+    setHeaders(headers: {}): void;
     setApiKey(key: MosaicRoutesApiApiKeys, value: string): void;
     /**
      * Gets the mosaic definition for a given mosaicId.

@@ -59,6 +59,9 @@ class MetadataRoutesApi {
     setDefaultAuthentication(auth) {
         this.authentications.default = auth;
     }
+    setHeaders(headers) {
+        this.defaultHeaders = headers;
+    }
     setApiKey(key, value) {
         this.authentications[MetadataRoutesApiApiKeys[key]].apiKey = value;
     }

@@ -53,10 +53,16 @@ class BlockHttp extends Http_1.Http {
      * @param url
      * @param networkHttp
      */
-    constructor(url, networkHttp) {
+    constructor(url, networkHttp, auth, headers) {
         networkHttp = networkHttp == null ? new NetworkHttp_1.NetworkHttp(url) : networkHttp;
         super(networkHttp);
         this.blockRoutesApi = new api_1.BlockRoutesApi(url);
+        if (auth) {
+            this.blockRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.blockRoutesApi.setHeaders(headers);
+        }
     }
     /**
      * Gets a BlockInfo for a given block height

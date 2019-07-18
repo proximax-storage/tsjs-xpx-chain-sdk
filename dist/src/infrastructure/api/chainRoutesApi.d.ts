@@ -27,6 +27,7 @@ export declare class ChainRoutesApi {
     useQuerystring: boolean;
     basePath: string;
     setDefaultAuthentication(auth: Authentication): void;
+    setHeaders(headers: {}): void;
     setApiKey(key: ChainRoutesApiApiKeys, value: string): void;
     /**
      * Returns the current height of the blockchain.

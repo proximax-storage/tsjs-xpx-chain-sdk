@@ -38,11 +38,19 @@ class TransactionHttp extends Http_1.Http {
      * Constructor
      * @param url
      */
-    constructor(url) {
+    constructor(url, auth, headers) {
         super();
         this.url = url;
         this.transactionRoutesApi = new api_1.TransactionRoutesApi(url);
         this.blockRoutesApi = new api_1.BlockRoutesApi(url);
+        if (auth) {
+            this.transactionRoutesApi.setDefaultAuthentication(auth);
+            this.blockRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.transactionRoutesApi.setHeaders(headers);
+            this.blockRoutesApi.setHeaders(headers);
+        }
     }
     /**
      * Gets a transaction for a transactionId

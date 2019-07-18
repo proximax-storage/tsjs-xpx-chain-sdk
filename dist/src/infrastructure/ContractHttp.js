@@ -17,10 +17,16 @@ class ContractHttp extends Http_1.Http {
      * @param url
      * @param networkHttp
      */
-    constructor(url, networkHttp) {
+    constructor(url, networkHttp, auth, headers) {
         networkHttp = networkHttp == null ? new NetworkHttp_1.NetworkHttp(url) : networkHttp;
         super(networkHttp);
         this.contractRoutesApi = new contractRoutesApi_1.ContractRoutesApi(url);
+        if (auth) {
+            this.contractRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.contractRoutesApi.setHeaders(headers);
+        }
     }
     getAccountContract(publicAccount) {
         return this.getNetworkTypeObservable().pipe(operators_1.mergeMap((networkType) => rxjs_1.from(this.contractRoutesApi.getAccountContract(publicAccount.publicKey)).pipe(operators_1.map((contractInfoDTOs) => {

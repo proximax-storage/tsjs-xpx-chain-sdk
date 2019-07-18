@@ -7,6 +7,7 @@ import { MetadataRepository } from './MetadataRepository';
 import { AddressMetadata } from '../model/metadata/AddressMetadata';
 import { NamespaceMetadata } from '../model/metadata/NamespaceMetadata';
 import { MosaicMetadata } from '../model/metadata/MosaicMetadata';
+import { Authentication } from './model/models';
 /**
  export declare class MetadataRoutesApi {
   constructor(apiClient: any);
@@ -43,7 +44,7 @@ export declare class MetadataHttp extends Http implements MetadataRepository {
      * @param url
      * @param networkHttp
      */
-    constructor(url: string, networkHttp?: NetworkHttp);
+    constructor(url: string, networkHttp?: NetworkHttp, auth?: Authentication, headers?: {});
     /**
      * Gets the Metadata for a given accountId
      * @param accountId - Account address/public key

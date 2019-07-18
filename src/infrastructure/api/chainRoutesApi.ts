@@ -81,6 +81,10 @@ export class ChainRoutesApi {
         this.authentications.default = auth;
     }
 
+    public setHeaders(headers: {}) {
+        this.defaultHeaders = headers;
+    }
+
     public setApiKey(key: ChainRoutesApiApiKeys, value: string) {
         (this.authentications as any)[ChainRoutesApiApiKeys[key]].apiKey = value;
     }

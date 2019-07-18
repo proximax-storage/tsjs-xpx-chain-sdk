@@ -6,6 +6,7 @@ import { TransactionAnnounceResponse } from '../model/transaction/TransactionAnn
 import { TransactionStatus } from '../model/transaction/TransactionStatus';
 import { Http } from './Http';
 import { TransactionRepository } from './TransactionRepository';
+import { Authentication } from './model/models';
 /**
  * Transaction http repository.
  *
@@ -17,7 +18,7 @@ export declare class TransactionHttp extends Http implements TransactionReposito
      * Constructor
      * @param url
      */
-    constructor(url: string);
+    constructor(url: string, auth?: Authentication, headers?: {});
     /**
      * Gets a transaction for a transactionId
      * @param transactionId - Transaction id or hash.

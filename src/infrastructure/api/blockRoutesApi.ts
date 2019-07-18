@@ -83,6 +83,10 @@ export class BlockRoutesApi {
         this.authentications.default = auth;
     }
 
+    public setHeaders(headers: {}) {
+        this.defaultHeaders = headers;
+    }
+
     public setApiKey(key: BlockRoutesApiApiKeys, value: string) {
         (this.authentications as any)[BlockRoutesApiApiKeys[key]].apiKey = value;
     }

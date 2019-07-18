@@ -28,6 +28,7 @@ export declare class ContractRoutesApi {
     useQuerystring: boolean;
     basePath: string;
     setDefaultAuthentication(auth: Authentication): void;
+    setHeaders(headers: {}): void;
     setApiKey(key: ContractRoutesApiApiKeys, value: string): void;
     /**
      * Gets all contracts where this account is involved.

@@ -86,6 +86,10 @@ export class AccountRoutesApi {
         this.authentications.default = auth;
     }
 
+    public setHeaders(headers: {}) {
+        this.defaultHeaders = headers;
+    }
+
     public setApiKey(key: AccountRoutesApiApiKeys, value: string) {
         (this.authentications as any)[AccountRoutesApiApiKeys[key]].apiKey = value;
     }

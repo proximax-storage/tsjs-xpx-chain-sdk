@@ -17,6 +17,7 @@
 import {Observable, of as observableOf} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {NetworkType} from '../model/blockchain/NetworkType';
+import { Authentication } from './model/models';
 import {NetworkHttp} from './NetworkHttp';
 import { QueryParams } from './QueryParams';
 /**
@@ -25,15 +26,23 @@ import { QueryParams } from './QueryParams';
 export abstract class Http {
     private networkHttp: NetworkHttp;
     private networkType: NetworkType;
+    private auth: Authentication;
+    private headers: {};
 
     /**
      * Constructor
      * @param url
      * @param networkHttp
      */
-    constructor(networkHttp?: NetworkHttp) {
+    constructor(networkHttp?: NetworkHttp, auth?: Authentication, headers?: {}) {
         if (networkHttp) {
             this.networkHttp = networkHttp;
+        }
+        if (auth) {
+            this.auth = auth;
+        }
+        if (headers) {
+            this.headers = headers;
         }
     }
 

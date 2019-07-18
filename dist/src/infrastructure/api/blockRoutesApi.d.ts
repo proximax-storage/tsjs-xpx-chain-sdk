@@ -29,6 +29,7 @@ export declare class BlockRoutesApi {
     useQuerystring: boolean;
     basePath: string;
     setDefaultAuthentication(auth: Authentication): void;
+    setHeaders(headers: {}): void;
     setApiKey(key: BlockRoutesApiApiKeys, value: string): void;
     /**
      * Gets a block from the chain that has the given height.

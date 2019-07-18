@@ -40,10 +40,16 @@ class MosaicHttp extends Http_1.Http {
      * @param url
      * @param networkHttp
      */
-    constructor(url, networkHttp) {
+    constructor(url, networkHttp, auth, headers) {
         networkHttp = networkHttp == null ? new NetworkHttp_1.NetworkHttp(url) : networkHttp;
         super(networkHttp);
         this.mosaicRoutesApi = new api_1.MosaicRoutesApi(url);
+        if (auth) {
+            this.mosaicRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.mosaicRoutesApi.setHeaders(headers);
+        }
     }
     /**
      * Gets the MosaicInfo for a given mosaicId

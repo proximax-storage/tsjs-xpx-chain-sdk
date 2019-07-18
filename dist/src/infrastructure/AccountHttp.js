@@ -44,10 +44,16 @@ class AccountHttp extends Http_1.Http {
      * @param url
      * @param networkHttp
      */
-    constructor(url, networkHttp) {
+    constructor(url, networkHttp, auth, headers) {
         networkHttp = networkHttp == null ? new NetworkHttp_1.NetworkHttp(url) : networkHttp;
         super(networkHttp);
         this.accountRoutesApi = new api_1.AccountRoutesApi(url);
+        if (auth) {
+            this.accountRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.accountRoutesApi.setHeaders(headers);
+        }
     }
     /**
      * Gets an AccountInfo for an account.

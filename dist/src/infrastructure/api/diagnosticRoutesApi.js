@@ -74,6 +74,9 @@ class DiagnosticRoutesApi {
     setDefaultAuthentication(auth) {
         this.authentications.default = auth;
     }
+    setHeaders(headers) {
+        this.defaultHeaders = headers;
+    }
     setApiKey(key, value) {
         this.authentications[DiagnosticRoutesApiApiKeys[key]].apiKey = value;
     }

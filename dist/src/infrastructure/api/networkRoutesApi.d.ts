@@ -26,6 +26,7 @@ export declare class NetworkRoutesApi {
     useQuerystring: boolean;
     basePath: string;
     setDefaultAuthentication(auth: Authentication): void;
+    setHeaders(headers: {}): void;
     setApiKey(key: NetworkRoutesApiApiKeys, value: string): void;
     /**
      * Returns the current network type.

@@ -36,6 +36,7 @@ import { AnnounceTransactionInfoDTO,
 import {Http} from './Http';
 import {CreateTransactionFromDTO} from './transaction/CreateTransactionFromDTO';
 import {TransactionRepository} from './TransactionRepository';
+import { Authentication } from './model/models';
 
 /**
  * Transaction http repository.
@@ -59,10 +60,18 @@ export class TransactionHttp extends Http implements TransactionRepository {
      * Constructor
      * @param url
      */
-    constructor(private readonly url: string) {
+    constructor(private readonly url: string, auth?: Authentication, headers?: {}) {
         super();
         this.transactionRoutesApi = new TransactionRoutesApi(url);
         this.blockRoutesApi = new BlockRoutesApi(url);
+        if (auth) {
+            this.transactionRoutesApi.setDefaultAuthentication(auth);
+            this.blockRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.transactionRoutesApi.setHeaders(headers);
+            this.blockRoutesApi.setHeaders(headers);
+        }
     }
 
     /**

@@ -81,6 +81,10 @@ export class NodeRoutesApi {
         this.authentications.default = auth;
     }
 
+    public setHeaders(headers: {}) {
+        this.defaultHeaders = headers;
+    }
+
     public setApiKey(key: NodeRoutesApiApiKeys, value: string) {
         (this.authentications as any)[NodeRoutesApiApiKeys[key]].apiKey = value;
     }

@@ -48,10 +48,16 @@ class MetadataHttp extends Http_1.Http {
      * @param url
      * @param networkHttp
      */
-    constructor(url, networkHttp) {
+    constructor(url, networkHttp, auth, headers) {
         networkHttp = networkHttp == null ? new NetworkHttp_1.NetworkHttp(url) : networkHttp;
         super(networkHttp);
         this.metadataRoutesApi = new metadataRoutesApi_1.MetadataRoutesApi(url);
+        if (auth) {
+            this.metadataRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.metadataRoutesApi.setHeaders(headers);
+        }
     }
     /**
      * Gets the Metadata for a given accountId

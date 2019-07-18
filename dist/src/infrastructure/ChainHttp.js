@@ -31,9 +31,15 @@ class ChainHttp extends Http_1.Http {
      * Constructor
      * @param url
      */
-    constructor(url) {
+    constructor(url, auth, headers) {
         super();
         this.chainRoutesApi = new api_1.ChainRoutesApi(url);
+        if (auth) {
+            this.chainRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.chainRoutesApi.setHeaders(headers);
+        }
     }
     /**
      * Gets current blockchain height

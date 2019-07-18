@@ -27,6 +27,7 @@ export declare class DiagnosticRoutesApi {
     useQuerystring: boolean;
     basePath: string;
     setDefaultAuthentication(auth: Authentication): void;
+    setHeaders(headers: {}): void;
     setApiKey(key: DiagnosticRoutesApiApiKeys, value: string): void;
     /**
      * Returns diagnostic information about the node storage.

@@ -3,6 +3,7 @@ import { BlockchainScore } from '../model/blockchain/BlockchainScore';
 import { UInt64 } from '../model/UInt64';
 import { ChainRepository } from './ChainRepository';
 import { Http } from './Http';
+import { Authentication } from './model/models';
 /**
  * Chian http repository.
  *
@@ -13,7 +14,7 @@ export declare class ChainHttp extends Http implements ChainRepository {
      * Constructor
      * @param url
      */
-    constructor(url: string);
+    constructor(url: string, auth?: Authentication, headers?: {});
     /**
      * Gets current blockchain height
      * @returns Observable<UInt64>
