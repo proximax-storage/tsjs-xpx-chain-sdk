@@ -88,7 +88,7 @@ export class NetworkRoutesApi {
      * Returns the current network type.
      * @summary Get the current network type of the chain
      */
-    public async getNetworkType(options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: NetworkTypeDTO; }> {
+    public async getNetworkType(options: { headers: { [name: string]: string } } = { headers: {} }): Promise<NetworkTypeDTO> {
         const localVarPath = this.basePath + '/network';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -116,7 +116,7 @@ export class NetworkRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: NetworkTypeDTO; }>((resolve, reject) => {
+        return new Promise<NetworkTypeDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);

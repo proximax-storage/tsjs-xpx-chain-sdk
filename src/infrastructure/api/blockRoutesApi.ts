@@ -92,7 +92,7 @@ export class BlockRoutesApi {
      * @summary Get block information
      * @param height The height of the block.
      */
-    public async getBlockByHeight(height: number, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: BlockInfoDTO; }> {
+    public async getBlockByHeight(height: number, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<BlockInfoDTO> {
         const localVarPath = this.basePath + '/block/{height}'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)));
         let localVarQueryParameters: any = {};
@@ -126,7 +126,7 @@ export class BlockRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: BlockInfoDTO; }>((resolve, reject) => {
+        return new Promise<BlockInfoDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -149,7 +149,7 @@ export class BlockRoutesApi {
      * @summary Get receipts from a block
      * @param height The height of the block.
      */
-    public async getBlockReceipts(height: number, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: StatementsDTO; }> {
+    public async getBlockReceipts(height: number, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<StatementsDTO> {
         const localVarPath = this.basePath + '/block/{height}/receipts'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)));
         let localVarQueryParameters: any = {};
@@ -183,7 +183,7 @@ export class BlockRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: StatementsDTO; }>((resolve, reject) => {
+        return new Promise<StatementsDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -208,7 +208,7 @@ export class BlockRoutesApi {
      * @param pageSize The number of transactions to return for each request.
      * @param id The transaction id up to which transactions are returned.
      */
-    public async getBlockTransactions(height: number, pageSize?: number, id?: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<TransactionInfoDTO>; }> {
+    public async getBlockTransactions(height: number, pageSize?: number, id?: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<Array<TransactionInfoDTO>> {
         const localVarPath = this.basePath + '/block/{height}/transactions'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)));
         let localVarQueryParameters: any = {};
@@ -250,7 +250,7 @@ export class BlockRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<TransactionInfoDTO>; }>((resolve, reject) => {
+        return new Promise<Array<TransactionInfoDTO>>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -274,7 +274,7 @@ export class BlockRoutesApi {
      * @param height The height of the block. If height -1 is not a multiple of the limit provided, the inferior closest multiple + 1 is used instead.
      * @param limit The number of blocks to be returned.
      */
-    public async getBlocksByHeightWithLimit(height: number, limit: 25 | 50 | 75 | 100, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<BlockInfoDTO>; }> {
+    public async getBlocksByHeightWithLimit(height: number, limit: 25 | 50 | 75 | 100, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<Array<BlockInfoDTO>> {
         const localVarPath = this.basePath + '/blocks/{height}/limit/{limit}'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)))
             .replace('{' + 'limit' + '}', encodeURIComponent(String(limit)));
@@ -314,7 +314,7 @@ export class BlockRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<BlockInfoDTO>; }>((resolve, reject) => {
+        return new Promise<Array<BlockInfoDTO>>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -338,7 +338,7 @@ export class BlockRoutesApi {
      * @param height The height of the block.
      * @param hash The hash of the receipt statement or resolution.
      */
-    public async getMerkleReceipts(height: number, hash: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: MerkleProofInfoDTO; }> {
+    public async getMerkleReceipts(height: number, hash: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<MerkleProofInfoDTO> {
         const localVarPath = this.basePath + '/block/{height}/receipt/{hash}/merkle'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)))
             .replace('{' + 'hash' + '}', encodeURIComponent(String(hash)));
@@ -378,7 +378,7 @@ export class BlockRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: MerkleProofInfoDTO; }>((resolve, reject) => {
+        return new Promise<MerkleProofInfoDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -402,7 +402,7 @@ export class BlockRoutesApi {
      * @param height The height of the block.
      * @param hash The hash of the transaction.
      */
-    public async getMerkleTransaction(height: number, hash: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: MerkleProofInfoDTO; }> {
+    public async getMerkleTransaction(height: number, hash: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<MerkleProofInfoDTO> {
         const localVarPath = this.basePath + '/block/{height}/transaction/{hash}/merkle'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)))
             .replace('{' + 'hash' + '}', encodeURIComponent(String(hash)));
@@ -442,7 +442,7 @@ export class BlockRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: MerkleProofInfoDTO; }>((resolve, reject) => {
+        return new Promise<MerkleProofInfoDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);

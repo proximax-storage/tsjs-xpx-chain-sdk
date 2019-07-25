@@ -113,7 +113,7 @@ export class AccountHttp extends Http implements AccountRepository {
         };
         return observableFrom(
             this.accountRoutesApi.getAccountRestrictionsFromAccounts(accountIds))
-                .pipe(map((accountRestrictions: AccountRestrictionsDTO[]) => {
+                .pipe(map((accountRestrictions: AccountRestrictionsInfoDTO[]) => {
             return accountRestrictions.map((restriction) => {
                 return DtoMapping.extractAccountRestrictionFromDto(restriction);
             });

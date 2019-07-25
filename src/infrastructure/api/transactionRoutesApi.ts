@@ -95,7 +95,7 @@ export class TransactionRoutesApi {
      * @summary Announce a cosignature transaction
      * @param cosignature
      */
-    public async announceCosignatureTransaction(cosignature: Cosignature, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: AnnounceTransactionInfoDTO; }> {
+    public async announceCosignatureTransaction(cosignature: Cosignature, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<AnnounceTransactionInfoDTO> {
         const localVarPath = this.basePath + '/transaction/cosignature';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -129,7 +129,7 @@ export class TransactionRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: AnnounceTransactionInfoDTO; }>((resolve, reject) => {
+        return new Promise<AnnounceTransactionInfoDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -152,7 +152,7 @@ export class TransactionRoutesApi {
      * @summary Announce an aggregate bonded transaction
      * @param transactionPayload
      */
-    public async announcePartialTransaction(transactionPayload: TransactionPayload, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: AnnounceTransactionInfoDTO; }> {
+    public async announcePartialTransaction(transactionPayload: TransactionPayload, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<AnnounceTransactionInfoDTO> {
         const localVarPath = this.basePath + '/transaction/partial';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -186,7 +186,7 @@ export class TransactionRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: AnnounceTransactionInfoDTO; }>((resolve, reject) => {
+        return new Promise<AnnounceTransactionInfoDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -209,7 +209,7 @@ export class TransactionRoutesApi {
      * @summary Announce a new transaction
      * @param transactionPayload
      */
-    public async announceTransaction(transactionPayload: TransactionPayload, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: AnnounceTransactionInfoDTO; }> {
+    public async announceTransaction(transactionPayload: TransactionPayload, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<AnnounceTransactionInfoDTO> {
         const localVarPath = this.basePath + '/transaction';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -243,7 +243,7 @@ export class TransactionRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: AnnounceTransactionInfoDTO; }>((resolve, reject) => {
+        return new Promise<AnnounceTransactionInfoDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -266,7 +266,7 @@ export class TransactionRoutesApi {
      * @summary Get transaction information
      * @param transactionId The transaction id or hash.
      */
-    public async getTransaction(transactionId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: TransactionInfoDTO; }> {
+    public async getTransaction(transactionId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<TransactionInfoDTO> {
         const localVarPath = this.basePath + '/transaction/{transactionId}'
             .replace('{' + 'transactionId' + '}', encodeURIComponent(String(transactionId)));
         let localVarQueryParameters: any = {};
@@ -300,7 +300,7 @@ export class TransactionRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: TransactionInfoDTO; }>((resolve, reject) => {
+        return new Promise<TransactionInfoDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -323,7 +323,7 @@ export class TransactionRoutesApi {
      * @summary Get transaction status
      * @param hash The transaction hash.
      */
-    public async getTransactionStatus(hash: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: TransactionStatusDTO; }> {
+    public async getTransactionStatus(hash: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<TransactionStatusDTO> {
         const localVarPath = this.basePath + '/transaction/{hash}/status'
             .replace('{' + 'hash' + '}', encodeURIComponent(String(hash)));
         let localVarQueryParameters: any = {};
@@ -357,7 +357,7 @@ export class TransactionRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: TransactionStatusDTO; }>((resolve, reject) => {
+        return new Promise<TransactionStatusDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -380,7 +380,7 @@ export class TransactionRoutesApi {
      * @summary Get transactions information
      * @param transactionIds
      */
-    public async getTransactions(transactionIds: TransactionIds, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<TransactionInfoDTO>; }> {
+    public async getTransactions(transactionIds: TransactionIds, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<Array<TransactionInfoDTO>> {
         const localVarPath = this.basePath + '/transaction';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -414,7 +414,7 @@ export class TransactionRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<TransactionInfoDTO>; }>((resolve, reject) => {
+        return new Promise<Array<TransactionInfoDTO>>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -437,7 +437,7 @@ export class TransactionRoutesApi {
      * @summary Get transactions status.
      * @param transactionHashes
      */
-    public async getTransactionsStatuses(transactionHashes: TransactionHashes, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<TransactionStatusDTO>; }> {
+    public async getTransactionsStatuses(transactionHashes: TransactionHashes, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<Array<TransactionStatusDTO>> {
         const localVarPath = this.basePath + '/transaction/statuses';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -471,7 +471,7 @@ export class TransactionRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<TransactionStatusDTO>; }>((resolve, reject) => {
+        return new Promise<Array<TransactionStatusDTO>>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);

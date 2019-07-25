@@ -95,7 +95,7 @@ export class AccountRoutesApi {
      * @summary Get account information
      * @param accountId The public key or address of the account.
      */
-    public async getAccountInfo(accountId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: AccountInfoDTO; }> {
+    public async getAccountInfo(accountId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<AccountInfoDTO> {
         const localVarPath = this.basePath + '/account/{accountId}'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
         let localVarQueryParameters: any = {};
@@ -129,7 +129,7 @@ export class AccountRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: AccountInfoDTO; }>((resolve, reject) => {
+        return new Promise<AccountInfoDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -152,7 +152,7 @@ export class AccountRoutesApi {
      * @summary Get multisig account information
      * @param accountId The public key or address of the account.
      */
-    public async getAccountMultisig(accountId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: MultisigAccountInfoDTO; }> {
+    public async getAccountMultisig(accountId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<MultisigAccountInfoDTO> {
         const localVarPath = this.basePath + '/account/{accountId}/multisig'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
         let localVarQueryParameters: any = {};
@@ -186,7 +186,7 @@ export class AccountRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: MultisigAccountInfoDTO; }>((resolve, reject) => {
+        return new Promise<MultisigAccountInfoDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -209,7 +209,7 @@ export class AccountRoutesApi {
      * @summary Get multisig account graph information
      * @param accountId The public key or address of the account.
      */
-    public async getAccountMultisigGraph(accountId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<MultisigAccountGraphInfoDTO>; }> {
+    public async getAccountMultisigGraph(accountId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<Array<MultisigAccountGraphInfoDTO>> {
         const localVarPath = this.basePath + '/account/{accountId}/multisig/graph'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
         let localVarQueryParameters: any = {};
@@ -243,7 +243,7 @@ export class AccountRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<MultisigAccountGraphInfoDTO>; }>((resolve, reject) => {
+        return new Promise<Array<MultisigAccountGraphInfoDTO>>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -266,7 +266,7 @@ export class AccountRoutesApi {
      * @summary Get the account restrictions
      * @param accountId The public key or address of the account.
      */
-    public async getAccountRestrictions (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.ClientResponse; body: AccountRestrictionsInfoDTO;  }> {
+    public async getAccountRestrictions (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<AccountRestrictionsInfoDTO> {
         // const localVarPath = this.basePath + '/account/{accountId}/restrictions'
         const localVarPath = this.basePath + '/account/{accountId}/properties'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
@@ -301,7 +301,7 @@ export class AccountRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: AccountRestrictionsInfoDTO;  }>((resolve, reject) => {
+        return new Promise<AccountRestrictionsInfoDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -324,7 +324,7 @@ export class AccountRoutesApi {
      * @summary Get account restrictions for given array of addresses
      * @param accountIds
      */
-    public async getAccountRestrictionsFromAccounts (accountIds: AccountIds, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.ClientResponse; body: Array<AccountRestrictionsInfoDTO>;  }> {
+    public async getAccountRestrictionsFromAccounts (accountIds: AccountIds, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<Array<AccountRestrictionsInfoDTO>> {
         // const localVarPath = this.basePath + '/account/restrictions';
         const localVarPath = this.basePath + '/account/properties';
         let localVarQueryParameters: any = {};
@@ -359,7 +359,7 @@ export class AccountRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<AccountRestrictionsInfoDTO>;  }>((resolve, reject) => {
+        return new Promise<Array<AccountRestrictionsInfoDTO>>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -382,7 +382,7 @@ export class AccountRoutesApi {
      * @summary Get accounts information
      * @param accountIds
      */
-    public async getAccountsInfo(accountIds: AccountIds, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<AccountInfoDTO>; }> {
+    public async getAccountsInfo(accountIds: AccountIds, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<Array<AccountInfoDTO>> {
         const localVarPath = this.basePath + '/account';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -416,7 +416,7 @@ export class AccountRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<AccountInfoDTO>; }>((resolve, reject) => {
+        return new Promise<Array<AccountInfoDTO>>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -439,7 +439,7 @@ export class AccountRoutesApi {
      * @summary Get readable names for a set of accountIds.
      * @param accountIds
      */
-    public async getAccountsNames(accountIds: AccountIds, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<AccountNamesDTO>; }> {
+    public async getAccountsNames(accountIds: AccountIds, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<Array<AccountNamesDTO>> {
         const localVarPath = this.basePath + '/account/names';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -473,7 +473,7 @@ export class AccountRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<AccountNamesDTO>; }>((resolve, reject) => {
+        return new Promise<Array<AccountNamesDTO>>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -499,7 +499,7 @@ export class AccountRoutesApi {
      * @param id The transaction id up to which transactions are returned.
      * @param ordering The ordering criteria: * -id - Descending order by id. * id - Ascending order by id.
      */
-    public async incomingTransactions(publicKey: string, pageSize?: number, id?: string, ordering?: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<TransactionInfoDTO>; }> {
+    public async incomingTransactions(publicKey: string, pageSize?: number, id?: string, ordering?: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<Array<TransactionInfoDTO>> {
         const localVarPath = this.basePath + '/account/{publicKey}/transactions/incoming'
             .replace('{' + 'publicKey' + '}', encodeURIComponent(String(publicKey)));
         let localVarQueryParameters: any = {};
@@ -545,7 +545,7 @@ export class AccountRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<TransactionInfoDTO>; }>((resolve, reject) => {
+        return new Promise<Array<TransactionInfoDTO>>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -571,7 +571,7 @@ export class AccountRoutesApi {
      * @param id The transaction id up to which transactions are returned.
      * @param ordering The ordering criteria: * -id - Descending order by id. * id - Ascending order by id.
      */
-    public async outgoingTransactions(publicKey: string, pageSize?: number, id?: string, ordering?: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<TransactionInfoDTO>; }> {
+    public async outgoingTransactions(publicKey: string, pageSize?: number, id?: string, ordering?: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<Array<TransactionInfoDTO>> {
         const localVarPath = this.basePath + '/account/{publicKey}/transactions/outgoing'
             .replace('{' + 'publicKey' + '}', encodeURIComponent(String(publicKey)));
         let localVarQueryParameters: any = {};
@@ -617,7 +617,7 @@ export class AccountRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<TransactionInfoDTO>; }>((resolve, reject) => {
+        return new Promise<Array<TransactionInfoDTO>>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -643,7 +643,7 @@ export class AccountRoutesApi {
      * @param id The transaction id up to which transactions are returned.
      * @param ordering The ordering criteria. * -id - Descending order by id. * id - Ascending order by id.
      */
-    public async partialTransactions(publicKey: string, pageSize?: number, id?: string, ordering?: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<TransactionInfoDTO>; }> {
+    public async partialTransactions(publicKey: string, pageSize?: number, id?: string, ordering?: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<Array<TransactionInfoDTO>> {
         const localVarPath = this.basePath + '/account/{publicKey}/transactions/partial'
             .replace('{' + 'publicKey' + '}', encodeURIComponent(String(publicKey)));
         let localVarQueryParameters: any = {};
@@ -689,7 +689,7 @@ export class AccountRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<TransactionInfoDTO>; }>((resolve, reject) => {
+        return new Promise<Array<TransactionInfoDTO>>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -715,7 +715,7 @@ export class AccountRoutesApi {
      * @param id The transaction id up to which transactions are returned.
      * @param ordering The ordering criteria: * -id - Descending order by id. * id - Ascending order by id.
      */
-    public async transactions(publicKey: string, pageSize?: number, id?: string, ordering?: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<TransactionInfoDTO>; }> {
+    public async transactions(publicKey: string, pageSize?: number, id?: string, ordering?: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<Array<TransactionInfoDTO>> {
         const localVarPath = this.basePath + '/account/{publicKey}/transactions'
             .replace('{' + 'publicKey' + '}', encodeURIComponent(String(publicKey)));
         let localVarQueryParameters: any = {};
@@ -761,7 +761,7 @@ export class AccountRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<TransactionInfoDTO>; }>((resolve, reject) => {
+        return new Promise<Array<TransactionInfoDTO>>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -787,7 +787,7 @@ export class AccountRoutesApi {
      * @param id The transaction id up to which transactions are returned.
      * @param ordering The ordering criteria. * -id - Descending order by id. * id - Ascending order by id.
      */
-    public async unconfirmedTransactions(publicKey: string, pageSize?: number, id?: string, ordering?: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<TransactionInfoDTO>; }> {
+    public async unconfirmedTransactions(publicKey: string, pageSize?: number, id?: string, ordering?: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<Array<TransactionInfoDTO>> {
         const localVarPath = this.basePath + '/account/{publicKey}/transactions/unconfirmed'
             .replace('{' + 'publicKey' + '}', encodeURIComponent(String(publicKey)));
         let localVarQueryParameters: any = {};
@@ -833,7 +833,7 @@ export class AccountRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<TransactionInfoDTO>; }>((resolve, reject) => {
+        return new Promise<Array<TransactionInfoDTO>>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
