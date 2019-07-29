@@ -62,16 +62,17 @@ import { TransferTransaction } from '../../src/model/transaction/TransferTransac
 import { UInt64 } from '../../src/model/UInt64';
 import {
     APIUrl, ConfNetworkType, ConfNetworkMosaic,
-    SeedAccount, TestingAccount, TestingRecipient, MultisigAccount, CosignatoryAccount, Cosignatory2Account, Cosignatory3Account, GetNemesisBlockDataPromise, ConfNamespace, ConfTestingMosaic, ConfTestingNamespace, ConfAccountHttp, ConfTransactionHttp, ConfMosaicHttp, NemesisBlockInfo, Customer1Account, ConfNetworkMosaicDivisibility
+    SeedAccount, TestingAccount, TestingRecipient, MultisigAccount, CosignatoryAccount, Cosignatory2Account, Cosignatory3Account, GetNemesisBlockDataPromise, ConfNamespace, ConfTestingMosaic, ConfTestingNamespace, ConfAccountHttp, ConfTransactionHttp, ConfMosaicHttp, NemesisBlockInfo, Customer1Account, ConfNetworkMosaicDivisibility, MultilevelMultisigAccount, Cosignatory4Account
 } from '../conf/conf.spec';
-import { AliasTransaction, Address, SignedTransaction } from '../../src/model/model';
+import { AliasTransaction, Address, SignedTransaction, AggregateTransactionCosignature, CosignatureTransaction } from '../../src/model/model';
 import { ModifyMetadataTransaction, MetadataModification, MetadataModificationType } from '../../src/model/transaction/ModifyMetadataTransaction';
 import { MetadataHttp } from '../../src/infrastructure/MetadataHttp';
 import { ConfUtils } from '../conf/ConfUtils';
 import { MosaicHttp } from '../../src/infrastructure/MosaicHttp';
 import { fail } from 'assert';
 import { randomBytes } from 'crypto';
-import { validateTransactionConfirmed } from '../utils';
+import { validateTransactionConfirmed, validateCosignaturePartialTransactionAnnouncedCorrectly, validatePartialTransactionNotPartialAnyMore, validatePartialTransactionAnnouncedCorrectly } from '../utils';
+import { TransactionMapping } from '../../src/core/utils/utility';
 
 describe('TransactionHttp', () => {
     let transactionHttp: TransactionHttp;
@@ -123,9 +124,165 @@ describe('TransactionHttp', () => {
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
-                transactionHttp.announce(signedTransaction);
             });
         });
+    });
+
+    describe('Multisig', () => {
+        const transferTransaction = TransferTransaction.create(
+            Deadline.create(),
+            TestingRecipient.address,
+            [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10))],
+            PlainMessage.create('test-message from multisig account as aggregate bonded'),
+            ConfNetworkType);
+        it('should send transfer tx as aggregate bonded', (done) => {
+            const aggregateBondedTransaction = AggregateTransaction.createBonded(
+                Deadline.create(),
+                [transferTransaction.toAggregate(MultisigAccount.publicAccount)],
+                ConfNetworkType
+            )
+            const signedAggregateBondedTransaction = aggregateBondedTransaction.signWith(CosignatoryAccount, generationHash);
+            const hashLockTransaction = HashLockTransaction.create(
+                Deadline.create(),
+                new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10000000)),
+                UInt64.fromUint(1000),
+                signedAggregateBondedTransaction,
+                ConfNetworkType,
+            );
+            const signedHashLockTransaction = hashLockTransaction.signWith(CosignatoryAccount, generationHash);
+            validateTransactionConfirmed(listener, CosignatoryAccount.address, signedHashLockTransaction.hash)
+                .then(() => {
+                    validatePartialTransactionAnnouncedCorrectly(listener, MultisigAccount.address, signedAggregateBondedTransaction.hash, (addedAggregateBondedTransaction) => {
+                        const cosignatureTransaction = CosignatureTransaction.create(addedAggregateBondedTransaction);
+                        const signedCosignatureTransaction = cosignatureTransaction.signWith(Cosignatory2Account);
+                        validatePartialTransactionNotPartialAnyMore(listener, MultisigAccount.address, signedAggregateBondedTransaction.hash, () => {
+                            done();
+                        });
+                        transactionHttp.announceAggregateBondedCosignature(signedCosignatureTransaction);
+                    });
+                    transactionHttp.announceAggregateBonded(signedAggregateBondedTransaction);
+                }).catch((reason) => fail(reason));
+            transactionHttp.announce(signedHashLockTransaction);
+        });
+
+        it('should send transfer tx as aggregate complete', (done) => {
+            const transferTransaction = TransferTransaction.create(
+                Deadline.create(),
+                TestingRecipient.address,
+                [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10))],
+                PlainMessage.create('test-message from multisig account as aggregate complete'),
+                ConfNetworkType);
+            const aggregateCompleteTransaction = AggregateTransaction.createComplete(
+                Deadline.create(),
+                [transferTransaction.toAggregate(MultisigAccount.publicAccount)],
+                ConfNetworkType,
+                []
+            )
+            const signedAggregateCompleteTransaction = CosignatoryAccount.signTransactionWithCosignatories(aggregateCompleteTransaction, [Cosignatory2Account], generationHash);
+            validateTransactionConfirmed(listener, CosignatoryAccount.address, signedAggregateCompleteTransaction.hash)
+                .then(() => done()).catch((reason) => fail(reason));
+            transactionHttp.announce(signedAggregateCompleteTransaction);
+        })
+    });
+
+    describe('Multilevel Multisig', () => {
+        const transferTransaction = TransferTransaction.create(
+            Deadline.create(),
+            TestingRecipient.address,
+            [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10))],
+            PlainMessage.create('test-message from multilevel multisig account as aggregate bonded'),
+            ConfNetworkType);
+        it('should send transfer tx as aggregate bonded', (done) => {
+            const aggregateBondedTransaction = AggregateTransaction.createBonded(
+                Deadline.create(),
+                [transferTransaction.toAggregate(MultilevelMultisigAccount.publicAccount)],
+                ConfNetworkType
+            )
+            const signedAggregateBondedTransaction = aggregateBondedTransaction.signWith(Cosignatory4Account, generationHash);
+            const hashLockTransaction = HashLockTransaction.create(
+                Deadline.create(),
+                new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10000000)),
+                UInt64.fromUint(1000),
+                signedAggregateBondedTransaction,
+                ConfNetworkType,
+            );
+            const signedHashLockTransaction = hashLockTransaction.signWith(Cosignatory4Account, generationHash);
+            validateTransactionConfirmed(listener, Cosignatory4Account.address, signedHashLockTransaction.hash)
+                .then(() => {
+                    validatePartialTransactionAnnouncedCorrectly(listener, MultilevelMultisigAccount.address, signedAggregateBondedTransaction.hash, (addedAggregateBondedTransaction) => {
+                        const cosignatureTransaction = CosignatureTransaction.create(addedAggregateBondedTransaction);
+                        const signedCosignatureTransaction1 = cosignatureTransaction.signWith(Cosignatory2Account);
+                        const signedCosignatureTransaction2 = cosignatureTransaction.signWith(Cosignatory3Account);
+                        validatePartialTransactionNotPartialAnyMore(listener, MultilevelMultisigAccount.address, signedAggregateBondedTransaction.hash, () => {
+                            done();
+                        });
+                        transactionHttp.announceAggregateBondedCosignature(signedCosignatureTransaction1);
+                        transactionHttp.announceAggregateBondedCosignature(signedCosignatureTransaction2);
+                    });
+                    transactionHttp.announceAggregateBonded(signedAggregateBondedTransaction);
+                }).catch((reason) => fail(reason));
+            transactionHttp.announce(signedHashLockTransaction);
+        });
+
+        it('should send transfer tx as aggregate complete signed at once', (done) => {
+            const transferTransaction = TransferTransaction.create(
+                Deadline.create(),
+                TestingRecipient.address,
+                [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10))],
+                PlainMessage.create('test-message from multilevel multisig account as aggregate complete'),
+                ConfNetworkType);
+            const aggregateCompleteTransaction = AggregateTransaction.createComplete(
+                Deadline.create(),
+                [transferTransaction.toAggregate(MultilevelMultisigAccount.publicAccount)],
+                ConfNetworkType,
+                []
+            )
+            const signedAggregateCompleteTransaction = Cosignatory4Account.signTransactionWithCosignatories(aggregateCompleteTransaction, [Cosignatory2Account, Cosignatory3Account], generationHash);
+            validateTransactionConfirmed(listener, Cosignatory4Account.address, signedAggregateCompleteTransaction.hash)
+                .then(() => done()).catch((reason) => fail(reason));
+            transactionHttp.announce(signedAggregateCompleteTransaction);
+        })
+
+        it('should send transfer tx as aggregate complete not signed at once (offline)', (done) => {
+            const transferTransaction = TransferTransaction.create(
+                Deadline.create(),
+                TestingRecipient.address,
+                [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10))],
+                PlainMessage.create('test-message from multilevel multisig account as aggregate complete'),
+                ConfNetworkType);
+            // initiator, delivers this to other cosigners
+            const aggregateCompleteTransaction = AggregateTransaction.createComplete(
+                Deadline.create(),
+                [transferTransaction.toAggregate(MultilevelMultisigAccount.publicAccount)],
+                ConfNetworkType,
+                []
+            )
+            const signedAggregateCompleteTransaction = aggregateCompleteTransaction.signWith(Cosignatory4Account, generationHash);
+
+            // second cosigner, cosign and send back to the initiator
+            const cosignedTwo = CosignatureTransaction.signTransactionPayload(Cosignatory2Account, signedAggregateCompleteTransaction.payload, generationHash);
+
+            // third cosigner, cosign and send back to the initiator
+            const cosignedThree = CosignatureTransaction.signTransactionPayload(Cosignatory3Account, signedAggregateCompleteTransaction.payload, generationHash);
+
+            // initiator combines all the signatures and the transaction into single signed transaction and announces
+            const cosignatureSignedTransactions = [
+                new CosignatureSignedTransaction(cosignedTwo.parentHash, cosignedTwo.signature, cosignedTwo.signer),
+                new CosignatureSignedTransaction(cosignedThree.parentHash, cosignedThree.signature, cosignedThree.signer)
+            ];
+            const deserializedAggregateCompleteTransaction = TransactionMapping.createFromPayload(signedAggregateCompleteTransaction.payload) as AggregateTransaction;
+            const signedDeserializedAggregateCompleteTransaction = deserializedAggregateCompleteTransaction.signTransactionGivenSignatures(Cosignatory4Account, cosignatureSignedTransactions, generationHash);
+
+            { // check that all the signatures are the same as if used the signTransactionWithCosignatories only
+                const differentlySignedAggregateCompleteTransaction = Cosignatory4Account.signTransactionWithCosignatories(aggregateCompleteTransaction, [Cosignatory2Account, Cosignatory3Account], generationHash);
+                expect(differentlySignedAggregateCompleteTransaction.payload).to.be.equal(signedDeserializedAggregateCompleteTransaction.payload);
+                expect(differentlySignedAggregateCompleteTransaction.hash).to.be.equal(signedDeserializedAggregateCompleteTransaction.hash);
+            }
+
+            validateTransactionConfirmed(listener, Cosignatory4Account.address, signedDeserializedAggregateCompleteTransaction.hash)
+                .then(() => done()).catch((reason) => fail(reason));
+            transactionHttp.announce(signedDeserializedAggregateCompleteTransaction);
+        })
     });
 
     describe('AccountLinkTransaction', () => {
@@ -188,15 +345,10 @@ describe('TransactionHttp', () => {
                         [new MetadataModification(MetadataModificationType.ADD, "key2", "some other value")]
                     );
                     const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount, generationHash);
-                    validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash).then(() => {
-                        done();
-                    }, (error) => {
-                        fail(error);
-                    })
+                    validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
+                        .then(() => done()).catch((reason) => fail(reason));
                     transactionHttp.announce(signedTransaction);
-                }, (error) => {
-                    fail(error);
-                });
+                }).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
             });
 
@@ -314,8 +466,6 @@ describe('TransactionHttp', () => {
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
-
-                transactionHttp.announce(signedTransaction);
             });
             it('should remove an alias from a mosaic', (done) => {
                 const mosaicAliasTransaction = AliasTransaction.createForMosaic(
@@ -328,8 +478,6 @@ describe('TransactionHttp', () => {
                 const signedTransaction = mosaicAliasTransaction.signWith(TestingAccount, generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
-                transactionHttp.announce(signedTransaction);
-
                 transactionHttp.announce(signedTransaction);
             });
         });

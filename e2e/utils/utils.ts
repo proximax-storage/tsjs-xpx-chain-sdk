@@ -1,5 +1,5 @@
 import { Listener } from "../../src/infrastructure/Listener";
-import { Address, Transaction } from "../../src/model/model";
+import { Address, Transaction, AggregateTransactionInfo, AggregateTransaction } from "../../src/model/model";
 
 export const validateTransactionConfirmed = (listener: Listener, address: Address,  hash: string) => {
     return new Promise((resolve, reject) => {
@@ -20,33 +20,34 @@ export const validateTransactionConfirmed = (listener: Listener, address: Addres
             }
         });
     });
+}
 
-    // TODO: improve
-    const validatePartialTransactionAnnounceCorrectly = (address: Address, done) => {
-        const sub = listener.aggregateBondedAdded(address).subscribe((transaction: Transaction) => {
+// TODO: improve
+export const validatePartialTransactionAnnouncedCorrectly = (listener: Listener, address: Address, hash: string, done: (tx: AggregateTransaction) => void) => {
+    const sub = listener.aggregateBondedAdded(address).subscribe((transaction: Transaction) => {
+        if (transaction && transaction.transactionInfo && transaction.transactionInfo.hash === hash) {
+            sub.unsubscribe();
+            return done(transaction as AggregateTransaction);
+        }
+    });
+}
+
+// TODO: improve
+export const validateCosignaturePartialTransactionAnnouncedCorrectly = (listener: Listener, address: Address, publicKey, done) => {
+    const sub = listener.cosignatureAdded(address).subscribe((signature) => {
+        if (signature.signer === publicKey) {
             sub.unsubscribe();
             return done();
-        });
-    }
+        }
+    });
+}
 
-    // TODO: improve
-    const validateCosignaturePartialTransactionAnnounceCorrectly = (address: Address, publicKey, done) => {
-        const sub = listener.cosignatureAdded(address).subscribe((signature) => {
-            if (signature.signer === publicKey) {
-                sub.unsubscribe();
-                return done();
-            }
-        });
-    }
-
-    // TODO: improve
-    const validatePartialTransactionNotPartialAnyMore = (address: Address, hash: string, done) => {
-        const sub = listener.aggregateBondedRemoved(address).subscribe(txhash => {
-            if (txhash === hash) {
-                sub.unsubscribe();
-                return done();
-            }
-        });
-    }
-
+// TODO: improve
+export const validatePartialTransactionNotPartialAnyMore = (listener: Listener, address: Address, hash: string, done) => {
+    const sub = listener.aggregateBondedRemoved(address).subscribe(txhash => {
+        if (txhash === hash) {
+            sub.unsubscribe();
+            return done();
+        }
+    });
 }
