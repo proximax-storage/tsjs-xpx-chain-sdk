@@ -53,14 +53,14 @@ export class CosignatureTransaction {
      * Creating a new CosignatureSignedTransaction
      * @param account - The signing account
      * @param payload - off transaction payload (aggregated transaction is unannounced)
-     * @param gernationHash - Network generation hash
+     * @param generationHash - Network generation hash
      * @returns {CosignatureSignedTransaction}
      */
-    public static signTransactionPayload(account: Account, payload: string, gernationHash: string, signSchema = SignSchema.SHA3): CosignatureSignedTransaction {
+    public static signTransactionPayload(account: Account, payload: string, generationHash: string, signSchema = SignSchema.SHA3): CosignatureSignedTransaction {
         /**
          * For aggregated complete transaction, cosignatories are gathered off chain announced.
          */
-        const transactionHash = VerifiableTransaction.createTransactionHash(payload, Array.from(Convert.hexToUint8(gernationHash)));
+        const transactionHash = VerifiableTransaction.createTransactionHash(payload, Array.from(Convert.hexToUint8(generationHash)));
         const aggregateSignatureTransaction = new CosignaturetransactionLibrary(transactionHash);
         const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account, signSchema);
         return new CosignatureSignedTransaction(signedTransactionRaw.parentHash,
