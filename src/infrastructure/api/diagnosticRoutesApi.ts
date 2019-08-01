@@ -89,7 +89,7 @@ export class DiagnosticRoutesApi {
      * Returns diagnostic information about the node storage.
      * @summary Get the storage information of the node
      */
-    public async getDiagnosticStorage(options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: StorageInfoDTO; }> {
+    public async getDiagnosticStorage(options: { headers: { [name: string]: string } } = { headers: {} }): Promise<StorageInfoDTO> {
         const localVarPath = this.basePath + '/diagnostic/storage';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -117,7 +117,7 @@ export class DiagnosticRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: StorageInfoDTO; }>((resolve, reject) => {
+        return new Promise<StorageInfoDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -139,7 +139,7 @@ export class DiagnosticRoutesApi {
      * Returns the version of the running rest component.
      * @summary Get the version of the running rest component
      */
-    public async getServerInfo(options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: ServerDTO; }> {
+    public async getServerInfo(options: { headers: { [name: string]: string } } = { headers: {} }): Promise<ServerDTO> {
         const localVarPath = this.basePath + '/diagnostic/server';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -167,7 +167,7 @@ export class DiagnosticRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: ServerDTO; }>((resolve, reject) => {
+        return new Promise<ServerDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);

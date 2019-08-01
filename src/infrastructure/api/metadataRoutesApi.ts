@@ -81,7 +81,7 @@ export class MetadataRoutesApi {
      * @summary Get metadata of account
      * @param accountId The account identifier.
      */
-    public async getAccountMetadata(accountId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: AddressMetadataInfoDTO; }> {
+    public async getAccountMetadata(accountId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<AddressMetadataInfoDTO> {
         const localVarPath = this.basePath + '/account/{accountId}/metadata'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
         let localVarQueryParameters: any = {};
@@ -115,7 +115,7 @@ export class MetadataRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: AddressMetadataInfoDTO; }>((resolve, reject) => {
+        return new Promise<AddressMetadataInfoDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -138,7 +138,7 @@ export class MetadataRoutesApi {
      * @summary Get metadata of namespace/mosaic/account
      * @param metadataId The metadata identifier.
      */
-    public async getMetadata(metadataId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: NamespaceMetadataInfoDTO; }> {
+    public async getMetadata(metadataId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<NamespaceMetadataInfoDTO> {
         const localVarPath = this.basePath + '/metadata/{metadataId}'
             .replace('{' + 'metadataId' + '}', encodeURIComponent(String(metadataId)));
         let localVarQueryParameters: any = {};
@@ -172,7 +172,7 @@ export class MetadataRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: NamespaceMetadataInfoDTO; }>((resolve, reject) => {
+        return new Promise<NamespaceMetadataInfoDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -195,7 +195,7 @@ export class MetadataRoutesApi {
      * @summary Get metadatas(namespace/mosaic/account) for an array of metadataids
      * @param metadataIds
      */
-    public async getMetadatas(metadataIds?: MetadataIds, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<AddressMetadataInfoDTO>; }> {
+    public async getMetadatas(metadataIds?: MetadataIds, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<Array<AddressMetadataInfoDTO>> {
         const localVarPath = this.basePath + '/metadata';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -224,7 +224,7 @@ export class MetadataRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<AddressMetadataInfoDTO>; }>((resolve, reject) => {
+        return new Promise<Array<AddressMetadataInfoDTO>>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -247,7 +247,7 @@ export class MetadataRoutesApi {
      * @summary Get metadata of mosaic
      * @param mosaicId The mosaic identifier.
      */
-    public async getMosaicMetadata(mosaicId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: MosaicMetadataInfoDTO; }> {
+    public async getMosaicMetadata(mosaicId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<MosaicMetadataInfoDTO> {
         const localVarPath = this.basePath + '/mosaic/{mosaicId}/metadata'
             .replace('{' + 'mosaicId' + '}', encodeURIComponent(String(mosaicId)));
         let localVarQueryParameters: any = {};
@@ -281,7 +281,7 @@ export class MetadataRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: MosaicMetadataInfoDTO; }>((resolve, reject) => {
+        return new Promise<MosaicMetadataInfoDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -304,7 +304,7 @@ export class MetadataRoutesApi {
      * @summary Get metadata of namespace
      * @param namespaceId The namespace identifier.
      */
-    public async getNamespaceMetadata(namespaceId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: NamespaceMetadataInfoDTO; }> {
+    public async getNamespaceMetadata(namespaceId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<NamespaceMetadataInfoDTO> {
         const localVarPath = this.basePath + '/namespace/{namespaceId}/metadata'
             .replace('{' + 'namespaceId' + '}', encodeURIComponent(String(namespaceId)));
         let localVarQueryParameters: any = {};
@@ -338,7 +338,7 @@ export class MetadataRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: NamespaceMetadataInfoDTO; }>((resolve, reject) => {
+        return new Promise<NamespaceMetadataInfoDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);

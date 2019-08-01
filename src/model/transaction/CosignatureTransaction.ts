@@ -20,6 +20,7 @@ import {Account} from '../account/Account';
 import {AggregateTransaction} from './AggregateTransaction';
 import {CosignatureSignedTransaction} from './CosignatureSignedTransaction';
 import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
+import { Convert } from '../../core/format';
 
 /**
  * Cosignature transaction is used to sign an aggregate transactions with missing cosignatures.
@@ -52,16 +53,16 @@ export class CosignatureTransaction {
      * Creating a new CosignatureSignedTransaction
      * @param account - The signing account
      * @param payload - off transaction payload (aggregated transaction is unannounced)
-     * @param gernationHash - Network generation hash
+     * @param generationHash - Network generation hash
      * @returns {CosignatureSignedTransaction}
      */
-    public static signTransactionPayload(account: Account, payload: string, gernationHash: string): CosignatureSignedTransaction {
+    public static signTransactionPayload(account: Account, payload: string, generationHash: string, signSchema = SignSchema.SHA3): CosignatureSignedTransaction {
         /**
          * For aggregated complete transaction, cosignatories are gathered off chain announced.
          */
-        const transactionHash = VerifiableTransaction.createTransactionHash(payload, gernationHash);
+        const transactionHash = VerifiableTransaction.createTransactionHash(payload, Array.from(Convert.hexToUint8(generationHash)));
         const aggregateSignatureTransaction = new CosignaturetransactionLibrary(transactionHash);
-        const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account);
+        const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account, signSchema);
         return new CosignatureSignedTransaction(signedTransactionRaw.parentHash,
             signedTransactionRaw.signature,
             signedTransactionRaw.signer);

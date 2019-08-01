@@ -92,7 +92,7 @@ export class NamespaceRoutesApi {
      * @summary Get namespace information
      * @param namespaceId The namespace identifier.
      */
-    public async getNamespace(namespaceId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: NamespaceInfoDTO; }> {
+    public async getNamespace(namespaceId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<NamespaceInfoDTO> {
         const localVarPath = this.basePath + '/namespace/{namespaceId}'
             .replace('{' + 'namespaceId' + '}', encodeURIComponent(String(namespaceId)));
         let localVarQueryParameters: any = {};
@@ -126,7 +126,7 @@ export class NamespaceRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: NamespaceInfoDTO; }>((resolve, reject) => {
+        return new Promise<NamespaceInfoDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -151,7 +151,7 @@ export class NamespaceRoutesApi {
      * @param pageSize The number of namespaces to return.
      * @param id The namespace id up to which namespace objects are returned.
      */
-    public async getNamespacesFromAccount(accountId: string, pageSize?: number, id?: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<NamespaceInfoDTO>; }> {
+    public async getNamespacesFromAccount(accountId: string, pageSize?: number, id?: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<Array<NamespaceInfoDTO>> {
         const localVarPath = this.basePath + '/account/{accountId}/namespaces'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
         let localVarQueryParameters: any = {};
@@ -193,7 +193,7 @@ export class NamespaceRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<NamespaceInfoDTO>; }>((resolve, reject) => {
+        return new Promise<Array<NamespaceInfoDTO>>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -218,7 +218,7 @@ export class NamespaceRoutesApi {
      * @param pageSize The number of namespaces to return.
      * @param id The namespace id up to which namespace objects are returned.
      */
-    public async getNamespacesFromAccounts(accountIds: AccountIds, pageSize?: number, id?: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<NamespaceInfoDTO>; }> {
+    public async getNamespacesFromAccounts(accountIds: AccountIds, pageSize?: number, id?: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<Array<NamespaceInfoDTO>> {
         const localVarPath = this.basePath + '/account/namespaces';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -260,7 +260,7 @@ export class NamespaceRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<NamespaceInfoDTO>; }>((resolve, reject) => {
+        return new Promise<Array<NamespaceInfoDTO>>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -283,7 +283,7 @@ export class NamespaceRoutesApi {
      * @summary Get readable names for a set of namespaces
      * @param namespaceIds
      */
-    public async getNamespacesNames(namespaceIds: NamespaceIds, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<NamespaceNameDTO>; }> {
+    public async getNamespacesNames(namespaceIds: NamespaceIds, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<Array<NamespaceNameDTO>> {
         const localVarPath = this.basePath + '/namespace/names';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -317,7 +317,7 @@ export class NamespaceRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<NamespaceNameDTO>; }>((resolve, reject) => {
+        return new Promise<Array<NamespaceNameDTO>>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);

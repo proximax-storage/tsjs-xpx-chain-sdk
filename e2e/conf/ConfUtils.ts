@@ -40,9 +40,16 @@ export class ConfUtils {
                 });
             });
         }, Promise.resolve()).then(() => {
-            return Array.from(AllTestingAccounts.values()).reduce((prev, curr) => {
+            // get all the msig roots; will traverse them with bfs, so all other in the middle nodes will be processed automatically
+            const msigAccounts: TestAccount[] = Array.from(AllTestingAccounts.values()).filter(ta => ta.hasCosignatories() && !ta.isCosignatory());
+            let idx = 0;
+            while (idx < msigAccounts.length) {
+                Array.prototype.push.apply(msigAccounts, msigAccounts[idx].cosignatories.filter(ta => ta.hasCosignatories()));
+                idx += 1;
+            }
+            return msigAccounts.reduce((prev, curr) => {
                 return prev.then(() => {
-                    return ConfUtils.checkIfNeedMsig(curr);
+                    return ConfUtils.convertToMultisigIfNotConvertedYet(curr);
                 });
             }, Promise.resolve());
         }).then(() => {
@@ -54,25 +61,18 @@ export class ConfUtils {
         });
     }
 
-    public static checkIfNeedMsig(ta: TestAccount) {
+    public static convertToMultisigIfNotConvertedYet(ta: TestAccount) {
         const accountHttp = ConfAccountHttp;
-        if (ta.hasCosignatories()) {
-            return accountHttp.getMultisigAccountInfo(ta.acc.address).toPromise().then(msigInfo => {
+        return accountHttp.getMultisigAccountInfo(ta.acc.address).toPromise().then(msigInfo => {
+            if (msigInfo.cosignatories && msigInfo.cosignatories.length > 0) {
                 console.log(ta.conf.alias + " already is msig");
                 return Promise.resolve();
-            }, error => { // it is not msig just yet, we need to convert it now
-                console.log(ta.conf.alias + " need msig");
-                if (ta.isCosignatory()) {
-                    // TODO: implement msig graphs
-                    console.log(ta.conf.alias + " in the middle of the graph, ignoring for now");
-                    return Promise.resolve();
-                } else {
-                    return ConfUtils.convertToMultisig(ta);
-                }
-            });
-        } else {
-            return Promise.resolve();
-        }
+            } else {// it is not msig just yet, we need to convert it now
+                return ConfUtils.convertToMultisig(ta);
+            }
+        }, error => { // it is not msig just yet, we need to convert it now
+            return ConfUtils.convertToMultisig(ta);
+        });
     }
 
     public static checkIfNeedPubKey(ta: TestAccount, accountInfo: AccountInfo) {
@@ -183,7 +183,7 @@ export class ConfUtils {
                     const convertIntoMultisigTransaction = ModifyMultisigAccountTransaction.create(
                         Deadline.create(),
                         ta.cosignatories.length<=1 ? 1 : ta.cosignatories.length - 1,
-                        1,
+                        ta.cosignatories.length,
                         ta.cosignatories.map(cos => new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, cos.acc.publicAccount)),
                         ta.acc.address.networkType);
 
@@ -234,7 +234,7 @@ export class ConfUtils {
 
                     this.waitForConfirmation(listener, ta.acc.address, () => {
                         this.waitForConfirmation(listener, ta.acc.address, () => {
-                            console.log("Converted to msig.");
+                            console.log(ta.conf.alias + " converted to msig.");
                             resolve();
                         }, signedAggregateBonded.hash);
                         transactionHttp.announceAggregateBonded(signedAggregateBonded);

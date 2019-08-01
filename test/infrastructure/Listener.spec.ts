@@ -34,7 +34,7 @@ describe('Listener', () => {
 
     describe('onerror', () => {
         it('should reject because of wrong server url', async () => {
-            const listener = new Listener('https://notcorrecturl:0000');
+            const listener = new Listener('https://notcorrecturl:0');
             await listener.open()
                 .then((result) => {
                     listener.close();
@@ -42,7 +42,7 @@ describe('Listener', () => {
                 })
                 .catch((error) => {
                     listener.close();
-                    expect(error.message.toString()).to.be.equal("getaddrinfo ENOTFOUND notcorrecturl notcorrecturl:0000");
+                    expect(error.message.toString()).to.be.equal("getaddrinfo ENOTFOUND notcorrecturl notcorrecturl:0");
                 });
         });
     });

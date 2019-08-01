@@ -89,7 +89,7 @@ export class ChainRoutesApi {
      * Returns the current height of the blockchain.
      * @summary Get the current height of the chain
      */
-    public async getBlockchainHeight(options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: HeightInfoDTO; }> {
+    public async getBlockchainHeight(options: { headers: { [name: string]: string } } = { headers: {} }): Promise<HeightInfoDTO> {
         const localVarPath = this.basePath + '/chain/height';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -117,7 +117,7 @@ export class ChainRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: HeightInfoDTO; }>((resolve, reject) => {
+        return new Promise<HeightInfoDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -139,7 +139,7 @@ export class ChainRoutesApi {
      * Gets the current score of the blockchain. The higher the score, the better the chain. During synchronization, nodes try to get the best blockchain in the network.  The score for a block is derived from its difficulty and the time (in seconds) that has elapsed since the last block:      block score = difficulty − time elapsed since last block
      * @summary Get the current score of the chain
      */
-    public async getBlockchainScore(options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: BlockchainScoreDTO; }> {
+    public async getBlockchainScore(options: { headers: { [name: string]: string } } = { headers: {} }): Promise<BlockchainScoreDTO> {
         const localVarPath = this.basePath + '/chain/score';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -167,7 +167,7 @@ export class ChainRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: BlockchainScoreDTO; }>((resolve, reject) => {
+        return new Promise<BlockchainScoreDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);

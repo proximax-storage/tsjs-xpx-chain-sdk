@@ -91,7 +91,7 @@ export class MosaicRoutesApi {
      * @summary Get mosaic information
      * @param mosaicId The mosaic identifier.
      */
-    public async getMosaic(mosaicId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: MosaicInfoDTO; }> {
+    public async getMosaic(mosaicId: string, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<MosaicInfoDTO> {
         const localVarPath = this.basePath + '/mosaic/{mosaicId}'
             .replace('{' + 'mosaicId' + '}', encodeURIComponent(String(mosaicId)));
         let localVarQueryParameters: any = {};
@@ -125,7 +125,7 @@ export class MosaicRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: MosaicInfoDTO; }>((resolve, reject) => {
+        return new Promise<MosaicInfoDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -148,7 +148,7 @@ export class MosaicRoutesApi {
      * @summary Get mosaics information for an array of mosaics
      * @param mosaicIds
      */
-    public async getMosaics(mosaicIds: MosaicIds, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<MosaicInfoDTO>; }> {
+    public async getMosaics(mosaicIds: MosaicIds, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<Array<MosaicInfoDTO>> {
         const localVarPath = this.basePath + '/mosaic';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -182,7 +182,7 @@ export class MosaicRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<MosaicInfoDTO>; }>((resolve, reject) => {
+        return new Promise<Array<MosaicInfoDTO>>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -205,7 +205,7 @@ export class MosaicRoutesApi {
      * @summary Get readable names for a set of mosaics
      * @param mosaicIds
      */
-    public async getMosaicsNames(mosaicIds: MosaicIds, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: Array<MosaicNamesDTO>; }> {
+    public async getMosaicsNames(mosaicIds: MosaicIds, options: { headers: { [name: string]: string } } = { headers: {} }): Promise<Array<MosaicNamesDTO>> {
         const localVarPath = this.basePath + '/mosaic/names';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -239,7 +239,7 @@ export class MosaicRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: Array<MosaicNamesDTO>; }>((resolve, reject) => {
+        return new Promise<Array<MosaicNamesDTO>>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);

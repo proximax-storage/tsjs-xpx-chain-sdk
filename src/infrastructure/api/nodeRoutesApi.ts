@@ -89,7 +89,7 @@ export class NodeRoutesApi {
      * Supplies additional information about the application running on a node.
      * @summary Get the node information
      */
-    public async getNodeInfo(options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: NodeInfoDTO; }> {
+    public async getNodeInfo(options: { headers: { [name: string]: string } } = { headers: {} }): Promise<NodeInfoDTO> {
         const localVarPath = this.basePath + '/node/info';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -117,7 +117,7 @@ export class NodeRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: NodeInfoDTO; }>((resolve, reject) => {
+        return new Promise<NodeInfoDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -139,7 +139,7 @@ export class NodeRoutesApi {
      * Gets the node time at the moment the reply was sent and received.
      * @summary Get the node time
      */
-    public async getNodeTime(options: { headers: { [name: string]: string } } = { headers: {} }): Promise<{ response: http.ClientResponse; body: NodeTimeDTO; }> {
+    public async getNodeTime(options: { headers: { [name: string]: string } } = { headers: {} }): Promise<NodeTimeDTO> {
         const localVarPath = this.basePath + '/node/time';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -167,7 +167,7 @@ export class NodeRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.ClientResponse; body: NodeTimeDTO; }>((resolve, reject) => {
+        return new Promise<NodeTimeDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
