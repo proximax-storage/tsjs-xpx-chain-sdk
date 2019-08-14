@@ -161,14 +161,14 @@ export abstract class Transaction {
      * @internal
      */
     public versionToDTO(): number {
-        return (this.networkType << 8) + this.version;
+        return (this.networkType << 24) + this.version;
     }
 
     /**
      * @internal
      */
     public versionToHex(): string {
-        return '0x' + this.versionToDTO().toString(16);
+        return '0x' + (this.versionToDTO() >>> 0).toString(16); // ">>> 0" hack makes it efectively an Uint32
     }
 
     /**
@@ -193,7 +193,7 @@ export abstract class Transaction {
         const byteSize = 4 // size
                         + 64 // signature
                         + 32 // signer
-                        + 2 // version
+                        + 4 // version
                         + 2 // type
                         + 8 // maxFee
                         + 8; // deadline

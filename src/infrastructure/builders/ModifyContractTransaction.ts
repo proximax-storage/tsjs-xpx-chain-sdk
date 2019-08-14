@@ -39,7 +39,7 @@ export class Builder {
         this.verifiers = [];
     }
 
-    addFee(fee) {
+    addMaxFee(fee) {
         this.fee = fee;
         return this;
     }
@@ -131,7 +131,7 @@ export class Builder {
         const executorsVector = ModifyContractTransactionBuffer.createExecutorsVector(builder, executorsArray);
         const verifiersVector = ModifyContractTransactionBuffer.createVerifiersVector(builder, verifiersArray);
 
-        const size = 120 + 8 + this.hash.length/2 + 3 + 33*(this.customers.length + this.executors.length + this.verifiers.length);
+        const size = 122 + 8 + this.hash.length/2 + 3 + 33*(this.customers.length + this.executors.length + this.verifiers.length);
 
         ModifyContractTransactionBuffer.startModifyContractTransactionBuffer(builder);
         ModifyContractTransactionBuffer.addSize(builder, size);

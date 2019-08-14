@@ -66,7 +66,7 @@ describe('AccountRestrictionTransaction', () => {
     });
 
     describe('size', () => {
-        it('should return 148 for AccountAddressRestrictionModificationTransaction transaction byte size with 1 modification', () => {
+        it('should return 150 for AccountAddressRestrictionModificationTransaction transaction byte size with 1 modification', () => {
             const address = Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
             const addressRestrictionFilter = AccountRestrictionModification.createForAddress(
                 RestrictionModificationType.Add,
@@ -79,10 +79,10 @@ describe('AccountRestrictionTransaction', () => {
                 NetworkType.MIJIN_TEST,
             );
 
-            expect(addressRestrictionTransaction.size).to.be.equal(148);
+            expect(addressRestrictionTransaction.size).to.be.equal(150);
         });
 
-        it('should return 131 for AccountMosaicRestrictionModificationTransaction transaction byte size with 1 modification', () => {
+        it('should return 133 for AccountMosaicRestrictionModificationTransaction transaction byte size with 1 modification', () => {
             const mosaicId = new MosaicId([2262289484, 3405110546]);
             const mosaicRestrictionFilter = AccountRestrictionModification.createForMosaic(
                 RestrictionModificationType.Add,
@@ -94,10 +94,10 @@ describe('AccountRestrictionTransaction', () => {
                 [mosaicRestrictionFilter],
                 NetworkType.MIJIN_TEST,
             );
-            expect(mosaicRestrictionTransaction.size).to.be.equal(131);
+            expect(mosaicRestrictionTransaction.size).to.be.equal(133);
         });
 
-        it('should return 125 for AccountOperationRestrictionModificationTransaction transaction byte size with 1 modification', () => {
+        it('should return 127 for AccountOperationRestrictionModificationTransaction transaction byte size with 1 modification', () => {
             const operation = TransactionType.ADDRESS_ALIAS;
             const operationRestrictionFilter = AccountRestrictionModification.createForOperation(
                 RestrictionModificationType.Add,
@@ -109,7 +109,7 @@ describe('AccountRestrictionTransaction', () => {
                 [operationRestrictionFilter],
                 NetworkType.MIJIN_TEST,
             );
-            expect(operationRestrictionTransaction.size).to.be.equal(125);
+            expect(operationRestrictionTransaction.size).to.be.equal(127);
         });
     });
 
@@ -165,7 +165,7 @@ describe('AccountRestrictionTransaction', () => {
         const signedTransaction = addressRestrictionTransaction.signWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
-            240,
+            244,
             signedTransaction.payload.length,
         )).to.be.equal('0101009050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142');
 
@@ -207,7 +207,7 @@ describe('AccountRestrictionTransaction', () => {
         const signedTransaction = mosaicRestrictionTransaction.signWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
-            240,
+            244,
             signedTransaction.payload.length,
         )).to.be.equal('0201004CCCD78612DDF5CA');
 
@@ -249,7 +249,7 @@ describe('AccountRestrictionTransaction', () => {
         const signedTransaction = operationRestrictionTransaction.signWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
-            240,
+            244,
             signedTransaction.payload.length,
         )).to.be.equal('0401004E42');
 

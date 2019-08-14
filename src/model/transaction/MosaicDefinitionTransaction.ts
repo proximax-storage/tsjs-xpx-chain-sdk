@@ -122,7 +122,7 @@ export class MosaicDefinitionTransaction extends Transaction {
     protected buildTransaction(): VerifiableTransaction {
         let mosaicDefinitionTransaction = new Builder()
             .addDeadline(this.deadline.toDTO())
-            .addFee(this.maxFee.toDTO())
+            .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addDivisibility(this.mosaicProperties.divisibility)
             .addDuration(this.mosaicProperties.duration ? this.mosaicProperties.duration.toDTO() : [])

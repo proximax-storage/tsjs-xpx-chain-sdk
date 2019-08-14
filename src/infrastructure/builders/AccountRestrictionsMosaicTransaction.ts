@@ -18,13 +18,13 @@
  * @module transactions/AccountRestrictionsMosaicTransaction
  */
 import { TransactionType } from '../../model/transaction/TransactionType';
-import AccountRestrictionsMosaicTransactionBufferPackage from '../buffers/AccountRestrictionsMosaicTransactionBuffer';
+import AccountRestrictionsMosaicTransactionBufferPackage from '../buffers/AccountPropertiesTransactionBuffer';
 import AccountRestrictionsMosaicModificationTransactionSchema from '../schemas/AccountRestrictionsMosaicModificationTransactionSchema';
 import { VerifiableTransaction } from './VerifiableTransaction';
 
 const {
-    AccountRestrictionsMosaicTransactionBuffer,
-    RestrictionMosaicModificationBuffer,
+    AccountPropertiesTransactionBuffer,
+    PropertyModificationBuffer,
 } = AccountRestrictionsMosaicTransactionBufferPackage.Buffers;
 
 import {flatbuffers} from 'flatbuffers';
@@ -48,7 +48,7 @@ export class Builder {
         this.type = TransactionType.MODIFY_ACCOUNT_RESTRICTION_MOSAIC;
     }
 
-    addFee(maxFee) {
+    addMaxFee(maxFee) {
         this.maxFee = maxFee;
         return this;
     }
@@ -84,40 +84,50 @@ export class Builder {
         // Create modifications
         const modificationsArray: any = [];
         this.modifications.forEach((modification) => {
-            const addressModificationVector = RestrictionMosaicModificationBuffer
-                .createValueVector(builder, modification.value);
-            RestrictionMosaicModificationBuffer.startRestrictionMosaicModificationBuffer(builder);
-            RestrictionMosaicModificationBuffer.addModificationType(builder, modification.type);
-            RestrictionMosaicModificationBuffer.addValue(builder, addressModificationVector);
-            modificationsArray.push(RestrictionMosaicModificationBuffer.endRestrictionMosaicModificationBuffer(builder));
+            const mosaicModificationVector = PropertyModificationBuffer
+                .createValueVector(builder, new Uint8Array([
+                    (modification.value[0] & 0xff)        >> 0,
+                    (modification.value[0] & 0xff00)      >> 8,
+                    (modification.value[0] & 0xff0000)    >> 16,
+                    (modification.value[0] & 0xff000000)  >> 24,
+                    (modification.value[1] & 0xff)        >> 0,
+                    (modification.value[1] & 0xff00)      >> 8,
+                    (modification.value[1] & 0xff0000)    >> 16,
+                    (modification.value[1] & 0xff000000)  >> 24,
+                ]));
+            PropertyModificationBuffer.startPropertyModificationBuffer(builder);
+            PropertyModificationBuffer.addModificationType(builder, modification.type);
+            PropertyModificationBuffer.addValue(builder, mosaicModificationVector);
+            modificationsArray.push(PropertyModificationBuffer.endPropertyModificationBuffer(builder));
         });
 
         // Create vectors
-        const signatureVector = AccountRestrictionsMosaicTransactionBuffer
+        const signatureVector = AccountPropertiesTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-        const signerVector = AccountRestrictionsMosaicTransactionBuffer
+        const signerVector = AccountPropertiesTransactionBuffer
             .createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-        const deadlineVector = AccountRestrictionsMosaicTransactionBuffer
+        const deadlineVector = AccountPropertiesTransactionBuffer
             .createDeadlineVector(builder, this.deadline);
-        const feeVector = AccountRestrictionsMosaicTransactionBuffer
-            .createFeeVector(builder, this.maxFee);
-        const modificationVector = AccountRestrictionsMosaicTransactionBuffer
+        const feeVector = AccountPropertiesTransactionBuffer
+            .createMaxFeeVector(builder, this.maxFee);
+        const modificationVector = AccountPropertiesTransactionBuffer
             .createModificationsVector(builder, modificationsArray);
 
-        AccountRestrictionsMosaicTransactionBuffer.startAccountRestrictionsMosaicTransactionBuffer(builder);
-        AccountRestrictionsMosaicTransactionBuffer.addSize(builder, 122 + (9 * this.modifications.length));
-        AccountRestrictionsMosaicTransactionBuffer.addSignature(builder, signatureVector);
-        AccountRestrictionsMosaicTransactionBuffer.addSigner(builder, signerVector);
-        AccountRestrictionsMosaicTransactionBuffer.addVersion(builder, this.version);
-        AccountRestrictionsMosaicTransactionBuffer.addType(builder, this.type);
-        AccountRestrictionsMosaicTransactionBuffer.addFee(builder, feeVector);
-        AccountRestrictionsMosaicTransactionBuffer.addDeadline(builder, deadlineVector);
-        AccountRestrictionsMosaicTransactionBuffer.addRestrictionType(builder, this.restrictionType);
-        AccountRestrictionsMosaicTransactionBuffer.addModificationCount(builder, this.modifications.length);
-        AccountRestrictionsMosaicTransactionBuffer.addModifications(builder, modificationVector);
+        AccountPropertiesTransactionBuffer.startAccountPropertiesTransactionBuffer(builder);
+        AccountPropertiesTransactionBuffer.addSize(builder, 122 + 2 + (9 * this.modifications.length));
+        AccountPropertiesTransactionBuffer.addSignature(builder, signatureVector);
+        AccountPropertiesTransactionBuffer.addSigner(builder, signerVector);
+        AccountPropertiesTransactionBuffer.addVersion(builder, this.version);
+        AccountPropertiesTransactionBuffer.addType(builder, this.type);
+        AccountPropertiesTransactionBuffer.addMaxFee(builder, feeVector);
+        AccountPropertiesTransactionBuffer.addDeadline(builder, deadlineVector);
+        AccountPropertiesTransactionBuffer.addPropertyType(builder, this.restrictionType);
+        AccountPropertiesTransactionBuffer.addModificationCount(builder, this.modifications.length);
+        AccountPropertiesTransactionBuffer.addModifications(builder, modificationVector);
 
         // Calculate size
-        const codedAccountRestrictionsMosaic = AccountRestrictionsMosaicTransactionBuffer.endAccountRestrictionsMosaicTransactionBuffer(builder);
+        const codedAccountRestrictionsMosaic = AccountPropertiesTransactionBuffer
+            .endAccountPropertiesTransactionBuffer(builder);
         builder.finish(codedAccountRestrictionsMosaic);
 
         const bytes = builder.asUint8Array();

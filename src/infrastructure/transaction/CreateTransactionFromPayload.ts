@@ -65,7 +65,7 @@ export const CreateTransactionFromPayload = (transactionBinary: string): Transac
     const sizeLength        = 8;
     const signatureLength   = 128;
     const publicKeyLength   = 64;
-    const versionLength     = 4;
+    const versionLength     = 8;
     const typeLength        = 4;
     const feeLength         = 16;
     const deadlineLength    = 16;
@@ -371,8 +371,8 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                 Deadline.createFromDTO(deadline),
                 innerTransactionArray.map((innerTransaction) => {
                     const transaction = CreateTransaction(
-                        extractTransactionTypeFromHex(innerTransaction.substring(68, 72)),
-                        innerTransaction.substring(72),
+                        extractTransactionTypeFromHex(innerTransaction.substring(72, 76)),
+                        innerTransaction.substring(76),
                         networkType,
                         deadline,
                     );
@@ -395,8 +395,8 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                 Deadline.createFromDTO(deadline),
                 bondedInnerTransactionArray.map((innerTransaction) => {
                     const transaction = CreateTransaction(
-                        extractTransactionTypeFromHex(innerTransaction.substring(68, 72)),
-                        innerTransaction.substring(72),
+                        extractTransactionTypeFromHex(innerTransaction.substring(72, 76)),
+                        innerTransaction.substring(76),
                         networkType,
                         deadline,
                         );
@@ -428,7 +428,7 @@ const extractTransactionTypeFromHex = (hexValue: string): number => {
  * @returns {NetworkType}
  */
 const extractNetwork = (versionHex: string): NetworkType => {
-    const networkType = convert.hexToUint8(versionHex)[1];
+    const networkType = convert.hexToUint8(versionHex)[3];
     if (networkType === NetworkType.MAIN_NET) {
         return NetworkType.MAIN_NET;
     } else if (networkType === NetworkType.TEST_NET) {

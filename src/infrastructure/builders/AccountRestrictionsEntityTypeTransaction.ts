@@ -18,13 +18,13 @@
  * @module transactions/AccountRestrictionsEntityTypeTransaction
  */
 import { TransactionType } from '../../model/transaction/TransactionType';
-import AccountRestrictionsEntityTypeTransactionBufferPackage from '../buffers/AccountRestrictionsEntityTypeTransactionBuffer';
+import AccountRestrictionsEntityTypeTransactionBufferPackage from '../buffers/AccountPropertiesTransactionBuffer';
 import AccountRestrictionsEntityTypeModificationTransactionSchema from '../schemas/AccountRestrictionsEntityTypeModificationTransactionSchema';
 import { VerifiableTransaction } from './VerifiableTransaction';
 
 const {
-    AccountRestrictionsEntityTypeTransactionBuffer,
-    RestrictionEntityTypeModificationBuffer,
+    AccountPropertiesTransactionBuffer,
+    PropertyModificationBuffer,
 } = AccountRestrictionsEntityTypeTransactionBufferPackage.Buffers;
 
 import {flatbuffers} from 'flatbuffers';
@@ -48,7 +48,7 @@ export class Builder {
         this.type = TransactionType.MODIFY_ACCOUNT_RESTRICTION_OPERATION;
     }
 
-    addFee(maxFee) {
+    addMaxFee(maxFee) {
         this.maxFee = maxFee;
         return this;
     }
@@ -84,39 +84,44 @@ export class Builder {
         // Create modifications
         const modificationsArray: any = [];
         this.modifications.forEach((modification) => {
-            RestrictionEntityTypeModificationBuffer.startRestrictionEntityTypeModificationBuffer(builder);
-            RestrictionEntityTypeModificationBuffer.addModificationType(builder, modification.type);
-            RestrictionEntityTypeModificationBuffer.addValue(builder, modification.value);
-            modificationsArray.push(RestrictionEntityTypeModificationBuffer.endRestrictionEntityTypeModificationBuffer(builder));
+            const entityTypeModificationVector = PropertyModificationBuffer
+                .createValueVector(builder, new Uint8Array([
+                    (modification.value & 0xff)        >> 0,
+                    (modification.value & 0xff00)      >> 8,
+                ]));
+            PropertyModificationBuffer.startPropertyModificationBuffer(builder);
+            PropertyModificationBuffer.addModificationType(builder, modification.type);
+            PropertyModificationBuffer.addValue(builder, entityTypeModificationVector);
+            modificationsArray.push(PropertyModificationBuffer.endPropertyModificationBuffer(builder));
         });
 
         // Create vectors
-        const signatureVector = AccountRestrictionsEntityTypeTransactionBuffer
+        const signatureVector = AccountPropertiesTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-        const signerVector = AccountRestrictionsEntityTypeTransactionBuffer
+        const signerVector = AccountPropertiesTransactionBuffer
             .createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-        const deadlineVector = AccountRestrictionsEntityTypeTransactionBuffer
+        const deadlineVector = AccountPropertiesTransactionBuffer
             .createDeadlineVector(builder, this.deadline);
-        const feeVector = AccountRestrictionsEntityTypeTransactionBuffer
-            .createFeeVector(builder, this.maxFee);
-        const modificationVector = AccountRestrictionsEntityTypeTransactionBuffer
+        const feeVector = AccountPropertiesTransactionBuffer
+            .createMaxFeeVector(builder, this.maxFee);
+        const modificationVector = AccountPropertiesTransactionBuffer
             .createModificationsVector(builder, modificationsArray);
 
-        AccountRestrictionsEntityTypeTransactionBuffer.startAccountRestrictionsEntityTypeTransactionBuffer(builder);
-        AccountRestrictionsEntityTypeTransactionBuffer.addSize(builder, 122 + (3 * this.modifications.length));
-        AccountRestrictionsEntityTypeTransactionBuffer.addSignature(builder, signatureVector);
-        AccountRestrictionsEntityTypeTransactionBuffer.addSigner(builder, signerVector);
-        AccountRestrictionsEntityTypeTransactionBuffer.addVersion(builder, this.version);
-        AccountRestrictionsEntityTypeTransactionBuffer.addType(builder, this.type);
-        AccountRestrictionsEntityTypeTransactionBuffer.addFee(builder, feeVector);
-        AccountRestrictionsEntityTypeTransactionBuffer.addDeadline(builder, deadlineVector);
-        AccountRestrictionsEntityTypeTransactionBuffer.addRestrictionType(builder, this.restrictionType);
-        AccountRestrictionsEntityTypeTransactionBuffer.addModificationCount(builder, this.modifications.length);
-        AccountRestrictionsEntityTypeTransactionBuffer.addModifications(builder, modificationVector);
+        AccountPropertiesTransactionBuffer.startAccountPropertiesTransactionBuffer(builder);
+        AccountPropertiesTransactionBuffer.addSize(builder, 122 + 2 + (3 * this.modifications.length));
+        AccountPropertiesTransactionBuffer.addSignature(builder, signatureVector);
+        AccountPropertiesTransactionBuffer.addSigner(builder, signerVector);
+        AccountPropertiesTransactionBuffer.addVersion(builder, this.version);
+        AccountPropertiesTransactionBuffer.addType(builder, this.type);
+        AccountPropertiesTransactionBuffer.addMaxFee(builder, feeVector);
+        AccountPropertiesTransactionBuffer.addDeadline(builder, deadlineVector);
+        AccountPropertiesTransactionBuffer.addPropertyType(builder, this.restrictionType);
+        AccountPropertiesTransactionBuffer.addModificationCount(builder, this.modifications.length);
+        AccountPropertiesTransactionBuffer.addModifications(builder, modificationVector);
 
         // Calculate size
-        const codedAccountRestrictionsAddress = AccountRestrictionsEntityTypeTransactionBuffer
-            .endAccountRestrictionsEntityTypeTransactionBuffer(builder);
+        const codedAccountRestrictionsAddress = AccountPropertiesTransactionBuffer
+            .endAccountPropertiesTransactionBuffer(builder);
         builder.finish(codedAccountRestrictionsAddress);
 
         const bytes = builder.asUint8Array();

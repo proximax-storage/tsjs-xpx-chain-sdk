@@ -202,7 +202,7 @@ describe('SecretLockTransaction', () => {
     });
 
     describe('size', () => {
-        it('should return 202 for SecretLockTransaction with proof of 32 bytes', () => {
+        it('should return 204 for SecretLockTransaction with proof of 32 bytes', () => {
             const proof = 'B778A39A3663719DFC5E48C9D78431B1E45C2AF9DF538782BF199C189DABEAC7';
             const recipient = Address.createFromRawAddress('SDBDG4IT43MPCW2W4CBBCSJJT42AYALQN7A4VVWL');
             const secretLockTransaction = SecretLockTransaction.create(
@@ -214,7 +214,7 @@ describe('SecretLockTransaction', () => {
                 recipient,
                 NetworkType.MIJIN_TEST,
             );
-            expect(secretLockTransaction.size).to.be.equal(202);
+            expect(secretLockTransaction.size).to.be.equal(204);
         });
     });
 });

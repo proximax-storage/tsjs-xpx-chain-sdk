@@ -48,7 +48,7 @@ export class Builder {
         this.type = TransactionType.LINK_ACCOUNT;
     }
 
-    addFee(maxFee) {
+    addMaxFee(maxFee) {
         this.maxFee = maxFee;
         return this;
     }
@@ -85,16 +85,16 @@ export class Builder {
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
         const signerVector = AccountLinkTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
         const deadlineVector = AccountLinkTransactionBuffer.createDeadlineVector(builder, this.deadline);
-        const feeVector = AccountLinkTransactionBuffer.createFeeVector(builder, this.maxFee);
+        const feeVector = AccountLinkTransactionBuffer.createMaxFeeVector(builder, this.maxFee);
         const remoteAccountKeyVector = AccountLinkTransactionBuffer.createRemoteAccountKeyVector(builder, this.remoteAccountKey);
 
         AccountLinkTransactionBuffer.startAccountLinkTransactionBuffer(builder);
-        AccountLinkTransactionBuffer.addSize(builder, 153);
+        AccountLinkTransactionBuffer.addSize(builder, 122 + 33);
         AccountLinkTransactionBuffer.addSignature(builder, signatureVector);
         AccountLinkTransactionBuffer.addSigner(builder, signerVector);
         AccountLinkTransactionBuffer.addVersion(builder, this.version);
         AccountLinkTransactionBuffer.addType(builder, this.type);
-        AccountLinkTransactionBuffer.addFee(builder, feeVector);
+        AccountLinkTransactionBuffer.addMaxFee(builder, feeVector);
         AccountLinkTransactionBuffer.addDeadline(builder, deadlineVector);
         AccountLinkTransactionBuffer.addRemoteAccountKey(builder, remoteAccountKeyVector);
         AccountLinkTransactionBuffer.addLinkAction(builder, this.linkAction);

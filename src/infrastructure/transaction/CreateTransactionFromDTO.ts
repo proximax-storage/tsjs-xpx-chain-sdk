@@ -449,7 +449,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
 };
 
 export const extractNetworkType = (version: number): NetworkType => {
-    const networkType = parseInt(version.toString(16).substr(0, 2), 16);
+    const networkType = parseInt((version >>> 0).toString(16).substr(0, 2), 16); // ">>> 0" hack makes it efectively an Uint32
     if (networkType === NetworkType.MAIN_NET) {
         return NetworkType.MAIN_NET;
     } else if (networkType === NetworkType.TEST_NET) {
@@ -467,7 +467,7 @@ export const extractNetworkType = (version: number): NetworkType => {
 };
 
 export const extractTransactionVersion = (version: number): number => {
-    return parseInt(version.toString(16).substr(2, 2), 16);
+    return parseInt((version >>> 0).toString(16).substr(2, 4), 16); // ">>> 0" hack makes it efectively an Uint32
 };
 
 /**

@@ -85,7 +85,7 @@ export class ModifyContractTransaction extends Transaction {
             .addType(this.type)
             .addVersion(this.versionToDTO())
             .addDeadline(this.deadline.toDTO())
-            .addFee(this.maxFee.toDTO())
+            .addMaxFee(this.maxFee.toDTO())
             .addHash(this.hash)
             .addDurationDelta(this.durationDelta.toDTO())
             .addCustomers(this.customers)

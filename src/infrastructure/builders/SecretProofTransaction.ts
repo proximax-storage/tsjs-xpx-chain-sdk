@@ -50,7 +50,7 @@ export class Builder {
         this.type = TransactionType.SECRET_PROOF;
     }
 
-    addFee(maxFee) {
+    addMaxFee(maxFee) {
         this.maxFee = maxFee;
         return this;
     }
@@ -97,7 +97,7 @@ export class Builder {
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
         const signerVector = SecretProofTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
         const deadlineVector = SecretProofTransactionBuffer.createDeadlineVector(builder, this.deadline);
-        const feeVector = SecretProofTransactionBuffer.createFeeVector(builder, this.maxFee);
+        const feeVector = SecretProofTransactionBuffer.createMaxFeeVector(builder, this.maxFee);
         const byteSecret = convert.hexToUint8(64 > this.secret.length ? this.secret + '0'.repeat(64 - this.secret.length) : this.secret);
         const secretVector = SecretProofTransactionBuffer.createSecretVector(builder, byteSecret);
         const recipientVector = SecretProofTransactionBuffer.createRecipientVector(builder, this.recipient);
@@ -105,12 +105,12 @@ export class Builder {
         const proofVector = SecretProofTransactionBuffer.createProofVector(builder, byteProof);
 
         SecretProofTransactionBuffer.startSecretProofTransactionBuffer(builder);
-        SecretProofTransactionBuffer.addSize(builder, 180 + byteProof.length);
+        SecretProofTransactionBuffer.addSize(builder, 122 + 60 + byteProof.length);
         SecretProofTransactionBuffer.addSignature(builder, signatureVector);
         SecretProofTransactionBuffer.addSigner(builder, signerVector);
         SecretProofTransactionBuffer.addVersion(builder, this.version);
         SecretProofTransactionBuffer.addType(builder, this.type);
-        SecretProofTransactionBuffer.addFee(builder, feeVector);
+        SecretProofTransactionBuffer.addMaxFee(builder, feeVector);
         SecretProofTransactionBuffer.addDeadline(builder, deadlineVector);
         SecretProofTransactionBuffer.addHashAlgorithm(builder, this.hashAlgorithm);
         SecretProofTransactionBuffer.addSecret(builder, secretVector);

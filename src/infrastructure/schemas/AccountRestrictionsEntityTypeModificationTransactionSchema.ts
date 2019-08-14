@@ -35,7 +35,7 @@ export default new Schema([
     uint('size'),
     array('signature'),
     array('signer'),
-    ushort('version'),
+    uint('version'),
     ushort('type'),
     array('fee', TypeSize.INT),
     array('deadline', TypeSize.INT),
@@ -43,6 +43,6 @@ export default new Schema([
     ubyte('modificationCount'),
     tableArray('modifications', [
         ubyte('modificationType'),
-        ushort('value')
+        array('value', TypeSize.BYTE)
     ])
 ]);

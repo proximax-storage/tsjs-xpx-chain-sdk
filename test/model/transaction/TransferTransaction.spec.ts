@@ -77,7 +77,7 @@ describe('TransferTransaction', () => {
         const signedTransaction = transferTransaction.signWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
-            240,
+            244,
             signedTransaction.payload.length,
         )).to.be.equal('9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1420D000000746573742D6D657373616765');
     });
@@ -101,7 +101,7 @@ describe('TransferTransaction', () => {
         const signedTransaction = transferTransaction.signWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
-            240,
+            244,
             signedTransaction.payload.length,
         )).to.be.equal(
             '9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1420D000100746573742D6D657373616765' +
@@ -129,7 +129,7 @@ describe('TransferTransaction', () => {
         const signedTransaction = transferTransaction.signWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
-            240,
+            244,
             signedTransaction.payload.length,
         )).to.be.equal('9151776168D24257D8000000000000000000000000000000000D000100746573742D6D657373616765' +
             '44B262C46CEABB8500E1F50500000000');
@@ -152,8 +152,8 @@ describe('TransferTransaction', () => {
         const signedTransaction = transferTransaction.signWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
-            240,
-            290,
+            244,
+            294,
         )).to.be.equal('9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142');
     });
 
@@ -174,13 +174,13 @@ describe('TransferTransaction', () => {
         const signedTransaction = transferTransaction.signWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
-            240,
-            290,
+            244,
+            294,
         )).to.be.equal('9151776168D24257D800000000000000000000000000000000');
     });
 
     describe('size', () => {
-        it('should return 158 for TransferTransaction with 1 mosaic and message NEM', () => {
+        it('should return 160 for TransferTransaction with 1 mosaic and message NEM', () => {
             const transaction = TransferTransaction.create(
                 Deadline.create(),
                 Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC'),
@@ -190,7 +190,7 @@ describe('TransferTransaction', () => {
                 PlainMessage.create('NEM'),
                 NetworkType.MIJIN_TEST,
             );
-            expect(transaction.size).to.be.equal(158);
+            expect(transaction.size).to.be.equal(160);
         });
     });
 });

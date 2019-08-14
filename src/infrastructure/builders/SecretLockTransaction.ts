@@ -52,7 +52,7 @@ export class Builder {
         this.type = TransactionType.SECRET_LOCK;
     }
 
-    addFee(maxFee) {
+    addMaxFee(maxFee) {
         this.maxFee = maxFee;
         return this;
     }
@@ -110,7 +110,7 @@ export class Builder {
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
         const signerVector = SecretLockTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
         const deadlineVector = SecretLockTransactionBuffer.createDeadlineVector(builder, this.deadline);
-        const feeVector = SecretLockTransactionBuffer.createFeeVector(builder, this.maxFee);
+        const feeVector = SecretLockTransactionBuffer.createMaxFeeVector(builder, this.maxFee);
         const mosaicIdVector = SecretLockTransactionBuffer.createMosaicIdVector(builder, this.mosaicId);
         const mosaicAmountVector = SecretLockTransactionBuffer.createMosaicAmountVector(builder, this.mosaicAmount);
         const durationVector = SecretLockTransactionBuffer.createDurationVector(builder, this.duration);
@@ -119,12 +119,12 @@ export class Builder {
         const recipientVector = SecretLockTransactionBuffer.createRecipientVector(builder, this.recipient);
 
         SecretLockTransactionBuffer.startSecretLockTransactionBuffer(builder);
-        SecretLockTransactionBuffer.addSize(builder, 202);
+        SecretLockTransactionBuffer.addSize(builder, 122 + 82);
         SecretLockTransactionBuffer.addSignature(builder, signatureVector);
         SecretLockTransactionBuffer.addSigner(builder, signerVector);
         SecretLockTransactionBuffer.addVersion(builder, this.version);
         SecretLockTransactionBuffer.addType(builder, this.type);
-        SecretLockTransactionBuffer.addFee(builder, feeVector);
+        SecretLockTransactionBuffer.addMaxFee(builder, feeVector);
         SecretLockTransactionBuffer.addDeadline(builder, deadlineVector);
         SecretLockTransactionBuffer.addMosaicId(builder, mosaicIdVector);
         SecretLockTransactionBuffer.addMosaicAmount(builder, mosaicAmountVector);

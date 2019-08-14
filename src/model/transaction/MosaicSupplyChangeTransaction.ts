@@ -117,7 +117,7 @@ export class MosaicSupplyChangeTransaction extends Transaction {
     protected buildTransaction(): VerifiableTransaction {
         return new Builder()
             .addDeadline(this.deadline.toDTO())
-            .addFee(this.maxFee.toDTO())
+            .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addMosaicId(this.mosaicId.id.toDTO())
             .addDirection(this.direction)

@@ -15,7 +15,7 @@ Catapult.Buffers = Catapult.Buffers || {};
 /**
  * @constructor
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer = function() {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer = function() {
   /**
    * @type {flatbuffers.ByteBuffer}
    */
@@ -30,9 +30,9 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer = function() {
 /**
  * @param {number} i
  * @param {flatbuffers.ByteBuffer} bb
- * @returns {Catapult.Buffers.MosaicSupplyChangeTransactionBuffer}
+ * @returns {Catapult.Buffers.CatapultUpgradeTransactionBuffer}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.__init = function(i, bb) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.__init = function(i, bb) {
   this.bb_pos = i;
   this.bb = bb;
   return this;
@@ -40,17 +40,17 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.__init = function
 
 /**
  * @param {flatbuffers.ByteBuffer} bb
- * @param {Catapult.Buffers.MosaicSupplyChangeTransactionBuffer=} obj
- * @returns {Catapult.Buffers.MosaicSupplyChangeTransactionBuffer}
+ * @param {Catapult.Buffers.CatapultUpgradeTransactionBuffer=} obj
+ * @returns {Catapult.Buffers.CatapultUpgradeTransactionBuffer}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.getRootAsMosaicSupplyChangeTransactionBuffer = function(bb, obj) {
-  return (obj || new Catapult.Buffers.MosaicSupplyChangeTransactionBuffer).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.getRootAsCatapultUpgradeTransactionBuffer = function(bb, obj) {
+  return (obj || new Catapult.Buffers.CatapultUpgradeTransactionBuffer).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
  * @returns {number}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.size = function() {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.size = function() {
   var offset = this.bb.__offset(this.bb_pos, 4);
   return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
 };
@@ -59,7 +59,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.size = function()
  * @param {number} index
  * @returns {number}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.signature = function(index) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.signature = function(index) {
   var offset = this.bb.__offset(this.bb_pos, 6);
   return offset ? this.bb.readUint8(this.bb.__vector(this.bb_pos + offset) + index) : 0;
 };
@@ -67,7 +67,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.signature = funct
 /**
  * @returns {number}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.signatureLength = function() {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.signatureLength = function() {
   var offset = this.bb.__offset(this.bb_pos, 6);
   return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
@@ -75,7 +75,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.signatureLength =
 /**
  * @returns {Uint8Array}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.signatureArray = function() {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.signatureArray = function() {
   var offset = this.bb.__offset(this.bb_pos, 6);
   return offset ? new Uint8Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -84,7 +84,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.signatureArray = 
  * @param {number} index
  * @returns {number}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.signer = function(index) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.signer = function(index) {
   var offset = this.bb.__offset(this.bb_pos, 8);
   return offset ? this.bb.readUint8(this.bb.__vector(this.bb_pos + offset) + index) : 0;
 };
@@ -92,7 +92,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.signer = function
 /**
  * @returns {number}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.signerLength = function() {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.signerLength = function() {
   var offset = this.bb.__offset(this.bb_pos, 8);
   return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
@@ -100,7 +100,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.signerLength = fu
 /**
  * @returns {Uint8Array}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.signerArray = function() {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.signerArray = function() {
   var offset = this.bb.__offset(this.bb_pos, 8);
   return offset ? new Uint8Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -108,7 +108,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.signerArray = fun
 /**
  * @returns {number}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.version = function() {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.version = function() {
   var offset = this.bb.__offset(this.bb_pos, 10);
   return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
 };
@@ -116,7 +116,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.version = functio
 /**
  * @returns {number}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.type = function() {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.type = function() {
   var offset = this.bb.__offset(this.bb_pos, 12);
   return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
 };
@@ -125,7 +125,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.type = function()
  * @param {number} index
  * @returns {number}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.maxFee = function(index) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.maxFee = function(index) {
   var offset = this.bb.__offset(this.bb_pos, 14);
   return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
@@ -133,7 +133,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.maxFee = function
 /**
  * @returns {number}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.maxFeeLength = function() {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.maxFeeLength = function() {
   var offset = this.bb.__offset(this.bb_pos, 14);
   return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
@@ -141,7 +141,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.maxFeeLength = fu
 /**
  * @returns {Uint32Array}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.maxFeeArray = function() {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.maxFeeArray = function() {
   var offset = this.bb.__offset(this.bb_pos, 14);
   return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -150,7 +150,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.maxFeeArray = fun
  * @param {number} index
  * @returns {number}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.deadline = function(index) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.deadline = function(index) {
   var offset = this.bb.__offset(this.bb_pos, 16);
   return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
@@ -158,7 +158,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.deadline = functi
 /**
  * @returns {number}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.deadlineLength = function() {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.deadlineLength = function() {
   var offset = this.bb.__offset(this.bb_pos, 16);
   return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
@@ -166,7 +166,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.deadlineLength = 
 /**
  * @returns {Uint32Array}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.deadlineArray = function() {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.deadlineArray = function() {
   var offset = this.bb.__offset(this.bb_pos, 16);
   return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -175,7 +175,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.deadlineArray = f
  * @param {number} index
  * @returns {number}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.mosaicId = function(index) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.upgradePeriod = function(index) {
   var offset = this.bb.__offset(this.bb_pos, 18);
   return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
@@ -183,7 +183,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.mosaicId = functi
 /**
  * @returns {number}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.mosaicIdLength = function() {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.upgradePeriodLength = function() {
   var offset = this.bb.__offset(this.bb_pos, 18);
   return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
@@ -191,56 +191,48 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.mosaicIdLength = 
 /**
  * @returns {Uint32Array}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.mosaicIdArray = function() {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.upgradePeriodArray = function() {
   var offset = this.bb.__offset(this.bb_pos, 18);
   return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
 
 /**
+ * @param {number} index
  * @returns {number}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.direction = function() {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.newCatapultVersion = function(index) {
   var offset = this.bb.__offset(this.bb_pos, 20);
-  return offset ? this.bb.readUint8(this.bb_pos + offset) : 0;
-};
-
-/**
- * @param {number} index
- * @returns {number}
- */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.delta = function(index) {
-  var offset = this.bb.__offset(this.bb_pos, 22);
   return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 
 /**
  * @returns {number}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.deltaLength = function() {
-  var offset = this.bb.__offset(this.bb_pos, 22);
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.newCatapultVersionLength = function() {
+  var offset = this.bb.__offset(this.bb_pos, 20);
   return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 
 /**
  * @returns {Uint32Array}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.deltaArray = function() {
-  var offset = this.bb.__offset(this.bb_pos, 22);
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.prototype.newCatapultVersionArray = function() {
+  var offset = this.bb.__offset(this.bb_pos, 20);
   return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
 
 /**
  * @param {flatbuffers.Builder} builder
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.startMosaicSupplyChangeTransactionBuffer = function(builder) {
-  builder.startObject(10);
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.startCatapultUpgradeTransactionBuffer = function(builder) {
+  builder.startObject(9);
 };
 
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} size
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addSize = function(builder, size) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.addSize = function(builder, size) {
   builder.addFieldInt32(0, size, 0);
 };
 
@@ -248,7 +240,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addSize = function(builder,
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} signatureOffset
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addSignature = function(builder, signatureOffset) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.addSignature = function(builder, signatureOffset) {
   builder.addFieldOffset(1, signatureOffset, 0);
 };
 
@@ -257,7 +249,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addSignature = function(bui
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.createSignatureVector = function(builder, data) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.createSignatureVector = function(builder, data) {
   builder.startVector(1, data.length, 1);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt8(data[i]);
@@ -269,7 +261,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.createSignatureVector = fun
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.startSignatureVector = function(builder, numElems) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.startSignatureVector = function(builder, numElems) {
   builder.startVector(1, numElems, 1);
 };
 
@@ -277,7 +269,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.startSignatureVector = func
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} signerOffset
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addSigner = function(builder, signerOffset) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.addSigner = function(builder, signerOffset) {
   builder.addFieldOffset(2, signerOffset, 0);
 };
 
@@ -286,7 +278,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addSigner = function(builde
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.createSignerVector = function(builder, data) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.createSignerVector = function(builder, data) {
   builder.startVector(1, data.length, 1);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt8(data[i]);
@@ -298,7 +290,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.createSignerVector = functi
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.startSignerVector = function(builder, numElems) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.startSignerVector = function(builder, numElems) {
   builder.startVector(1, numElems, 1);
 };
 
@@ -306,7 +298,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.startSignerVector = functio
  * @param {flatbuffers.Builder} builder
  * @param {number} version
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addVersion = function(builder, version) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.addVersion = function(builder, version) {
   builder.addFieldInt32(3, version, 0);
 };
 
@@ -314,7 +306,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addVersion = function(build
  * @param {flatbuffers.Builder} builder
  * @param {number} type
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addType = function(builder, type) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.addType = function(builder, type) {
   builder.addFieldInt16(4, type, 0);
 };
 
@@ -322,7 +314,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addType = function(builder,
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} maxFeeOffset
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addMaxFee = function(builder, maxFeeOffset) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.addMaxFee = function(builder, maxFeeOffset) {
   builder.addFieldOffset(5, maxFeeOffset, 0);
 };
 
@@ -331,7 +323,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addMaxFee = function(builde
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.createMaxFeeVector = function(builder, data) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.createMaxFeeVector = function(builder, data) {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -343,7 +335,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.createMaxFeeVector = functi
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.startMaxFeeVector = function(builder, numElems) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.startMaxFeeVector = function(builder, numElems) {
   builder.startVector(4, numElems, 4);
 };
 
@@ -351,7 +343,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.startMaxFeeVector = functio
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} deadlineOffset
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addDeadline = function(builder, deadlineOffset) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.addDeadline = function(builder, deadlineOffset) {
   builder.addFieldOffset(6, deadlineOffset, 0);
 };
 
@@ -360,7 +352,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addDeadline = function(buil
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.createDeadlineVector = function(builder, data) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.createDeadlineVector = function(builder, data) {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -372,16 +364,16 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.createDeadlineVector = func
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.startDeadlineVector = function(builder, numElems) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.startDeadlineVector = function(builder, numElems) {
   builder.startVector(4, numElems, 4);
 };
 
 /**
  * @param {flatbuffers.Builder} builder
- * @param {flatbuffers.Offset} mosaicIdOffset
+ * @param {flatbuffers.Offset} upgradePeriodOffset
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addMosaicId = function(builder, mosaicIdOffset) {
-  builder.addFieldOffset(7, mosaicIdOffset, 0);
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.addUpgradePeriod = function(builder, upgradePeriodOffset) {
+  builder.addFieldOffset(7, upgradePeriodOffset, 0);
 };
 
 /**
@@ -389,7 +381,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addMosaicId = function(buil
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.createMosaicIdVector = function(builder, data) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.createUpgradePeriodVector = function(builder, data) {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -401,24 +393,16 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.createMosaicIdVector = func
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.startMosaicIdVector = function(builder, numElems) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.startUpgradePeriodVector = function(builder, numElems) {
   builder.startVector(4, numElems, 4);
 };
 
 /**
  * @param {flatbuffers.Builder} builder
- * @param {number} direction
+ * @param {flatbuffers.Offset} newCatapultVersionOffset
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addDirection = function(builder, direction) {
-  builder.addFieldInt8(8, direction, 0);
-};
-
-/**
- * @param {flatbuffers.Builder} builder
- * @param {flatbuffers.Offset} deltaOffset
- */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addDelta = function(builder, deltaOffset) {
-  builder.addFieldOffset(9, deltaOffset, 0);
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.addNewCatapultVersion = function(builder, newCatapultVersionOffset) {
+  builder.addFieldOffset(8, newCatapultVersionOffset, 0);
 };
 
 /**
@@ -426,7 +410,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addDelta = function(builder
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.createDeltaVector = function(builder, data) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.createNewCatapultVersionVector = function(builder, data) {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt32(data[i]);
@@ -438,7 +422,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.createDeltaVector = functio
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.startDeltaVector = function(builder, numElems) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.startNewCatapultVersionVector = function(builder, numElems) {
   builder.startVector(4, numElems, 4);
 };
 
@@ -446,7 +430,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.startDeltaVector = function
  * @param {flatbuffers.Builder} builder
  * @returns {flatbuffers.Offset}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.endMosaicSupplyChangeTransactionBuffer = function(builder) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.endCatapultUpgradeTransactionBuffer = function(builder) {
   var offset = builder.endObject();
   return offset;
 };
@@ -455,7 +439,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.endMosaicSupplyChangeTransa
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} offset
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.finishMosaicSupplyChangeTransactionBufferBuffer = function(builder, offset) {
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.finishCatapultUpgradeTransactionBufferBuffer = function(builder, offset) {
   builder.finish(offset);
 };
 
@@ -468,24 +452,22 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.finishMosaicSupplyChangeTra
  * @param {number} type
  * @param {flatbuffers.Offset} maxFeeOffset
  * @param {flatbuffers.Offset} deadlineOffset
- * @param {flatbuffers.Offset} mosaicIdOffset
- * @param {number} direction
- * @param {flatbuffers.Offset} deltaOffset
+ * @param {flatbuffers.Offset} upgradePeriodOffset
+ * @param {flatbuffers.Offset} newCatapultVersionOffset
  * @returns {flatbuffers.Offset}
  */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.createMosaicSupplyChangeTransactionBuffer = function(builder, size, signatureOffset, signerOffset, version, type, maxFeeOffset, deadlineOffset, mosaicIdOffset, direction, deltaOffset) {
-  Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.startMosaicSupplyChangeTransactionBuffer(builder);
-  Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addSize(builder, size);
-  Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addSignature(builder, signatureOffset);
-  Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addSigner(builder, signerOffset);
-  Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addVersion(builder, version);
-  Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addType(builder, type);
-  Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addMaxFee(builder, maxFeeOffset);
-  Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addDeadline(builder, deadlineOffset);
-  Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addMosaicId(builder, mosaicIdOffset);
-  Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addDirection(builder, direction);
-  Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addDelta(builder, deltaOffset);
-  return Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.endMosaicSupplyChangeTransactionBuffer(builder);
+Catapult.Buffers.CatapultUpgradeTransactionBuffer.createCatapultUpgradeTransactionBuffer = function(builder, size, signatureOffset, signerOffset, version, type, maxFeeOffset, deadlineOffset, upgradePeriodOffset, newCatapultVersionOffset) {
+  Catapult.Buffers.CatapultUpgradeTransactionBuffer.startCatapultUpgradeTransactionBuffer(builder);
+  Catapult.Buffers.CatapultUpgradeTransactionBuffer.addSize(builder, size);
+  Catapult.Buffers.CatapultUpgradeTransactionBuffer.addSignature(builder, signatureOffset);
+  Catapult.Buffers.CatapultUpgradeTransactionBuffer.addSigner(builder, signerOffset);
+  Catapult.Buffers.CatapultUpgradeTransactionBuffer.addVersion(builder, version);
+  Catapult.Buffers.CatapultUpgradeTransactionBuffer.addType(builder, type);
+  Catapult.Buffers.CatapultUpgradeTransactionBuffer.addMaxFee(builder, maxFeeOffset);
+  Catapult.Buffers.CatapultUpgradeTransactionBuffer.addDeadline(builder, deadlineOffset);
+  Catapult.Buffers.CatapultUpgradeTransactionBuffer.addUpgradePeriod(builder, upgradePeriodOffset);
+  Catapult.Buffers.CatapultUpgradeTransactionBuffer.addNewCatapultVersion(builder, newCatapultVersionOffset);
+  return Catapult.Buffers.CatapultUpgradeTransactionBuffer.endCatapultUpgradeTransactionBuffer(builder);
 }
 
 // Exports for Node.js and RequireJS

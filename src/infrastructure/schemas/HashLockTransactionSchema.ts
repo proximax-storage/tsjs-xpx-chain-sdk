@@ -33,7 +33,7 @@ const schema = new Schema([
     uint('size'),
     array('signature'),
     array('signer'),
-    ushort('version'),
+    uint('version'),
     ushort('type'),
     array('fee', TypeSize.INT),
     array('deadline', TypeSize.INT),

@@ -15,16 +15,16 @@
  */
 import { Convert as convert } from '../../core/format';
 import { TransactionType } from '../../model/transaction/TransactionType';
-import MultisigModificationTransactionBufferPackage from '../buffers/MultisigModificationTransactionBuffer';
+import ModifyMultisigAccountTransactionBufferPackage from '../buffers/MultisigModificationTransactionBuffer';
 import MultisigModificationTransactionSchema from '../schemas/MultisigModificationTransactionSchema';
 import { VerifiableTransaction } from './VerifiableTransaction';
 
 import {flatbuffers} from 'flatbuffers';
 
 const {
-    MultisigModificationTransactionBuffer,
+    ModifyMultisigAccountTransactionBuffer,
     CosignatoryModificationBuffer,
-} = MultisigModificationTransactionBufferPackage.Buffers;
+} = ModifyMultisigAccountTransactionBufferPackage.Buffers;
 
 /**
  * @module transactions/MultisigModificationTransaction
@@ -49,7 +49,7 @@ export class Builder {
         this.type = TransactionType.MODIFY_MULTISIG_ACCOUNT;
     }
 
-    addFee(maxFee) {
+    addMaxFee(maxFee) {
         this.maxFee = maxFee;
         return this;
     }
@@ -99,33 +99,33 @@ export class Builder {
         });
 
         // Create vectors
-        const signatureVector = MultisigModificationTransactionBuffer
+        const signatureVector = ModifyMultisigAccountTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-        const signerVector = MultisigModificationTransactionBuffer
+        const signerVector = ModifyMultisigAccountTransactionBuffer
             .createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-        const deadlineVector = MultisigModificationTransactionBuffer
+        const deadlineVector = ModifyMultisigAccountTransactionBuffer
             .createDeadlineVector(builder, this.deadline);
-        const feeVector = MultisigModificationTransactionBuffer
-            .createFeeVector(builder, this.maxFee);
-        const modificationsVector = MultisigModificationTransactionBuffer
+        const feeVector = ModifyMultisigAccountTransactionBuffer
+            .createMaxFeeVector(builder, this.maxFee);
+        const modificationsVector = ModifyMultisigAccountTransactionBuffer
             .createModificationsVector(builder, modificationsArray);
 
-        MultisigModificationTransactionBuffer.startMultisigModificationTransactionBuffer(builder);
-        MultisigModificationTransactionBuffer.addSize(builder, 123 + (33 * this.modifications.length));
-        MultisigModificationTransactionBuffer.addSignature(builder, signatureVector);
-        MultisigModificationTransactionBuffer.addSigner(builder, signerVector);
-        MultisigModificationTransactionBuffer.addVersion(builder, this.version);
-        MultisigModificationTransactionBuffer.addType(builder, this.type);
-        MultisigModificationTransactionBuffer.addFee(builder, feeVector);
-        MultisigModificationTransactionBuffer.addDeadline(builder, deadlineVector);
-        MultisigModificationTransactionBuffer.addMinRemovalDelta(builder, this.minRemovalDelta);
-        MultisigModificationTransactionBuffer.addMinApprovalDelta(builder, this.minApprovalDelta);
-        MultisigModificationTransactionBuffer.addNumModifications(builder, this.modifications.length);
-        MultisigModificationTransactionBuffer.addModifications(builder, modificationsVector);
+        ModifyMultisigAccountTransactionBuffer.startModifyMultisigAccountTransactionBuffer(builder);
+        ModifyMultisigAccountTransactionBuffer.addSize(builder, 122 + 3 + (33 * this.modifications.length));
+        ModifyMultisigAccountTransactionBuffer.addSignature(builder, signatureVector);
+        ModifyMultisigAccountTransactionBuffer.addSigner(builder, signerVector);
+        ModifyMultisigAccountTransactionBuffer.addVersion(builder, this.version);
+        ModifyMultisigAccountTransactionBuffer.addType(builder, this.type);
+        ModifyMultisigAccountTransactionBuffer.addMaxFee(builder, feeVector);
+        ModifyMultisigAccountTransactionBuffer.addDeadline(builder, deadlineVector);
+        ModifyMultisigAccountTransactionBuffer.addMinRemovalDelta(builder, this.minRemovalDelta);
+        ModifyMultisigAccountTransactionBuffer.addMinApprovalDelta(builder, this.minApprovalDelta);
+        ModifyMultisigAccountTransactionBuffer.addNumModifications(builder, this.modifications.length);
+        ModifyMultisigAccountTransactionBuffer.addModifications(builder, modificationsVector);
 
         // Calculate size
-        const codedMultisigAggregate = MultisigModificationTransactionBuffer
-            .endMultisigModificationTransactionBuffer(builder);
+        const codedMultisigAggregate = ModifyMultisigAccountTransactionBuffer
+            .endModifyMultisigAccountTransactionBuffer(builder);
         builder.finish(codedMultisigAggregate);
 
         const bytes = builder.asUint8Array();

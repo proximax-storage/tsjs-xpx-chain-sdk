@@ -18,7 +18,7 @@
  * @module transactions/HashLockTransaction
  */
 import { Convert as convert } from '../../core/format';
-import * as HashLockTransactionBufferPackage from '../buffers/HashLockTransactionBuffer';
+import * as LockFundsTransactionBufferPackage from '../buffers/HashLockTransactionBuffer';
 import HashLockTransactionSchema from '../schemas/HashLockTransactionSchema';
 import { VerifiableTransaction } from './VerifiableTransaction';
 import { TransactionType } from '../../model/transaction/TransactionType';
@@ -26,8 +26,8 @@ import { TransactionType } from '../../model/transaction/TransactionType';
 import {flatbuffers} from 'flatbuffers';
 
 const {
-    HashLockTransactionBuffer,
-} = HashLockTransactionBufferPackage.default.Buffers;
+    LockFundsTransactionBuffer,
+} = LockFundsTransactionBufferPackage.default.Buffers;
 
 export default class HashLockTransaction extends VerifiableTransaction {
     constructor(bytes) {
@@ -50,7 +50,7 @@ export class Builder {
         this.type = TransactionType.LOCK;
     }
 
-    addFee(maxFee) {
+    addMaxFee(maxFee) {
         this.maxFee = maxFee;
         return this;
     }
@@ -94,31 +94,31 @@ export class Builder {
         const builder = new flatbuffers.Builder(1);
 
         // Create vectors
-        const signatureVector = HashLockTransactionBuffer
+        const signatureVector = LockFundsTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-        const signerVector = HashLockTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-        const deadlineVector = HashLockTransactionBuffer.createDeadlineVector(builder, this.deadline);
-        const feeVector = HashLockTransactionBuffer.createFeeVector(builder, this.maxFee);
-        const mosaicIdVector = HashLockTransactionBuffer.createMosaicIdVector(builder, this.mosaicId);
-        const mosaicAmountVector = HashLockTransactionBuffer.createMosaicAmountVector(builder, this.mosaicAmount);
-        const durationVector = HashLockTransactionBuffer.createDurationVector(builder, this.duration);
+        const signerVector = LockFundsTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
+        const deadlineVector = LockFundsTransactionBuffer.createDeadlineVector(builder, this.deadline);
+        const feeVector = LockFundsTransactionBuffer.createMaxFeeVector(builder, this.maxFee);
+        const mosaicIdVector = LockFundsTransactionBuffer.createMosaicIdVector(builder, this.mosaicId);
+        const mosaicAmountVector = LockFundsTransactionBuffer.createMosaicAmountVector(builder, this.mosaicAmount);
+        const durationVector = LockFundsTransactionBuffer.createDurationVector(builder, this.duration);
         const byteHash = convert.hexToUint8(this.hash);
-        const hashVector = HashLockTransactionBuffer.createHashVector(builder, byteHash);
+        const hashVector = LockFundsTransactionBuffer.createHashVector(builder, byteHash);
 
-        HashLockTransactionBuffer.startHashLockTransactionBuffer(builder);
-        HashLockTransactionBuffer.addSize(builder, 176);
-        HashLockTransactionBuffer.addSignature(builder, signatureVector);
-        HashLockTransactionBuffer.addSigner(builder, signerVector);
-        HashLockTransactionBuffer.addVersion(builder, this.version);
-        HashLockTransactionBuffer.addType(builder, this.type);
-        HashLockTransactionBuffer.addFee(builder, feeVector);
-        HashLockTransactionBuffer.addDeadline(builder, deadlineVector);
-        HashLockTransactionBuffer.addMosaicId(builder, mosaicIdVector);
-        HashLockTransactionBuffer.addMosaicAmount(builder, mosaicAmountVector);
-        HashLockTransactionBuffer.addDuration(builder, durationVector);
-        HashLockTransactionBuffer.addHash(builder, hashVector);
+        LockFundsTransactionBuffer.startLockFundsTransactionBuffer(builder);
+        LockFundsTransactionBuffer.addSize(builder, 122 + 56);
+        LockFundsTransactionBuffer.addSignature(builder, signatureVector);
+        LockFundsTransactionBuffer.addSigner(builder, signerVector);
+        LockFundsTransactionBuffer.addVersion(builder, this.version);
+        LockFundsTransactionBuffer.addType(builder, this.type);
+        LockFundsTransactionBuffer.addMaxFee(builder, feeVector);
+        LockFundsTransactionBuffer.addDeadline(builder, deadlineVector);
+        LockFundsTransactionBuffer.addMosaicId(builder, mosaicIdVector);
+        LockFundsTransactionBuffer.addMosaicAmount(builder, mosaicAmountVector);
+        LockFundsTransactionBuffer.addDuration(builder, durationVector);
+        LockFundsTransactionBuffer.addHash(builder, hashVector);
 
-        const codedHashLock = HashLockTransactionBuffer.endHashLockTransactionBuffer(builder);
+        const codedHashLock = LockFundsTransactionBuffer.endLockFundsTransactionBuffer(builder);
         builder.finish(codedHashLock);
 
         const bytes = builder.asUint8Array();

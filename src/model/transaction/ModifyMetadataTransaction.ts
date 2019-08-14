@@ -167,7 +167,7 @@ export class ModifyMetadataTransaction extends Transaction {
             .addType(this.type)
             .addVersion(this.versionToDTO())
             .addDeadline(this.deadline.toDTO())
-            .addFee(this.maxFee.toDTO())
+            .addMaxFee(this.maxFee.toDTO())
             .addMetadataType(this.metadataType)
             .addMetadataId(this.metadataId)
             .addModifications(this.modifications)

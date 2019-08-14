@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 import { TransactionType } from '../../model/transaction/TransactionType';
-import MosaicAliasTransactionBufferPackage from '../buffers/MosaicAliasTransactionBuffer';
+import MosaicAliasTransactionBufferPackage from '../buffers/AliasTransactionBuffer';
 import MosaicAliasTransactionSchema from '../schemas/MosaicAliasTransactionSchema';
 import { VerifiableTransaction } from './VerifiableTransaction';
 
 const {
-    MosaicAliasTransactionBuffer,
+    AliasTransactionBuffer,
 } = MosaicAliasTransactionBufferPackage.Buffers;
 
 import {flatbuffers} from 'flatbuffers';
@@ -47,7 +47,7 @@ export class Builder {
         this.type = TransactionType.MOSAIC_ALIAS;
     }
 
-    addFee(maxFee) {
+    addMaxFee(maxFee) {
         this.maxFee = maxFee;
         return this;
     }
@@ -86,33 +86,42 @@ export class Builder {
         const builder = new flatbuffers.Builder(1);
 
         // Create vectors
-        const signatureVector = MosaicAliasTransactionBuffer
+        const signatureVector = AliasTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-        const signerVector = MosaicAliasTransactionBuffer
+        const signerVector = AliasTransactionBuffer
             .createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-        const deadlineVector = MosaicAliasTransactionBuffer
+        const deadlineVector = AliasTransactionBuffer
             .createDeadlineVector(builder, this.deadline);
-        const feeVector = MosaicAliasTransactionBuffer
-            .createFeeVector(builder, this.maxFee);
-        const namespaceIdVector = MosaicAliasTransactionBuffer
+        const feeVector = AliasTransactionBuffer
+            .createMaxFeeVector(builder, this.maxFee);
+        const namespaceIdVector = AliasTransactionBuffer
             .createNamespaceIdVector(builder, this.namespaceId);
-        const mosaicIdVector = MosaicAliasTransactionBuffer
-            .createMosaicIdVector(builder, this.mosaicId);
+        const mosaicIdVector = AliasTransactionBuffer
+            .createAliasIdVector(builder, new Uint8Array([
+                (this.mosaicId[0] & 0xff)        >> 0,
+                (this.mosaicId[0] & 0xff00)      >> 8,
+                (this.mosaicId[0] & 0xff0000)    >> 16,
+                (this.mosaicId[0] & 0xff000000)  >> 24,
+                (this.mosaicId[1] & 0xff)        >> 0,
+                (this.mosaicId[1] & 0xff00)      >> 8,
+                (this.mosaicId[1] & 0xff0000)    >> 16,
+                (this.mosaicId[1] & 0xff000000)  >> 24,
+            ]));
 
-        MosaicAliasTransactionBuffer.startMosaicAliasTransactionBuffer(builder);
-        MosaicAliasTransactionBuffer.addSize(builder, 137);
-        MosaicAliasTransactionBuffer.addSignature(builder, signatureVector);
-        MosaicAliasTransactionBuffer.addSigner(builder, signerVector);
-        MosaicAliasTransactionBuffer.addVersion(builder, this.version);
-        MosaicAliasTransactionBuffer.addType(builder, this.type);
-        MosaicAliasTransactionBuffer.addFee(builder, feeVector);
-        MosaicAliasTransactionBuffer.addDeadline(builder, deadlineVector);
-        MosaicAliasTransactionBuffer.addActionType(builder, this.actionType);
-        MosaicAliasTransactionBuffer.addNamespaceId(builder, namespaceIdVector);
-        MosaicAliasTransactionBuffer.addMosaicId(builder, mosaicIdVector);
+        AliasTransactionBuffer.startAliasTransactionBuffer(builder);
+        AliasTransactionBuffer.addSize(builder, 122 + 17);
+        AliasTransactionBuffer.addSignature(builder, signatureVector);
+        AliasTransactionBuffer.addSigner(builder, signerVector);
+        AliasTransactionBuffer.addVersion(builder, this.version);
+        AliasTransactionBuffer.addType(builder, this.type);
+        AliasTransactionBuffer.addMaxFee(builder, feeVector);
+        AliasTransactionBuffer.addDeadline(builder, deadlineVector);
+        AliasTransactionBuffer.addActionType(builder, this.actionType);
+        AliasTransactionBuffer.addNamespaceId(builder, namespaceIdVector);
+        AliasTransactionBuffer.addAliasId(builder, mosaicIdVector);
 
         // Calculate size
-        const codedMosaicChangeSupply = MosaicAliasTransactionBuffer.endMosaicAliasTransactionBuffer(builder);
+        const codedMosaicChangeSupply = AliasTransactionBuffer.endAliasTransactionBuffer(builder);
         builder.finish(codedMosaicChangeSupply);
 
         const bytes = builder.asUint8Array();

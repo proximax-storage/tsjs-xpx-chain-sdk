@@ -167,7 +167,7 @@ export class RegisterNamespaceTransaction extends Transaction {
     protected buildTransaction(): VerifiableTransaction {
         let registerNamespacetransaction = new Builder()
             .addDeadline(this.deadline.toDTO())
-            .addFee(this.maxFee.toDTO())
+            .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addNamespaceType(this.namespaceType)
             .addNamespaceId(this.namespaceId.id.toDTO())

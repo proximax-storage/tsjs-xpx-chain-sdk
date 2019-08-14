@@ -92,7 +92,7 @@ describe('MosaicDefinitionTransaction', () => {
         const signedTransaction = mosaicDefinitionTransaction.signWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
-            240,
+            244,
             signedTransaction.payload.length,
         )).to.be.equal('E6DE84B8010000000000000001030302E803000000000000');
 
@@ -122,14 +122,14 @@ describe('MosaicDefinitionTransaction', () => {
         const signedTransaction = mosaicDefinitionTransaction.signWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
-            240,
+            244,
             signedTransaction.payload.length,
         )).to.be.equal('E6DE84B8010000000000000001000302E803000000000000');
 
     });
 
     describe('size', () => {
-        it('should return 144 for MosaicDefinition transaction byte size', () => {
+        it('should return 146 for MosaicDefinition transaction byte size', () => {
             const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
                 Deadline.create(),
                 new MosaicNonce(new Uint8Array([0xE6, 0xDE, 0x84, 0xB8])), // nonce
@@ -142,7 +142,7 @@ describe('MosaicDefinitionTransaction', () => {
                 }),
                 NetworkType.MIJIN_TEST,
             );
-            expect(mosaicDefinitionTransaction.size).to.be.equal(144);
+            expect(mosaicDefinitionTransaction.size).to.be.equal(146);
         });
     });
 
@@ -167,9 +167,36 @@ describe('MosaicDefinitionTransaction', () => {
         const signedTransaction = mosaicDefinitionTransaction.signWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
-            240,
+            244,
             signedTransaction.payload.length,
         )).to.be.equal('E6DE84B80100000000000000000003');
+
+    });
+
+    it('should createComplete an MosaicDefinitionTransaction object and sign it without duration with zero nonce', () => {
+
+        const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
+            Deadline.create(),
+            new MosaicNonce(new Uint8Array([0x00, 0x00, 0x00, 0x00])), // zero nonce
+            new MosaicId(UInt64.fromUint(1).toDTO()), // ID
+            MosaicProperties.create({
+                supplyMutable: false,
+                transferable: false,
+                divisibility: 3,
+            }),
+            NetworkType.MIJIN_TEST,
+        );
+
+        expect(mosaicDefinitionTransaction.mosaicProperties.divisibility).to.be.equal(3);
+        expect(mosaicDefinitionTransaction.mosaicProperties.supplyMutable).to.be.equal(false);
+        expect(mosaicDefinitionTransaction.mosaicProperties.transferable).to.be.equal(false);
+
+        const signedTransaction = mosaicDefinitionTransaction.signWith(account, generationHash);
+
+        expect(signedTransaction.payload.substring(
+            244,
+            signedTransaction.payload.length,
+        )).to.be.equal('000000000100000000000000000003');
 
     });
 });

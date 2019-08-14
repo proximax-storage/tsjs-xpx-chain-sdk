@@ -31,6 +31,8 @@ export * from './blockRoutesApi';
 import { BlockRoutesApi } from './blockRoutesApi';
 export * from './chainRoutesApi';
 import { ChainRoutesApi } from './chainRoutesApi';
+export * from './configRoutesApi';
+import { ConfigRoutesApi } from './configRoutesApi';
 export * from './contractRoutesApi';
 import { ContractRoutesApi } from './contractRoutesApi';
 export * from './diagnosticRoutesApi';
@@ -47,5 +49,6 @@ export * from './nodeRoutesApi';
 import { NodeRoutesApi } from './nodeRoutesApi';
 export * from './transactionRoutesApi';
 import { TransactionRoutesApi } from './transactionRoutesApi';
-export const APIS = [AccountRoutesApi, BlockRoutesApi, ChainRoutesApi, ContractRoutesApi, DiagnosticRoutesApi, MetadataRoutesApi, MosaicRoutesApi, NamespaceRoutesApi, NetworkRoutesApi, NodeRoutesApi, TransactionRoutesApi];
-
+export * from './upgradeRoutesApi';
+import { UpgradeRoutesApi } from './upgradeRoutesApi';
+export const APIS = [AccountRoutesApi, BlockRoutesApi, ChainRoutesApi, ConfigRoutesApi, ContractRoutesApi, DiagnosticRoutesApi, MetadataRoutesApi, MosaicRoutesApi, NamespaceRoutesApi, NetworkRoutesApi, NodeRoutesApi, TransactionRoutesApi, UpgradeRoutesApi];
