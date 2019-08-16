@@ -55,6 +55,7 @@ import {UInt64} from '../../model/UInt64';
 import { ModifyMetadataTransaction, MetadataModification } from '../../model/transaction/ModifyMetadataTransaction';
 import { MetadataType } from '../../model/metadata/MetadataType';
 import { ModifyContractTransaction } from '../../model/transaction/ModifyContractTransaction';
+import { ChainConfigTransaction, ChainUpgradeTransaction } from '../../model/model';
 
 /**
  * @internal
@@ -443,8 +444,33 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
                     extractNetworkType(transactionDTO.version)) : undefined,
             transactionInfo
         );
-
+    } else if (transactionDTO.type === TransactionType.CHAIN_UPGRADE) {
+        return new ChainUpgradeTransaction(
+            extractNetworkType(transactionDTO.version),
+            extractTransactionVersion(transactionDTO.version),
+            Deadline.createFromDTO(transactionDTO.deadline),
+            new UInt64(transactionDTO.maxFee || [0, 0]),
+            transactionDTO.signature,
+            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                            extractNetworkType(transactionDTO.version)) : undefined,
+            transactionInfo,
+        );
+    } else if (transactionDTO.type === TransactionType.CHAIN_CONFIGURE) {
+        return new ChainConfigTransaction(
+            extractNetworkType(transactionDTO.version),
+            extractTransactionVersion(transactionDTO.version),
+            Deadline.createFromDTO(transactionDTO.deadline),
+            new UInt64(transactionDTO.maxFee || [0, 0]),
+            new UInt64(transactionDTO.applyHeightDelta || [0, 0]),
+            transactionDTO.blockChainConfig,
+            transactionDTO.supportedEntityVersions,
+            transactionDTO.signature,
+            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                            extractNetworkType(transactionDTO.version)) : undefined,
+            transactionInfo,
+        );
     }
+
     throw new Error('Unimplemented transaction with type ' + transactionDTO.type);
 };
 

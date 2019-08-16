@@ -142,6 +142,8 @@ export * from './transaction/TransactionStatus';
 export * from './transaction/TransactionStatusError';
 export * from './transaction/TransactionType';
 export * from './transaction/TransferTransaction';
+export * from './transaction/ChainConfigTransaction';
+export * from './transaction/ChainUpgradeTransaction';
 
 // Wallet
 export * from './wallet/EncryptedPrivateKey';

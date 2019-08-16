@@ -121,7 +121,7 @@ export class Listener {
                     } else if (message.transaction) {
                         this.messageSubject.next({channelName: message.meta.channelName, message: CreateTransactionFromDTO(message)});
                     } else if (message.block) {
-                        const networkType = parseInt(message.block.version.toString(16).substr(0, 2), 16);
+                        const networkType = parseInt((message.block.version >>> 0).toString(16).substr(0, 2), 16);
                         this.messageSubject.next({
                             channelName: ListenerChannelName.block, message: new BlockInfo(
                                 message.meta.hash,
@@ -131,7 +131,7 @@ export class Listener {
                                 message.block.signature,
                                 PublicAccount.createFromPublicKey(message.block.signer, networkType),
                                 networkType,
-                                parseInt(message.block.version.toString(16).substr(2, 2), 16), // Tx version
+                                parseInt((message.block.version >>> 0).toString(16).substr(2, 2), 16), // Tx version
                                 message.block.type,
                                 new UInt64(message.block.height),
                                 new UInt64(message.block.timestamp),
