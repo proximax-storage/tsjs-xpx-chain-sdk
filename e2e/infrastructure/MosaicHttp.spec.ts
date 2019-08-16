@@ -30,7 +30,8 @@ describe('MosaicHttp', () => {
     let generationHash: string;
     let namespaceId: NamespaceId;
     let mosaicId = ConfNetworkMosaic;
-    const mosaicDivisibility = 6;
+    let mosaicDivisibility = 6;
+    let mosaicDuration = UInt64.fromUint(0);
 
     const validateTransactionAnnounceCorrectly = (address: Address, done, hash?: string) => {
         const status = listener.status(address).subscribe(error => {
@@ -90,6 +91,8 @@ describe('MosaicHttp', () => {
             // overwrites mosaicId globally for the rest of the tests
             const nonce = MosaicNonce.createRandom();
             mosaicId = MosaicId.createFromNonce(nonce, TestingAccount.publicAccount);
+            mosaicDivisibility = 3;
+            mosaicDuration = UInt64.fromUint(1000);
             const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
                 Deadline.create(),
                 nonce,
@@ -98,7 +101,7 @@ describe('MosaicHttp', () => {
                     supplyMutable: true,
                     transferable: true,
                     divisibility: mosaicDivisibility,
-                    duration: UInt64.fromUint(1000),
+                    duration: mosaicDuration,
                 }),
                 ConfNetworkType
             )
@@ -138,6 +141,7 @@ describe('MosaicHttp', () => {
                 .subscribe((mosaicInfo) => {
                     expect(mosaicInfo.height.lower).not.to.be.null;
                     expect(mosaicInfo.divisibility).to.be.equal(mosaicDivisibility);
+                    expect((mosaicInfo.duration as UInt64).equals(mosaicDuration)).to.be.equal(true);
                     expect(mosaicInfo.isSupplyMutable()).to.be.equal(true);
                     expect(mosaicInfo.isTransferable()).to.be.equal(true);
                     done();
@@ -151,6 +155,7 @@ describe('MosaicHttp', () => {
                 .subscribe((mosaicInfos) => {
                     expect(mosaicInfos[0].height.lower).not.to.be.null;
                     expect(mosaicInfos[0].divisibility).to.be.equal(mosaicDivisibility);
+                    expect((mosaicInfos[0].duration as UInt64).equals(mosaicDuration)).to.be.equal(true);
                     expect(mosaicInfos[0].isSupplyMutable()).to.be.equal(true);
                     expect(mosaicInfos[0].isTransferable()).to.be.equal(true);
                     done();
