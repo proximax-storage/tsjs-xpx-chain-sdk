@@ -23,8 +23,8 @@ import { Deadline } from '../../src/model/transaction/Deadline';
 import { PlainMessage } from '../../src/model/transaction/PlainMessage';
 import { Transaction } from '../../src/model/transaction/Transaction';
 import { TransferTransaction } from '../../src/model/transaction/TransferTransaction';
-import { APIUrl, ConfNetworkType, TestingRecipient, NemesisBlockInfo, TestingAccount } from '../conf/conf.spec';
-import { Address } from '../../src/model/model';
+import { APIUrl, ConfNetworkType, TestingRecipient, NemesisBlockInfo, TestingAccount, ConfNetworkMosaic } from '../conf/conf.spec';
+import { Address, Mosaic, UInt64 } from '../../src/model/model';
 import { fail } from 'assert';
 
 describe('BlockHttp', () => {
@@ -80,7 +80,7 @@ describe('BlockHttp', () => {
             const transferTransaction = TransferTransaction.create(
                 Deadline.create(),
                 TestingRecipient.address,
-                [NetworkCurrencyMosaic.createAbsolute(1)],
+                [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(1000000))],
                 PlainMessage.create('test-message'),
                 ConfNetworkType,
             );

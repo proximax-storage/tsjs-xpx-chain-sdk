@@ -113,6 +113,8 @@ export * from './transaction/AggregateTransaction';
 export * from './transaction/AggregateTransactionCosignature';
 export * from './transaction/AggregateTransactionInfo';
 export * from './transaction/AliasTransaction';
+export * from './transaction/ChainConfigTransaction';
+export * from './transaction/ChainUpgradeTransaction';
 export * from './transaction/CosignatureSignedTransaction';
 export * from './transaction/CosignatureTransaction';
 export * from './transaction/Deadline';
@@ -142,8 +144,6 @@ export * from './transaction/TransactionStatus';
 export * from './transaction/TransactionStatusError';
 export * from './transaction/TransactionType';
 export * from './transaction/TransferTransaction';
-export * from './transaction/ChainConfigTransaction';
-export * from './transaction/ChainUpgradeTransaction';
 
 // Wallet
 export * from './wallet/EncryptedPrivateKey';
