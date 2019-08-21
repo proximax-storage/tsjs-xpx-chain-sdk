@@ -5,12 +5,15 @@
         "protocol": "http",
         "port": 3000
     },
-
     "blockchain": {
         "accounts": [
             {
                 "alias": "seed",
                 "pk": "<undefined; you have to set TEST_SEED_ACCOUNT_KEY env. variable>"
+            },
+            {
+                "alias": "nemesis",
+                "pk": "0000000000000000000000000000000000000000000000000000000000000000"
             },
             {
                 "alias": "testing",

@@ -140,7 +140,7 @@ export class TransactionType {
     /**
      * Upgrade chain transaction type
      */
-    public static readonly CHAIN_UPGRADE = 0x4158; // TODO: check
+    public static readonly CHAIN_UPGRADE = 0x4158;
 
     /**
      * Configure chain transaction type

@@ -1232,9 +1232,9 @@ describe('TransactionHttp', () => {
         });
     });
 
-    describe.only('announce', () => {
+    describe('announce', () => {
         describe('ChainConfigTransaction', () => {
-            it('standalone', (done) => {
+            ((NemesisAccount.privateKey !== "0".repeat(64)) ? it : it.skip)('standalone', (done) => {
                 GetNemesisBlockDataPromise().then(nemesisBlockInfo => {
                     const chainConfigTransaction = ChainConfigTransaction.create(
                         Deadline.create(),
