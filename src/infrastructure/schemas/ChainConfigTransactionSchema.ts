@@ -29,6 +29,11 @@ const schema = new Schema([
     ushort('type'),
     array('fee', TypeSize.INT),
     array('deadline', TypeSize.INT),
+    array('applyHeightDelta', TypeSize.INT),
+    ushort('blockChainConfigSize'),
+    ushort('supportedEntityVersionsSize'),
+    array('blockChainConfig'),
+    array('supportedEntityVersions'),
 ]);
 
 export default schema;
