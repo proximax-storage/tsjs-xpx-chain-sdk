@@ -157,6 +157,18 @@ export class ModifyMetadataTransaction extends Transaction {
         this.metadataId = metadataId;
         this.modifications = modifications;
     }
+    /**
+     * @description get the byte size of a transaction
+     * @returns {number}
+     * @memberof Transaction
+     */
+    public get size(): number {
+        const byteSize = super.size
+                        + 1 // type
+                        + (this.metadataType === 1 ? 25 : 8) // id
+                        + this.modifications.map(m => 4 + 1 + 1 + 2 + m.key.length + (m.value ? m.value.length : 0)).reduce((p,n) => p+n) // value
+        return byteSize;
+    }
 
     /**
      * @internal

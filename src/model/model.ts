@@ -125,6 +125,8 @@ export * from './transaction/InnerTransaction';
 export * from './transaction/LinkAction';
 export * from './transaction/LockFundsTransaction';
 export * from './transaction/Message';
+export * from './transaction/ModifyContractTransaction';
+export * from './transaction/ModifyMetadataTransaction';
 export * from './transaction/ModifyMultisigAccountTransaction';
 export * from './transaction/MosaicAliasTransaction';
 export * from './transaction/MosaicDefinitionTransaction';
