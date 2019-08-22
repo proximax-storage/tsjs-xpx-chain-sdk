@@ -11,7 +11,7 @@ import {TestingAccount} from '../../conf/conf.spec';
 import { ModifyContractTransaction, MultisigCosignatoryModification, MultisigCosignatoryModificationType } from '../../../src/model/model';
 import { Customer1Account, Executor1Account, Verifier1Account } from '../../conf/conf.spec';
 
-describe('ContractTransaction', () => {
+describe('ModifyContractTransaction', () => {
     let account: Account;
     const generationHash = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
     before(() => {
