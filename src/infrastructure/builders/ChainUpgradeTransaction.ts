@@ -6,14 +6,13 @@
  * @module transactions/ChainUpgradeTransaction
  */
 import { TransactionType } from '../../model/transaction/TransactionType';
-import ChainUpgradeTransactionBufferPackage from '../buffers/ChainUpgradeTransactionBuffer';
+import CatapultUpgradeTransactionBufferPackage from '../buffers/ChainUpgradeTransactionBuffer';
 import ChainUpgradeTransactionSchema from '../schemas/ChainUpgradeTransactionSchema';
-import AccountRestrictionsMosaicModificationTransactionSchema from '../schemas/AccountRestrictionsMosaicModificationTransactionSchema';
 import { VerifiableTransaction } from './VerifiableTransaction';
 
 const {
     CatapultUpgradeTransactionBuffer,
-} = ChainUpgradeTransactionBufferPackage.Buffers;
+} = CatapultUpgradeTransactionBufferPackage.Buffers;
 
 import {flatbuffers} from 'flatbuffers';
 
@@ -28,9 +27,12 @@ export class Builder {
     version: any;
     type: any;
     deadline: any;
+    upgradePeriod: any;
+    newCatapultVersion: any;
 
     constructor() {
         this.maxFee = [0, 0];
+        this.type = TransactionType.CHAIN_UPGRADE;
     }
 
     addMaxFee(maxFee) {
@@ -53,10 +55,47 @@ export class Builder {
         return this;
     }
 
+    addUpgradePeriod(upgradePeriod) {
+        this.upgradePeriod = upgradePeriod;
+        return this;
+    }
+
+    addNewCatapultVersion(newCatapultVersion) {
+        this.newCatapultVersion = newCatapultVersion;
+        return this;
+    }
+
     build() {
-        throw new Error("Not implemented yet.");
         const builder = new flatbuffers.Builder(1);
 
+        const signatureVector = CatapultUpgradeTransactionBuffer
+            .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
+        const signerVector = CatapultUpgradeTransactionBuffer
+            .createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
+        const deadlineVector = CatapultUpgradeTransactionBuffer
+            .createDeadlineVector(builder, this.deadline);
+        const feeVector = CatapultUpgradeTransactionBuffer
+            .createMaxFeeVector(builder, this.maxFee);
+        const upgradePeriodVector = CatapultUpgradeTransactionBuffer
+            .createUpgradePeriodVector(builder, this.upgradePeriod);
+        const newCatapultVersionVector = CatapultUpgradeTransactionBuffer
+            .createNewCatapultVersionVector(builder, this.newCatapultVersion);
+
+
+        CatapultUpgradeTransactionBuffer.startCatapultUpgradeTransactionBuffer(builder);
+        CatapultUpgradeTransactionBuffer.addSize(builder, 122 + 8 + 8);
+        CatapultUpgradeTransactionBuffer.addSignature(builder, signatureVector);
+        CatapultUpgradeTransactionBuffer.addSigner(builder, signerVector);
+        CatapultUpgradeTransactionBuffer.addVersion(builder, this.version);
+        CatapultUpgradeTransactionBuffer.addType(builder, this.type);
+        CatapultUpgradeTransactionBuffer.addMaxFee(builder, feeVector);
+        CatapultUpgradeTransactionBuffer.addDeadline(builder, deadlineVector);
+        CatapultUpgradeTransactionBuffer.addUpgradePeriod(builder, upgradePeriodVector);
+        CatapultUpgradeTransactionBuffer.addNewCatapultVersion(builder, newCatapultVersionVector);
+
+        // Calculate size
+        const codedChainUpgrade = CatapultUpgradeTransactionBuffer.endCatapultUpgradeTransactionBuffer(builder);
+        builder.finish(codedChainUpgrade);
 
         const bytes = builder.asUint8Array();
         return new ChainUpgradeTransaction(bytes);

@@ -64,7 +64,7 @@ import {
     APIUrl, ConfNetworkType, ConfNetworkMosaic,
     SeedAccount, TestingAccount, TestingRecipient, MultisigAccount, CosignatoryAccount, Cosignatory2Account, Cosignatory3Account, GetNemesisBlockDataPromise, ConfNamespace, ConfTestingMosaic, ConfTestingNamespace, ConfAccountHttp, ConfTransactionHttp, ConfMosaicHttp, NemesisBlockInfo, Customer1Account, ConfNetworkMosaicDivisibility, MultilevelMultisigAccount, Cosignatory4Account, NemesisAccount
 } from '../conf/conf.spec';
-import { AliasTransaction, Address, ChainConfigTransaction, SignedTransaction, AggregateTransactionCosignature, CosignatureTransaction } from '../../src/model/model';
+import { AliasTransaction, Address, ChainConfigTransaction, SignedTransaction, AggregateTransactionCosignature, CosignatureTransaction, ChainUpgradeTransaction } from '../../src/model/model';
 import { ModifyMetadataTransaction, MetadataModification, MetadataModificationType } from '../../src/model/transaction/ModifyMetadataTransaction';
 import { MetadataHttp } from '../../src/infrastructure/MetadataHttp';
 import { ConfUtils } from '../conf/ConfUtils';
@@ -1244,6 +1244,22 @@ describe('TransactionHttp', () => {
                         ConfNetworkType
                     );
                     const signedTransaction = chainConfigTransaction.signWith(NemesisAccount, generationHash);
+                    validateTransactionConfirmed(listener, NemesisAccount.address, signedTransaction.hash)
+                        .then(() => done()).catch((reason) => fail(reason));
+                    transactionHttp.announce(signedTransaction);
+                });
+            });
+        });
+        describe('ChainUpgradeTransaction', () => {
+            ((NemesisAccount.privateKey !== "0".repeat(64)) ? it : it.skip)('standalone', (done) => {
+                GetNemesisBlockDataPromise().then(nemesisBlockInfo => {
+                    const chainUpgradeTransaction = ChainUpgradeTransaction.create(
+                        Deadline.create(),
+                        UInt64.fromUint(100000),
+                        UInt64.fromHex('0001000200030004'),
+                        ConfNetworkType
+                    );
+                    const signedTransaction = chainUpgradeTransaction.signWith(NemesisAccount, generationHash);
                     validateTransactionConfirmed(listener, NemesisAccount.address, signedTransaction.hash)
                         .then(() => done()).catch((reason) => fail(reason));
                     transactionHttp.announce(signedTransaction);

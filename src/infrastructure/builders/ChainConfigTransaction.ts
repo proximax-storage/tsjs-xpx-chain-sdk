@@ -8,7 +8,6 @@
 import { TransactionType } from '../../model/transaction/TransactionType';
 import ChainConfigTransactionBufferPackage from '../buffers/ChainConfigTransactionBuffer';
 import ChainConfigTransactionSchema from '../schemas/ChainConfigTransactionSchema';
-import AccountRestrictionsMosaicModificationTransactionSchema from '../schemas/AccountRestrictionsMosaicModificationTransactionSchema';
 import { VerifiableTransaction } from './VerifiableTransaction';
 
 const {

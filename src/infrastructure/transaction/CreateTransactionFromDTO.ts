@@ -450,6 +450,8 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             extractTransactionVersion(transactionDTO.version),
             Deadline.createFromDTO(transactionDTO.deadline),
             new UInt64(transactionDTO.maxFee || [0, 0]),
+            new UInt64(transactionDTO.upgradePeriod),
+            new UInt64(transactionDTO.newCatapultVersion),
             transactionDTO.signature,
             transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
                             extractNetworkType(transactionDTO.version)) : undefined,

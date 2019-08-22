@@ -36,7 +36,7 @@ export class ChainConfigTransaction extends Transaction {
         signature?: string,
         signer?: PublicAccount,
         transactionInfo?: TransactionInfo) {
-        super(TransactionType.CHAIN_CONFIGURE, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
+            super(TransactionType.CHAIN_CONFIGURE, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
     }
 
     public static create(deadline: Deadline,
@@ -54,7 +54,6 @@ export class ChainConfigTransaction extends Transaction {
             supportedEntityVersions
         );
     }
-
 
     /**
      * @description get the byte size of a transaction

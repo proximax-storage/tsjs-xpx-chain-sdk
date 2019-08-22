@@ -11,6 +11,7 @@ import { PublicAccount } from "../account/PublicAccount";
 import { TransactionInfo } from "./TransactionInfo";
 import { Builder } from "../../infrastructure/builders/ChainUpgradeTransaction";
 import { VerifiableTransaction } from "../../infrastructure/builders/VerifiableTransaction";
+import { TransactionVersion } from "./TransactionVersion";
 
 export class ChainUpgradeTransaction extends Transaction {
     /**
@@ -26,20 +27,50 @@ export class ChainUpgradeTransaction extends Transaction {
         version: number,
         deadline: Deadline,
         maxFee: UInt64,
+        public readonly upgradePeriod: UInt64,
+        public readonly newCatapultVersion: UInt64,
         signature?: string,
         signer?: PublicAccount,
         transactionInfo?: TransactionInfo) {
             super(TransactionType.CHAIN_CONFIGURE, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
-        }    /**
-        * @internal
-        * @returns {VerifiableTransaction}
-        */
-       protected buildTransaction(): VerifiableTransaction {
-           return new Builder()
-               .addDeadline(this.deadline.toDTO())
-               .addMaxFee(this.maxFee.toDTO())
-               .addVersion(this.versionToDTO())
-               .build();
-       }
+    }
 
+    public static create(deadline: Deadline,
+        upgradePeriod: UInt64,
+        newCatapultVersion: UInt64,
+        networkType: NetworkType,
+        maxFee: UInt64 = new UInt64([0, 0])): ChainUpgradeTransaction {
+        return new ChainUpgradeTransaction(networkType,
+            TransactionVersion.CHAIN_UPGRADE,
+            deadline,
+            maxFee,
+            upgradePeriod,
+            newCatapultVersion
+        );
+    }
+
+    /**
+     * @description get the byte size of a transaction
+     * @returns {number}
+     * @memberof Transaction
+     */
+    public get size(): number {
+        const byteSize = 8 // upgradePeriod
+            + 8; // newCatapultVersion
+        return super.size + byteSize;
+    }
+
+    /**
+    * @internal
+    * @returns {VerifiableTransaction}
+    */
+    protected buildTransaction(): VerifiableTransaction {
+        return new Builder()
+            .addDeadline(this.deadline.toDTO())
+            .addMaxFee(this.maxFee.toDTO())
+            .addVersion(this.versionToDTO())
+            .addUpgradePeriod(this.upgradePeriod.toDTO())
+            .addNewCatapultVersion(this.newCatapultVersion.toDTO())
+            .build();
+    }
 }
