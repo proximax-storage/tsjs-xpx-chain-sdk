@@ -32,7 +32,7 @@ export class ChainUpgradeTransaction extends Transaction {
         signature?: string,
         signer?: PublicAccount,
         transactionInfo?: TransactionInfo) {
-            super(TransactionType.CHAIN_CONFIGURE, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
+            super(TransactionType.CHAIN_UPGRADE, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
     }
 
     public static create(deadline: Deadline,
