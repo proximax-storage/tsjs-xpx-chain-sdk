@@ -79,35 +79,32 @@ export class MetadataHttp extends Http implements MetadataRepository {
      * @returns Observable<MosaicInfo>
      */
     public getAccountMetadata(accountId: string): Observable<AddressMetadata> {
-        return this.getNetworkTypeObservable().pipe(
-            mergeMap((networkType) => observableFrom(
-                this.metadataRoutesApi.getAccountMetadata(accountId)).pipe(map((addressMetadataInfoDTO: any) => {
+        return observableFrom(
+            this.metadataRoutesApi.getAccountMetadata(accountId)).pipe(map((addressMetadataInfoDTO: any) => {
                 return new AddressMetadata(
                     Address.createFromEncoded(addressMetadataInfoDTO.metadata.metadataId),
                     addressMetadataInfoDTO.metadata.metadataType,
                     addressMetadataInfoDTO.metadata.fields.map(fieldDTO => new Field(fieldDTO.key, fieldDTO.value)));
-            }))));
+            }));
     }
 
     public getNamespaceMetadata(namespaceId: NamespaceId): Observable<NamespaceMetadata> {
-        return this.getNetworkTypeObservable().pipe(
-            mergeMap((networkType) => observableFrom(
-                this.metadataRoutesApi.getNamespaceMetadata(namespaceId.id.toHex())).pipe(map((namespaceMetadataInfoDTO: any) => {
-                    return new NamespaceMetadata(
-                        new NamespaceId(namespaceMetadataInfoDTO.metadata.metadataId),
-                        namespaceMetadataInfoDTO.metadata.metadataType,
-                        namespaceMetadataInfoDTO.metadata.fields.map(fieldDTO => new Field(fieldDTO.key, fieldDTO.value)));
-                }))));
+        return observableFrom(
+            this.metadataRoutesApi.getNamespaceMetadata(namespaceId.id.toHex())).pipe(map((namespaceMetadataInfoDTO: any) => {
+                return new NamespaceMetadata(
+                    new NamespaceId(namespaceMetadataInfoDTO.metadata.metadataId),
+                    namespaceMetadataInfoDTO.metadata.metadataType,
+                    namespaceMetadataInfoDTO.metadata.fields.map(fieldDTO => new Field(fieldDTO.key, fieldDTO.value)));
+            }));
     }
 
     public getMosaicMetadata(mosaicId: MosaicId): Observable<MosaicMetadata> {
-        return this.getNetworkTypeObservable().pipe(
-            mergeMap((networkType) => observableFrom(
-                this.metadataRoutesApi.getMosaicMetadata(mosaicId.id.toHex())).pipe(map((mosaicMetadataInfoDTO: any) => {
-                    return new MosaicMetadata(
-                        new MosaicId(mosaicMetadataInfoDTO.metadata.metadataId),
-                        mosaicMetadataInfoDTO.metadata.metadataType,
-                        mosaicMetadataInfoDTO.metadata.fields.map(fieldDTO => new Field(fieldDTO.key, fieldDTO.value)));
-                }))));
+        return observableFrom(
+            this.metadataRoutesApi.getMosaicMetadata(mosaicId.id.toHex())).pipe(map((mosaicMetadataInfoDTO: any) => {
+                return new MosaicMetadata(
+                    new MosaicId(mosaicMetadataInfoDTO.metadata.metadataId),
+                    mosaicMetadataInfoDTO.metadata.metadataType,
+                    mosaicMetadataInfoDTO.metadata.fields.map(fieldDTO => new Field(fieldDTO.key, fieldDTO.value)));
+            }));
     }
 }

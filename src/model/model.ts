@@ -40,6 +40,9 @@ export * from './blockchain/MerklePathItem';
 export * from './blockchain/MerkleProofInfo';
 export * from './blockchain/MerkleProofInfoPayload';
 
+// Config
+export * from './config/ChainConfig';
+
 // Contract
 export * from './contract/Contract';
 
@@ -146,6 +149,9 @@ export * from './transaction/TransactionStatus';
 export * from './transaction/TransactionStatusError';
 export * from './transaction/TransactionType';
 export * from './transaction/TransferTransaction';
+
+// Upgrade
+export * from './upgrade/ChainUpgrade';
 
 // Wallet
 export * from './wallet/EncryptedPrivateKey';
