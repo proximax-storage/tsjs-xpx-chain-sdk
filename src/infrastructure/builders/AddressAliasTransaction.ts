@@ -15,12 +15,12 @@
  */
 import { RawAddress as addressLibrary } from '../../core/format';
 import { TransactionType } from '../../model/transaction/TransactionType';
-import AddressAliasTransactionBufferPackage from '../buffers/AddressAliasTransactionBuffer';
+import AddressAliasTransactionBufferPackage from '../buffers/AliasTransactionBuffer';
 import AddressAliasTransactionSchema from '../schemas/AddressAliasTransactionSchema';
 import { VerifiableTransaction } from './VerifiableTransaction';
 
 const {
-    AddressAliasTransactionBuffer,
+    AliasTransactionBuffer,
 } = AddressAliasTransactionBufferPackage.Buffers;
 
 import {flatbuffers} from 'flatbuffers';
@@ -47,7 +47,7 @@ export class Builder {
         this.type = TransactionType.ADDRESS_ALIAS;
     }
 
-    addFee(maxFee) {
+    addMaxFee(maxFee) {
         this.maxFee = maxFee;
         return this;
     }
@@ -86,33 +86,33 @@ export class Builder {
         const builder = new flatbuffers.Builder(1);
 
         // Create vectors
-        const signatureVector = AddressAliasTransactionBuffer
+        const signatureVector = AliasTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-        const signerVector = AddressAliasTransactionBuffer
+        const signerVector = AliasTransactionBuffer
             .createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-        const deadlineVector = AddressAliasTransactionBuffer
+        const deadlineVector = AliasTransactionBuffer
             .createDeadlineVector(builder, this.deadline);
-        const feeVector = AddressAliasTransactionBuffer
-            .createFeeVector(builder, this.maxFee);
-        const namespaceIdVector = AddressAliasTransactionBuffer
+        const feeVector = AliasTransactionBuffer
+            .createMaxFeeVector(builder, this.maxFee);
+        const namespaceIdVector = AliasTransactionBuffer
             .createNamespaceIdVector(builder, this.namespaceId);
-        const addressVector = AddressAliasTransactionBuffer
-            .createAddressVector(builder, this.address);
+        const addressVector = AliasTransactionBuffer
+            .createAliasIdVector(builder, this.address);
 
-        AddressAliasTransactionBuffer.startAddressAliasTransactionBuffer(builder);
-        AddressAliasTransactionBuffer.addSize(builder, 154);
-        AddressAliasTransactionBuffer.addSignature(builder, signatureVector);
-        AddressAliasTransactionBuffer.addSigner(builder, signerVector);
-        AddressAliasTransactionBuffer.addVersion(builder, this.version);
-        AddressAliasTransactionBuffer.addType(builder, this.type);
-        AddressAliasTransactionBuffer.addFee(builder, feeVector);
-        AddressAliasTransactionBuffer.addDeadline(builder, deadlineVector);
-        AddressAliasTransactionBuffer.addActionType(builder, this.actionType);
-        AddressAliasTransactionBuffer.addNamespaceId(builder, namespaceIdVector);
-        AddressAliasTransactionBuffer.addAddress(builder, addressVector);
+        AliasTransactionBuffer.startAliasTransactionBuffer(builder);
+        AliasTransactionBuffer.addSize(builder, 122 + 34);
+        AliasTransactionBuffer.addSignature(builder, signatureVector);
+        AliasTransactionBuffer.addSigner(builder, signerVector);
+        AliasTransactionBuffer.addVersion(builder, this.version);
+        AliasTransactionBuffer.addType(builder, this.type);
+        AliasTransactionBuffer.addMaxFee(builder, feeVector);
+        AliasTransactionBuffer.addDeadline(builder, deadlineVector);
+        AliasTransactionBuffer.addActionType(builder, this.actionType);
+        AliasTransactionBuffer.addNamespaceId(builder, namespaceIdVector);
+        AliasTransactionBuffer.addAliasId(builder, addressVector);
 
         // Calculate size
-        const codedMosaicChangeSupply = AddressAliasTransactionBuffer.endAddressAliasTransactionBuffer(builder);
+        const codedMosaicChangeSupply = AliasTransactionBuffer.endAliasTransactionBuffer(builder);
         builder.finish(codedMosaicChangeSupply);
 
         const bytes = builder.asUint8Array();

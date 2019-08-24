@@ -178,7 +178,7 @@ describe('SecretProofTransaction', () => {
     });
 
     describe('size', () => {
-        it('should return 212 for SecretProofTransaction with proof and secret both 32 bytes', () => {
+        it('should return 214 for SecretProofTransaction with proof and secret both 32 bytes', () => {
             const proof = 'B778A39A3663719DFC5E48C9D78431B1E45C2AF9DF538782BF199C189DABEAC7';
             const secretProofTransaction = SecretProofTransaction.create(
                 Deadline.create(),
@@ -188,7 +188,7 @@ describe('SecretProofTransaction', () => {
                 proof,
                 NetworkType.MIJIN_TEST,
             );
-            expect(secretProofTransaction.size).to.be.equal(212);
+            expect(secretProofTransaction.size).to.be.equal(214);
         });
     });
 });

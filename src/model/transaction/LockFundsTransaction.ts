@@ -128,7 +128,7 @@ export class LockFundsTransaction extends Transaction {
         return new Builder()
             .addDeadline(this.deadline.toDTO())
             .addType(this.type)
-            .addFee(this.maxFee.toDTO())
+            .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addMosaicId(this.mosaic.id.id.toDTO())
             .addMosaicAmount(this.mosaic.amount.toDTO())

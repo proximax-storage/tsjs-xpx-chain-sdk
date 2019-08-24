@@ -104,7 +104,7 @@ export class AccountLinkTransaction extends Transaction {
     protected buildTransaction(): VerifiableTransaction {
         return new Builder()
             .addDeadline(this.deadline.toDTO())
-            .addFee(this.maxFee.toDTO())
+            .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addRemoteAccountKey(this.remoteAccountKey)
             .addLinkAction(this.linkAction)

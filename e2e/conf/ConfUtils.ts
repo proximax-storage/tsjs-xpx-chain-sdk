@@ -33,13 +33,10 @@ export class ConfUtils {
     }
 
     public static prepareE2eTestData() {
-        return Array.from(AllTestingAccounts.values()).reduce((prev, curr) => {
-            return prev.then(() => {
-                return ConfUtils.seed(curr).then((accInfo) => {
-                    return ConfUtils.checkIfNeedPubKey(curr, accInfo);
-                });
-            });
-        }, Promise.resolve()).then(() => {
+        return Promise.all(Array.from(AllTestingAccounts.values()).map(ta =>
+            ConfUtils.seed(ta).then(accInfo =>
+                ConfUtils.checkIfNeedPubKey(ta, accInfo)
+        ))).then(accInfos => {
             // get all the msig roots; will traverse them with bfs, so all other in the middle nodes will be processed automatically
             const msigAccounts: TestAccount[] = Array.from(AllTestingAccounts.values()).filter(ta => ta.hasCosignatories() && !ta.isCosignatory());
             let idx = 0;

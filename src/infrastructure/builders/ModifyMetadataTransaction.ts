@@ -34,7 +34,7 @@ export class Builder {
         this.version = 1;
     }
 
-    addFee(fee) {
+    addMaxFee(fee) {
         this.fee = fee;
         return this;
     }
@@ -114,7 +114,7 @@ export class Builder {
 
         // TODO: different types/lengths
         const metadataIdVector = ModifyMetadataTransactionBuffer.createMetadataIdVector(builder, metadataIdDecoded);
-        const size = 120 + 1 + metadataIdDecoded.length + modificationsSumSize;
+        const size = 122 + 1 + metadataIdDecoded.length + modificationsSumSize;
 
         ModifyMetadataTransactionBuffer.startModifyMetadataTransactionBuffer(builder);
         ModifyMetadataTransactionBuffer.addSize(builder, size);

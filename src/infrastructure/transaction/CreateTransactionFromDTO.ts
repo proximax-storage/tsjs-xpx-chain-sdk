@@ -55,6 +55,7 @@ import {UInt64} from '../../model/UInt64';
 import { ModifyMetadataTransaction, MetadataModification } from '../../model/transaction/ModifyMetadataTransaction';
 import { MetadataType } from '../../model/metadata/MetadataType';
 import { ModifyContractTransaction } from '../../model/transaction/ModifyContractTransaction';
+import { ChainConfigTransaction, ChainUpgradeTransaction } from '../../model/model';
 
 /**
  * @internal
@@ -443,13 +444,40 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
                     extractNetworkType(transactionDTO.version)) : undefined,
             transactionInfo
         );
-
+    } else if (transactionDTO.type === TransactionType.CHAIN_UPGRADE) {
+        return new ChainUpgradeTransaction(
+            extractNetworkType(transactionDTO.version),
+            extractTransactionVersion(transactionDTO.version),
+            Deadline.createFromDTO(transactionDTO.deadline),
+            new UInt64(transactionDTO.maxFee || [0, 0]),
+            new UInt64(transactionDTO.upgradePeriod),
+            new UInt64(transactionDTO.newCatapultVersion),
+            transactionDTO.signature,
+            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                            extractNetworkType(transactionDTO.version)) : undefined,
+            transactionInfo,
+        );
+    } else if (transactionDTO.type === TransactionType.CHAIN_CONFIGURE) {
+        return new ChainConfigTransaction(
+            extractNetworkType(transactionDTO.version),
+            extractTransactionVersion(transactionDTO.version),
+            Deadline.createFromDTO(transactionDTO.deadline),
+            new UInt64(transactionDTO.maxFee || [0, 0]),
+            new UInt64(transactionDTO.applyHeightDelta || [0, 0]),
+            transactionDTO.blockChainConfig,
+            transactionDTO.supportedEntityVersions,
+            transactionDTO.signature,
+            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                            extractNetworkType(transactionDTO.version)) : undefined,
+            transactionInfo,
+        );
     }
+
     throw new Error('Unimplemented transaction with type ' + transactionDTO.type);
 };
 
 export const extractNetworkType = (version: number): NetworkType => {
-    const networkType = parseInt(version.toString(16).substr(0, 2), 16);
+    const networkType = parseInt((version >>> 0).toString(16).substr(0, 2), 16); // ">>> 0" hack makes it effectively an Uint32
     if (networkType === NetworkType.MAIN_NET) {
         return NetworkType.MAIN_NET;
     } else if (networkType === NetworkType.TEST_NET) {
@@ -467,7 +495,7 @@ export const extractNetworkType = (version: number): NetworkType => {
 };
 
 export const extractTransactionVersion = (version: number): number => {
-    return parseInt(version.toString(16).substr(2, 2), 16);
+    return parseInt((version >>> 0).toString(16).substr(2, 4), 16); // ">>> 0" hack makes it effectively an Uint32
 };
 
 /**

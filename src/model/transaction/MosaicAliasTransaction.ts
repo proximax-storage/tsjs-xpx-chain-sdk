@@ -114,7 +114,7 @@ export class MosaicAliasTransaction extends Transaction {
     protected buildTransaction(): VerifiableTransaction {
         return new Builder()
             .addDeadline(this.deadline.toDTO())
-            .addFee(this.maxFee.toDTO())
+            .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addActionType(this.actionType)
             .addNamespaceId(this.namespaceId.id.toDTO())

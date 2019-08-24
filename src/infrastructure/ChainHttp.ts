@@ -25,7 +25,7 @@ import { ChainRepository } from './ChainRepository';
 import {Http} from './Http';
 
 /**
- * Chian http repository.
+ * Chain http repository.
  *
  * @since 1.0
  */

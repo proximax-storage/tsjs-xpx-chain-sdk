@@ -101,7 +101,7 @@ describe('LockFundsTransaction', () => {
     });
 
     describe('size', () => {
-        it('should return 176 for LockFundsTransaction transaction byte size', () => {
+        it('should return 178 for LockFundsTransaction transaction byte size', () => {
             const aggregateTransaction = AggregateTransaction.createBonded(
                 Deadline.create(),
                 [],
@@ -115,7 +115,7 @@ describe('LockFundsTransaction', () => {
                 signedTransaction,
                 NetworkType.MIJIN_TEST,
             );
-            expect(lockFundsTransaction.size).to.be.equal(176);
+            expect(lockFundsTransaction.size).to.be.equal(178);
         });
     });
 });

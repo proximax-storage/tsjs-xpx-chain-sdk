@@ -21,14 +21,15 @@ import { TransactionType } from '../../model/transaction/TransactionType';
 import MosaicCreationTransactionBufferPackage from '../buffers/MosaicCreationTransactionBuffer';
 import {
     schema as MosaicCreationTransactionSchema,
-    schemaNoDuration as MosaicCreationTransactionSchemaNoDuration
+    schemaNoDuration as MosaicCreationTransactionSchemaNoDuration,
 } from '../schemas/MosaicCreationTransactionSchema';
 import { VerifiableTransaction } from './VerifiableTransaction';
 
 import {flatbuffers} from 'flatbuffers';
+import { MosaicPropertyType } from '../../model/model';
 
 const {
-    MosaicCreationTransactionBuffer,
+    MosaicDefinitionTransactionBuffer,
 } = MosaicCreationTransactionBufferPackage.Buffers;
 
 export default class MosaicCreationTransaction extends VerifiableTransaction {
@@ -54,7 +55,7 @@ export class Builder {
         this.nonce = 0;
     }
 
-    addFee(maxFee) {
+    addMaxFee(maxFee) {
         this.maxFee = maxFee;
         return this;
     }
@@ -113,47 +114,46 @@ export class Builder {
         const builder = new flatbuffers.Builder(1);
 
         // Create vectors
-        const signatureVector = MosaicCreationTransactionBuffer
+        const signatureVector = MosaicDefinitionTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-        const signerVector = MosaicCreationTransactionBuffer
+        const signerVector = MosaicDefinitionTransactionBuffer
             .createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-        const deadlineVector = MosaicCreationTransactionBuffer
+        const deadlineVector = MosaicDefinitionTransactionBuffer
             .createDeadlineVector(builder, this.deadline);
-        const feeVector = MosaicCreationTransactionBuffer
-            .createFeeVector(builder, this.maxFee);
-        const nonceVector = MosaicCreationTransactionBuffer
-            .createNonceVector(builder, this.nonce);
-        const mosaicIdVector = MosaicCreationTransactionBuffer
+        const feeVector = MosaicDefinitionTransactionBuffer
+            .createMaxFeeVector(builder, this.maxFee);
+        const mosaicNonceVector = MosaicDefinitionTransactionBuffer
+            .createMosaicNonceVector(builder, this.nonce);
+        const mosaicIdVector = MosaicDefinitionTransactionBuffer
             .createMosaicIdVector(builder, this.mosaicId);
 
-        const durationVector = MosaicCreationTransactionBuffer
+        const durationVector = MosaicDefinitionTransactionBuffer
             .createDurationVector(builder, this.duration);
 
         const durationProvided = 0 < this.duration.length;
 
-        MosaicCreationTransactionBuffer.startMosaicCreationTransactionBuffer(builder);
-        MosaicCreationTransactionBuffer.addSize(builder, durationProvided ? 144 : 135);
-        MosaicCreationTransactionBuffer.addSignature(builder, signatureVector);
-        MosaicCreationTransactionBuffer.addSigner(builder, signerVector);
-        MosaicCreationTransactionBuffer.addVersion(builder, this.version);
-        MosaicCreationTransactionBuffer.addType(builder, this.type);
-        MosaicCreationTransactionBuffer.addFee(builder, feeVector);
-        MosaicCreationTransactionBuffer.addDeadline(builder, deadlineVector);
-        MosaicCreationTransactionBuffer.addNonce(builder, nonceVector);
-        MosaicCreationTransactionBuffer.addMosaicId(builder, mosaicIdVector);
-        MosaicCreationTransactionBuffer.addNumOptionalProperties(builder, durationProvided ? 1 : 0);
-        MosaicCreationTransactionBuffer.addFlags(builder, this.flags);
-
-        MosaicCreationTransactionBuffer.addDivisibility(builder, this.divisibility);
+        MosaicDefinitionTransactionBuffer.startMosaicDefinitionTransactionBuffer(builder);
+        MosaicDefinitionTransactionBuffer.addSize(builder, 122 + 4 + 8 + 1 + 1 + 1 + (durationProvided ? 9 : 0));
+        MosaicDefinitionTransactionBuffer.addSignature(builder, signatureVector);
+        MosaicDefinitionTransactionBuffer.addSigner(builder, signerVector);
+        MosaicDefinitionTransactionBuffer.addVersion(builder, this.version);
+        MosaicDefinitionTransactionBuffer.addType(builder, this.type);
+        MosaicDefinitionTransactionBuffer.addMaxFee(builder, feeVector);
+        MosaicDefinitionTransactionBuffer.addDeadline(builder, deadlineVector);
+        MosaicDefinitionTransactionBuffer.addMosaicNonce(builder, mosaicNonceVector);
+        MosaicDefinitionTransactionBuffer.addMosaicId(builder, mosaicIdVector);
+        MosaicDefinitionTransactionBuffer.addNumOptionalProperties(builder, (durationProvided ? 1 : 0));
+        MosaicDefinitionTransactionBuffer.addFlags(builder, this.flags);
+        MosaicDefinitionTransactionBuffer.addDivisibility(builder, this.divisibility);
 
         if (durationProvided) {
-            MosaicCreationTransactionBuffer.addIndicateDuration(builder, 2);
-            MosaicCreationTransactionBuffer.addDuration(builder, durationVector);
+            MosaicDefinitionTransactionBuffer.addIndicateDuration(builder, MosaicPropertyType.Duration);
+            MosaicDefinitionTransactionBuffer.addDuration(builder, durationVector);
         }
 
         // Calculate size
 
-        const codedMosaicCreation = MosaicCreationTransactionBuffer.endMosaicCreationTransactionBuffer(builder);
+        const codedMosaicCreation = MosaicDefinitionTransactionBuffer.endMosaicDefinitionTransactionBuffer(builder);
         builder.finish(codedMosaicCreation);
 
         const bytes = builder.asUint8Array();

@@ -248,7 +248,7 @@ Catapult.Buffers.ModifyContractTransactionBuffer.prototype.signerArray = functio
  */
 Catapult.Buffers.ModifyContractTransactionBuffer.prototype.version = function() {
   var offset = this.bb.__offset(this.bb_pos, 10);
-  return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
+  return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
 };
 
 /**
@@ -515,7 +515,7 @@ Catapult.Buffers.ModifyContractTransactionBuffer.startSignerVector = function(bu
  * @param {number} version
  */
 Catapult.Buffers.ModifyContractTransactionBuffer.addVersion = function(builder, version) {
-  builder.addFieldInt16(3, version, 0);
+  builder.addFieldInt32(3, version, 0);
 };
 
 /**

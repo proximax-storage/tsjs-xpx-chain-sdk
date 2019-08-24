@@ -38,3 +38,18 @@ export const Cosignatory2Account = Account.createFromPrivateKey(
 export const Cosignatory3Account = Account.createFromPrivateKey(
     '111602be4d36f92dd60ca6a3c68478988578f26f6a02f8c72089839515ab603e',
     NetworkType.MIJIN_TEST);
+
+export const Customer1Account = Account.createFromPrivateKey(
+    'c2b069398cc135645fa0959708ad2504f3dcfdb12a8b95c015ecbd16e29aeb77',
+    NetworkType.TEST_NET
+)
+
+export const Executor1Account = Account.createFromPrivateKey(
+    '0e02cce89fb87546f21b0b594461dcbea8b0a33743095870c3a1cd914e38be62',
+    NetworkType.TEST_NET
+)
+
+export const Verifier1Account = Account.createFromPrivateKey(
+    'c8a449299d45b26e4679b5fdd8e39a73fccd74f77444a8bf68d2893a93d29770',
+    NetworkType.TEST_NET
+)

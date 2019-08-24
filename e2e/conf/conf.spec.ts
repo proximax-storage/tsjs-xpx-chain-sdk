@@ -3,7 +3,7 @@ const conf = require("config");
 import { Account } from '../../src/model/account/Account';
 import { NetworkType } from '../../src/model/blockchain/NetworkType';
 import { MosaicId, NamespaceId, TransactionType, RegisterNamespaceTransaction, MosaicDefinitionTransaction,
-    TransferTransaction, TransactionInfo, MosaicNonce, MosaicProperties, UInt64, BlockInfo } from '../../src/model/model';
+    TransferTransaction, TransactionInfo, MosaicNonce, MosaicProperties, UInt64, BlockInfo, ChainConfigTransaction } from '../../src/model/model';
 import { ConfUtils } from './ConfUtils';
 import { BlockHttp } from '../../src/infrastructure/BlockHttp';
 import { ChainHttp } from '../../src/infrastructure/ChainHttp';
@@ -44,6 +44,7 @@ interface ConfBlockchain {
 }
 
 interface ConfEnv {
+    TEST_NEMESIS_ACCOUNT_KEY: string;
     TEST_SEED_ACCOUNT_KEY: string;
     TEST_TEST_ACCOUNT1_KEY: string;
     TEST_TEST_ACCOUNT2_KEY: string;
@@ -98,6 +99,7 @@ class TestAccount {
 const loadEnvKeys = () => {
     return new Map([
         ["seed", systemEnv.TEST_SEED_ACCOUNT_KEY],
+        ["nemesis", systemEnv.TEST_NEMESIS_ACCOUNT_KEY],
         ["testing", systemEnv.TEST_TEST_ACCOUNT1_KEY],
         ["recipient", systemEnv.TEST_TEST_ACCOUNT2_KEY],
         ["multisig", systemEnv.TEST_TEST_ACCOUNT3_KEY],
@@ -146,6 +148,7 @@ const getMosId = (alias: string) => {
 const accounts = loadBlockchainConfAccouns(blockchain);
 
 const SeedAccount = (accounts.get("seed") as unknown as TestAccount).acc;
+const NemesisAccount = (accounts.get("nemesis") as unknown as TestAccount).acc;
 const TestingAccount = (accounts.get("testing") as unknown as TestAccount).acc;
 const TestingRecipient = (accounts.get("recipient") as unknown as TestAccount).acc;
 const MultisigAccount = (accounts.get("multisig") as unknown as TestAccount).acc;
@@ -202,10 +205,11 @@ const GetNemesisBlockDataPromise = () => {
         return blockHttp.getBlockTransactions(1, new QueryParams(100)).toPromise()
         .then(txs => {
             const regNamespaceTxs = txs.filter(tx => tx.type === TransactionType.REGISTER_NAMESPACE) as RegisterNamespaceTransaction[];
-            const currencyNamespace = regNamespaceTxs.find(tx => tx.namespaceName === "currency");
+            const currencyNamespace = regNamespaceTxs.find(tx => tx.namespaceName === "xpx");
             const testNamespace = currencyNamespace ? currencyNamespace : regNamespaceTxs[0];
             const regMosaicTx = txs.find(tx => tx.type === TransactionType.MOSAIC_DEFINITION) as MosaicDefinitionTransaction;
             const transferTx = txs.find(tx => tx.type === TransactionType.TRANSFER) as TransferTransaction;
+            const config = txs.find(tx => tx.type === TransactionType.CHAIN_CONFIGURE) as ChainConfigTransaction;
 
             return {
                 nemesisBlockInfo,
@@ -219,6 +223,7 @@ const GetNemesisBlockDataPromise = () => {
                 },
                 testTxHash: (transferTx.transactionInfo as TransactionInfo).hash as string,
                 testTxId: (transferTx.transactionInfo as TransactionInfo).id,
+                config,
             }
         });
     });
@@ -244,6 +249,7 @@ export {
     ConfTransactionHttp,
 
     ConfNetworkType,
+    NemesisAccount,
     SeedAccount,
     TestingAccount,
     TestingRecipient,

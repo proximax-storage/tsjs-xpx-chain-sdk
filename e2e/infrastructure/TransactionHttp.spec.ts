@@ -1,14 +1,14 @@
 /*
  * Copyright 2018 NEM
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the \"License\");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
+ * distributed under the License is distributed on an \"AS IS\" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -62,9 +62,9 @@ import { TransferTransaction } from '../../src/model/transaction/TransferTransac
 import { UInt64 } from '../../src/model/UInt64';
 import {
     APIUrl, ConfNetworkType, ConfNetworkMosaic,
-    SeedAccount, TestingAccount, TestingRecipient, MultisigAccount, CosignatoryAccount, Cosignatory2Account, Cosignatory3Account, GetNemesisBlockDataPromise, ConfNamespace, ConfTestingMosaic, ConfTestingNamespace, ConfAccountHttp, ConfTransactionHttp, ConfMosaicHttp, NemesisBlockInfo, Customer1Account, ConfNetworkMosaicDivisibility, MultilevelMultisigAccount, Cosignatory4Account
+    SeedAccount, TestingAccount, TestingRecipient, MultisigAccount, CosignatoryAccount, Cosignatory2Account, Cosignatory3Account, GetNemesisBlockDataPromise, ConfNamespace, ConfTestingMosaic, ConfTestingNamespace, ConfAccountHttp, ConfTransactionHttp, ConfMosaicHttp, NemesisBlockInfo, Customer1Account, ConfNetworkMosaicDivisibility, MultilevelMultisigAccount, Cosignatory4Account, NemesisAccount
 } from '../conf/conf.spec';
-import { AliasTransaction, Address, SignedTransaction, AggregateTransactionCosignature, CosignatureTransaction } from '../../src/model/model';
+import { AliasTransaction, Address, ChainConfigTransaction, SignedTransaction, AggregateTransactionCosignature, CosignatureTransaction, ChainUpgradeTransaction } from '../../src/model/model';
 import { ModifyMetadataTransaction, MetadataModification, MetadataModificationType } from '../../src/model/transaction/ModifyMetadataTransaction';
 import { MetadataHttp } from '../../src/infrastructure/MetadataHttp';
 import { ConfUtils } from '../conf/ConfUtils';
@@ -342,7 +342,7 @@ describe('TransactionHttp', () => {
                         Deadline.create(),
                         undefined,
                         mosaicId,
-                        [new MetadataModification(MetadataModificationType.ADD, "key2", "some other value")]
+                        [new MetadataModification(MetadataModificationType.ADD, 'key2', 'some other value')]
                     );
                     const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount, generationHash);
                     validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
@@ -1228,6 +1228,42 @@ describe('TransactionHttp', () => {
                         fail(reason);
                     })
                 transactionHttp.announce(signedSecretLockTransaction);
+            });
+        });
+    });
+
+    describe('announce', () => {
+        describe('ChainConfigTransaction', () => {
+            ((NemesisAccount.privateKey !== "0".repeat(64)) ? it : it.skip)('standalone', (done) => {
+                GetNemesisBlockDataPromise().then(nemesisBlockInfo => {
+                    const chainConfigTransaction = ChainConfigTransaction.create(
+                        Deadline.create(),
+                        UInt64.fromUint(10),
+                        nemesisBlockInfo.config.blockChainConfig,
+                        nemesisBlockInfo.config.supportedEntityVersions,
+                        ConfNetworkType
+                    );
+                    const signedTransaction = chainConfigTransaction.signWith(NemesisAccount, generationHash);
+                    validateTransactionConfirmed(listener, NemesisAccount.address, signedTransaction.hash)
+                        .then(() => done()).catch((reason) => fail(reason));
+                    transactionHttp.announce(signedTransaction);
+                });
+            });
+        });
+        describe('ChainUpgradeTransaction', () => {
+            ((NemesisAccount.privateKey !== "0".repeat(64)) ? it : it.skip)('standalone', (done) => {
+                GetNemesisBlockDataPromise().then(nemesisBlockInfo => {
+                    const chainUpgradeTransaction = ChainUpgradeTransaction.create(
+                        Deadline.create(),
+                        UInt64.fromUint(100000),
+                        UInt64.fromHex('0001000200030004'),
+                        ConfNetworkType
+                    );
+                    const signedTransaction = chainUpgradeTransaction.signWith(NemesisAccount, generationHash);
+                    validateTransactionConfirmed(listener, NemesisAccount.address, signedTransaction.hash)
+                        .then(() => done()).catch((reason) => fail(reason));
+                    transactionHttp.announce(signedTransaction);
+                });
             });
         });
     });

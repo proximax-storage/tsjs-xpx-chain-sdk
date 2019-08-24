@@ -123,7 +123,7 @@ export class AggregateTransaction extends Transaction {
         return new Builder()
             .addDeadline(this.deadline.toDTO())
             .addType(this.type)
-            .addFee(this.maxFee.toDTO())
+            .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addTransactions(this.innerTransactions.map((transaction) => {
                 return transaction.aggregateTransaction();

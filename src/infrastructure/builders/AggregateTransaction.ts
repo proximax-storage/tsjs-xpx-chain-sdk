@@ -86,7 +86,7 @@ export class Builder {
         this.type = TransactionType.AGGREGATE_COMPLETE;
     }
 
-    addFee(maxFee) {
+    addMaxFee(maxFee) {
         this.maxFee = maxFee;
         return this;
     }
@@ -127,16 +127,16 @@ export class Builder {
             .createSignerVector(builder, Array(...Array(32))
                 .map(Number.prototype.valueOf, 0));
         const deadlineVector = AggregateTransactionBuffer.createDeadlineVector(builder, this.deadline);
-        const feeVector = AggregateTransactionBuffer.createFeeVector(builder, this.maxFee);
+        const feeVector = AggregateTransactionBuffer.createMaxFeeVector(builder, this.maxFee);
         const modificationsVector = AggregateTransactionBuffer.createTransactionsVector(builder, this.transactions);
 
         AggregateTransactionBuffer.startAggregateTransactionBuffer(builder);
-        AggregateTransactionBuffer.addSize(builder, 120 + 4 + this.transactions.length);
+        AggregateTransactionBuffer.addSize(builder, 122 + 4 + this.transactions.length);
         AggregateTransactionBuffer.addSignature(builder, signatureVector);
         AggregateTransactionBuffer.addSigner(builder, signerVector);
         AggregateTransactionBuffer.addVersion(builder, this.version);
         AggregateTransactionBuffer.addType(builder, this.type);
-        AggregateTransactionBuffer.addFee(builder, feeVector);
+        AggregateTransactionBuffer.addMaxFee(builder, feeVector);
         AggregateTransactionBuffer.addDeadline(builder, deadlineVector);
         AggregateTransactionBuffer.addTransactionsSize(builder, 0 !== this.transactions.length ? this.transactions.length : 4294967296);
         AggregateTransactionBuffer.addTransactions(builder, modificationsVector);

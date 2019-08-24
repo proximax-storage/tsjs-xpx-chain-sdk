@@ -80,7 +80,7 @@ export class BlockHttp extends Http implements BlockRepository {
      */
     public getBlockByHeight(height: number): Observable<BlockInfo> {
         return observableFrom(this.blockRoutesApi.getBlockByHeight(height)).pipe(map((blockDTO: BlockInfoDTO) => {
-            const networkType = parseInt((blockDTO.block.version as number).toString(16).substr(0, 2), 16);
+            const networkType = parseInt((blockDTO.block.version >>> 0).toString(16).substr(0, 2), 16); // ">>> 0" hack makes it effectively an Uint32
             return new BlockInfo(
                 blockDTO.meta.hash,
                 blockDTO.meta.generationHash,
@@ -89,7 +89,7 @@ export class BlockHttp extends Http implements BlockRepository {
                 blockDTO.block.signature,
                 PublicAccount.createFromPublicKey(blockDTO.block.signer, networkType),
                 networkType,
-                parseInt((blockDTO.block.version as number).toString(16).substr(2, 2), 16), // Tx version
+                parseInt((blockDTO.block.version >>> 0).toString(16).substr(2, 2), 16), // Tx version
                 blockDTO.block.type,
                 new UInt64(blockDTO.block.height),
                 new UInt64(blockDTO.block.timestamp),
@@ -134,7 +134,7 @@ export class BlockHttp extends Http implements BlockRepository {
         return observableFrom(
             this.blockRoutesApi.getBlocksByHeightWithLimit(height, limit)).pipe(map((blocksDTO: BlockInfoDTO[]) => {
             return blocksDTO.map((blockDTO) => {
-                const networkType = parseInt((blockDTO.block.version as number).toString(16).substr(0, 2), 16);
+                const networkType = parseInt((blockDTO.block.version >>> 0).toString(16).substr(0, 2), 16);
                 return new BlockInfo(
                     blockDTO.meta.hash,
                     blockDTO.meta.generationHash,
@@ -143,7 +143,7 @@ export class BlockHttp extends Http implements BlockRepository {
                     blockDTO.block.signature,
                     PublicAccount.createFromPublicKey(blockDTO.block.signer, networkType),
                     networkType,
-                    parseInt((blockDTO.block.version as number).toString(16).substr(2, 2), 16), // Tx version
+                    parseInt((blockDTO.block.version >>> 0).toString(16).substr(2, 2), 16), // Tx version
                     blockDTO.block.type,
                     new UInt64(blockDTO.block.height),
                     new UInt64(blockDTO.block.timestamp),

@@ -136,4 +136,14 @@ export class TransactionType {
      * Modify contract transaction type
      */
     public static readonly MODIFY_CONTRACT = 0x4157;
+
+    /**
+     * Upgrade chain transaction type
+     */
+    public static readonly CHAIN_UPGRADE = 0x4158;
+
+    /**
+     * Configure chain transaction type
+     */
+    public static readonly CHAIN_CONFIGURE = 0x4159;
 }

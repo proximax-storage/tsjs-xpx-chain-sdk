@@ -103,7 +103,7 @@ export class AccountMosaicRestrictionModificationTransaction extends Transaction
     protected buildTransaction(): VerifiableTransaction {
         return new Builder()
             .addDeadline(this.deadline.toDTO())
-            .addFee(this.maxFee.toDTO())
+            .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addRestrictionType(this.restrictionType)
             .addModifications(this.modifications.map((modification) => modification.toDTO()))

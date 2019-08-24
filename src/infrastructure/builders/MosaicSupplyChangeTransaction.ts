@@ -46,7 +46,7 @@ export class Builder {
         this.type = TransactionType.MOSAIC_SUPPLY_CHANGE;
     }
 
-    addFee(maxFee) {
+    addMaxFee(maxFee) {
         this.maxFee = maxFee;
         return this;
     }
@@ -92,19 +92,19 @@ export class Builder {
         const deadlineVector = MosaicSupplyChangeTransactionBuffer
             .createDeadlineVector(builder, this.deadline);
         const feeVector = MosaicSupplyChangeTransactionBuffer
-            .createFeeVector(builder, this.maxFee);
+            .createMaxFeeVector(builder, this.maxFee);
         const mosaicIdVector = MosaicSupplyChangeTransactionBuffer
-            .createFeeVector(builder, this.mosaicId);
+            .createMaxFeeVector(builder, this.mosaicId);
         const deltaVector = MosaicSupplyChangeTransactionBuffer
-            .createFeeVector(builder, this.delta);
+            .createMaxFeeVector(builder, this.delta);
 
         MosaicSupplyChangeTransactionBuffer.startMosaicSupplyChangeTransactionBuffer(builder);
-        MosaicSupplyChangeTransactionBuffer.addSize(builder, 137);
+        MosaicSupplyChangeTransactionBuffer.addSize(builder, 122 + 17);
         MosaicSupplyChangeTransactionBuffer.addSignature(builder, signatureVector);
         MosaicSupplyChangeTransactionBuffer.addSigner(builder, signerVector);
         MosaicSupplyChangeTransactionBuffer.addVersion(builder, this.version);
         MosaicSupplyChangeTransactionBuffer.addType(builder, this.type);
-        MosaicSupplyChangeTransactionBuffer.addFee(builder, feeVector);
+        MosaicSupplyChangeTransactionBuffer.addMaxFee(builder, feeVector);
         MosaicSupplyChangeTransactionBuffer.addDeadline(builder, deadlineVector);
         MosaicSupplyChangeTransactionBuffer.addMosaicId(builder, mosaicIdVector);
         MosaicSupplyChangeTransactionBuffer.addDirection(builder, this.direction);

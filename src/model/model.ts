@@ -40,6 +40,9 @@ export * from './blockchain/MerklePathItem';
 export * from './blockchain/MerkleProofInfo';
 export * from './blockchain/MerkleProofInfoPayload';
 
+// Config
+export * from './config/ChainConfig';
+
 // Contract
 export * from './contract/Contract';
 
@@ -113,6 +116,8 @@ export * from './transaction/AggregateTransaction';
 export * from './transaction/AggregateTransactionCosignature';
 export * from './transaction/AggregateTransactionInfo';
 export * from './transaction/AliasTransaction';
+export * from './transaction/ChainConfigTransaction';
+export * from './transaction/ChainUpgradeTransaction';
 export * from './transaction/CosignatureSignedTransaction';
 export * from './transaction/CosignatureTransaction';
 export * from './transaction/Deadline';
@@ -123,6 +128,8 @@ export * from './transaction/InnerTransaction';
 export * from './transaction/LinkAction';
 export * from './transaction/LockFundsTransaction';
 export * from './transaction/Message';
+export * from './transaction/ModifyContractTransaction';
+export * from './transaction/ModifyMetadataTransaction';
 export * from './transaction/ModifyMultisigAccountTransaction';
 export * from './transaction/MosaicAliasTransaction';
 export * from './transaction/MosaicDefinitionTransaction';
@@ -142,6 +149,9 @@ export * from './transaction/TransactionStatus';
 export * from './transaction/TransactionStatusError';
 export * from './transaction/TransactionType';
 export * from './transaction/TransferTransaction';
+
+// Upgrade
+export * from './upgrade/ChainUpgrade';
 
 // Wallet
 export * from './wallet/EncryptedPrivateKey';

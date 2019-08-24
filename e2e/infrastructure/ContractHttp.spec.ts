@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {APIUrl, TestingAccount, ConfNetworkType, ConfTestingNamespace, ConfTestingMosaic, NemesisBlockInfo, Customer1Account, Executor1Account, Executor2Account, Verifier1Account, Verifier2Account} from '../conf/conf.spec';
 import { MetadataHttp } from '../../src/infrastructure/MetadataHttp';
-import { MosaicId, NamespaceId, Deadline, Address, Transaction, SignedTransaction, UInt64, MultisigCosignatoryModification, MultisigCosignatoryModificationType } from '../../src/model/model';
+import { MosaicId, NamespaceId, Deadline, Address, Transaction, SignedTransaction, UInt64, MultisigCosignatoryModification, MultisigCosignatoryModificationType, AggregateTransaction } from '../../src/model/model';
 import { ModifyMetadataTransaction, MetadataModification, MetadataModificationType } from '../../src/model/transaction/ModifyMetadataTransaction';
 import { TransactionHttp, Listener, ContractHttp } from '../../src/infrastructure/infrastructure';
 import { ConfUtils } from '../conf/ConfUtils';
@@ -68,8 +68,12 @@ describe('ContractHttp', () => {
                 [new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, Verifier1Account.publicAccount),
                  new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, Verifier2Account.publicAccount)]
             );
-            it('standalone', (done) => {
-                const signedTransaction = modifyContractTransaction.signWith(Customer1Account, generationHash);
+            it('aggregate', (done) => {
+                const aggregateTransaction = AggregateTransaction.createComplete(Deadline.create(),
+                [modifyContractTransaction.toAggregate(Customer1Account.publicAccount)],
+                ConfNetworkType,
+                []);
+                const signedTransaction = aggregateTransaction.signWith(Customer1Account, generationHash);
                 validateTransactionAnnounceCorrectly(Customer1Account.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });

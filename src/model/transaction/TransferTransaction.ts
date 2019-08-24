@@ -138,7 +138,7 @@ export class TransferTransaction extends Transaction {
     protected buildTransaction(): VerifiableTransaction {
         return new Builder()
             .addDeadline(this.deadline.toDTO())
-            .addFee(this.maxFee.toDTO())
+            .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addRecipient(this.recipientToString())
             .addMosaics(this.mosaics.map((mosaic) => mosaic.toDTO()))

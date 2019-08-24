@@ -193,14 +193,14 @@ describe('Transaction', () => {
             const serialized = transaction.serialize();
 
             expect(serialized.substring(
-                240,
+                244,
                 serialized.length,
             )).to.be.equal('9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1420D000000746573742D6D657373616765');
         });
     });
 
     describe('size', () => {
-        it('should return 120 for base transaction size', () => {
+        it('should return 122 for base transaction size', () => {
             const transaction = new FakeTransaction(TransactionType.TRANSFER,
                 NetworkType.MIJIN_TEST,
                 1,
@@ -210,7 +210,7 @@ describe('Transaction', () => {
                 undefined,
                 new TransactionInfo(UInt64.fromUint(100), 1, 'id_hash', 'hash', 'hash'),
             );
-            expect(transaction.size).to.be.equal(120);
+            expect(transaction.size).to.be.equal(122);
         });
     });
 
@@ -225,7 +225,7 @@ describe('Transaction', () => {
                 undefined,
                 new TransactionInfo(UInt64.fromUint(100), 1, 'id_hash', 'hash', 'hash'),
             );
-            expect(transaction.versionToHex()).to.be.equal('0x9001');
+            expect(transaction.versionToHex()).to.be.equal('0x90000001');
         });
     });
 });

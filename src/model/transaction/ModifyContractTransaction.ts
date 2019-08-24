@@ -77,6 +77,23 @@ export class ModifyContractTransaction extends Transaction {
     }
 
     /**
+     * @description get the byte size of a transaction
+     * @returns {number}
+     * @memberof Transaction
+     */
+    public get size(): number {
+        const byteSize = 8 // duration delta
+            + this.hash.length/2 // hash (hex)
+            + 1 // num customers
+            + 1 // num executors
+            + 1 // num verifiers
+            + 33*(this.customers.length + this.executors.length + this.verifiers.length);
+
+        return super.size + byteSize;
+    }
+
+
+    /**
      * @internal
      * @returns {VerifiableTransaction}
      */
@@ -85,7 +102,7 @@ export class ModifyContractTransaction extends Transaction {
             .addType(this.type)
             .addVersion(this.versionToDTO())
             .addDeadline(this.deadline.toDTO())
-            .addFee(this.maxFee.toDTO())
+            .addMaxFee(this.maxFee.toDTO())
             .addHash(this.hash)
             .addDurationDelta(this.durationDelta.toDTO())
             .addCustomers(this.customers)

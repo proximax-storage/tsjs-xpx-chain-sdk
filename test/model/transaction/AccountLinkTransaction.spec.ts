@@ -69,7 +69,7 @@ describe('AccountLinkTransaction', () => {
         const signedTransaction = accountLinkTransaction.signWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
-            240,
+            244,
             signedTransaction.payload.length,
         )).to.be.equal('C2F93346E27CE6AD1A9F8F5E3066F8326593A406BDF357ACB041E2F9AB402EFE00');
     });
@@ -88,20 +88,20 @@ describe('AccountLinkTransaction', () => {
         const signedTransaction = accountLinkTransaction.signWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
-            240,
+            244,
             signedTransaction.payload.length,
         )).to.be.equal('C2F93346E27CE6AD1A9F8F5E3066F8326593A406BDF357ACB041E2F9AB402EFE01');
     });
 
     describe('size', () => {
-        it('should return 153 for AccountLinkTransaction byte size', () => {
+        it('should return 155 for AccountLinkTransaction byte size', () => {
             const accountLinkTransaction = AccountLinkTransaction.create(
                 Deadline.create(),
                 account.publicKey,
                 LinkAction.Unlink,
                 NetworkType.MIJIN_TEST,
             );
-            expect(accountLinkTransaction.size).to.be.equal(153);
+            expect(accountLinkTransaction.size).to.be.equal(155);
         });
     });
 });

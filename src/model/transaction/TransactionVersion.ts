@@ -134,4 +134,15 @@ export class TransactionVersion {
      */
     public static readonly MODIFY_CONTRACT = 3;
 
+    /**
+     * Chain configuration transaction version
+     * @type {number}
+     */
+    public static readonly CHAIN_CONFIG = 1;
+
+    /**
+     * Chain upgrade transaction version
+     * @type {number}
+     */
+    public static readonly CHAIN_UPGRADE = 1;
 }

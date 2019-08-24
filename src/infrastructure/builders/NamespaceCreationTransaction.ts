@@ -24,7 +24,7 @@ import NamespaceCreationTransactionSchema from '../schemas/NamespaceCreationTran
 import { VerifiableTransaction } from './VerifiableTransaction';
 
 const {
-    NamespaceCreationTransactionBuffer,
+    RegisterNamespaceTransactionBuffer,
 } = NamespaceCreationTransactionBufferPackage.default.Buffers;
 
 import {flatbuffers} from 'flatbuffers';
@@ -51,7 +51,7 @@ export class Builder {
         this.type = TransactionType.REGISTER_NAMESPACE;
     }
 
-    addFee(maxFee) {
+    addMaxFee(maxFee) {
         this.maxFee = maxFee;
         return this;
     }
@@ -102,38 +102,38 @@ export class Builder {
         const namespaceNameLength = convert.utf8ToHex(this.namespaceName).length / 2;
 
         // create vectors
-        const signatureVector = NamespaceCreationTransactionBuffer
+        const signatureVector = RegisterNamespaceTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-        const signerVector = NamespaceCreationTransactionBuffer
+        const signerVector = RegisterNamespaceTransactionBuffer
             .createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-        const deadlineVector = NamespaceCreationTransactionBuffer
+        const deadlineVector = RegisterNamespaceTransactionBuffer
             .createDeadlineVector(builder, this.deadline);
-        const feeVector = NamespaceCreationTransactionBuffer
-            .createFeeVector(builder, this.maxFee);
+        const feeVector = RegisterNamespaceTransactionBuffer
+            .createMaxFeeVector(builder, this.maxFee);
         const parentIdVector = 1 === this.namespaceType ? this.parentId : this.duration;
-        const durationParentIdVector = NamespaceCreationTransactionBuffer
+        const durationParentIdVector = RegisterNamespaceTransactionBuffer
             .createDurationParentIdVector(builder, parentIdVector);
-        const namespaceIdVector = NamespaceCreationTransactionBuffer
+        const namespaceIdVector = RegisterNamespaceTransactionBuffer
             .createNamespaceIdVector(builder, this.namespaceId);
 
         const name = builder.createString(this.namespaceName);
 
-        NamespaceCreationTransactionBuffer.startNamespaceCreationTransactionBuffer(builder);
-        NamespaceCreationTransactionBuffer.addSize(builder, 138 + namespaceNameLength);
-        NamespaceCreationTransactionBuffer.addSignature(builder, signatureVector);
-        NamespaceCreationTransactionBuffer.addSigner(builder, signerVector);
-        NamespaceCreationTransactionBuffer.addVersion(builder, this.version);
-        NamespaceCreationTransactionBuffer.addType(builder, this.type);
-        NamespaceCreationTransactionBuffer.addFee(builder, feeVector);
-        NamespaceCreationTransactionBuffer.addDeadline(builder, deadlineVector);
-        NamespaceCreationTransactionBuffer.addNamespaceType(builder, this.namespaceType);
-        NamespaceCreationTransactionBuffer.addDurationParentId(builder, durationParentIdVector);
-        NamespaceCreationTransactionBuffer.addNamespaceId(builder, namespaceIdVector);
-        NamespaceCreationTransactionBuffer.addNamespaceNameSize(builder, namespaceNameLength);
-        NamespaceCreationTransactionBuffer.addNamespaceName(builder, name);
+        RegisterNamespaceTransactionBuffer.startRegisterNamespaceTransactionBuffer(builder);
+        RegisterNamespaceTransactionBuffer.addSize(builder, 122 + 18 + namespaceNameLength);
+        RegisterNamespaceTransactionBuffer.addSignature(builder, signatureVector);
+        RegisterNamespaceTransactionBuffer.addSigner(builder, signerVector);
+        RegisterNamespaceTransactionBuffer.addVersion(builder, this.version);
+        RegisterNamespaceTransactionBuffer.addType(builder, this.type);
+        RegisterNamespaceTransactionBuffer.addMaxFee(builder, feeVector);
+        RegisterNamespaceTransactionBuffer.addDeadline(builder, deadlineVector);
+        RegisterNamespaceTransactionBuffer.addNamespaceType(builder, this.namespaceType);
+        RegisterNamespaceTransactionBuffer.addDurationParentId(builder, durationParentIdVector);
+        RegisterNamespaceTransactionBuffer.addNamespaceId(builder, namespaceIdVector);
+        RegisterNamespaceTransactionBuffer.addNamespaceNameSize(builder, namespaceNameLength);
+        RegisterNamespaceTransactionBuffer.addNamespaceName(builder, name);
 
         // Calculate size
-        const codedNamespace = NamespaceCreationTransactionBuffer.endNamespaceCreationTransactionBuffer(builder);
+        const codedNamespace = RegisterNamespaceTransactionBuffer.endRegisterNamespaceTransactionBuffer(builder);
         builder.finish(codedNamespace);
 
         const bytes = builder.asUint8Array();
