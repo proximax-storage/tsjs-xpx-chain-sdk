@@ -80,7 +80,7 @@ export class BlockHttp extends Http implements BlockRepository {
      */
     public getBlockByHeight(height: number): Observable<BlockInfo> {
         return observableFrom(this.blockRoutesApi.getBlockByHeight(height)).pipe(map((blockDTO: BlockInfoDTO) => {
-            const networkType = parseInt((blockDTO.block.version >>> 0).toString(16).substr(0, 2), 16); // ">>> 0" hack makes it efectively an Uint32
+            const networkType = parseInt((blockDTO.block.version >>> 0).toString(16).substr(0, 2), 16); // ">>> 0" hack makes it effectively an Uint32
             return new BlockInfo(
                 blockDTO.meta.hash,
                 blockDTO.meta.generationHash,

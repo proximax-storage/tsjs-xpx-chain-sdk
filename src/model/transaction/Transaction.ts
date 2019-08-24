@@ -168,7 +168,7 @@ export abstract class Transaction {
      * @internal
      */
     public versionToHex(): string {
-        return '0x' + (this.versionToDTO() >>> 0).toString(16); // ">>> 0" hack makes it efectively an Uint32
+        return '0x' + (this.versionToDTO() >>> 0).toString(16); // ">>> 0" hack makes it effectively an Uint32
     }
 
     /**
