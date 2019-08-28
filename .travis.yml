@@ -10,7 +10,7 @@ before_script:
   - npm run build
 script: 
   - npm run test:coveralls
-deploy
+deploy:
  	  provider: npm
  	  email: "$AUTH_EMAIL"
  	  api_key: "$AUTH_TOKEN"
