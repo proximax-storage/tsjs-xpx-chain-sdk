@@ -23,9 +23,6 @@
     "type": "git",
     "url": "git+https://github.com/proximax-storage/tsjs-xpx-chain-sdk.git"
   },
-  "publishConfig": {
-    "registry": "https://nexus.internal.proximax.io/repository/npm-private/"
-  },
   "license": "Apache-2.0",
   "homepage": "https://github.com/proximax-storage/tsjs-xpx-chain-sdk#readme",
   "main": "dist/index.js",
