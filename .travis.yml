@@ -12,6 +12,7 @@ script:
   - npm run test:coveralls
 deploy:
   provider: npm
+  skip-cleanup: true
   email: "$AUTH_EMAIL"
   api_key: "$AUTH_TOKEN"
   on:
