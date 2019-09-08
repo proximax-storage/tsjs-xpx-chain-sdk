@@ -16,7 +16,6 @@
 
 import {expect} from 'chai';
 import {ChainHttp} from '../../src/infrastructure/ChainHttp';
-import {QueryParams} from '../../src/infrastructure/QueryParams';
 import { APIUrl } from '../conf/conf.spec';
 describe('ChainHttp', () => {
     let chainHttp = new ChainHttp(APIUrl);

@@ -4,19 +4,20 @@
 
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
-import { NamespaceId } from '../namespace/NamespaceId';
 import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
-import { Transaction } from './Transaction';
+import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
-import { TransactionType } from './TransactionType';
 import { TransactionVersion } from './TransactionVersion';
 import { AggregateTransactionInfo } from './AggregateTransactionInfo';
-import { MosaicId } from '../mosaic/MosaicId';
-import { Address } from '../account/Address';
 import { MetadataType } from '../metadata/MetadataType';
 import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
 import { Builder } from '../../infrastructure/builders/ModifyMetadataTransaction';
+import { TransactionType } from './TransactionType';
+import { calculateFee } from './FeeCalculationStrategy';
+import { Address } from '../account/Address';
+import { MosaicId } from '../mosaic/MosaicId';
+import { NamespaceId } from '../namespace/NamespaceId';
 
 export enum MetadataModificationType {
     ADD = 0,
@@ -57,24 +58,16 @@ export class ModifyMetadataTransaction extends Transaction {
     public static createWithAddress(
         networkType: NetworkType,
         deadline: Deadline,
-        maxFee: UInt64 = new UInt64([0, 0]),
         address: Address,
         modifications: MetadataModification[],
-        signature?: string,
-        signer?: PublicAccount,
-        transactionInfo?: TransactionInfo | AggregateTransactionInfo
-    ): ModifyMetadataTransaction {
-        return new ModifyMetadataTransaction(
-            TransactionType.MODIFY_ACCOUNT_METADATA,
-            networkType,
-            deadline,
-            maxFee,
-            MetadataType.ADDRESS,
-            address.plain(),
-            modifications,
-            signature,
-            signer,
-            transactionInfo);
+        maxFee?: UInt64): ModifyMetadataTransaction {
+        return new ModifyAccountMetadataTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .address(address)
+            .modifications(modifications)
+            .build();
     }
     /**
      * Create a modify metadata transaction object
@@ -83,24 +76,16 @@ export class ModifyMetadataTransaction extends Transaction {
     public static createWithMosaicId(
         networkType: NetworkType,
         deadline: Deadline,
-        maxFee: UInt64 = new UInt64([0, 0]),
         mosaicId: MosaicId,
         modifications: MetadataModification[],
-        signature?: string,
-        signer?: PublicAccount,
-        transactionInfo?: TransactionInfo | AggregateTransactionInfo
-    ): ModifyMetadataTransaction {
-        return new ModifyMetadataTransaction(
-            TransactionType.MODIFY_MOSAIC_METADATA,
-            networkType,
-            deadline,
-            maxFee,
-            MetadataType.MOSAIC,
-            mosaicId.toHex(),
-            modifications,
-            signature,
-            signer,
-            transactionInfo);
+        maxFee?: UInt64): ModifyMetadataTransaction {
+        return new ModifyMosaicMetadataTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .mosaicId(mosaicId)
+            .modifications(modifications)
+            .build();
     }
     /**
      * Create a modify metadata transaction object
@@ -109,24 +94,16 @@ export class ModifyMetadataTransaction extends Transaction {
     public static createWithNamespaceId(
         networkType: NetworkType,
         deadline: Deadline,
-        maxFee: UInt64 = new UInt64([0, 0]),
         namespaceId: NamespaceId,
         modifications: MetadataModification[],
-        signature?: string,
-        signer?: PublicAccount,
-        transactionInfo?: TransactionInfo | AggregateTransactionInfo
-    ): ModifyMetadataTransaction {
-        return new ModifyMetadataTransaction(
-            TransactionType.MODIFY_NAMESPACE_METADATA,
-            networkType,
-            deadline,
-            maxFee,
-            MetadataType.NAMESPACE,
-            namespaceId.toHex(),
-            modifications,
-            signature,
-            signer,
-            transactionInfo);
+        maxFee?: UInt64): ModifyMetadataTransaction {
+        return new ModifyNamespaceMetadataTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .namespaceId(namespaceId)
+            .modifications(modifications)
+            .build();
     }
 
     /**
@@ -141,7 +118,7 @@ export class ModifyMetadataTransaction extends Transaction {
      * @param signer
      * @param transactionInfo
      */
-    private constructor(
+    constructor(
         transactionType: number,
         networkType: NetworkType,
         deadline: Deadline,
@@ -162,12 +139,17 @@ export class ModifyMetadataTransaction extends Transaction {
      * @returns {number}
      * @memberof Transaction
      */
-    public get size(): number {
-        const byteSize = super.size
+    public static calculateSize(type: TransactionType, modifications: MetadataModification[]): number {
+        const modificationsSize = modifications.map(m => 4 + 1 + 1 + 2 + m.key.length + (m.value ? m.value.length : 0)).reduce((p,n) => p+n);
+        const byteSize = Transaction.getHeaderSize()
                         + 1 // type
-                        + (this.metadataType === 1 ? 25 : 8) // id
-                        + this.modifications.map(m => 4 + 1 + 1 + 2 + m.key.length + (m.value ? m.value.length : 0)).reduce((p,n) => p+n) // value
+                        + (type === TransactionType.MODIFY_ACCOUNT_METADATA ? 25 : 8) // id
+                        + modificationsSize
         return byteSize;
+    }
+
+    public get size(): number {
+        return ModifyMetadataTransaction.calculateSize(this.type, this.modifications);
     }
 
     /**
@@ -184,5 +166,73 @@ export class ModifyMetadataTransaction extends Transaction {
             .addMetadataId(this.metadataId)
             .addModifications(this.modifications)
             .build();
+    }
+}
+
+class ModifyMetadataTransactionBuilder extends TransactionBuilder {
+    private _transactionType: number;
+    protected _metadataType: MetadataType;
+    protected _metadataId: string;
+    private _modifications: MetadataModification[];
+
+    constructor(transactionType: number) {
+        super();
+        this._transactionType = transactionType;
+    }
+
+    public modifications(modifications: MetadataModification[]) {
+        this._modifications = modifications;
+        return this;
+    }
+
+    public build(): ModifyMetadataTransaction {
+        return new ModifyMetadataTransaction(
+            this._transactionType,
+            this._networkType,
+            this._deadline ? this._deadline : this._createNewDeadlineFn(),
+            this._maxFee ? this._maxFee : calculateFee(ModifyMetadataTransaction.calculateSize(this._transactionType, this._modifications), this._feeCalculationStrategy),
+            this._metadataType,
+            this._metadataId,
+            this._modifications,
+            this._signature,
+            this._signer,
+            this._transactionInfo
+        );
+    }
+}
+
+export class ModifyAccountMetadataTransactionBuilder extends ModifyMetadataTransactionBuilder {
+    public address(address: Address) {
+        this._metadataType = MetadataType.ADDRESS;
+        this._metadataId = address.plain();
+        return this;
+    }
+
+    constructor() {
+        super(TransactionType.MODIFY_ACCOUNT_METADATA);
+    }
+}
+
+export class ModifyMosaicMetadataTransactionBuilder extends ModifyMetadataTransactionBuilder {
+    public mosaicId(mosaicId: MosaicId) {
+        this._metadataType = MetadataType.MOSAIC;
+        this._metadataId = mosaicId.toHex();
+        return this;
+    }
+
+    constructor() {
+        super(TransactionType.MODIFY_MOSAIC_METADATA);
+    }
+}
+
+export class ModifyNamespaceMetadataTransactionBuilder extends ModifyMetadataTransactionBuilder {
+    public namespaceId(namespaceId: NamespaceId) {
+        this._metadataType = MetadataType.NAMESPACE;
+        this._metadataId = namespaceId.toHex();
+        return this;
+    }
+
+    constructor() {
+        super(TransactionType.MODIFY_NAMESPACE_METADATA);
     }
 }

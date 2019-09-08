@@ -54,6 +54,11 @@ export abstract class Message {
     }
 
     /**
+     * Returns the byte size of the message
+     */
+    public abstract size(): number;
+
+    /**
      * Create DTO object
      */
     toDTO() {

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Convert as convert } from '../../core/format';
 import { Builder } from '../../infrastructure/builders/TransferTransaction';
-import {VerifiableTransaction} from '../../infrastructure/builders/VerifiableTransaction';
+import { TransactionBuilder } from './Transaction';
+import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
 import { Address } from '../account/Address';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
@@ -29,6 +29,8 @@ import { Transaction } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
 import { TransactionVersion } from './TransactionVersion';
+import { EmptyMessage } from './PlainMessage';
+import { calculateFee } from './FeeCalculationStrategy';
 
 /**
  * Transfer transactions contain data about transfers of mosaics and message to another account.
@@ -49,14 +51,15 @@ export class TransferTransaction extends Transaction {
                          mosaics: Mosaic[],
                          message: Message,
                          networkType: NetworkType,
-                         maxFee: UInt64 = new UInt64([0, 0])): TransferTransaction {
-        return new TransferTransaction(networkType,
-            TransactionVersion.TRANSFER,
-            deadline,
-            maxFee,
-            recipient,
-            mosaics,
-            message);
+                         maxFee?: UInt64): TransferTransaction {
+        return new TransferTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .recipient(recipient)
+            .mosaics(mosaics)
+            .message(message)
+            .build();
     }
 
     /**
@@ -110,25 +113,22 @@ export class TransferTransaction extends Transaction {
     }
 
     /**
-     * @override Transaction.size()
      * @description get the byte size of a TransferTransaction
      * @returns {number}
      * @memberof TransferTransaction
      */
-    public get size(): number {
-        const byteSize = super.size;
+    public static calculateSize(messageSize: number, mosaicsCount: number): number {
+        const byteSize = Transaction.getHeaderSize();
 
         // recipient and number of mosaics are static byte size
         const byteRecipient = 25;
         const byteNumMosaics = 2;
 
-        // read message payload size
-        const bytePayload = convert.hexToUint8(convert.utf8ToHex(this.message.payload || '')).length;
+        return byteSize + byteRecipient + byteNumMosaics + messageSize + 8*mosaicsCount;
+    }
 
-        // mosaicId / namespaceId are written on 8 bytes
-        const byteMosaics = 8 * this.mosaics.length;
-
-        return byteSize + byteRecipient + byteNumMosaics + bytePayload + byteMosaics;
+    public get size(): number {
+        return TransferTransaction.calculateSize(this.message.size(), this.mosaics.length)
     }
 
     /**
@@ -145,5 +145,40 @@ export class TransferTransaction extends Transaction {
             .addMessage(this.message)
             .build();
     }
+}
 
+export class TransferTransactionBuilder extends TransactionBuilder {
+    private _recipient: Address | NamespaceId;
+    private _mosaics: Mosaic[] = [];
+    private _message: Message = EmptyMessage;
+
+    public recipient(recipient: Address | NamespaceId) {
+        this._recipient = recipient;
+        return this;
+    }
+
+    public mosaics(mosaics: Mosaic[]) {
+        this._mosaics = mosaics;
+        return this;
+    }
+
+    public message(message: Message) {
+        this._message = message;
+        return this;
+    }
+
+    public build(): TransferTransaction {
+        return new TransferTransaction(
+            this._networkType,
+            TransactionVersion.TRANSFER,
+            this._deadline ? this._deadline : this._createNewDeadlineFn(),
+            this._maxFee ? this._maxFee : calculateFee(TransferTransaction.calculateSize(this._message.size(), this._mosaics.length), this._feeCalculationStrategy),
+            this._recipient,
+            this._mosaics,
+            this._message,
+            this._signature,
+            this._signer,
+            this._transactionInfo
+        );
+    }
 }

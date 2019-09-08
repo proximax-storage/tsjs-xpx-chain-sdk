@@ -22,16 +22,34 @@ import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
 import { AggregateTransactionInfo } from './AggregateTransactionInfo';
-import { Deadline } from './Deadline';
+import { Deadline, DefaultCreateNewDeadline } from './Deadline';
 import { InnerTransaction } from './InnerTransaction';
 import { SignedTransaction } from './SignedTransaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
+import { FeeCalculationStrategy } from './FeeCalculationStrategy';
 
 /**
  * An abstract transaction class that serves as the base class of all NEM transactions.
  */
 export abstract class Transaction {
+
+    /**
+     * @description get the byte size of the common transaction header
+     * @returns {number}
+     * @memberof Transaction
+     */
+    public static getHeaderSize(): number {
+        const byteSize = 4 // size
+                        + 64 // signature
+                        + 32 // signer
+                        + 4 // version
+                        + 2 // type
+                        + 8 // maxFee
+                        + 8; // deadline
+
+        return byteSize;
+    }
 
     /**
      * @constructor
@@ -189,17 +207,7 @@ export abstract class Transaction {
      * @returns {number}
      * @memberof Transaction
      */
-    public get size(): number {
-        const byteSize = 4 // size
-                        + 64 // signature
-                        + 32 // signer
-                        + 4 // version
-                        + 2 // type
-                        + 8 // maxFee
-                        + 8; // deadline
-
-        return byteSize;
-    }
+    public abstract get size(): number;
 
     /**
      * @description Serialize a transaction object
@@ -232,5 +240,62 @@ export abstract class Transaction {
 
         const childClassObject = SerializeTransactionToJSON(this);
         return {transaction: Object.assign(commonTransactionObject, childClassObject)};
+    }
+}
+
+export abstract class TransactionBuilder {
+    protected _networkType: NetworkType;
+    protected _deadline: Deadline;
+    protected _generationHash: string;
+    protected _feeCalculationStrategy: FeeCalculationStrategy = FeeCalculationStrategy.ZeroFeeCalculationStrategy;
+    protected _maxFee: UInt64 | undefined;
+    protected _signature: string;
+    protected _signer: PublicAccount;
+    protected _transactionInfo: TransactionInfo;
+    protected _createNewDeadlineFn: () => Deadline = DefaultCreateNewDeadline;
+
+    public networkType(networkType: NetworkType) {
+        this._networkType = networkType;
+        return this;
+    }
+
+    public deadline(deadline: Deadline) {
+        this._deadline = deadline;
+        return this;
+    }
+
+    public generationHash(generationHash: string) {
+        this._generationHash = generationHash;
+        return this;
+    }
+
+    public feeCalculationStrategy(feeCalculationStrategy: FeeCalculationStrategy) {
+        this._feeCalculationStrategy = feeCalculationStrategy;
+        return this;
+    }
+
+    public createNewDeadlineFn(createNewDeadlineFn: () => Deadline) {
+        this._createNewDeadlineFn = createNewDeadlineFn;
+        return this;
+    }
+
+    public maxFee(maxFee: UInt64 | undefined) {
+        this._maxFee = maxFee;
+        return this;
+    }
+
+    public signature(signature: string) {
+        this._signature = signature;
+        return this;
+    }
+
+    public signer(signer: PublicAccount) {
+        this._signer = signer;
+        return this;
+    }
+
+    public transactionInfo(transactionInfo: TransactionInfo) {
+        this._transactionInfo = transactionInfo;
+        return this;
     }
 }

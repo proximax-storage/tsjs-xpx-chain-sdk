@@ -15,6 +15,7 @@
  */
 
 import { Builder } from '../../infrastructure/builders/MosaicCreationTransaction';
+import { TransactionBuilder } from './Transaction';
 import {VerifiableTransaction} from '../../infrastructure/builders/VerifiableTransaction';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
@@ -27,6 +28,7 @@ import { Transaction } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
 import { TransactionVersion } from './TransactionVersion';
+import { calculateFee } from './FeeCalculationStrategy';
 
 /**
  * Before a mosaic can be created or transferred, a corresponding definition of the mosaic has to be created and published to the network.
@@ -49,15 +51,15 @@ export class MosaicDefinitionTransaction extends Transaction {
                          mosaicId: MosaicId,
                          mosaicProperties: MosaicProperties,
                          networkType: NetworkType,
-                         maxFee: UInt64 = new UInt64([0, 0])): MosaicDefinitionTransaction {
-        return new MosaicDefinitionTransaction(networkType,
-            TransactionVersion.MOSAIC_DEFINITION,
-            deadline,
-            maxFee,
-            nonce,
-            mosaicId,
-            mosaicProperties,
-        );
+                         maxFee?: UInt64): MosaicDefinitionTransaction {
+        return new MosaicDefinitionTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .mosaicNonce(nonce)
+            .mosaicId(mosaicId)
+            .mosaicProperties(mosaicProperties)
+            .build();
     }
 
     /**
@@ -95,13 +97,12 @@ export class MosaicDefinitionTransaction extends Transaction {
     }
 
     /**
-     * @override Transaction.size()
      * @description get the byte size of a MosaicDefinitionTransaction
      * @returns {number}
      * @memberof MosaicDefinitionTransaction
      */
-    public get size(): number {
-        const byteSize = super.size;
+    public static calculateSize(): number {
+        const byteSize = Transaction.getHeaderSize();
 
         // set static byte size fields
         const byteNonce = 4;
@@ -113,6 +114,10 @@ export class MosaicDefinitionTransaction extends Transaction {
         const byteDuration = 8;
 
         return byteSize + byteNonce + byteMosaicId + byteNumProps + byteFlags + byteDivisibility + byteDurationSize + byteDuration;
+    }
+
+    public get size(): number {
+        return MosaicDefinitionTransaction.calculateSize();
     }
 
     /**
@@ -140,4 +145,40 @@ export class MosaicDefinitionTransaction extends Transaction {
         return mosaicDefinitionTransaction.build();
     }
 
+}
+
+export class MosaicDefinitionTransactionBuilder extends TransactionBuilder {
+    private _mosaicNonce: MosaicNonce;
+    private _mosaicId: MosaicId;
+    private _mosaicProperties: MosaicProperties;
+
+    public mosaicNonce(mosaicNonce: MosaicNonce) {
+        this._mosaicNonce = mosaicNonce;
+        return this;
+    }
+
+    public mosaicId(mosaicId: MosaicId) {
+        this._mosaicId = mosaicId;
+        return this;
+    }
+
+    public mosaicProperties(mosaicProperties: MosaicProperties) {
+        this._mosaicProperties = mosaicProperties;
+        return this;
+    }
+
+    public build() {
+        return new MosaicDefinitionTransaction(
+            this._networkType,
+            TransactionVersion.MOSAIC_DEFINITION,
+            this._deadline ? this._deadline : this._createNewDeadlineFn(),
+            this._maxFee ? this._maxFee : calculateFee(MosaicDefinitionTransaction.calculateSize(), this._feeCalculationStrategy),
+            this._mosaicNonce,
+            this._mosaicId,
+            this._mosaicProperties,
+            this._signature,
+            this._signer,
+            this._transactionInfo
+        );
+    }
 }

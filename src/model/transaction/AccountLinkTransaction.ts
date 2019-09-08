@@ -15,6 +15,7 @@
  */
 
 import { Builder } from '../../infrastructure/builders/AccountLinkTransaction';
+import { TransactionBuilder } from './Transaction';
 import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
@@ -25,6 +26,7 @@ import { Transaction } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
 import { TransactionVersion } from './TransactionVersion';
+import { calculateFee } from './FeeCalculationStrategy';
 
 /**
  * Announce an AccountLinkTransaction to delegate the account importance to a proxy account.
@@ -43,13 +45,14 @@ export class AccountLinkTransaction extends Transaction {
                          remoteAccountKey: string,
                          linkAction: LinkAction,
                          networkType: NetworkType,
-                         maxFee: UInt64 = new UInt64([0, 0])): AccountLinkTransaction {
-        return new AccountLinkTransaction(networkType,
-            TransactionVersion.LINK_ACCOUNT,
-            deadline,
-            maxFee,
-            remoteAccountKey,
-            linkAction);
+                         maxFee?: UInt64): AccountLinkTransaction {
+        return new AccountLinkTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .remoteAccountKey(remoteAccountKey)
+            .linkAction(linkAction)
+            .build();
     }
 
     /**
@@ -82,19 +85,22 @@ export class AccountLinkTransaction extends Transaction {
     }
 
     /**
-     * @override Transaction.size()
      * @description get the byte size of a AccountLinkTransaction
      * @returns {number}
      * @memberof AccountLinkTransaction
      */
-    public get size(): number {
-        const byteSize = super.size;
+    public static calculateSize(): number {
+        const byteSize = Transaction.getHeaderSize();
 
         // set static byte size fields
         const bytePublicKey = 32;
         const byteLinkAction = 1;
 
         return byteSize + bytePublicKey + byteLinkAction;
+    }
+
+    public get size(): number {
+        return AccountLinkTransaction.calculateSize();
     }
 
     /**
@@ -111,4 +117,33 @@ export class AccountLinkTransaction extends Transaction {
             .build();
     }
 
+}
+
+export class AccountLinkTransactionBuilder extends TransactionBuilder {
+    private _remoteAccountKey: string;
+    private _linkAction: LinkAction;
+
+    public linkAction(linkAction: LinkAction) {
+        this._linkAction = linkAction;
+        return this;
+    }
+
+    public remoteAccountKey(remoteAccountKey: string) {
+        this._remoteAccountKey = remoteAccountKey;
+        return this;
+    }
+
+    public build(): AccountLinkTransaction {
+        return new AccountLinkTransaction(
+            this._networkType,
+            TransactionVersion.LINK_ACCOUNT,
+            this._deadline ? this._deadline : this._createNewDeadlineFn(),
+            this._maxFee ? this._maxFee : calculateFee(AccountLinkTransaction.calculateSize(), this._feeCalculationStrategy),
+            this._remoteAccountKey,
+            this._linkAction,
+            this._signature,
+            this._signer,
+            this._transactionInfo
+        );
+    }
 }

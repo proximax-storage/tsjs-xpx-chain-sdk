@@ -238,4 +238,8 @@ class FakeTransaction extends Transaction {
     protected buildTransaction(): VerifiableTransaction {
         throw new Error('Method not implemented.');
     }
+
+    public get size(): number {
+        return Transaction.getHeaderSize();
+    }
 }

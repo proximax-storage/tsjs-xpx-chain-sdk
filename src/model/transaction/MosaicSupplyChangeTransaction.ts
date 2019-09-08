@@ -22,10 +22,11 @@ import { MosaicId } from '../mosaic/MosaicId';
 import { MosaicSupplyType } from '../mosaic/MosaicSupplyType';
 import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
-import { Transaction } from './Transaction';
+import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
 import { TransactionVersion } from './TransactionVersion';
+import { calculateFee } from './FeeCalculationStrategy';
 
 /**
  * In case a mosaic has the flag 'supplyMutable' set to true, the creator of the mosaic can change the supply,
@@ -48,15 +49,15 @@ export class MosaicSupplyChangeTransaction extends Transaction {
                          direction: MosaicSupplyType,
                          delta: UInt64,
                          networkType: NetworkType,
-                         maxFee: UInt64 = new UInt64([0, 0])): MosaicSupplyChangeTransaction {
-        return new MosaicSupplyChangeTransaction(networkType,
-            TransactionVersion.MOSAIC_SUPPLY_CHANGE,
-            deadline,
-            maxFee,
-            mosaicId,
-            direction,
-            delta,
-        );
+                         maxFee?: UInt64): MosaicSupplyChangeTransaction {
+        return new MosaicSupplyChangeTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .mosaicId(mosaicId)
+            .direction(direction)
+            .delta(delta)
+            .build();
     }
 
     /**
@@ -94,13 +95,12 @@ export class MosaicSupplyChangeTransaction extends Transaction {
     }
 
     /**
-     * @override Transaction.size()
      * @description get the byte size of a MosaicSupplyChangeTransaction
      * @returns {number}
      * @memberof MosaicSupplyChangeTransaction
      */
-    public get size(): number {
-        const byteSize = super.size;
+    public static calculateSize(): number {
+        const byteSize = Transaction.getHeaderSize();
 
         // set static byte size fields
         const byteMosaicId = 8;
@@ -108,6 +108,10 @@ export class MosaicSupplyChangeTransaction extends Transaction {
         const byteDelta = 8;
 
         return byteSize + byteMosaicId + byteDirection + byteDelta;
+    }
+
+    public get size(): number {
+        return MosaicSupplyChangeTransaction.calculateSize();
     }
 
     /**
@@ -124,5 +128,40 @@ export class MosaicSupplyChangeTransaction extends Transaction {
             .addDelta(this.delta.toDTO())
             .build();
     }
+}
 
+export class MosaicSupplyChangeTransactionBuilder extends TransactionBuilder {
+    private _mosaicId: MosaicId;
+    private _direction: MosaicSupplyType;
+    private _delta: UInt64;
+
+    public mosaicId(mosaicId: MosaicId) {
+        this._mosaicId = mosaicId;
+        return this;
+    }
+
+    public direction(direction: MosaicSupplyType) {
+        this._direction = direction;
+        return this;
+    }
+
+    public delta(delta: UInt64) {
+        this._delta = delta;
+        return this;
+    }
+
+    public build() {
+        return new MosaicSupplyChangeTransaction(
+            this._networkType,
+            TransactionVersion.MOSAIC_SUPPLY_CHANGE,
+            this._deadline ? this._deadline : this._createNewDeadlineFn(),
+            this._maxFee ? this._maxFee : calculateFee(MosaicSupplyChangeTransaction.calculateSize(), this._feeCalculationStrategy),
+            this._mosaicId,
+            this._direction,
+            this._delta,
+            this._signature,
+            this._signer,
+            this._transactionInfo
+        );
+    }
 }

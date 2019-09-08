@@ -15,7 +15,7 @@
  */
 import {expect} from 'chai';
 import {NamespaceHttp} from '../../src/infrastructure/NamespaceHttp';
-import {APIUrl, GetNemesisBlockDataPromise, ConfTestingNamespace, TestingAccount} from '../conf/conf.spec';
+import {APIUrl, GetNemesisBlockDataPromise, ConfTestingNamespaceId, TestingAccount} from '../conf/conf.spec';
 import { deepEqual } from 'assert';
 
 describe('NamespaceHttp', () => {
@@ -86,7 +86,7 @@ describe('NamespaceHttp', () => {
     describe('getLinkedAddress', () => {
         it('should return address given namespaceId', (done) => {
             GetNemesisBlockDataPromise().then(data => {
-                namespaceHttp.getLinkedAddress(ConfTestingNamespace)
+                namespaceHttp.getLinkedAddress(ConfTestingNamespaceId)
                 .subscribe((address) => {
                     expect(address.plain()).to.be.equal(TestingAccount.address.plain());
                     done();

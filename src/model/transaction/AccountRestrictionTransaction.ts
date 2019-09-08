@@ -39,8 +39,7 @@ export class AccountRestrictionTransaction {
         restrictionType: RestrictionType,
         modifications: Array<AccountRestrictionModification<string>>,
         networkType: NetworkType,
-        maxFee: UInt64 = new UInt64([0, 0]),
-    ): AccountAddressRestrictionModificationTransaction {
+        maxFee?: UInt64): AccountAddressRestrictionModificationTransaction {
         if (![RestrictionType.AllowAddress, RestrictionType.BlockAddress].includes(restrictionType)) {
             throw new Error ('Restriction type is not allowed.');
         }
@@ -67,8 +66,7 @@ export class AccountRestrictionTransaction {
         restrictionType: RestrictionType,
         modifications: Array<AccountRestrictionModification<number[]>>,
         networkType: NetworkType,
-        maxFee: UInt64 = new UInt64([0, 0]),
-    ): AccountMosaicRestrictionModificationTransaction {
+        maxFee?: UInt64): AccountMosaicRestrictionModificationTransaction {
         if (![RestrictionType.AllowMosaic, RestrictionType.BlockMosaic].includes(restrictionType)) {
             throw new Error ('Restriction type is not allowed.');
         }
@@ -95,8 +93,7 @@ export class AccountRestrictionTransaction {
         restrictionType: RestrictionType,
         modifications: Array<AccountRestrictionModification<TransactionType>>,
         networkType: NetworkType,
-        maxFee: UInt64 = new UInt64([0, 0]),
-    ): AccountOperationRestrictionModificationTransaction {
+        maxFee?: UInt64): AccountOperationRestrictionModificationTransaction {
         if (![RestrictionType.AllowTransaction, RestrictionType.BlockTransaction].includes(restrictionType)) {
             throw new Error ('Restriction type is not allowed.');
         }

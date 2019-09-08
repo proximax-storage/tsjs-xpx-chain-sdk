@@ -22,10 +22,11 @@ import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
 import { AccountRestrictionModification } from './AccountRestrictionModification';
 import { Deadline } from './Deadline';
-import { Transaction } from './Transaction';
+import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
 import { TransactionVersion } from './TransactionVersion';
+import { calculateFee } from './FeeCalculationStrategy';
 
 export class AccountAddressRestrictionModificationTransaction extends Transaction {
 
@@ -42,13 +43,14 @@ export class AccountAddressRestrictionModificationTransaction extends Transactio
                          restrictionType: RestrictionType,
                          modifications: Array<AccountRestrictionModification<string>>,
                          networkType: NetworkType,
-                         maxFee: UInt64 = new UInt64([0, 0])): AccountAddressRestrictionModificationTransaction {
-        return new AccountAddressRestrictionModificationTransaction(networkType,
-            TransactionVersion.MODIFY_ACCOUNT_RESTRICTION_ADDRESS,
-            deadline,
-            maxFee,
-            restrictionType,
-            modifications);
+                         maxFee?: UInt64): AccountAddressRestrictionModificationTransaction {
+        return new AccountAddressRestrictionModificationTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .restrictionType(restrictionType)
+            .modifications(modifications)
+            .maxFee(maxFee)
+            .build();
     }
 
     /**
@@ -76,13 +78,12 @@ export class AccountAddressRestrictionModificationTransaction extends Transactio
     }
 
     /**
-     * @override Transaction.size()
      * @description get the byte size of a AccountAddressRestrictionModificationTransaction
      * @returns {number}
      * @memberof AccountAddressRestrictionModificationTransaction
      */
-    public get size(): number {
-        const byteSize = super.size;
+    public static calculateSize(modificationCount: number): number {
+        const byteSize = Transaction.getHeaderSize();
 
         // set static byte size fields
         const byteRestrictionType = 1;
@@ -91,9 +92,13 @@ export class AccountAddressRestrictionModificationTransaction extends Transactio
         // each modification contains :
         // - 1 byte for modificationType
         // - 25 bytes for the modification value (address)
-        const byteModifications = 26 * this.modifications.length;
+        const byteModifications = 26 * modificationCount;
 
         return byteSize + byteRestrictionType + byteModificationCount + byteModifications;
+    }
+
+    public get size(): number {
+        return AccountAddressRestrictionModificationTransaction.calculateSize(this.modifications.length);
     }
 
     /**
@@ -109,5 +114,36 @@ export class AccountAddressRestrictionModificationTransaction extends Transactio
             .addModifications(this.modifications.map((modification) => modification.toDTO()))
             .build();
     }
+}
 
+export class AccountAddressRestrictionModificationTransactionBuilder extends TransactionBuilder {
+    private _modifications: Array<AccountRestrictionModification<string>>;
+    private _restrictionType: RestrictionType;
+
+    public restrictionType(restrictionType: RestrictionType) {
+        if (! (restrictionType === RestrictionType.AllowAddress || restrictionType === RestrictionType.BlockAddress)) {
+            throw new Error('Restriction type is not allowed.');
+        };
+        this._restrictionType = restrictionType;
+        return this;
+    }
+
+    public modifications(modifications: Array<AccountRestrictionModification<string>>) {
+        this._modifications = modifications;
+        return this;
+    }
+
+    public build(): AccountAddressRestrictionModificationTransaction {
+        return new AccountAddressRestrictionModificationTransaction(
+            this._networkType,
+            TransactionVersion.MODIFY_ACCOUNT_RESTRICTION_ADDRESS,
+            this._deadline ? this._deadline : this._createNewDeadlineFn(),
+            this._maxFee ? this._maxFee : calculateFee(AccountAddressRestrictionModificationTransaction.calculateSize(this._modifications.length), this._feeCalculationStrategy),
+            this._restrictionType,
+            this._modifications,
+            this._signature,
+            this._signer,
+            this._transactionInfo
+        );
+    }
 }

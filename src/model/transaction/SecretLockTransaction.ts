@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Convert as convert } from '../../core/format';
 import { Builder } from '../../infrastructure/builders/SecretLockTransaction';
 import {VerifiableTransaction} from '../../infrastructure/builders/VerifiableTransaction';
 import { Address } from '../account/Address';
@@ -23,10 +22,11 @@ import { Mosaic } from '../mosaic/Mosaic';
 import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
 import { HashType, HashTypeLengthValidator } from './HashType';
-import { Transaction } from './Transaction';
+import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
 import { TransactionVersion } from './TransactionVersion';
+import { calculateFee } from './FeeCalculationStrategy';
 
 export class SecretLockTransaction extends Transaction {
 
@@ -51,18 +51,17 @@ export class SecretLockTransaction extends Transaction {
                          secret: string,
                          recipient: Address,
                          networkType: NetworkType,
-                         maxFee: UInt64 = new UInt64([0, 0])): SecretLockTransaction {
-        return new SecretLockTransaction(
-            networkType,
-            TransactionVersion.SECRET_LOCK,
-            deadline,
-            maxFee,
-            mosaic,
-            duration,
-            hashType,
-            secret,
-            recipient,
-        );
+                         maxFee?: UInt64): SecretLockTransaction {
+        return new SecretLockTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .mosaic(mosaic)
+            .duration(duration)
+            .hashType(hashType)
+            .secret(secret)
+            .recipient(recipient)
+            .build();
     }
 
     /**
@@ -113,13 +112,12 @@ export class SecretLockTransaction extends Transaction {
     }
 
     /**
-     * @override Transaction.size()
      * @description get the byte size of a SecretLockTransaction
      * @returns {number}
      * @memberof SecretLockTransaction
      */
-    public get size(): number {
-        const byteSize = super.size;
+    public static calculateSize(secret: string): number {
+        const byteSize = Transaction.getHeaderSize();
 
         // set static byte size fields
         const byteMosaicId = 8;
@@ -128,10 +126,14 @@ export class SecretLockTransaction extends Transaction {
         const byteAlgorithm = 1;
         const byteRecipient = 25;
 
-        // convert secret to uint8
-        const byteSecret = convert.hexToUint8(this.secret).length;
+        // get secret byte size
+        const secretSize = secret.length / 2;
 
-        return byteSize + byteMosaicId + byteAmount + byteDuration + byteAlgorithm + byteRecipient + byteSecret;
+        return byteSize + byteMosaicId + byteAmount + byteDuration + byteAlgorithm + byteRecipient + secretSize;
+    }
+
+    public get size(): number {
+        return SecretLockTransaction.calculateSize(this.secret);
     }
 
     /**
@@ -152,5 +154,54 @@ export class SecretLockTransaction extends Transaction {
             .addRecipient(this.recipient.plain())
             .build();
     }
+}
 
+export class SecretLockTransactionBuilder extends TransactionBuilder {
+    private _mosaic: Mosaic;
+    private _duration: UInt64;
+    private _hashType: HashType;
+    private _secret: string;
+    private _recipient: Address;
+
+    public mosaic(mosaic: Mosaic) {
+        this._mosaic = mosaic;
+        return this;
+    }
+
+    public duration(duration: UInt64) {
+        this._duration = duration;
+        return this;
+    }
+
+    public hashType(hashType: HashType) {
+        this._hashType = hashType;
+        return this;
+    }
+
+    public secret(secret: string) {
+        this._secret = secret;
+        return this;
+    }
+
+    public recipient(recipient: Address) {
+        this._recipient = recipient;
+        return this;
+    }
+
+    public build(): SecretLockTransaction {
+        return new SecretLockTransaction(
+            this._networkType,
+            TransactionVersion.SECRET_LOCK,
+            this._deadline ? this._deadline : this._createNewDeadlineFn(),
+            this._maxFee ? this._maxFee : calculateFee(SecretLockTransaction.calculateSize(this._secret), this._feeCalculationStrategy),
+            this._mosaic,
+            this._duration,
+            this._hashType,
+            this._secret,
+            this._recipient,
+            this._signature,
+            this._signer,
+            this._transactionInfo
+        );
+    }
 }

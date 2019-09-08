@@ -23,10 +23,11 @@ import { AliasActionType } from '../namespace/AliasActionType';
 import { NamespaceId } from '../namespace/NamespaceId';
 import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
-import { Transaction } from './Transaction';
+import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
 import { TransactionVersion } from './TransactionVersion';
+import { calculateFee } from './FeeCalculationStrategy';
 
 /**
  * In case a mosaic has the flag 'supplyMutable' set to true, the creator of the mosaic can change the supply,
@@ -49,15 +50,15 @@ export class AddressAliasTransaction extends Transaction {
                          namespaceId: NamespaceId,
                          address: Address,
                          networkType: NetworkType,
-                         maxFee: UInt64 = new UInt64([0, 0])): AddressAliasTransaction {
-        return new AddressAliasTransaction(networkType,
-            TransactionVersion.ADDRESS_ALIAS,
-            deadline,
-            maxFee,
-            actionType,
-            namespaceId,
-            address,
-        );
+                         maxFee?: UInt64): AddressAliasTransaction {
+        return new AddressAliasTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .actionType(actionType)
+            .namespaceId(namespaceId)
+            .address(address)
+            .build();
     }
 
     /**
@@ -95,13 +96,12 @@ export class AddressAliasTransaction extends Transaction {
     }
 
     /**
-     * @override Transaction.size()
      * @description get the byte size of a AddressAliasTransaction
      * @returns {number}
      * @memberof AddressAliasTransaction
      */
-    public get size(): number {
-        const byteSize = super.size;
+    public static calculateSize(): number {
+        const byteSize = Transaction.getHeaderSize();
 
         // set static byte size fields
         const byteActionType = 1;
@@ -109,6 +109,10 @@ export class AddressAliasTransaction extends Transaction {
         const byteAddress = 25;
 
         return byteSize + byteActionType + byteNamespaceId + byteAddress;
+    }
+
+    public get size(): number {
+        return AddressAliasTransaction.calculateSize();
     }
 
     /**
@@ -125,5 +129,40 @@ export class AddressAliasTransaction extends Transaction {
             .addAddress(this.address.plain())
             .build();
     }
+}
 
+export class AddressAliasTransactionBuilder extends TransactionBuilder {
+    private _actionType: AliasActionType;
+    private _namespaceId: NamespaceId;
+    private _address: Address;
+
+    public actionType(actionType: AliasActionType) {
+        this._actionType = actionType;
+        return this;
+    }
+
+    public namespaceId(namespaceId: NamespaceId) {
+        this._namespaceId = namespaceId;
+        return this;
+    }
+
+    public address(address: Address) {
+        this._address = address;
+        return this;
+    }
+
+    public build(): AddressAliasTransaction {
+        return new AddressAliasTransaction(
+            this._networkType,
+            TransactionVersion.ADDRESS_ALIAS,
+            this._deadline ? this._deadline : this._createNewDeadlineFn(),
+            this._maxFee ? this._maxFee : calculateFee(AddressAliasTransaction.calculateSize()),
+            this._actionType,
+            this._namespaceId,
+            this._address,
+            this._signature,
+            this._signer,
+            this._transactionInfo
+        );
+    }
 }
