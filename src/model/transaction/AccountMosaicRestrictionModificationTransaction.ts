@@ -78,10 +78,15 @@ export class AccountMosaicRestrictionModificationTransaction extends Transaction
     }
 
     /**
+     * @override Transaction.size()
      * @description get the byte size of a AccountMosaicRestrictionModificationTransaction
      * @returns {number}
      * @memberof AccountMosaicRestrictionModificationTransaction
      */
+    public get size(): number {
+        return AccountMosaicRestrictionModificationTransaction.calculateSize(this.modifications.length);
+    }
+
     public static calculateSize(modificationCount: number): number {
         const byteSize = Transaction.getHeaderSize();
 
@@ -95,10 +100,6 @@ export class AccountMosaicRestrictionModificationTransaction extends Transaction
         const byteModifications = 9 * modificationCount;
 
         return byteSize + byteRestrictionType + byteModificationCount + byteModifications;
-    }
-
-    public get size(): number {
-        return AccountMosaicRestrictionModificationTransaction.calculateSize(this.modifications.length);
     }
 
     /**

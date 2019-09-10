@@ -129,10 +129,15 @@ export class RegisterNamespaceTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.size()
      * @description get the byte size of a RegisterNamespaceTransaction
      * @returns {number}
      * @memberof RegisterNamespaceTransaction
      */
+    public get size(): number {
+        return RegisterNamespaceTransaction.calculateSize(this.namespaceName);
+    }
+
     public static calculateSize(namespaceName: string): number {
         const byteSize = Transaction.getHeaderSize();
 
@@ -146,10 +151,6 @@ export class RegisterNamespaceTransaction extends Transaction {
         const namespaceNameSize = convert.utf8ToHex(namespaceName).length / 2;
 
         return byteSize + byteType + byteDurationParentId + byteNamespaceId + byteNameSize + namespaceNameSize;
-    }
-
-    public get size(): number {
-        return RegisterNamespaceTransaction.calculateSize(this.namespaceName);
     }
 
     /**

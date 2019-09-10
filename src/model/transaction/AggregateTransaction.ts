@@ -184,10 +184,15 @@ export class AggregateTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.size()
      * @description get the byte size of a AggregateTransaction
      * @returns {number}
      * @memberof AggregateTransaction
      */
+    public get size(): number {
+        return AggregateTransaction.calculateSize(this.innerTransactions || []);
+    }
+
     public static calculateSize(innerTransactions: InnerTransaction[]): number {
         const innerTransactionsSumSize = innerTransactions.reduce((previous, current) => previous + current.size, 0);
         const byteSize = Transaction.getHeaderSize();
@@ -197,9 +202,6 @@ export class AggregateTransaction extends Transaction {
         return byteSize + byteTransactionsSize + innerTransactionsSumSize;
     }
 
-    public get size(): number {
-        return AggregateTransaction.calculateSize(this.innerTransactions || []);
-    }
 }
 
 export class AggregateCompleteTransactionBuilder extends TransactionBuilder {

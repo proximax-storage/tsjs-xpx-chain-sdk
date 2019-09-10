@@ -93,10 +93,15 @@ export class MosaicAliasTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.size()
      * @description get the byte size of a MosaicAliasTransaction
      * @returns {number}
      * @memberof MosaicAliasTransaction
      */
+    public get size(): number {
+        return MosaicAliasTransaction.calculateSize();
+    }
+
     public static calculateSize(): number {
         const byteSize = Transaction.getHeaderSize();
 
@@ -106,10 +111,6 @@ export class MosaicAliasTransaction extends Transaction {
         const byteMosaicId = 8;
 
         return byteSize + byteType + byteNamespaceId + byteMosaicId;
-    }
-
-    public get size(): number {
-        return MosaicAliasTransaction.calculateSize();
     }
 
     /**

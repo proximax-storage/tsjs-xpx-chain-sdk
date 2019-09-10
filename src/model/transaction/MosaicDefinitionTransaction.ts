@@ -97,10 +97,15 @@ export class MosaicDefinitionTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.size()
      * @description get the byte size of a MosaicDefinitionTransaction
      * @returns {number}
      * @memberof MosaicDefinitionTransaction
      */
+    public get size(): number {
+        return MosaicDefinitionTransaction.calculateSize();
+    }
+
     public static calculateSize(): number {
         const byteSize = Transaction.getHeaderSize();
 
@@ -114,10 +119,6 @@ export class MosaicDefinitionTransaction extends Transaction {
         const byteDuration = 8;
 
         return byteSize + byteNonce + byteMosaicId + byteNumProps + byteFlags + byteDivisibility + byteDurationSize + byteDuration;
-    }
-
-    public get size(): number {
-        return MosaicDefinitionTransaction.calculateSize();
     }
 
     /**

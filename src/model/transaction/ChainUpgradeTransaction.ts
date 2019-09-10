@@ -51,19 +51,20 @@ export class ChainUpgradeTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.size()
      * @description get the byte size of a transaction
      * @returns {number}
      * @memberof Transaction
      */
+    public get size(): number {
+        return ChainUpgradeTransaction.calculateSize();
+    }
+
     public static calculateSize(): number {
         const byteSize = Transaction.getHeaderSize()
             + 8 // upgradePeriod
             + 8; // newCatapultVersion
         return byteSize;
-    }
-
-    public get size(): number {
-        return ChainUpgradeTransaction.calculateSize();
     }
 
     /**

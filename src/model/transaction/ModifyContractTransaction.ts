@@ -69,10 +69,15 @@ export class ModifyContractTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.size()
      * @description get the byte size of a transaction
      * @returns {number}
      * @memberof Transaction
      */
+    public get size(): number {
+        return ModifyContractTransaction.calculateSize(this.hash.length, this.customers.length, this.executors.length, this.verifiers.length);
+    }
+
     public static calculateSize(hashLength: number, customersCount: number, executorsCount: number, verifiersCount: number): number {
         const byteSize = Transaction.getHeaderSize()
             + 8 // duration delta
@@ -85,9 +90,6 @@ export class ModifyContractTransaction extends Transaction {
         return byteSize;
     }
 
-    public get size(): number {
-        return ModifyContractTransaction.calculateSize(this.hash.length, this.customers.length, this.executors.length, this.verifiers.length);
-    }
 
     /**
      * @internal

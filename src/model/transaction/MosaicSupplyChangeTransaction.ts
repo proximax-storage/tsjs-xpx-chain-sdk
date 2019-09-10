@@ -95,10 +95,15 @@ export class MosaicSupplyChangeTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.size()
      * @description get the byte size of a MosaicSupplyChangeTransaction
      * @returns {number}
      * @memberof MosaicSupplyChangeTransaction
      */
+    public get size(): number {
+        return MosaicSupplyChangeTransaction.calculateSize();
+    }
+
     public static calculateSize(): number {
         const byteSize = Transaction.getHeaderSize();
 
@@ -108,10 +113,6 @@ export class MosaicSupplyChangeTransaction extends Transaction {
         const byteDelta = 8;
 
         return byteSize + byteMosaicId + byteDirection + byteDelta;
-    }
-
-    public get size(): number {
-        return MosaicSupplyChangeTransaction.calculateSize();
     }
 
     /**

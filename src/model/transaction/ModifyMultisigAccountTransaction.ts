@@ -98,10 +98,15 @@ export class ModifyMultisigAccountTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.size()
      * @description get the byte size of a ModifyMultisigAccountTransaction
      * @returns {number}
      * @memberof ModifyMultisigAccountTransaction
      */
+    public get size(): number {
+        return ModifyMultisigAccountTransaction.calculateSize(this.modifications.length);
+    }
+
     public static calculateSize(modificationsCount: number): number {
         const byteSize = Transaction.getHeaderSize();
 
@@ -116,10 +121,6 @@ export class ModifyMultisigAccountTransaction extends Transaction {
         const byteModifications = 33 * modificationsCount;
 
         return byteSize + byteRemovalDelta + byteApprovalDelta + byteNumModifications + byteModifications;
-    }
-
-    public get size(): number {
-        return ModifyMultisigAccountTransaction.calculateSize(this.modifications.length);
     }
 
     /**

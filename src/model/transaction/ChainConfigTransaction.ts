@@ -57,10 +57,15 @@ export class ChainConfigTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.size()
      * @description get the byte size of a transaction
      * @returns {number}
      * @memberof Transaction
      */
+    public get size(): number {
+        return ChainConfigTransaction.calculateSize(this.blockChainConfig.length, this.supportedEntityVersions.length);
+    }
+
     public static calculateSize(blockChainConfigLength: number, supportedEntityVersionsLength: number): number {
         const byteSize = Transaction.getHeaderSize()
             + 8 // applyHeightDelta
@@ -69,10 +74,6 @@ export class ChainConfigTransaction extends Transaction {
             + blockChainConfigLength //blockChainConfig
             + supportedEntityVersionsLength // supportedEntityVersions
         return byteSize;
-    }
-
-    public get size(): number {
-        return ChainConfigTransaction.calculateSize(this.blockChainConfig.length, this.supportedEntityVersions.length);
     }
 
     /**

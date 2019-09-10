@@ -85,10 +85,15 @@ export class AccountLinkTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.size()
      * @description get the byte size of a AccountLinkTransaction
      * @returns {number}
      * @memberof AccountLinkTransaction
      */
+    public get size(): number {
+        return AccountLinkTransaction.calculateSize();
+    }
+
     public static calculateSize(): number {
         const byteSize = Transaction.getHeaderSize();
 
@@ -97,10 +102,6 @@ export class AccountLinkTransaction extends Transaction {
         const byteLinkAction = 1;
 
         return byteSize + bytePublicKey + byteLinkAction;
-    }
-
-    public get size(): number {
-        return AccountLinkTransaction.calculateSize();
     }
 
     /**

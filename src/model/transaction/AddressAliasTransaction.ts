@@ -96,10 +96,15 @@ export class AddressAliasTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.size()
      * @description get the byte size of a AddressAliasTransaction
      * @returns {number}
      * @memberof AddressAliasTransaction
      */
+    public get size(): number {
+        return AddressAliasTransaction.calculateSize();
+    }
+
     public static calculateSize(): number {
         const byteSize = Transaction.getHeaderSize();
 
@@ -109,10 +114,6 @@ export class AddressAliasTransaction extends Transaction {
         const byteAddress = 25;
 
         return byteSize + byteActionType + byteNamespaceId + byteAddress;
-    }
-
-    public get size(): number {
-        return AddressAliasTransaction.calculateSize();
     }
 
     /**

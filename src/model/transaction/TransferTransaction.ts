@@ -113,10 +113,15 @@ export class TransferTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.size()
      * @description get the byte size of a TransferTransaction
      * @returns {number}
      * @memberof TransferTransaction
      */
+    public get size(): number {
+        return TransferTransaction.calculateSize(this.message.size(), this.mosaics.length)
+    }
+
     public static calculateSize(messageSize: number, mosaicsCount: number): number {
         const byteSize = Transaction.getHeaderSize();
 
@@ -125,10 +130,6 @@ export class TransferTransaction extends Transaction {
         const byteNumMosaics = 2;
 
         return byteSize + byteRecipient + byteNumMosaics + messageSize + 8*mosaicsCount;
-    }
-
-    public get size(): number {
-        return TransferTransaction.calculateSize(this.message.size(), this.mosaics.length)
     }
 
     /**

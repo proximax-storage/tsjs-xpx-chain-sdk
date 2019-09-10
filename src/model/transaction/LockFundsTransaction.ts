@@ -103,10 +103,15 @@ export class LockFundsTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.size()
      * @description get the byte size of a LockFundsTransaction
      * @returns {number}
      * @memberof LockFundsTransaction
      */
+    public get size(): number {
+        return LockFundsTransaction.calculateSize();
+    }
+
     public static calculateSize(): number {
         const byteSize = Transaction.getHeaderSize();
 
@@ -117,10 +122,6 @@ export class LockFundsTransaction extends Transaction {
         const byteHash = 32;
 
         return byteSize + byteMosaicId + byteAmount + byteDuration + byteHash;
-    }
-
-    public get size(): number {
-        return LockFundsTransaction.calculateSize();
     }
 
     /**

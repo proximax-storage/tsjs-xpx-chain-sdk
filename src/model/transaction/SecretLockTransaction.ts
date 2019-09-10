@@ -112,10 +112,15 @@ export class SecretLockTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.size()
      * @description get the byte size of a SecretLockTransaction
      * @returns {number}
      * @memberof SecretLockTransaction
      */
+    public get size(): number {
+        return SecretLockTransaction.calculateSize(this.secret);
+    }
+
     public static calculateSize(secret: string): number {
         const byteSize = Transaction.getHeaderSize();
 
@@ -130,10 +135,6 @@ export class SecretLockTransaction extends Transaction {
         const secretSize = secret.length / 2;
 
         return byteSize + byteMosaicId + byteAmount + byteDuration + byteAlgorithm + byteRecipient + secretSize;
-    }
-
-    public get size(): number {
-        return SecretLockTransaction.calculateSize(this.secret);
     }
 
     /**

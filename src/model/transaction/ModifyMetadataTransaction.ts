@@ -135,10 +135,15 @@ export class ModifyMetadataTransaction extends Transaction {
         this.modifications = modifications;
     }
     /**
+     * @override Transaction.size()
      * @description get the byte size of a transaction
      * @returns {number}
      * @memberof Transaction
      */
+    public get size(): number {
+        return ModifyMetadataTransaction.calculateSize(this.type, this.modifications);
+    }
+
     public static calculateSize(type: TransactionType, modifications: MetadataModification[]): number {
         const modificationsSize = modifications.map(m => 4 + 1 + 1 + 2 + m.key.length + (m.value ? m.value.length : 0)).reduce((p,n) => p+n);
         const byteSize = Transaction.getHeaderSize()
@@ -146,10 +151,6 @@ export class ModifyMetadataTransaction extends Transaction {
                         + (type === TransactionType.MODIFY_ACCOUNT_METADATA ? 25 : 8) // id
                         + modificationsSize
         return byteSize;
-    }
-
-    public get size(): number {
-        return ModifyMetadataTransaction.calculateSize(this.type, this.modifications);
     }
 
     /**

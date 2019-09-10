@@ -78,10 +78,15 @@ export class AccountOperationRestrictionModificationTransaction extends Transact
     }
 
     /**
+     * @override Transaction.size()
      * @description get the byte size of a AccountOperationRestrictionModificationTransaction
      * @returns {number}
      * @memberof AccountOperationRestrictionModificationTransaction
      */
+    public get size(): number {
+        return AccountOperationRestrictionModificationTransaction.calculateSize(this.modifications.length);
+    }
+
     public static calculateSize(modificationCount: number): number {
         const byteSize = Transaction.getHeaderSize();
 
@@ -95,10 +100,6 @@ export class AccountOperationRestrictionModificationTransaction extends Transact
         const byteModifications = 3 * modificationCount;
 
         return byteSize + byteRestrictionType + byteModificationCount + byteModifications;
-    }
-
-    public get size(): number {
-        return AccountOperationRestrictionModificationTransaction.calculateSize(this.modifications.length);
     }
 
     /**

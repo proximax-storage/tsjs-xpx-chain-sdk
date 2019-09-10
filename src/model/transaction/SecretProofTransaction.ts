@@ -93,10 +93,15 @@ export class SecretProofTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.size()
      * @description get the byte size of a SecretProofTransaction
      * @returns {number}
      * @memberof SecretProofTransaction
      */
+    public get size(): number {
+        return SecretProofTransaction.calculateSize(this.secret, this.proof);
+    }
+
     public static calculateSize(secret: string, proof: string): number {
         const byteSize = Transaction.getHeaderSize();
 
@@ -110,10 +115,6 @@ export class SecretProofTransaction extends Transaction {
         const proofLength = proof.length/2 ;
 
         return byteSize + byteAlgorithm + secretLength + byteRecipient + byteProofSize + proofLength;
-    }
-
-    public get size(): number {
-        return SecretProofTransaction.calculateSize(this.secret, this.proof);
     }
 
     /**

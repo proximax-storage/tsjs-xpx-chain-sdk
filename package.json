@@ -1,6 +1,6 @@
 {
   "name": "tsjs-xpx-chain-sdk",
-  "version": "0.5.0",
+  "version": "0.5.2",
   "description": "Proximax Blockchain sdk for typescript and javascript",
   "scripts": {
     "pretest": "npm run build",
@@ -22,9 +22,6 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/proximax-storage/tsjs-xpx-chain-sdk.git"
-  },
-  "publishConfig": {
-    "registry": "https://nexus.internal.proximax.io/repository/npm-private/"
   },
   "license": "Apache-2.0",
   "homepage": "https://github.com/proximax-storage/tsjs-xpx-chain-sdk#readme",
