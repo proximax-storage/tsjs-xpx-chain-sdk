@@ -28,4 +28,12 @@ export declare class CosignatureTransaction {
      * @returns {CosignatureSignedTransaction}
      */
     static signTransactionPayload(account: Account, payload: string, generationHash: string, signSchema?: SignSchema): CosignatureSignedTransaction;
+    /**
+     * @internal
+     * Serialize and sign transaction creating a new SignedTransaction
+     * @param account
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @returns {CosignatureSignedTransaction}
+     */
+    signWith(account: Account, signSchema?)
 }
