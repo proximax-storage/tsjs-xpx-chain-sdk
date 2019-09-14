@@ -1,3 +1,4 @@
+import { Account } from '../account/Account';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
@@ -82,6 +83,15 @@ export declare abstract class Transaction {
      * Transactions meta data object contains additional information about the transaction.
      */
     transactionInfo?: TransactionInfo | AggregateTransactionInfo | undefined);
+    /**
+     * @internal
+     * Serialize and sign transaction creating a new SignedTransaction
+     * @param account - The account to sign the transaction
+     * @param generationHash - Network generation hash hex
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @returns {SignedTransaction}
+     */
+    signWith(account: Account, generationHash, signSchema?)
     /**
      * Convert an aggregate transaction to an inner transaction including transaction signer.
      * @param signer - Transaction signer.
