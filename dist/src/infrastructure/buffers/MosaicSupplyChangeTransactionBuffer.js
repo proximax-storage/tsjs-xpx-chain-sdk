@@ -113,11 +113,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.signerArray = fun
  */
 Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.version = function () {
     var offset = this.bb.__offset(this.bb_pos, 10);
-<<<<<<< HEAD
     return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
-=======
-    return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
->>>>>>> jwt
 };
 /**
  * @returns {number}
@@ -130,33 +126,21 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.type = function (
  * @param {number} index
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.maxFee = function (index) {
-=======
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.fee = function (index) {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 14);
     return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.maxFeeLength = function () {
-=======
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.feeLength = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 14);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint32Array}
  */
-<<<<<<< HEAD
 Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.maxFeeArray = function () {
-=======
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.prototype.feeArray = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 14);
     return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -303,11 +287,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.startSignerVector = functio
  * @param {number} version
  */
 Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addVersion = function (builder, version) {
-<<<<<<< HEAD
     builder.addFieldInt32(3, version, 0);
-=======
-    builder.addFieldInt16(3, version, 0);
->>>>>>> jwt
 };
 /**
  * @param {flatbuffers.Builder} builder
@@ -318,28 +298,17 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addType = function (builder
 };
 /**
  * @param {flatbuffers.Builder} builder
-<<<<<<< HEAD
  * @param {flatbuffers.Offset} maxFeeOffset
  */
 Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addMaxFee = function (builder, maxFeeOffset) {
     builder.addFieldOffset(5, maxFeeOffset, 0);
-=======
- * @param {flatbuffers.Offset} feeOffset
- */
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addFee = function (builder, feeOffset) {
-    builder.addFieldOffset(5, feeOffset, 0);
->>>>>>> jwt
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
-<<<<<<< HEAD
 Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.createMaxFeeVector = function (builder, data) {
-=======
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.createFeeVector = function (builder, data) {
->>>>>>> jwt
     builder.startVector(4, data.length, 4);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt32(data[i]);
@@ -350,11 +319,7 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.createFeeVector = function 
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-<<<<<<< HEAD
 Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.startMaxFeeVector = function (builder, numElems) {
-=======
-Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.startFeeVector = function (builder, numElems) {
->>>>>>> jwt
     builder.startVector(4, numElems, 4);
 };
 /**
@@ -457,7 +422,6 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.endMosaicSupplyChangeTransa
 Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.finishMosaicSupplyChangeTransactionBufferBuffer = function (builder, offset) {
     builder.finish(offset);
 };
-<<<<<<< HEAD
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} size
@@ -486,8 +450,6 @@ Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.createMosaicSupplyChangeTra
     Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.addDelta(builder, deltaOffset);
     return Catapult.Buffers.MosaicSupplyChangeTransactionBuffer.endMosaicSupplyChangeTransactionBuffer(builder);
 };
-=======
->>>>>>> jwt
 // Exports for Node.js and RequireJS
 exports.default = Catapult;
 //# sourceMappingURL=MosaicSupplyChangeTransactionBuffer.js.map

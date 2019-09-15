@@ -25,16 +25,6 @@ export declare class Address {
      */
     static createFromRawAddress(rawAddress: string): Address;
     /**
-<<<<<<< HEAD
-=======
-     * @internal
-     * Create an Address from a given encoded address.
-     * @param {string} encoded
-     * @return {Address}
-     */
-    static createFromEncoded(encoded): Address;
-    /**
->>>>>>> jwt
      * Get address in plain format ex: SB3KUBHATFCPV7UZQLWAQ2EUR6SIHBSBEOEDDDF3.
      * @returns {string}
      */

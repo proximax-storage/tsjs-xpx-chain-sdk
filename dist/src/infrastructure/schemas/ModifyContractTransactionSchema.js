@@ -15,11 +15,7 @@ const schema = new Schema_1.Schema([
     Schema_1.uint('size'),
     Schema_1.array('signature'),
     Schema_1.array('signer'),
-<<<<<<< HEAD
     Schema_1.uint('version'),
-=======
-    Schema_1.ushort('version'),
->>>>>>> jwt
     Schema_1.ushort('type'),
     Schema_1.array('fee', Schema_1.TypeSize.INT),
     Schema_1.array('deadline', Schema_1.TypeSize.INT),

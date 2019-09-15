@@ -12,20 +12,12 @@ const VerifiableTransaction_1 = require("./VerifiableTransaction");
 const ModifyContractTransactionSchema_1 = require("../schemas/ModifyContractTransactionSchema");
 const { CosignatoryModificationBuffer, ModifyContractTransactionBuffer } = ModifyContractTransactionBuffer_1.default.Buffers;
 const { flatbuffers } = require('flatbuffers');
-<<<<<<< HEAD
 class ModifyContractTransaction extends VerifiableTransaction_1.VerifiableTransaction {
-=======
-class ModifyMetadataTransaction extends VerifiableTransaction_1.VerifiableTransaction {
->>>>>>> jwt
     constructor(bytes) {
         super(bytes, ModifyContractTransactionSchema_1.default);
     }
 }
-<<<<<<< HEAD
 exports.default = ModifyContractTransaction;
-=======
-exports.default = ModifyMetadataTransaction;
->>>>>>> jwt
 class Builder {
     constructor() {
         this.fee = [0, 0];
@@ -34,11 +26,7 @@ class Builder {
         this.executors = [];
         this.verifiers = [];
     }
-<<<<<<< HEAD
     addMaxFee(fee) {
-=======
-    addFee(fee) {
->>>>>>> jwt
         this.fee = fee;
         return this;
     }
@@ -118,11 +106,7 @@ class Builder {
         const customersVector = ModifyContractTransactionBuffer.createCustomersVector(builder, customersArray);
         const executorsVector = ModifyContractTransactionBuffer.createExecutorsVector(builder, executorsArray);
         const verifiersVector = ModifyContractTransactionBuffer.createVerifiersVector(builder, verifiersArray);
-<<<<<<< HEAD
         const size = 122 + 8 + this.hash.length / 2 + 3 + 33 * (this.customers.length + this.executors.length + this.verifiers.length);
-=======
-        const size = 120 + 8 + this.hash.length / 2 + 3 + 33 * (this.customers.length + this.executors.length + this.verifiers.length);
->>>>>>> jwt
         ModifyContractTransactionBuffer.startModifyContractTransactionBuffer(builder);
         ModifyContractTransactionBuffer.addSize(builder, size);
         ModifyContractTransactionBuffer.addSignature(builder, signatureVector);
@@ -146,11 +130,7 @@ class Builder {
         if (bytes.length !== size) {
             // throw new Error("Declared size differs from actual bytes.length during ModifyContractTransaction serialization")
         }
-<<<<<<< HEAD
         return new ModifyContractTransaction(bytes);
-=======
-        return new ModifyMetadataTransaction(bytes);
->>>>>>> jwt
     }
 }
 exports.Builder = Builder;

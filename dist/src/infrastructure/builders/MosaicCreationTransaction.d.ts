@@ -13,11 +13,7 @@ export declare class Builder {
     divisibility: any;
     duration: any;
     constructor();
-<<<<<<< HEAD
     addMaxFee(maxFee: any): this;
-=======
-    addFee(maxFee: any): this;
->>>>>>> jwt
     addVersion(version: any): this;
     addType(type: any): this;
     addNonce(nonce: any): this;

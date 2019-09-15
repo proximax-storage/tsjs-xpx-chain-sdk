@@ -1,9 +1,5 @@
 import { VerifiableTransaction } from './VerifiableTransaction';
-<<<<<<< HEAD
 export default class ModifyContractTransaction extends VerifiableTransaction {
-=======
-export default class ModifyMetadataTransaction extends VerifiableTransaction {
->>>>>>> jwt
     constructor(bytes: any);
 }
 export declare class Builder {
@@ -17,11 +13,7 @@ export declare class Builder {
     executors: any[];
     verifiers: any[];
     constructor();
-<<<<<<< HEAD
     addMaxFee(fee: any): this;
-=======
-    addFee(fee: any): this;
->>>>>>> jwt
     addVersion(version: any): this;
     addType(type: any): this;
     addDeadline(deadline: any): this;
@@ -30,9 +22,5 @@ export declare class Builder {
     addCustomers(customers: any[]): this;
     addExecutors(executors: any[]): this;
     addVerifiers(verifiers: any[]): this;
-<<<<<<< HEAD
     build(): ModifyContractTransaction;
-=======
-    build(): ModifyMetadataTransaction;
->>>>>>> jwt
 }

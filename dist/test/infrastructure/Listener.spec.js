@@ -40,11 +40,7 @@ describe('Listener', () => {
     });
     describe('onerror', () => {
         it('should reject because of wrong server url', () => __awaiter(this, void 0, void 0, function* () {
-<<<<<<< HEAD
             const listener = new Listener_1.Listener('https://notcorrecturl:0');
-=======
-            const listener = new Listener_1.Listener('https://notcorrecturl:0000');
->>>>>>> jwt
             yield listener.open()
                 .then((result) => {
                 listener.close();
@@ -52,11 +48,7 @@ describe('Listener', () => {
             })
                 .catch((error) => {
                 listener.close();
-<<<<<<< HEAD
                 chai_1.expect(error.message.toString()).to.be.equal("getaddrinfo ENOTFOUND notcorrecturl notcorrecturl:0");
-=======
-                chai_1.expect(error.message.toString()).to.be.equal("getaddrinfo ENOTFOUND notcorrecturl notcorrecturl:0000");
->>>>>>> jwt
             });
         }));
     });

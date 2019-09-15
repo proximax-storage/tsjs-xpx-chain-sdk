@@ -48,11 +48,7 @@ describe('TransferTransaction', () => {
         chai_1.expect(transferTransaction.recipient).to.be.instanceof(Address_1.Address);
         chai_1.expect(transferTransaction.recipient.plain()).to.be.equal('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
         const signedTransaction = transferTransaction.signWith(account, generationHash);
-<<<<<<< HEAD
         chai_1.expect(signedTransaction.payload.substring(244, signedTransaction.payload.length)).to.be.equal('9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1420D000000746573742D6D657373616765');
-=======
-        chai_1.expect(signedTransaction.payload.substring(240, signedTransaction.payload.length)).to.be.equal('9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1420D000000746573742D6D657373616765');
->>>>>>> jwt
     });
     it('should createComplete an TransferTransaction object and sign it with mosaics', () => {
         const transferTransaction = TransferTransaction_1.TransferTransaction.create(Deadline_1.Deadline.create(), Address_1.Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC'), [
@@ -63,11 +59,7 @@ describe('TransferTransaction', () => {
         chai_1.expect(transferTransaction.recipient).to.be.instanceof(Address_1.Address);
         chai_1.expect(transferTransaction.recipient.plain()).to.be.equal('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
         const signedTransaction = transferTransaction.signWith(account, generationHash);
-<<<<<<< HEAD
         chai_1.expect(signedTransaction.payload.substring(244, signedTransaction.payload.length)).to.be.equal('9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1420D000100746573742D6D657373616765' +
-=======
-        chai_1.expect(signedTransaction.payload.substring(240, signedTransaction.payload.length)).to.be.equal('9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1420D000100746573742D6D657373616765' +
->>>>>>> jwt
             '44B262C46CEABB8500E1F50500000000');
     });
     it('should createComplete an TransferTransaction object with NamespaceId recipient', () => {
@@ -81,11 +73,7 @@ describe('TransferTransaction', () => {
         chai_1.expect(transferTransaction.recipient).to.be.equal(addressAlias);
         chai_1.expect(transferTransaction.recipient.toHex()).to.be.equal(addressAlias.toHex());
         const signedTransaction = transferTransaction.signWith(account, generationHash);
-<<<<<<< HEAD
         chai_1.expect(signedTransaction.payload.substring(244, signedTransaction.payload.length)).to.be.equal('9151776168D24257D8000000000000000000000000000000000D000100746573742D6D657373616765' +
-=======
-        chai_1.expect(signedTransaction.payload.substring(240, signedTransaction.payload.length)).to.be.equal('9151776168D24257D8000000000000000000000000000000000D000100746573742D6D657373616765' +
->>>>>>> jwt
             '44B262C46CEABB8500E1F50500000000');
     });
     it('should format TransferTransaction payload with 25 bytes binary address', () => {
@@ -95,11 +83,7 @@ describe('TransferTransaction', () => {
         // test recipientToString with Address recipient
         chai_1.expect(transferTransaction.recipientToString()).to.be.equal('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
         const signedTransaction = transferTransaction.signWith(account, generationHash);
-<<<<<<< HEAD
         chai_1.expect(signedTransaction.payload.substring(244, 294)).to.be.equal('9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142');
-=======
-        chai_1.expect(signedTransaction.payload.substring(240, 290)).to.be.equal('9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142');
->>>>>>> jwt
     });
     it('should format TransferTransaction payload with 8 bytes binary namespaceId', () => {
         const transferTransaction = TransferTransaction_1.TransferTransaction.create(Deadline_1.Deadline.create(), new NamespaceId_1.NamespaceId('nem.owner'), [
@@ -108,7 +92,6 @@ describe('TransferTransaction', () => {
         // test recipientToString with NamespaceId recipient
         chai_1.expect(transferTransaction.recipientToString()).to.be.equal('d85742d268617751');
         const signedTransaction = transferTransaction.signWith(account, generationHash);
-<<<<<<< HEAD
         chai_1.expect(signedTransaction.payload.substring(244, 294)).to.be.equal('9151776168D24257D800000000000000000000000000000000');
     });
     describe('size', () => {
@@ -117,16 +100,6 @@ describe('TransferTransaction', () => {
                 NetworkCurrencyMosaic_1.NetworkCurrencyMosaic.createRelative(100),
             ], PlainMessage_1.PlainMessage.create('NEM'), NetworkType_1.NetworkType.MIJIN_TEST);
             chai_1.expect(transaction.size).to.be.equal(160);
-=======
-        chai_1.expect(signedTransaction.payload.substring(240, 290)).to.be.equal('9151776168D24257D800000000000000000000000000000000');
-    });
-    describe('size', () => {
-        it('should return 158 for TransferTransaction with 1 mosaic and message NEM', () => {
-            const transaction = TransferTransaction_1.TransferTransaction.create(Deadline_1.Deadline.create(), Address_1.Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC'), [
-                NetworkCurrencyMosaic_1.NetworkCurrencyMosaic.createRelative(100),
-            ], PlainMessage_1.PlainMessage.create('NEM'), NetworkType_1.NetworkType.MIJIN_TEST);
-            chai_1.expect(transaction.size).to.be.equal(158);
->>>>>>> jwt
         });
     });
 });

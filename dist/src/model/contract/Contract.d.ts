@@ -1,12 +1,9 @@
 import { UInt64 } from "../UInt64";
 import { ContractDTO } from "../../infrastructure/model/contractDTO";
-<<<<<<< HEAD
 /**
  * The contract structure stores a supercontract definition as returned from http contractApi.
  * The contract can be created on blockachain using ModifyContractTransaction
  */
-=======
->>>>>>> jwt
 export declare class Contract {
     readonly multisig: string;
     readonly multisigAddress: string;

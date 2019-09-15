@@ -134,7 +134,6 @@ Catapult.Buffers.CosignatoryModificationBuffer.endCosignatoryModificationBuffer 
     return offset;
 };
 /**
-<<<<<<< HEAD
  * @param {flatbuffers.Builder} builder
  * @param {number} type
  * @param {flatbuffers.Offset} cosignatoryPublicKeyOffset
@@ -150,11 +149,6 @@ Catapult.Buffers.CosignatoryModificationBuffer.createCosignatoryModificationBuff
  * @constructor
  */
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer = function () {
-=======
- * @constructor
- */
-Catapult.Buffers.MultisigModificationTransactionBuffer = function () {
->>>>>>> jwt
     /**
      * @type {flatbuffers.ByteBuffer}
      */
@@ -167,43 +161,25 @@ Catapult.Buffers.MultisigModificationTransactionBuffer = function () {
 /**
  * @param {number} i
  * @param {flatbuffers.ByteBuffer} bb
-<<<<<<< HEAD
  * @returns {Catapult.Buffers.ModifyMultisigAccountTransactionBuffer}
  */
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.__init = function (i, bb) {
-=======
- * @returns {Catapult.Buffers.MultisigModificationTransactionBuffer}
- */
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.__init = function (i, bb) {
->>>>>>> jwt
     this.bb_pos = i;
     this.bb = bb;
     return this;
 };
 /**
  * @param {flatbuffers.ByteBuffer} bb
-<<<<<<< HEAD
  * @param {Catapult.Buffers.ModifyMultisigAccountTransactionBuffer=} obj
  * @returns {Catapult.Buffers.ModifyMultisigAccountTransactionBuffer}
  */
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.getRootAsModifyMultisigAccountTransactionBuffer = function (bb, obj) {
     return (obj || new Catapult.Buffers.ModifyMultisigAccountTransactionBuffer).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-=======
- * @param {Catapult.Buffers.MultisigModificationTransactionBuffer=} obj
- * @returns {Catapult.Buffers.MultisigModificationTransactionBuffer}
- */
-Catapult.Buffers.MultisigModificationTransactionBuffer.getRootAsMultisigModificationTransactionBuffer = function (bb, obj) {
-    return (obj || new Catapult.Buffers.MultisigModificationTransactionBuffer).__init(bb.readInt32(bb.position()) + bb.position(), bb);
->>>>>>> jwt
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.size = function () {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.size = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 4);
     return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
 };
@@ -211,33 +187,21 @@ Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.size = function
  * @param {number} index
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.signature = function (index) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.signature = function (index) {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 6);
     return offset ? this.bb.readUint8(this.bb.__vector(this.bb_pos + offset) + index) : 0;
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.signatureLength = function () {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.signatureLength = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 6);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint8Array}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.signatureArray = function () {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.signatureArray = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 6);
     return offset ? new Uint8Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -245,57 +209,35 @@ Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.signatureArray 
  * @param {number} index
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.signer = function (index) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.signer = function (index) {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 8);
     return offset ? this.bb.readUint8(this.bb.__vector(this.bb_pos + offset) + index) : 0;
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.signerLength = function () {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.signerLength = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 8);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint8Array}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.signerArray = function () {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.signerArray = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 8);
     return offset ? new Uint8Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.version = function () {
     var offset = this.bb.__offset(this.bb_pos, 10);
     return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.version = function () {
-    var offset = this.bb.__offset(this.bb_pos, 10);
-    return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
->>>>>>> jwt
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.type = function () {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.type = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 12);
     return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
 };
@@ -303,33 +245,21 @@ Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.type = function
  * @param {number} index
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.maxFee = function (index) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.fee = function (index) {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 14);
     return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.maxFeeLength = function () {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.feeLength = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 14);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint32Array}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.maxFeeArray = function () {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.feeArray = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 14);
     return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -337,70 +267,42 @@ Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.feeArray = func
  * @param {number} index
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.deadline = function (index) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.deadline = function (index) {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 16);
     return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.deadlineLength = function () {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.deadlineLength = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 16);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint32Array}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.deadlineArray = function () {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.deadlineArray = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 16);
     return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.minRemovalDelta = function () {
     var offset = this.bb.__offset(this.bb_pos, 18);
     return offset ? this.bb.readInt8(this.bb_pos + offset) : 0;
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.minRemovalDelta = function () {
-    var offset = this.bb.__offset(this.bb_pos, 18);
-    return offset ? this.bb.readUint8(this.bb_pos + offset) : 0;
->>>>>>> jwt
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.minApprovalDelta = function () {
     var offset = this.bb.__offset(this.bb_pos, 20);
     return offset ? this.bb.readInt8(this.bb_pos + offset) : 0;
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.minApprovalDelta = function () {
-    var offset = this.bb.__offset(this.bb_pos, 20);
-    return offset ? this.bb.readUint8(this.bb_pos + offset) : 0;
->>>>>>> jwt
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.numModifications = function () {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.numModifications = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 22);
     return offset ? this.bb.readUint8(this.bb_pos + offset) : 0;
 };
@@ -409,55 +311,35 @@ Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.numModification
  * @param {Catapult.Buffers.CosignatoryModificationBuffer=} obj
  * @returns {Catapult.Buffers.CosignatoryModificationBuffer}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.modifications = function (index, obj) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.modifications = function (index, obj) {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 24);
     return offset ? (obj || new Catapult.Buffers.CosignatoryModificationBuffer).__init(this.bb.__indirect(this.bb.__vector(this.bb_pos + offset) + index * 4), this.bb) : null;
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.prototype.modificationsLength = function () {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.prototype.modificationsLength = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 24);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @param {flatbuffers.Builder} builder
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.startModifyMultisigAccountTransactionBuffer = function (builder) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.startMultisigModificationTransactionBuffer = function (builder) {
->>>>>>> jwt
     builder.startObject(11);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} size
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.addSize = function (builder, size) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.addSize = function (builder, size) {
->>>>>>> jwt
     builder.addFieldInt32(0, size, 0);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} signatureOffset
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.addSignature = function (builder, signatureOffset) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.addSignature = function (builder, signatureOffset) {
->>>>>>> jwt
     builder.addFieldOffset(1, signatureOffset, 0);
 };
 /**
@@ -465,11 +347,7 @@ Catapult.Buffers.MultisigModificationTransactionBuffer.addSignature = function (
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.createSignatureVector = function (builder, data) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.createSignatureVector = function (builder, data) {
->>>>>>> jwt
     builder.startVector(1, data.length, 1);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt8(data[i]);
@@ -480,22 +358,14 @@ Catapult.Buffers.MultisigModificationTransactionBuffer.createSignatureVector = f
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.startSignatureVector = function (builder, numElems) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.startSignatureVector = function (builder, numElems) {
->>>>>>> jwt
     builder.startVector(1, numElems, 1);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} signerOffset
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.addSigner = function (builder, signerOffset) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.addSigner = function (builder, signerOffset) {
->>>>>>> jwt
     builder.addFieldOffset(2, signerOffset, 0);
 };
 /**
@@ -503,11 +373,7 @@ Catapult.Buffers.MultisigModificationTransactionBuffer.addSigner = function (bui
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.createSignerVector = function (builder, data) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.createSignerVector = function (builder, data) {
->>>>>>> jwt
     builder.startVector(1, data.length, 1);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt8(data[i]);
@@ -518,60 +384,36 @@ Catapult.Buffers.MultisigModificationTransactionBuffer.createSignerVector = func
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.startSignerVector = function (builder, numElems) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.startSignerVector = function (builder, numElems) {
->>>>>>> jwt
     builder.startVector(1, numElems, 1);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} version
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.addVersion = function (builder, version) {
     builder.addFieldInt32(3, version, 0);
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.addVersion = function (builder, version) {
-    builder.addFieldInt16(3, version, 0);
->>>>>>> jwt
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} type
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.addType = function (builder, type) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.addType = function (builder, type) {
->>>>>>> jwt
     builder.addFieldInt16(4, type, 0);
 };
 /**
  * @param {flatbuffers.Builder} builder
-<<<<<<< HEAD
  * @param {flatbuffers.Offset} maxFeeOffset
  */
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.addMaxFee = function (builder, maxFeeOffset) {
     builder.addFieldOffset(5, maxFeeOffset, 0);
-=======
- * @param {flatbuffers.Offset} feeOffset
- */
-Catapult.Buffers.MultisigModificationTransactionBuffer.addFee = function (builder, feeOffset) {
-    builder.addFieldOffset(5, feeOffset, 0);
->>>>>>> jwt
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.createMaxFeeVector = function (builder, data) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.createFeeVector = function (builder, data) {
->>>>>>> jwt
     builder.startVector(4, data.length, 4);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt32(data[i]);
@@ -582,22 +424,14 @@ Catapult.Buffers.MultisigModificationTransactionBuffer.createFeeVector = functio
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.startMaxFeeVector = function (builder, numElems) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.startFeeVector = function (builder, numElems) {
->>>>>>> jwt
     builder.startVector(4, numElems, 4);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} deadlineOffset
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.addDeadline = function (builder, deadlineOffset) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.addDeadline = function (builder, deadlineOffset) {
->>>>>>> jwt
     builder.addFieldOffset(6, deadlineOffset, 0);
 };
 /**
@@ -605,11 +439,7 @@ Catapult.Buffers.MultisigModificationTransactionBuffer.addDeadline = function (b
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.createDeadlineVector = function (builder, data) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.createDeadlineVector = function (builder, data) {
->>>>>>> jwt
     builder.startVector(4, data.length, 4);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt32(data[i]);
@@ -620,55 +450,35 @@ Catapult.Buffers.MultisigModificationTransactionBuffer.createDeadlineVector = fu
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.startDeadlineVector = function (builder, numElems) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.startDeadlineVector = function (builder, numElems) {
->>>>>>> jwt
     builder.startVector(4, numElems, 4);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} minRemovalDelta
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.addMinRemovalDelta = function (builder, minRemovalDelta) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.addMinRemovalDelta = function (builder, minRemovalDelta) {
->>>>>>> jwt
     builder.addFieldInt8(7, minRemovalDelta, 0);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} minApprovalDelta
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.addMinApprovalDelta = function (builder, minApprovalDelta) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.addMinApprovalDelta = function (builder, minApprovalDelta) {
->>>>>>> jwt
     builder.addFieldInt8(8, minApprovalDelta, 0);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} numModifications
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.addNumModifications = function (builder, numModifications) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.addNumModifications = function (builder, numModifications) {
->>>>>>> jwt
     builder.addFieldInt8(9, numModifications, 0);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} modificationsOffset
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.addModifications = function (builder, modificationsOffset) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.addModifications = function (builder, modificationsOffset) {
->>>>>>> jwt
     builder.addFieldOffset(10, modificationsOffset, 0);
 };
 /**
@@ -676,11 +486,7 @@ Catapult.Buffers.MultisigModificationTransactionBuffer.addModifications = functi
  * @param {Array.<flatbuffers.Offset>} data
  * @returns {flatbuffers.Offset}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.createModificationsVector = function (builder, data) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.createModificationsVector = function (builder, data) {
->>>>>>> jwt
     builder.startVector(4, data.length, 4);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addOffset(data[i]);
@@ -691,22 +497,14 @@ Catapult.Buffers.MultisigModificationTransactionBuffer.createModificationsVector
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.startModificationsVector = function (builder, numElems) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.startModificationsVector = function (builder, numElems) {
->>>>>>> jwt
     builder.startVector(4, numElems, 4);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @returns {flatbuffers.Offset}
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.endModifyMultisigAccountTransactionBuffer = function (builder) {
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.endMultisigModificationTransactionBuffer = function (builder) {
->>>>>>> jwt
     var offset = builder.endObject();
     return offset;
 };
@@ -714,7 +512,6 @@ Catapult.Buffers.MultisigModificationTransactionBuffer.endMultisigModificationTr
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} offset
  */
-<<<<<<< HEAD
 Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.finishModifyMultisigAccountTransactionBufferBuffer = function (builder, offset) {
     builder.finish(offset);
 };
@@ -748,11 +545,6 @@ Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.createModifyMultisigAcco
     Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.addModifications(builder, modificationsOffset);
     return Catapult.Buffers.ModifyMultisigAccountTransactionBuffer.endModifyMultisigAccountTransactionBuffer(builder);
 };
-=======
-Catapult.Buffers.MultisigModificationTransactionBuffer.finishMultisigModificationTransactionBufferBuffer = function (builder, offset) {
-    builder.finish(offset);
-};
->>>>>>> jwt
 // Exports for Node.js and RequireJS
 exports.default = Catapult;
 //# sourceMappingURL=MultisigModificationTransactionBuffer.js.map

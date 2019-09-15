@@ -19,20 +19,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module transactions/HashLockTransaction
  */
 const format_1 = require("../../core/format");
-<<<<<<< HEAD
 const LockFundsTransactionBufferPackage = require("../buffers/HashLockTransactionBuffer");
-=======
-const HashLockTransactionBufferPackage = require("../buffers/HashLockTransactionBuffer");
->>>>>>> jwt
 const HashLockTransactionSchema_1 = require("../schemas/HashLockTransactionSchema");
 const VerifiableTransaction_1 = require("./VerifiableTransaction");
 const TransactionType_1 = require("../../model/transaction/TransactionType");
 const flatbuffers_1 = require("flatbuffers");
-<<<<<<< HEAD
 const { LockFundsTransactionBuffer, } = LockFundsTransactionBufferPackage.default.Buffers;
-=======
-const { HashLockTransactionBuffer, } = HashLockTransactionBufferPackage.default.Buffers;
->>>>>>> jwt
 class HashLockTransaction extends VerifiableTransaction_1.VerifiableTransaction {
     constructor(bytes) {
         super(bytes, HashLockTransactionSchema_1.default);
@@ -45,11 +37,7 @@ class Builder {
         this.maxFee = [0, 0];
         this.type = TransactionType_1.TransactionType.LOCK;
     }
-<<<<<<< HEAD
     addMaxFee(maxFee) {
-=======
-    addFee(maxFee) {
->>>>>>> jwt
         this.maxFee = maxFee;
         return this;
     }
@@ -84,7 +72,6 @@ class Builder {
     build() {
         const builder = new flatbuffers_1.flatbuffers.Builder(1);
         // Create vectors
-<<<<<<< HEAD
         const signatureVector = LockFundsTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
         const signerVector = LockFundsTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
@@ -108,31 +95,6 @@ class Builder {
         LockFundsTransactionBuffer.addDuration(builder, durationVector);
         LockFundsTransactionBuffer.addHash(builder, hashVector);
         const codedHashLock = LockFundsTransactionBuffer.endLockFundsTransactionBuffer(builder);
-=======
-        const signatureVector = HashLockTransactionBuffer
-            .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-        const signerVector = HashLockTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-        const deadlineVector = HashLockTransactionBuffer.createDeadlineVector(builder, this.deadline);
-        const feeVector = HashLockTransactionBuffer.createFeeVector(builder, this.maxFee);
-        const mosaicIdVector = HashLockTransactionBuffer.createMosaicIdVector(builder, this.mosaicId);
-        const mosaicAmountVector = HashLockTransactionBuffer.createMosaicAmountVector(builder, this.mosaicAmount);
-        const durationVector = HashLockTransactionBuffer.createDurationVector(builder, this.duration);
-        const byteHash = format_1.Convert.hexToUint8(this.hash);
-        const hashVector = HashLockTransactionBuffer.createHashVector(builder, byteHash);
-        HashLockTransactionBuffer.startHashLockTransactionBuffer(builder);
-        HashLockTransactionBuffer.addSize(builder, 176);
-        HashLockTransactionBuffer.addSignature(builder, signatureVector);
-        HashLockTransactionBuffer.addSigner(builder, signerVector);
-        HashLockTransactionBuffer.addVersion(builder, this.version);
-        HashLockTransactionBuffer.addType(builder, this.type);
-        HashLockTransactionBuffer.addFee(builder, feeVector);
-        HashLockTransactionBuffer.addDeadline(builder, deadlineVector);
-        HashLockTransactionBuffer.addMosaicId(builder, mosaicIdVector);
-        HashLockTransactionBuffer.addMosaicAmount(builder, mosaicAmountVector);
-        HashLockTransactionBuffer.addDuration(builder, durationVector);
-        HashLockTransactionBuffer.addHash(builder, hashVector);
-        const codedHashLock = HashLockTransactionBuffer.endHashLockTransactionBuffer(builder);
->>>>>>> jwt
         builder.finish(codedHashLock);
         const bytes = builder.asUint8Array();
         return new HashLockTransaction(bytes);

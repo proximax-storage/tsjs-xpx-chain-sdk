@@ -6,10 +6,7 @@ import { TransactionAnnounceResponse } from '../model/transaction/TransactionAnn
 import { TransactionStatus } from '../model/transaction/TransactionStatus';
 import { Http } from './Http';
 import { TransactionRepository } from './TransactionRepository';
-<<<<<<< HEAD
-=======
 import { Authentication } from './model/models';
->>>>>>> jwt
 /**
  * Transaction http repository.
  *
@@ -21,11 +18,7 @@ export declare class TransactionHttp extends Http implements TransactionReposito
      * Constructor
      * @param url
      */
-<<<<<<< HEAD
-    constructor(url: string);
-=======
     constructor(url: string, auth?: Authentication, headers?: {});
->>>>>>> jwt
     /**
      * Gets a transaction for a transactionId
      * @param transactionId - Transaction id or hash.

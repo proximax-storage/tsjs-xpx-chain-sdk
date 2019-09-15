@@ -52,43 +52,25 @@ exports.SerializeTransactionToJSON = (transaction) => {
                 duration: transaction.duration.toDTO(),
                 hash: transaction.hash,
             };
-<<<<<<< HEAD
         case TransactionType_1.TransactionType.MODIFY_ACCOUNT_RESTRICTION_ADDRESS:
             return {
                 restrictionType: transaction.restrictionType,
-=======
-        case TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_ADDRESS:
-            return {
-                propertyType: transaction.propertyType,
->>>>>>> jwt
                 modifications: transaction.
                     modifications.map((modification) => {
                     return modification.toDTO();
                 }),
             };
-<<<<<<< HEAD
         case TransactionType_1.TransactionType.MODIFY_ACCOUNT_RESTRICTION_OPERATION:
             return {
                 restrictionType: transaction.restrictionType,
-=======
-        case TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_ENTITY_TYPE:
-            return {
-                propertyType: transaction.propertyType,
->>>>>>> jwt
                 modifications: transaction.
                     modifications.map((modification) => {
                     return modification.toDTO();
                 }),
             };
-<<<<<<< HEAD
         case TransactionType_1.TransactionType.MODIFY_ACCOUNT_RESTRICTION_MOSAIC:
             return {
                 restrictionType: transaction.restrictionType,
-=======
-        case TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_MOSAIC:
-            return {
-                propertyType: transaction.propertyType,
->>>>>>> jwt
                 modifications: transaction.modifications.map((modification) => {
                     return modification.toDTO();
                 }),

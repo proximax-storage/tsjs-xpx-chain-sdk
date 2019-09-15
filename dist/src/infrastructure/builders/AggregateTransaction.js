@@ -47,11 +47,7 @@ class AggregateTransaction extends VerifiableTransaction_1.VerifiableTransaction
             signedTransaction.payload.substr(8, signedTransaction.payload.length - 8);
         return signedTransaction;
     }
-<<<<<<< HEAD
     signTransactionGivenSignatures(initializer, cosignedSignedTransactions, generationHash, signSchema = crypto_1.SignSchema.SHA3) {
-=======
-    signTransactionGivenSignatures(initializer, cosignedSignedTransactions, generationHash, signSchema) {
->>>>>>> jwt
         const signedTransaction = this.signTransaction(initializer, generationHash, signSchema);
         cosignedSignedTransactions.forEach((cosignedTransaction) => {
             signedTransaction.payload = signedTransaction.payload + cosignedTransaction.signer + cosignedTransaction.signature;
@@ -73,11 +69,7 @@ class Builder {
         this.maxFee = [0, 0];
         this.type = TransactionType_1.TransactionType.AGGREGATE_COMPLETE;
     }
-<<<<<<< HEAD
     addMaxFee(maxFee) {
-=======
-    addFee(maxFee) {
->>>>>>> jwt
         this.maxFee = maxFee;
         return this;
     }
@@ -111,26 +103,15 @@ class Builder {
             .createSignerVector(builder, Array(...Array(32))
             .map(Number.prototype.valueOf, 0));
         const deadlineVector = AggregateTransactionBuffer.createDeadlineVector(builder, this.deadline);
-<<<<<<< HEAD
         const feeVector = AggregateTransactionBuffer.createMaxFeeVector(builder, this.maxFee);
         const modificationsVector = AggregateTransactionBuffer.createTransactionsVector(builder, this.transactions);
         AggregateTransactionBuffer.startAggregateTransactionBuffer(builder);
         AggregateTransactionBuffer.addSize(builder, 122 + 4 + this.transactions.length);
-=======
-        const feeVector = AggregateTransactionBuffer.createFeeVector(builder, this.maxFee);
-        const modificationsVector = AggregateTransactionBuffer.createTransactionsVector(builder, this.transactions);
-        AggregateTransactionBuffer.startAggregateTransactionBuffer(builder);
-        AggregateTransactionBuffer.addSize(builder, 120 + 4 + this.transactions.length);
->>>>>>> jwt
         AggregateTransactionBuffer.addSignature(builder, signatureVector);
         AggregateTransactionBuffer.addSigner(builder, signerVector);
         AggregateTransactionBuffer.addVersion(builder, this.version);
         AggregateTransactionBuffer.addType(builder, this.type);
-<<<<<<< HEAD
         AggregateTransactionBuffer.addMaxFee(builder, feeVector);
-=======
-        AggregateTransactionBuffer.addFee(builder, feeVector);
->>>>>>> jwt
         AggregateTransactionBuffer.addDeadline(builder, deadlineVector);
         AggregateTransactionBuffer.addTransactionsSize(builder, 0 !== this.transactions.length ? this.transactions.length : 4294967296);
         AggregateTransactionBuffer.addTransactions(builder, modificationsVector);

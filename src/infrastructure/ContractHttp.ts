@@ -1,19 +1,18 @@
 // Copyright 2019 ProximaX Limited. All rights reserved.
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file
+import { from as observableFrom, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
-import {from as observableFrom, Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {PublicAccount} from '../model/account/PublicAccount';
-import {Http} from './Http';
-import { Authentication } from './model/models';
-import {NetworkHttp} from './NetworkHttp';
-import { AddressMetadata } from '../model/metadata/AddressMetadata';
+import { PublicAccount } from '../model/account/PublicAccount';
 import { Address, Contract } from '../model/model';
 import { ContractRoutesApi } from './api/contractRoutesApi';
-import { ContractInfoDTO } from './model/contractInfoDTO';
 import { ContractRepository } from './ContractRepository';
+import { Http } from './Http';
+import { ContractInfoDTO } from './model/contractInfoDTO';
+import { Authentication } from './model/models';
 import { NetworkHttp } from './NetworkHttp';
+
 
 /**
  * Contract http repository.

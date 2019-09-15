@@ -1,10 +1,4 @@
-<<<<<<< HEAD
 import { Account } from '../account/Account';
-=======
-import { SignSchema } from '../../core/crypto';
-import { Account } from '../../model/account/Account';
-import { SignedTransaction } from '../../model/transaction/SignedTransaction';
->>>>>>> jwt
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
@@ -12,10 +6,6 @@ import { AggregateTransactionInfo } from './AggregateTransactionInfo';
 import { Deadline } from './Deadline';
 import { InnerTransaction } from './InnerTransaction';
 import { TransactionInfo } from './TransactionInfo';
-<<<<<<< HEAD
-=======
-
->>>>>>> jwt
 /**
  * An abstract transaction class that serves as the base class of all NEM transactions.
  */
@@ -101,11 +91,7 @@ export declare abstract class Transaction {
      * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {SignedTransaction}
      */
-<<<<<<< HEAD
-    signWith(account: Account, generationHash, signSchema?)
-=======
-    public signWith(account: Account, generationHash: string, signSchema?: SignSchema): SignedTransaction
->>>>>>> jwt
+    signWith(account: Account, generationHash: string, signSchema?)
     /**
      * Convert an aggregate transaction to an inner transaction including transaction signer.
      * @param signer - Transaction signer.

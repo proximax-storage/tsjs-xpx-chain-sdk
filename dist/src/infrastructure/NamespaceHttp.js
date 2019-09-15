@@ -43,12 +43,6 @@ class NamespaceHttp extends Http_1.Http {
      * @param url
      * @param networkHttp
      */
-<<<<<<< HEAD
-    constructor(url, networkHttp) {
-        networkHttp = networkHttp == null ? new NetworkHttp_1.NetworkHttp(url) : networkHttp;
-        super(networkHttp);
-        this.namespaceRoutesApi = new api_1.NamespaceRoutesApi(url);
-=======
     constructor(url, networkHttp, auth, headers) {
         networkHttp = networkHttp == null ? new NetworkHttp_1.NetworkHttp(url) : networkHttp;
         super(networkHttp);
@@ -59,7 +53,6 @@ class NamespaceHttp extends Http_1.Http {
         if (headers) {
             this.namespaceRoutesApi.setHeaders(headers);
         }
->>>>>>> jwt
     }
     /**
      * Gets the NamespaceInfo for a given namespaceId

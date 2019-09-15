@@ -9,11 +9,7 @@ export declare class AggregateTransaction extends VerifiableTransaction {
         payload: string;
         hash: string;
     };
-<<<<<<< HEAD
     signTransactionGivenSignatures(initializer: any, cosignedSignedTransactions: any, generationHash: any, signSchema?: SignSchema): {
-=======
-    signTransactionGivenSignatures(initializer: any, cosignedSignedTransactions: any, generationHash: any, signSchema: any): {
->>>>>>> jwt
         payload: string;
         hash: string;
     };
@@ -25,11 +21,7 @@ export declare class Builder {
     deadline: any;
     transactions: any;
     constructor();
-<<<<<<< HEAD
     addMaxFee(maxFee: any): this;
-=======
-    addFee(maxFee: any): this;
->>>>>>> jwt
     addVersion(version: any): this;
     addType(type: any): this;
     addDeadline(deadline: any): this;

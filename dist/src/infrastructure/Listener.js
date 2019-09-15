@@ -96,15 +96,9 @@ class Listener {
                         this.messageSubject.next({ channelName: message.meta.channelName, message: CreateTransactionFromDTO_1.CreateTransactionFromDTO(message) });
                     }
                     else if (message.block) {
-<<<<<<< HEAD
                         const networkType = parseInt((message.block.version >>> 0).toString(16).substr(0, 2), 16);
                         this.messageSubject.next({
                             channelName: ListenerChannelName.block, message: new BlockInfo_1.BlockInfo(message.meta.hash, message.meta.generationHash, message.meta.totalFee ? new UInt64_1.UInt64(message.meta.totalFee) : new UInt64_1.UInt64([0, 0]), message.meta.numTransactions, message.block.signature, PublicAccount_1.PublicAccount.createFromPublicKey(message.block.signer, networkType), networkType, parseInt((message.block.version >>> 0).toString(16).substr(2, 2), 16), // Tx version
-=======
-                        const networkType = parseInt(message.block.version.toString(16).substr(0, 2), 16);
-                        this.messageSubject.next({
-                            channelName: ListenerChannelName.block, message: new BlockInfo_1.BlockInfo(message.meta.hash, message.meta.generationHash, message.meta.totalFee ? new UInt64_1.UInt64(message.meta.totalFee) : new UInt64_1.UInt64([0, 0]), message.meta.numTransactions, message.block.signature, PublicAccount_1.PublicAccount.createFromPublicKey(message.block.signer, networkType), networkType, parseInt(message.block.version.toString(16).substr(2, 2), 16), // Tx version
->>>>>>> jwt
                             message.block.type, new UInt64_1.UInt64(message.block.height), new UInt64_1.UInt64(message.block.timestamp), new UInt64_1.UInt64(message.block.difficulty), message.block.feeMultiplier, message.block.previousBlockHash, message.block.blockTransactionsHash, message.block.blockReceiptsHash, message.block.stateHash, CreateTransactionFromDTO_1.extractBeneficiary(message, networkType)),
                         });
                     }

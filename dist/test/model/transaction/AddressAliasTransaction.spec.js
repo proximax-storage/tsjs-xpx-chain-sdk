@@ -53,7 +53,6 @@ describe('AddressAliasTransaction', () => {
         chai_1.expect(addressAliasTransaction.namespaceId.id.higher).to.be.equal(3779697293);
         chai_1.expect(addressAliasTransaction.address.plain()).to.be.equal('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
         const signedTransaction = addressAliasTransaction.signWith(account, generationHash);
-<<<<<<< HEAD
         chai_1.expect(signedTransaction.payload.substring(244, signedTransaction.payload.length)).to.be.equal('002AD8FC018D9A49E19050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142');
     });
     describe('size', () => {
@@ -62,16 +61,6 @@ describe('AddressAliasTransaction', () => {
             const address = Address_1.Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
             const addressAliasTransaction = AddressAliasTransaction_1.AddressAliasTransaction.create(Deadline_1.Deadline.create(), AliasActionType_1.AliasActionType.Link, namespaceId, address, NetworkType_1.NetworkType.MIJIN_TEST);
             chai_1.expect(addressAliasTransaction.size).to.be.equal(156);
-=======
-        chai_1.expect(signedTransaction.payload.substring(240, signedTransaction.payload.length)).to.be.equal('002AD8FC018D9A49E19050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142');
-    });
-    describe('size', () => {
-        it('should return 154 for AggregateTransaction byte size with TransferTransaction with 1 mosaic and message NEM', () => {
-            const namespaceId = new NamespaceId_1.NamespaceId([33347626, 3779697293]);
-            const address = Address_1.Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
-            const addressAliasTransaction = AddressAliasTransaction_1.AddressAliasTransaction.create(Deadline_1.Deadline.create(), AliasActionType_1.AliasActionType.Link, namespaceId, address, NetworkType_1.NetworkType.MIJIN_TEST);
-            chai_1.expect(addressAliasTransaction.size).to.be.equal(154);
->>>>>>> jwt
         });
     });
 });

@@ -129,11 +129,7 @@ class RegisterNamespaceTransaction extends Transaction_1.Transaction {
     buildTransaction() {
         let registerNamespacetransaction = new NamespaceCreationTransaction_1.Builder()
             .addDeadline(this.deadline.toDTO())
-<<<<<<< HEAD
             .addMaxFee(this.maxFee.toDTO())
-=======
-            .addFee(this.maxFee.toDTO())
->>>>>>> jwt
             .addVersion(this.versionToDTO())
             .addNamespaceType(this.namespaceType)
             .addNamespaceId(this.namespaceId.id.toDTO())

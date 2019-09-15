@@ -27,11 +27,7 @@ const MosaicProperties_1 = require("../../model/mosaic/MosaicProperties");
 const NamespaceId_1 = require("../../model/namespace/NamespaceId");
 const NamespaceType_1 = require("../../model/namespace/NamespaceType");
 const AccountLinkTransaction_1 = require("../../model/transaction/AccountLinkTransaction");
-<<<<<<< HEAD
 const AccountRestrictionModification_1 = require("../../model/transaction/AccountRestrictionModification");
-=======
-const AccountPropertyModification_1 = require("../../model/transaction/AccountPropertyModification");
->>>>>>> jwt
 const AddressAliasTransaction_1 = require("../../model/transaction/AddressAliasTransaction");
 const AggregateTransaction_1 = require("../../model/transaction/AggregateTransaction");
 const AggregateTransactionCosignature_1 = require("../../model/transaction/AggregateTransactionCosignature");
@@ -39,15 +35,9 @@ const Deadline_1 = require("../../model/transaction/Deadline");
 const EncryptedMessage_1 = require("../../model/transaction/EncryptedMessage");
 const LockFundsTransaction_1 = require("../../model/transaction/LockFundsTransaction");
 const MessageType_1 = require("../../model/transaction/MessageType");
-<<<<<<< HEAD
 const AccountAddressRestrictionModificationTransaction_1 = require("../../model/transaction/AccountAddressRestrictionModificationTransaction");
 const AccountOperationRestrictionModificationTransaction_1 = require("../../model/transaction/AccountOperationRestrictionModificationTransaction");
 const AccountMosaicRestrictionModificationTransaction_1 = require("../../model/transaction/AccountMosaicRestrictionModificationTransaction");
-=======
-const ModifyAccountPropertyAddressTransaction_1 = require("../../model/transaction/ModifyAccountPropertyAddressTransaction");
-const ModifyAccountPropertyEntityTypeTransaction_1 = require("../../model/transaction/ModifyAccountPropertyEntityTypeTransaction");
-const ModifyAccountPropertyMosaicTransaction_1 = require("../../model/transaction/ModifyAccountPropertyMosaicTransaction");
->>>>>>> jwt
 const ModifyMultisigAccountTransaction_1 = require("../../model/transaction/ModifyMultisigAccountTransaction");
 const MosaicAliasTransaction_1 = require("../../model/transaction/MosaicAliasTransaction");
 const MosaicDefinitionTransaction_1 = require("../../model/transaction/MosaicDefinitionTransaction");
@@ -72,11 +62,7 @@ exports.CreateTransactionFromPayload = (transactionBinary) => {
     const sizeLength = 8;
     const signatureLength = 128;
     const publicKeyLength = 64;
-<<<<<<< HEAD
     const versionLength = 8;
-=======
-    const versionLength = 4;
->>>>>>> jwt
     const typeLength = 4;
     const feeLength = 16;
     const deadlineLength = 16;
@@ -105,15 +91,9 @@ exports.CreateTransactionFromPayload = (transactionBinary) => {
  */
 const CreateTransaction = (type, transactionData, networkType, deadline) => {
     switch (type) {
-<<<<<<< HEAD
         case TransactionType_1.TransactionType.MODIFY_ACCOUNT_RESTRICTION_ADDRESS:
         case TransactionType_1.TransactionType.MODIFY_ACCOUNT_RESTRICTION_OPERATION:
         case TransactionType_1.TransactionType.MODIFY_ACCOUNT_RESTRICTION_MOSAIC:
-=======
-        case TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_ADDRESS:
-        case TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_ENTITY_TYPE:
-        case TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_MOSAIC:
->>>>>>> jwt
             const propertyTypeLength = 2;
             const modificationCountOffset = propertyTypeLength;
             const modificationArrayOffset = modificationCountOffset + propertyTypeLength;
@@ -122,7 +102,6 @@ const CreateTransaction = (type, transactionData, networkType, deadline) => {
             const modifications = transactionData.substring(modificationArrayOffset, transactionData.length);
             const modificationArray = modifications.match(/.{1,52}/g);
             switch (type) {
-<<<<<<< HEAD
                 case TransactionType_1.TransactionType.MODIFY_ACCOUNT_RESTRICTION_ADDRESS:
                     const t = AccountAddressRestrictionModificationTransaction_1.AccountAddressRestrictionModificationTransaction.create(Deadline_1.Deadline.createFromDTO(deadline), parseInt(format_1.Convert.uint8ToHex(format_1.Convert.hexToUint8(propertyType).reverse()), 16), modificationArray ? modificationArray.map((modification) => new AccountRestrictionModification_1.AccountRestrictionModification(parseInt(format_1.Convert.uint8ToHex(format_1.Convert.hexToUint8(modification.substring(0, 2)).reverse()), 16), Address_1.Address.createFromEncoded(modification.substring(2, modification.length)).plain())) : [], networkType);
                     return t;
@@ -132,17 +111,6 @@ const CreateTransaction = (type, transactionData, networkType, deadline) => {
                     return AccountOperationRestrictionModificationTransaction_1.AccountOperationRestrictionModificationTransaction.create(Deadline_1.Deadline.createFromDTO(deadline), parseInt(format_1.Convert.uint8ToHex(format_1.Convert.hexToUint8(propertyType).reverse()), 16), modificationArray ? modificationArray.map((modification) => new AccountRestrictionModification_1.AccountRestrictionModification(parseInt(format_1.Convert.uint8ToHex(format_1.Convert.hexToUint8(modification.substring(0, 2)).reverse()), 16), parseInt(format_1.Convert.uint8ToHex(format_1.Convert.hexToUint8(modification.substring(2, modification.length)).reverse()), 16))) : [], networkType);
             }
             throw new Error('Account restriction transaction type not recognised.');
-=======
-                case TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_ADDRESS:
-                    const t = ModifyAccountPropertyAddressTransaction_1.ModifyAccountPropertyAddressTransaction.create(Deadline_1.Deadline.createFromDTO(deadline), parseInt(format_1.Convert.uint8ToHex(format_1.Convert.hexToUint8(propertyType).reverse()), 16), modificationArray ? modificationArray.map((modification) => new AccountPropertyModification_1.AccountPropertyModification(parseInt(format_1.Convert.uint8ToHex(format_1.Convert.hexToUint8(modification.substring(0, 2)).reverse()), 16), Address_1.Address.createFromEncoded(modification.substring(2, modification.length)).plain())) : [], networkType);
-                    return t;
-                case TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_MOSAIC:
-                    return ModifyAccountPropertyMosaicTransaction_1.ModifyAccountPropertyMosaicTransaction.create(Deadline_1.Deadline.createFromDTO(deadline), parseInt(format_1.Convert.uint8ToHex(format_1.Convert.hexToUint8(propertyType).reverse()), 16), modificationArray ? modificationArray.map((modification) => new AccountPropertyModification_1.AccountPropertyModification(parseInt(format_1.Convert.uint8ToHex(format_1.Convert.hexToUint8(modification.substring(0, 2)).reverse()), 16), UInt64_1.UInt64.fromHex(reverse(modification.substring(2, modification.length))).toDTO())) : [], networkType);
-                case TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_ENTITY_TYPE:
-                    return ModifyAccountPropertyEntityTypeTransaction_1.ModifyAccountPropertyEntityTypeTransaction.create(Deadline_1.Deadline.createFromDTO(deadline), parseInt(format_1.Convert.uint8ToHex(format_1.Convert.hexToUint8(propertyType).reverse()), 16), modificationArray ? modificationArray.map((modification) => new AccountPropertyModification_1.AccountPropertyModification(parseInt(format_1.Convert.uint8ToHex(format_1.Convert.hexToUint8(modification.substring(0, 2)).reverse()), 16), parseInt(format_1.Convert.uint8ToHex(format_1.Convert.hexToUint8(modification.substring(2, modification.length)).reverse()), 16))) : [], networkType);
-            }
-            throw new Error('Account property transaction type not recognised.');
->>>>>>> jwt
         case TransactionType_1.TransactionType.LINK_ACCOUNT:
             // read bytes
             const remoteAccountKey = transactionData.substring(0, 64);
@@ -256,11 +224,7 @@ const CreateTransaction = (type, transactionData, networkType, deadline) => {
             const innerTransactionArray = parseInnerTransactionFromBinary(transactionData.substring(8, payloadSize + 8));
             const consignatureArray = cosignatures.match(/.{1,192}/g);
             return AggregateTransaction_1.AggregateTransaction.createComplete(Deadline_1.Deadline.createFromDTO(deadline), innerTransactionArray.map((innerTransaction) => {
-<<<<<<< HEAD
                 const transaction = CreateTransaction(extractTransactionTypeFromHex(innerTransaction.substring(72, 76)), innerTransaction.substring(76), networkType, deadline);
-=======
-                const transaction = CreateTransaction(extractTransactionTypeFromHex(innerTransaction.substring(68, 72)), innerTransaction.substring(72), networkType, deadline);
->>>>>>> jwt
                 return transaction.toAggregate(PublicAccount_1.PublicAccount.createFromPublicKey(innerTransaction.substring(0, 64), networkType));
             }), networkType, consignatureArray ? consignatureArray.map((cosignature) => new AggregateTransactionCosignature_1.AggregateTransactionCosignature(cosignature.substring(64, 192), PublicAccount_1.PublicAccount.createFromPublicKey(cosignature.substring(0, 64), networkType))) : []);
         case TransactionType_1.TransactionType.AGGREGATE_BONDED:
@@ -269,11 +233,7 @@ const CreateTransaction = (type, transactionData, networkType, deadline) => {
             const bondedInnerTransactionArray = parseInnerTransactionFromBinary(transactionData.substring(8, bondedPayloadSize + 8));
             const bondedConsignatureArray = bondedCosignatures.match(/.{1,192}/g);
             return AggregateTransaction_1.AggregateTransaction.createBonded(Deadline_1.Deadline.createFromDTO(deadline), bondedInnerTransactionArray.map((innerTransaction) => {
-<<<<<<< HEAD
                 const transaction = CreateTransaction(extractTransactionTypeFromHex(innerTransaction.substring(72, 76)), innerTransaction.substring(76), networkType, deadline);
-=======
-                const transaction = CreateTransaction(extractTransactionTypeFromHex(innerTransaction.substring(68, 72)), innerTransaction.substring(72), networkType, deadline);
->>>>>>> jwt
                 return transaction.toAggregate(PublicAccount_1.PublicAccount.createFromPublicKey(innerTransaction.substring(0, 64), networkType));
             }), networkType, bondedConsignatureArray ? bondedConsignatureArray.map((cosignature) => new AggregateTransactionCosignature_1.AggregateTransactionCosignature(cosignature.substring(64, 192), PublicAccount_1.PublicAccount.createFromPublicKey(cosignature.substring(0, 64), networkType))) : []);
         default:
@@ -294,11 +254,7 @@ const extractTransactionTypeFromHex = (hexValue) => {
  * @returns {NetworkType}
  */
 const extractNetwork = (versionHex) => {
-<<<<<<< HEAD
     const networkType = format_1.Convert.hexToUint8(versionHex)[3];
-=======
-    const networkType = format_1.Convert.hexToUint8(versionHex)[1];
->>>>>>> jwt
     if (networkType === NetworkType_1.NetworkType.MAIN_NET) {
         return NetworkType_1.NetworkType.MAIN_NET;
     }

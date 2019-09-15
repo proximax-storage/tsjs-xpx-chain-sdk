@@ -60,7 +60,6 @@ describe('ModifyMultisigAccountTransaction', () => {
         chai_1.expect(modifyMultisigAccountTransaction.modifications[1].cosignatoryPublicAccount.publicKey)
             .to.be.equal('B1B5581FC81A6970DEE418D2C2978F2724228B7B36C5C6DF71B0162BB04778B4');
         const signedTransaction = modifyMultisigAccountTransaction.signWith(account, generationHash);
-<<<<<<< HEAD
         chai_1.expect(signedTransaction.payload.substring(244, signedTransaction.payload.length)).to.be.equal('01020200B0F93CBEE49EEB9953C6F3985B15A4F238E205584D8F924C621CBE4D7AC' +
             '6EC2400B1B5581FC81A6970DEE418D2C2978F2724228B7B36C5C6DF71B0162BB04778B4');
     });
@@ -68,15 +67,6 @@ describe('ModifyMultisigAccountTransaction', () => {
         it('should return 158 for ModifyMultisigAccountTransaction transaction byte size with 1 modification', () => {
             const modifyMultisigAccountTransaction = ModifyMultisigAccountTransaction_1.ModifyMultisigAccountTransaction.create(Deadline_1.Deadline.create(), 1, 1, [new MultisigCosignatoryModification_1.MultisigCosignatoryModification(MultisigCosignatoryModificationType_1.MultisigCosignatoryModificationType.Add, PublicAccount_1.PublicAccount.createFromPublicKey('B0F93CBEE49EEB9953C6F3985B15A4F238E205584D8F924C621CBE4D7AC6EC24', NetworkType_1.NetworkType.MIJIN_TEST))], NetworkType_1.NetworkType.MIJIN_TEST);
             chai_1.expect(modifyMultisigAccountTransaction.size).to.be.equal(158);
-=======
-        chai_1.expect(signedTransaction.payload.substring(240, signedTransaction.payload.length)).to.be.equal('01020200B0F93CBEE49EEB9953C6F3985B15A4F238E205584D8F924C621CBE4D7AC' +
-            '6EC2400B1B5581FC81A6970DEE418D2C2978F2724228B7B36C5C6DF71B0162BB04778B4');
-    });
-    describe('size', () => {
-        it('should return 156 for ModifyMultisigAccountTransaction transaction byte size with 1 modification', () => {
-            const modifyMultisigAccountTransaction = ModifyMultisigAccountTransaction_1.ModifyMultisigAccountTransaction.create(Deadline_1.Deadline.create(), 1, 1, [new MultisigCosignatoryModification_1.MultisigCosignatoryModification(MultisigCosignatoryModificationType_1.MultisigCosignatoryModificationType.Add, PublicAccount_1.PublicAccount.createFromPublicKey('B0F93CBEE49EEB9953C6F3985B15A4F238E205584D8F924C621CBE4D7AC6EC24', NetworkType_1.NetworkType.MIJIN_TEST))], NetworkType_1.NetworkType.MIJIN_TEST);
-            chai_1.expect(modifyMultisigAccountTransaction.size).to.be.equal(156);
->>>>>>> jwt
         });
     });
 });

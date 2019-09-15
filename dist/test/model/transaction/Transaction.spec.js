@@ -96,7 +96,6 @@ describe('Transaction', () => {
         it('Should return serialized payload', () => {
             const transaction = TransferTransaction_1.TransferTransaction.create(Deadline_1.Deadline.create(), Address_1.Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC'), [], PlainMessage_1.PlainMessage.create('test-message'), NetworkType_1.NetworkType.MIJIN_TEST);
             const serialized = transaction.serialize();
-<<<<<<< HEAD
             chai_1.expect(serialized.substring(244, serialized.length)).to.be.equal('9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1420D000000746573742D6D657373616765');
         });
     });
@@ -104,25 +103,12 @@ describe('Transaction', () => {
         it('should return 122 for base transaction size', () => {
             const transaction = new FakeTransaction(TransactionType_1.TransactionType.TRANSFER, NetworkType_1.NetworkType.MIJIN_TEST, 1, Deadline_1.Deadline.create(), UInt64_1.UInt64.fromUint(0), undefined, undefined, new TransactionInfo_1.TransactionInfo(UInt64_1.UInt64.fromUint(100), 1, 'id_hash', 'hash', 'hash'));
             chai_1.expect(transaction.size).to.be.equal(122);
-=======
-            chai_1.expect(serialized.substring(240, serialized.length)).to.be.equal('9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1420D000000746573742D6D657373616765');
-        });
-    });
-    describe('size', () => {
-        it('should return 120 for base transaction size', () => {
-            const transaction = new FakeTransaction(TransactionType_1.TransactionType.TRANSFER, NetworkType_1.NetworkType.MIJIN_TEST, 1, Deadline_1.Deadline.create(), UInt64_1.UInt64.fromUint(0), undefined, undefined, new TransactionInfo_1.TransactionInfo(UInt64_1.UInt64.fromUint(100), 1, 'id_hash', 'hash', 'hash'));
-            chai_1.expect(transaction.size).to.be.equal(120);
->>>>>>> jwt
         });
     });
     describe('version', () => {
         it('should return version in hex format', () => {
             const transaction = new FakeTransaction(TransactionType_1.TransactionType.TRANSFER, NetworkType_1.NetworkType.MIJIN_TEST, 1, Deadline_1.Deadline.create(), UInt64_1.UInt64.fromUint(0), undefined, undefined, new TransactionInfo_1.TransactionInfo(UInt64_1.UInt64.fromUint(100), 1, 'id_hash', 'hash', 'hash'));
-<<<<<<< HEAD
             chai_1.expect(transaction.versionToHex()).to.be.equal('0x90000001');
-=======
-            chai_1.expect(transaction.versionToHex()).to.be.equal('0x9001');
->>>>>>> jwt
         });
     });
 });

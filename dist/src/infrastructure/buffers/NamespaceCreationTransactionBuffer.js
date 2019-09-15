@@ -29,11 +29,7 @@ Catapult.Buffers = Catapult.Buffers || {};
 /**
  * @constructor
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer = function () {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer = function () {
->>>>>>> jwt
     /**
      * @type {flatbuffers.ByteBuffer}
      */
@@ -46,43 +42,25 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer = function () {
 /**
  * @param {number} i
  * @param {flatbuffers.ByteBuffer} bb
-<<<<<<< HEAD
  * @returns {Catapult.Buffers.RegisterNamespaceTransactionBuffer}
  */
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.__init = function (i, bb) {
-=======
- * @returns {Catapult.Buffers.NamespaceCreationTransactionBuffer}
- */
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.__init = function (i, bb) {
->>>>>>> jwt
     this.bb_pos = i;
     this.bb = bb;
     return this;
 };
 /**
  * @param {flatbuffers.ByteBuffer} bb
-<<<<<<< HEAD
  * @param {Catapult.Buffers.RegisterNamespaceTransactionBuffer=} obj
  * @returns {Catapult.Buffers.RegisterNamespaceTransactionBuffer}
  */
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.getRootAsRegisterNamespaceTransactionBuffer = function (bb, obj) {
     return (obj || new Catapult.Buffers.RegisterNamespaceTransactionBuffer).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-=======
- * @param {Catapult.Buffers.NamespaceCreationTransactionBuffer=} obj
- * @returns {Catapult.Buffers.NamespaceCreationTransactionBuffer}
- */
-Catapult.Buffers.NamespaceCreationTransactionBuffer.getRootAsNamespaceCreationTransactionBuffer = function (bb, obj) {
-    return (obj || new Catapult.Buffers.NamespaceCreationTransactionBuffer).__init(bb.readInt32(bb.position()) + bb.position(), bb);
->>>>>>> jwt
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.size = function () {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.size = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 4);
     return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
 };
@@ -90,33 +68,21 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.size = function ()
  * @param {number} index
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.signature = function (index) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.signature = function (index) {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 6);
     return offset ? this.bb.readUint8(this.bb.__vector(this.bb_pos + offset) + index) : 0;
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.signatureLength = function () {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.signatureLength = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 6);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint8Array}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.signatureArray = function () {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.signatureArray = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 6);
     return offset ? new Uint8Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -124,57 +90,35 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.signatureArray = f
  * @param {number} index
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.signer = function (index) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.signer = function (index) {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 8);
     return offset ? this.bb.readUint8(this.bb.__vector(this.bb_pos + offset) + index) : 0;
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.signerLength = function () {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.signerLength = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 8);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint8Array}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.signerArray = function () {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.signerArray = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 8);
     return offset ? new Uint8Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.version = function () {
     var offset = this.bb.__offset(this.bb_pos, 10);
     return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.version = function () {
-    var offset = this.bb.__offset(this.bb_pos, 10);
-    return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
->>>>>>> jwt
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.type = function () {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.type = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 12);
     return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
 };
@@ -182,33 +126,21 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.type = function ()
  * @param {number} index
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.maxFee = function (index) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.fee = function (index) {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 14);
     return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.maxFeeLength = function () {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.feeLength = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 14);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint32Array}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.maxFeeArray = function () {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.feeArray = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 14);
     return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -216,44 +148,28 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.feeArray = functio
  * @param {number} index
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.deadline = function (index) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.deadline = function (index) {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 16);
     return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.deadlineLength = function () {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.deadlineLength = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 16);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint32Array}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.deadlineArray = function () {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.deadlineArray = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 16);
     return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.namespaceType = function () {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.namespaceType = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 18);
     return offset ? this.bb.readUint8(this.bb_pos + offset) : 0;
 };
@@ -261,33 +177,21 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.namespaceType = fu
  * @param {number} index
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.durationParentId = function (index) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.durationParentId = function (index) {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 20);
     return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.durationParentIdLength = function () {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.durationParentIdLength = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 20);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint32Array}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.durationParentIdArray = function () {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.durationParentIdArray = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 20);
     return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -295,44 +199,28 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.durationParentIdAr
  * @param {number} index
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.namespaceId = function (index) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.namespaceId = function (index) {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 22);
     return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.namespaceIdLength = function () {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.namespaceIdLength = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 22);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint32Array}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.namespaceIdArray = function () {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.namespaceIdArray = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 22);
     return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.namespaceNameSize = function () {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.namespaceNameSize = function () {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 24);
     return offset ? this.bb.readUint8(this.bb_pos + offset) : 0;
 };
@@ -340,44 +228,28 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.namespaceNameSize 
  * @param {flatbuffers.Encoding=} optionalEncoding
  * @returns {string|Uint8Array|null}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.prototype.namespaceName = function (optionalEncoding) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.prototype.namespaceName = function (optionalEncoding) {
->>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 26);
     return offset ? this.bb.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
 /**
  * @param {flatbuffers.Builder} builder
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.startRegisterNamespaceTransactionBuffer = function (builder) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.startNamespaceCreationTransactionBuffer = function (builder) {
->>>>>>> jwt
     builder.startObject(12);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} size
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.addSize = function (builder, size) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.addSize = function (builder, size) {
->>>>>>> jwt
     builder.addFieldInt32(0, size, 0);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} signatureOffset
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.addSignature = function (builder, signatureOffset) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.addSignature = function (builder, signatureOffset) {
->>>>>>> jwt
     builder.addFieldOffset(1, signatureOffset, 0);
 };
 /**
@@ -385,11 +257,7 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer.addSignature = function (bui
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.createSignatureVector = function (builder, data) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.createSignatureVector = function (builder, data) {
->>>>>>> jwt
     builder.startVector(1, data.length, 1);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt8(data[i]);
@@ -400,22 +268,14 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer.createSignatureVector = func
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.startSignatureVector = function (builder, numElems) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.startSignatureVector = function (builder, numElems) {
->>>>>>> jwt
     builder.startVector(1, numElems, 1);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} signerOffset
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.addSigner = function (builder, signerOffset) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.addSigner = function (builder, signerOffset) {
->>>>>>> jwt
     builder.addFieldOffset(2, signerOffset, 0);
 };
 /**
@@ -423,11 +283,7 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer.addSigner = function (builde
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.createSignerVector = function (builder, data) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.createSignerVector = function (builder, data) {
->>>>>>> jwt
     builder.startVector(1, data.length, 1);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt8(data[i]);
@@ -438,60 +294,36 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer.createSignerVector = functio
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.startSignerVector = function (builder, numElems) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.startSignerVector = function (builder, numElems) {
->>>>>>> jwt
     builder.startVector(1, numElems, 1);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} version
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.addVersion = function (builder, version) {
     builder.addFieldInt32(3, version, 0);
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.addVersion = function (builder, version) {
-    builder.addFieldInt16(3, version, 0);
->>>>>>> jwt
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} type
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.addType = function (builder, type) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.addType = function (builder, type) {
->>>>>>> jwt
     builder.addFieldInt16(4, type, 0);
 };
 /**
  * @param {flatbuffers.Builder} builder
-<<<<<<< HEAD
  * @param {flatbuffers.Offset} maxFeeOffset
  */
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.addMaxFee = function (builder, maxFeeOffset) {
     builder.addFieldOffset(5, maxFeeOffset, 0);
-=======
- * @param {flatbuffers.Offset} feeOffset
- */
-Catapult.Buffers.NamespaceCreationTransactionBuffer.addFee = function (builder, feeOffset) {
-    builder.addFieldOffset(5, feeOffset, 0);
->>>>>>> jwt
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.createMaxFeeVector = function (builder, data) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.createFeeVector = function (builder, data) {
->>>>>>> jwt
     builder.startVector(4, data.length, 4);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt32(data[i]);
@@ -502,22 +334,14 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer.createFeeVector = function (
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.startMaxFeeVector = function (builder, numElems) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.startFeeVector = function (builder, numElems) {
->>>>>>> jwt
     builder.startVector(4, numElems, 4);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} deadlineOffset
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.addDeadline = function (builder, deadlineOffset) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.addDeadline = function (builder, deadlineOffset) {
->>>>>>> jwt
     builder.addFieldOffset(6, deadlineOffset, 0);
 };
 /**
@@ -525,11 +349,7 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer.addDeadline = function (buil
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.createDeadlineVector = function (builder, data) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.createDeadlineVector = function (builder, data) {
->>>>>>> jwt
     builder.startVector(4, data.length, 4);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt32(data[i]);
@@ -540,33 +360,21 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer.createDeadlineVector = funct
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.startDeadlineVector = function (builder, numElems) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.startDeadlineVector = function (builder, numElems) {
->>>>>>> jwt
     builder.startVector(4, numElems, 4);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} namespaceType
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.addNamespaceType = function (builder, namespaceType) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.addNamespaceType = function (builder, namespaceType) {
->>>>>>> jwt
     builder.addFieldInt8(7, namespaceType, 0);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} durationParentIdOffset
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.addDurationParentId = function (builder, durationParentIdOffset) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.addDurationParentId = function (builder, durationParentIdOffset) {
->>>>>>> jwt
     builder.addFieldOffset(8, durationParentIdOffset, 0);
 };
 /**
@@ -574,11 +382,7 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer.addDurationParentId = functi
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.createDurationParentIdVector = function (builder, data) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.createDurationParentIdVector = function (builder, data) {
->>>>>>> jwt
     builder.startVector(4, data.length, 4);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt32(data[i]);
@@ -589,22 +393,14 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer.createDurationParentIdVector
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.startDurationParentIdVector = function (builder, numElems) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.startDurationParentIdVector = function (builder, numElems) {
->>>>>>> jwt
     builder.startVector(4, numElems, 4);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} namespaceIdOffset
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.addNamespaceId = function (builder, namespaceIdOffset) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.addNamespaceId = function (builder, namespaceIdOffset) {
->>>>>>> jwt
     builder.addFieldOffset(9, namespaceIdOffset, 0);
 };
 /**
@@ -612,11 +408,7 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer.addNamespaceId = function (b
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.createNamespaceIdVector = function (builder, data) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.createNamespaceIdVector = function (builder, data) {
->>>>>>> jwt
     builder.startVector(4, data.length, 4);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt32(data[i]);
@@ -627,44 +419,28 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer.createNamespaceIdVector = fu
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.startNamespaceIdVector = function (builder, numElems) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.startNamespaceIdVector = function (builder, numElems) {
->>>>>>> jwt
     builder.startVector(4, numElems, 4);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} namespaceNameSize
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.addNamespaceNameSize = function (builder, namespaceNameSize) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.addNamespaceNameSize = function (builder, namespaceNameSize) {
->>>>>>> jwt
     builder.addFieldInt8(10, namespaceNameSize, 0);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} namespaceNameOffset
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.addNamespaceName = function (builder, namespaceNameOffset) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.addNamespaceName = function (builder, namespaceNameOffset) {
->>>>>>> jwt
     builder.addFieldOffset(11, namespaceNameOffset, 0);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @returns {flatbuffers.Offset}
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.endRegisterNamespaceTransactionBuffer = function (builder) {
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.endNamespaceCreationTransactionBuffer = function (builder) {
->>>>>>> jwt
     var offset = builder.endObject();
     return offset;
 };
@@ -672,7 +448,6 @@ Catapult.Buffers.NamespaceCreationTransactionBuffer.endNamespaceCreationTransact
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} offset
  */
-<<<<<<< HEAD
 Catapult.Buffers.RegisterNamespaceTransactionBuffer.finishRegisterNamespaceTransactionBufferBuffer = function (builder, offset) {
     builder.finish(offset);
 };
@@ -708,11 +483,6 @@ Catapult.Buffers.RegisterNamespaceTransactionBuffer.createRegisterNamespaceTrans
     Catapult.Buffers.RegisterNamespaceTransactionBuffer.addNamespaceName(builder, namespaceNameOffset);
     return Catapult.Buffers.RegisterNamespaceTransactionBuffer.endRegisterNamespaceTransactionBuffer(builder);
 };
-=======
-Catapult.Buffers.NamespaceCreationTransactionBuffer.finishNamespaceCreationTransactionBufferBuffer = function (builder, offset) {
-    builder.finish(offset);
-};
->>>>>>> jwt
 // Exports for Node.js and RequireJS
 exports.default = Catapult;
 //# sourceMappingURL=NamespaceCreationTransactionBuffer.js.map

@@ -111,19 +111,11 @@ describe('SecretLockTransaction', () => {
         }).to.throw(Error);
     });
     describe('size', () => {
-<<<<<<< HEAD
         it('should return 204 for SecretLockTransaction with proof of 32 bytes', () => {
             const proof = 'B778A39A3663719DFC5E48C9D78431B1E45C2AF9DF538782BF199C189DABEAC7';
             const recipient = Address_1.Address.createFromRawAddress('SDBDG4IT43MPCW2W4CBBCSJJT42AYALQN7A4VVWL');
             const secretLockTransaction = SecretLockTransaction_1.SecretLockTransaction.create(Deadline_1.Deadline.create(), NetworkCurrencyMosaic_1.NetworkCurrencyMosaic.createAbsolute(10), UInt64_1.UInt64.fromUint(100), HashType_1.HashType.Op_Hash_256, CryptoJS.SHA256(CryptoJS.SHA256(proof).toString(CryptoJS.enc.Hex)).toString(CryptoJS.enc.Hex), recipient, NetworkType_1.NetworkType.MIJIN_TEST);
             chai_1.expect(secretLockTransaction.size).to.be.equal(204);
-=======
-        it('should return 202 for SecretLockTransaction with proof of 32 bytes', () => {
-            const proof = 'B778A39A3663719DFC5E48C9D78431B1E45C2AF9DF538782BF199C189DABEAC7';
-            const recipient = Address_1.Address.createFromRawAddress('SDBDG4IT43MPCW2W4CBBCSJJT42AYALQN7A4VVWL');
-            const secretLockTransaction = SecretLockTransaction_1.SecretLockTransaction.create(Deadline_1.Deadline.create(), NetworkCurrencyMosaic_1.NetworkCurrencyMosaic.createAbsolute(10), UInt64_1.UInt64.fromUint(100), HashType_1.HashType.Op_Hash_256, CryptoJS.SHA256(CryptoJS.SHA256(proof).toString(CryptoJS.enc.Hex)).toString(CryptoJS.enc.Hex), recipient, NetworkType_1.NetworkType.MIJIN_TEST);
-            chai_1.expect(secretLockTransaction.size).to.be.equal(202);
->>>>>>> jwt
         });
     });
 });

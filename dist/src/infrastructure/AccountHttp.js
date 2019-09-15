@@ -44,12 +44,6 @@ class AccountHttp extends Http_1.Http {
      * @param url
      * @param networkHttp
      */
-<<<<<<< HEAD
-    constructor(url, networkHttp) {
-        networkHttp = networkHttp == null ? new NetworkHttp_1.NetworkHttp(url) : networkHttp;
-        super(networkHttp);
-        this.accountRoutesApi = new api_1.AccountRoutesApi(url);
-=======
     constructor(url, networkHttp, auth, headers) {
         networkHttp = networkHttp == null ? new NetworkHttp_1.NetworkHttp(url) : networkHttp;
         super(networkHttp);
@@ -60,7 +54,6 @@ class AccountHttp extends Http_1.Http {
         if (headers) {
             this.accountRoutesApi.setHeaders(headers);
         }
->>>>>>> jwt
     }
     /**
      * Gets an AccountInfo for an account.
@@ -73,7 +66,6 @@ class AccountHttp extends Http_1.Http {
         }));
     }
     /**
-<<<<<<< HEAD
      * Get Account restrictions.
      * @param publicAccount public account
      * @returns Observable<AccountRestrictionsInfo>
@@ -97,31 +89,6 @@ class AccountHttp extends Http_1.Http {
             .pipe(operators_1.map((accountRestrictions) => {
             return accountRestrictions.map((restriction) => {
                 return DtoMapping_1.DtoMapping.extractAccountRestrictionFromDto(restriction);
-=======
-     * Gets Account property.
-     * @param publicAccount public account
-     * @returns Observable<AccountPropertiesInfo>
-     */
-    getAccountProperties(address) {
-        return rxjs_1.from(this.accountRoutesApi.getAccountProperties(address.plain()))
-            .pipe(operators_1.map((accountProperties) => {
-            return DtoMapping_1.DtoMapping.extractAccountPropertyFromDto(accountProperties);
-        }));
-    }
-    /**
-     * Gets Account properties.
-     * @param address list of addresses
-     * @returns Observable<AccountPropertiesInfo[]>
-     */
-    getAccountPropertiesFromAccounts(addresses) {
-        const accountIds = {
-            addresses: addresses.map((address) => address.plain()),
-        };
-        return rxjs_1.from(this.accountRoutesApi.getAccountPropertiesFromAccounts(accountIds))
-            .pipe(operators_1.map((accountProperties) => {
-            return accountProperties.map((property) => {
-                return DtoMapping_1.DtoMapping.extractAccountPropertyFromDto(property);
->>>>>>> jwt
             });
         }));
     }

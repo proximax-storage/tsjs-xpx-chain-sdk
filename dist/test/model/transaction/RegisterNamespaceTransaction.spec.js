@@ -43,39 +43,22 @@ describe('RegisterNamespaceTransaction', () => {
         chai_1.expect(registerNamespaceTransaction.duration.lower).to.be.equal(1000);
         chai_1.expect(registerNamespaceTransaction.duration.higher).to.be.equal(0);
         const signedTransaction = registerNamespaceTransaction.signWith(account, generationHash);
-<<<<<<< HEAD
         chai_1.expect(signedTransaction.payload.substring(244, signedTransaction.payload.length)).to.be.equal('00E803000000000000CFCBE72D994BE69B13726F6F742D746573742D6E616D657370616365');
-=======
-        chai_1.expect(signedTransaction.payload.substring(240, signedTransaction.payload.length)).to.be.equal('00E803000000000000CFCBE72D994BE69B13726F6F742D746573742D6E616D657370616365');
->>>>>>> jwt
     });
     it('should createComplete an sub RegisterNamespaceTransaction object and sign it', () => {
         const registerNamespaceTransaction = RegisterNamespaceTransaction_1.RegisterNamespaceTransaction.createSubNamespace(Deadline_1.Deadline.create(), 'root-test-namespace', 'parent-test-namespace', NetworkType_1.NetworkType.MIJIN_TEST);
         const signedTransaction = registerNamespaceTransaction.signWith(account, generationHash);
-<<<<<<< HEAD
         chai_1.expect(signedTransaction.payload.substring(244, signedTransaction.payload.length)).to.be.equal('014DF55E7F6D8FB7FF924207DF2CA1BBF313726F6F742D746573742D6E616D657370616365');
-=======
-        chai_1.expect(signedTransaction.payload.substring(240, signedTransaction.payload.length)).to.be.equal('014DF55E7F6D8FB7FF924207DF2CA1BBF313726F6F742D746573742D6E616D657370616365');
->>>>>>> jwt
     });
     it('should createComplete an sub RegisterNamespaceTransaction object and sign it - ParentId', () => {
         const registerNamespaceTransaction = RegisterNamespaceTransaction_1.RegisterNamespaceTransaction.createSubNamespace(Deadline_1.Deadline.create(), 'root-test-namespace', new NamespaceId_1.NamespaceId([929036875, 2226345261]), NetworkType_1.NetworkType.MIJIN_TEST);
         const signedTransaction = registerNamespaceTransaction.signWith(account, generationHash);
-<<<<<<< HEAD
         chai_1.expect(signedTransaction.payload.substring(244, signedTransaction.payload.length)).to.be.equal('014BFA5F372D55B384CFCBE72D994BE69B13726F6F742D746573742D6E616D657370616365');
     });
     describe('size', () => {
         it('should return 159 for RegisterNamespaceTransaction with name of 19 bytes', () => {
             const registerNamespaceTransaction = RegisterNamespaceTransaction_1.RegisterNamespaceTransaction.createRootNamespace(Deadline_1.Deadline.create(), 'root-test-namespace', UInt64_1.UInt64.fromUint(1000), NetworkType_1.NetworkType.MIJIN_TEST);
             chai_1.expect(registerNamespaceTransaction.size).to.be.equal(159);
-=======
-        chai_1.expect(signedTransaction.payload.substring(240, signedTransaction.payload.length)).to.be.equal('014BFA5F372D55B384CFCBE72D994BE69B13726F6F742D746573742D6E616D657370616365');
-    });
-    describe('size', () => {
-        it('should return 176 for RegisterNamespaceTransaction with name of 19 bytes', () => {
-            const registerNamespaceTransaction = RegisterNamespaceTransaction_1.RegisterNamespaceTransaction.createRootNamespace(Deadline_1.Deadline.create(), 'root-test-namespace', UInt64_1.UInt64.fromUint(1000), NetworkType_1.NetworkType.MIJIN_TEST);
-            chai_1.expect(registerNamespaceTransaction.size).to.be.equal(157);
->>>>>>> jwt
         });
     });
 });

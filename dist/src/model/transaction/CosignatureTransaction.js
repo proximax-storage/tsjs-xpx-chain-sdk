@@ -19,10 +19,7 @@ const crypto_1 = require("../../core/crypto");
 const CosignatureTransaction_1 = require("../../infrastructure/builders/CosignatureTransaction");
 const CosignatureSignedTransaction_1 = require("./CosignatureSignedTransaction");
 const VerifiableTransaction_1 = require("../../infrastructure/builders/VerifiableTransaction");
-<<<<<<< HEAD
 const format_1 = require("../../core/format");
-=======
->>>>>>> jwt
 /**
  * Cosignature transaction is used to sign an aggregate transactions with missing cosignatures.
  */
@@ -51,7 +48,6 @@ class CosignatureTransaction {
      * Creating a new CosignatureSignedTransaction
      * @param account - The signing account
      * @param payload - off transaction payload (aggregated transaction is unannounced)
-<<<<<<< HEAD
      * @param generationHash - Network generation hash
      * @returns {CosignatureSignedTransaction}
      */
@@ -62,18 +58,6 @@ class CosignatureTransaction {
         const transactionHash = VerifiableTransaction_1.VerifiableTransaction.createTransactionHash(payload, Array.from(format_1.Convert.hexToUint8(generationHash)));
         const aggregateSignatureTransaction = new CosignatureTransaction_1.CosignatureTransaction(transactionHash);
         const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account, signSchema);
-=======
-     * @param gernationHash - Network generation hash
-     * @returns {CosignatureSignedTransaction}
-     */
-    static signTransactionPayload(account, payload, gernationHash) {
-        /**
-         * For aggregated complete transaction, cosignatories are gathered off chain announced.
-         */
-        const transactionHash = VerifiableTransaction_1.VerifiableTransaction.createTransactionHash(payload, gernationHash);
-        const aggregateSignatureTransaction = new CosignatureTransaction_1.CosignatureTransaction(transactionHash);
-        const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account);
->>>>>>> jwt
         return new CosignatureSignedTransaction_1.CosignatureSignedTransaction(signedTransactionRaw.parentHash, signedTransactionRaw.signature, signedTransactionRaw.signer);
     }
     /**

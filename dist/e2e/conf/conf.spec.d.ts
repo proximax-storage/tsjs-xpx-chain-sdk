@@ -1,9 +1,5 @@
 import { Account } from '../../src/model/account/Account';
-<<<<<<< HEAD
 import { MosaicId, NamespaceId, MosaicNonce, MosaicProperties, BlockInfo, ChainConfigTransaction } from '../../src/model/model';
-=======
-import { MosaicId, NamespaceId, MosaicNonce, MosaicProperties, BlockInfo } from '../../src/model/model';
->>>>>>> jwt
 import { AccountHttp, TransactionHttp, NamespaceHttp, MosaicHttp } from '../../src/infrastructure/infrastructure';
 interface ConfAccount {
     alias: string;
@@ -33,30 +29,21 @@ declare class TestAccount {
     isCosignatory(): boolean;
 }
 declare const SeedAccount: Account;
-<<<<<<< HEAD
 declare const NemesisAccount: Account;
-=======
->>>>>>> jwt
 declare const TestingAccount: Account;
 declare const TestingRecipient: Account;
 declare const MultisigAccount: Account;
 declare const CosignatoryAccount: Account;
 declare const Cosignatory2Account: Account;
 declare const Cosignatory3Account: Account;
-<<<<<<< HEAD
 declare const Cosignatory4Account: Account;
 declare const Cosignatory5Account: Account;
-=======
->>>>>>> jwt
 declare const Customer1Account: Account;
 declare const Executor1Account: Account;
 declare const Executor2Account: Account;
 declare const Verifier1Account: Account;
 declare const Verifier2Account: Account;
-<<<<<<< HEAD
 declare const MultilevelMultisigAccount: Account;
-=======
->>>>>>> jwt
 declare const AllTestingAccounts: Map<string, TestAccount>;
 declare const ConfNamespace: NamespaceId;
 declare const ConfNamespace2: NamespaceId;
@@ -84,11 +71,6 @@ declare const GetNemesisBlockDataPromise: () => Promise<{
     };
     testTxHash: string;
     testTxId: string;
-<<<<<<< HEAD
     config: ChainConfigTransaction;
 }>;
 export { TestAccount, GetNemesisBlockDataPromise, NemesisBlockInfo, APIUrl, ConfAccountHttp, ConfMosaicHttp, ConfNamespaceHttp, ConfTransactionHttp, ConfNetworkType, NemesisAccount, SeedAccount, TestingAccount, TestingRecipient, MultisigAccount, CosignatoryAccount, Cosignatory2Account, Cosignatory3Account, Cosignatory4Account, Cosignatory5Account, Customer1Account, Executor1Account, Executor2Account, Verifier1Account, Verifier2Account, MultilevelMultisigAccount, AllTestingAccounts, ConfTestingMosaicNonce, ConfTestingMosaicProperties, ConfTestingMosaic, ConfTestingNamespace, ConfNamespace, ConfNamespace2, ConfNetworkMosaic, ConfNetworkMosaicName, ConfNetworkMosaicDivisibility };
-=======
-}>;
-export { TestAccount, GetNemesisBlockDataPromise, NemesisBlockInfo, APIUrl, ConfAccountHttp, ConfMosaicHttp, ConfNamespaceHttp, ConfTransactionHttp, ConfNetworkType, SeedAccount, TestingAccount, TestingRecipient, MultisigAccount, CosignatoryAccount, Cosignatory2Account, Cosignatory3Account, Customer1Account, Executor1Account, Executor2Account, Verifier1Account, Verifier2Account, AllTestingAccounts, ConfTestingMosaicNonce, ConfTestingMosaicProperties, ConfTestingMosaic, ConfTestingNamespace, ConfNamespace, ConfNamespace2, ConfNetworkMosaic, ConfNetworkMosaicName, ConfNetworkMosaicDivisibility };
->>>>>>> jwt

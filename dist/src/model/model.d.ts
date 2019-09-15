@@ -6,19 +6,11 @@ export * from './account/Address';
 export * from './account/MultisigAccountGraphInfo';
 export * from './account/MultisigAccountInfo';
 export * from './account/PublicAccount';
-<<<<<<< HEAD
 export * from './account/AccountRestrictions';
 export * from './account/AccountRestrictionsInfo';
 export * from './account/AccountRestriction';
 export * from './account/RestrictionModificationType';
 export * from './account/RestrictionType';
-=======
-export * from './account/AccountProperties';
-export * from './account/AccountPropertiesInfo';
-export * from './account/AccountProperty';
-export * from './account/PropertyModificationType';
-export * from './account/PropertyType';
->>>>>>> jwt
 export * from './account/AccountNames';
 export * from './blockchain/BlockchainScore';
 export * from './blockchain/BlockchainStorageInfo';
@@ -27,10 +19,7 @@ export * from './blockchain/NetworkType';
 export * from './blockchain/MerklePathItem';
 export * from './blockchain/MerkleProofInfo';
 export * from './blockchain/MerkleProofInfoPayload';
-<<<<<<< HEAD
 export * from './config/ChainConfig';
-=======
->>>>>>> jwt
 export * from './contract/Contract';
 export * from './diagnostic/ServerInfo';
 export * from './metadata/Metadata';
@@ -79,29 +68,18 @@ export * from './receipt/ResolutionType';
 export * from './receipt/InflationReceipt';
 export * from './receipt/Statement';
 export * from './transaction/AccountLinkTransaction';
-<<<<<<< HEAD
 export * from './transaction/AccountRestrictionTransaction';
 export * from './transaction/AccountAddressRestrictionModificationTransaction';
 export * from './transaction/AccountOperationRestrictionModificationTransaction';
 export * from './transaction/AccountMosaicRestrictionModificationTransaction';
 export * from './transaction/AccountRestrictionModification';
-=======
-export * from './transaction/AccountPropertyTransaction';
-export * from './transaction/ModifyAccountPropertyAddressTransaction';
-export * from './transaction/ModifyAccountPropertyEntityTypeTransaction';
-export * from './transaction/ModifyAccountPropertyMosaicTransaction';
-export * from './transaction/AccountPropertyModification';
->>>>>>> jwt
 export * from './transaction/AddressAliasTransaction';
 export * from './transaction/AggregateTransaction';
 export * from './transaction/AggregateTransactionCosignature';
 export * from './transaction/AggregateTransactionInfo';
 export * from './transaction/AliasTransaction';
-<<<<<<< HEAD
 export * from './transaction/ChainConfigTransaction';
 export * from './transaction/ChainUpgradeTransaction';
-=======
->>>>>>> jwt
 export * from './transaction/CosignatureSignedTransaction';
 export * from './transaction/CosignatureTransaction';
 export * from './transaction/Deadline';
@@ -112,11 +90,8 @@ export * from './transaction/InnerTransaction';
 export * from './transaction/LinkAction';
 export * from './transaction/LockFundsTransaction';
 export * from './transaction/Message';
-<<<<<<< HEAD
 export * from './transaction/ModifyContractTransaction';
 export * from './transaction/ModifyMetadataTransaction';
-=======
->>>>>>> jwt
 export * from './transaction/ModifyMultisigAccountTransaction';
 export * from './transaction/MosaicAliasTransaction';
 export * from './transaction/MosaicDefinitionTransaction';
@@ -136,10 +111,7 @@ export * from './transaction/TransactionStatus';
 export * from './transaction/TransactionStatusError';
 export * from './transaction/TransactionType';
 export * from './transaction/TransferTransaction';
-<<<<<<< HEAD
 export * from './upgrade/ChainUpgrade';
-=======
->>>>>>> jwt
 export * from './wallet/EncryptedPrivateKey';
 export * from './wallet/Password';
 export * from './wallet/SimpleWallet';

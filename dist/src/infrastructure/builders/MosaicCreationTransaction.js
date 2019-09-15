@@ -23,12 +23,8 @@ const MosaicCreationTransactionBuffer_1 = require("../buffers/MosaicCreationTran
 const MosaicCreationTransactionSchema_1 = require("../schemas/MosaicCreationTransactionSchema");
 const VerifiableTransaction_1 = require("./VerifiableTransaction");
 const flatbuffers_1 = require("flatbuffers");
-<<<<<<< HEAD
 const model_1 = require("../../model/model");
 const { MosaicDefinitionTransactionBuffer, } = MosaicCreationTransactionBuffer_1.default.Buffers;
-=======
-const { MosaicCreationTransactionBuffer, } = MosaicCreationTransactionBuffer_1.default.Buffers;
->>>>>>> jwt
 class MosaicCreationTransaction extends VerifiableTransaction_1.VerifiableTransaction {
     constructor(bytes, schema) {
         super(bytes, schema);
@@ -43,11 +39,7 @@ class Builder {
         this.type = TransactionType_1.TransactionType.MOSAIC_DEFINITION;
         this.nonce = 0;
     }
-<<<<<<< HEAD
     addMaxFee(maxFee) {
-=======
-    addFee(maxFee) {
->>>>>>> jwt
         this.maxFee = maxFee;
         return this;
     }
@@ -94,7 +86,6 @@ class Builder {
     build() {
         const builder = new flatbuffers_1.flatbuffers.Builder(1);
         // Create vectors
-<<<<<<< HEAD
         const signatureVector = MosaicDefinitionTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
         const signerVector = MosaicDefinitionTransactionBuffer
@@ -129,42 +120,6 @@ class Builder {
         }
         // Calculate size
         const codedMosaicCreation = MosaicDefinitionTransactionBuffer.endMosaicDefinitionTransactionBuffer(builder);
-=======
-        const signatureVector = MosaicCreationTransactionBuffer
-            .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-        const signerVector = MosaicCreationTransactionBuffer
-            .createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-        const deadlineVector = MosaicCreationTransactionBuffer
-            .createDeadlineVector(builder, this.deadline);
-        const feeVector = MosaicCreationTransactionBuffer
-            .createFeeVector(builder, this.maxFee);
-        const nonceVector = MosaicCreationTransactionBuffer
-            .createNonceVector(builder, this.nonce);
-        const mosaicIdVector = MosaicCreationTransactionBuffer
-            .createMosaicIdVector(builder, this.mosaicId);
-        const durationVector = MosaicCreationTransactionBuffer
-            .createDurationVector(builder, this.duration);
-        const durationProvided = 0 < this.duration.length;
-        MosaicCreationTransactionBuffer.startMosaicCreationTransactionBuffer(builder);
-        MosaicCreationTransactionBuffer.addSize(builder, durationProvided ? 144 : 135);
-        MosaicCreationTransactionBuffer.addSignature(builder, signatureVector);
-        MosaicCreationTransactionBuffer.addSigner(builder, signerVector);
-        MosaicCreationTransactionBuffer.addVersion(builder, this.version);
-        MosaicCreationTransactionBuffer.addType(builder, this.type);
-        MosaicCreationTransactionBuffer.addFee(builder, feeVector);
-        MosaicCreationTransactionBuffer.addDeadline(builder, deadlineVector);
-        MosaicCreationTransactionBuffer.addNonce(builder, nonceVector);
-        MosaicCreationTransactionBuffer.addMosaicId(builder, mosaicIdVector);
-        MosaicCreationTransactionBuffer.addNumOptionalProperties(builder, durationProvided ? 1 : 0);
-        MosaicCreationTransactionBuffer.addFlags(builder, this.flags);
-        MosaicCreationTransactionBuffer.addDivisibility(builder, this.divisibility);
-        if (durationProvided) {
-            MosaicCreationTransactionBuffer.addIndicateDuration(builder, 2);
-            MosaicCreationTransactionBuffer.addDuration(builder, durationVector);
-        }
-        // Calculate size
-        const codedMosaicCreation = MosaicCreationTransactionBuffer.endMosaicCreationTransactionBuffer(builder);
->>>>>>> jwt
         builder.finish(codedMosaicCreation);
         const bytes = builder.asUint8Array();
         const schema = durationProvided ? MosaicCreationTransactionSchema_1.schema : MosaicCreationTransactionSchema_1.schemaNoDuration;

@@ -61,13 +61,10 @@ export declare class ModifyMetadataTransaction extends Transaction {
      * @param transactionInfo
      */
     private constructor();
-<<<<<<< HEAD
     /**
      * @description get the byte size of a transaction
      * @returns {number}
      * @memberof Transaction
      */
     readonly size: number;
-=======
->>>>>>> jwt
 }

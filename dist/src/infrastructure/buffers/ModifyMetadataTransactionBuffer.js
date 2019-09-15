@@ -352,11 +352,7 @@ Catapult.Buffers.ModifyMetadataTransactionBuffer.prototype.signerArray = functio
  */
 Catapult.Buffers.ModifyMetadataTransactionBuffer.prototype.version = function () {
     var offset = this.bb.__offset(this.bb_pos, 10);
-<<<<<<< HEAD
     return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
-=======
-    return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
->>>>>>> jwt
 };
 /**
  * @returns {number}
@@ -526,11 +522,7 @@ Catapult.Buffers.ModifyMetadataTransactionBuffer.startSignerVector = function (b
  * @param {number} version
  */
 Catapult.Buffers.ModifyMetadataTransactionBuffer.addVersion = function (builder, version) {
-<<<<<<< HEAD
     builder.addFieldInt32(3, version, 0);
-=======
-    builder.addFieldInt16(3, version, 0);
->>>>>>> jwt
 };
 /**
  * @param {flatbuffers.Builder} builder

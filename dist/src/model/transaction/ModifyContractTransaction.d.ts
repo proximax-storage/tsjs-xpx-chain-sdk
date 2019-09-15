@@ -18,13 +18,10 @@ export declare class ModifyContractTransaction extends Transaction {
      */
     static create(networkType: NetworkType, deadline: Deadline, durationDelta: UInt64, hash: string, customers: MultisigCosignatoryModification[], executors: MultisigCosignatoryModification[], verifiers: MultisigCosignatoryModification[], maxFee?: UInt64, signature?: string, signer?: PublicAccount, transactionInfo?: TransactionInfo | AggregateTransactionInfo): ModifyContractTransaction;
     private constructor();
-<<<<<<< HEAD
     /**
      * @description get the byte size of a transaction
      * @returns {number}
      * @memberof Transaction
      */
     readonly size: number;
-=======
->>>>>>> jwt
 }

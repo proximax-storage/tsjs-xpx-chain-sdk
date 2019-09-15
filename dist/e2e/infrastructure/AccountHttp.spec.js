@@ -15,18 +15,12 @@
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-<<<<<<< HEAD
 const assert_1 = require("assert");
-=======
->>>>>>> jwt
 const chai_1 = require("chai");
 const AccountHttp_1 = require("../../src/infrastructure/AccountHttp");
 const QueryParams_1 = require("../../src/infrastructure/QueryParams");
 const conf_spec_1 = require("../conf/conf.spec");
-<<<<<<< HEAD
 const model_1 = require("../../src/model/model");
-=======
->>>>>>> jwt
 const accountHttp = new AccountHttp_1.AccountHttp(conf_spec_1.APIUrl);
 describe('AccountHttp', () => {
     describe('getAccountInfo', () => {
@@ -47,7 +41,6 @@ describe('AccountHttp', () => {
             });
         });
     });
-<<<<<<< HEAD
     describe('getAccountRestrictions', () => {
         it('should call getAccountRestrictions successfully', (done) => {
             setTimeout(() => {
@@ -91,30 +84,6 @@ describe('AccountHttp', () => {
                     done();
                 });
             }, 1000);
-=======
-    describe('getMultisigAccountInfo', () => {
-        it('should call getMultisigAccountInfo successfully', (done) => {
-            accountHttp.getMultisigAccountInfo(conf_spec_1.MultisigAccount.address).subscribe((multisigAccountInfo) => {
-                chai_1.expect(multisigAccountInfo.account.publicKey).to.be.equal(conf_spec_1.MultisigAccount.publicKey);
-                done();
-            });
-        });
-    });
-    describe('getAccountProperties', () => {
-        it('should call getAccountProperties successfully', (done) => {
-            accountHttp.getAccountProperties(conf_spec_1.TestingAccount.publicAccount.address).subscribe((accountProperty) => {
-                chai_1.expect(accountProperty.accountProperties.address).not.to.be.equal(undefined);
-                done();
-            });
-        });
-    });
-    describe('getAccountPropertiesFromAccounts', () => {
-        it('should call getAccountPropertiesFromAccounts successfully', (done) => {
-            accountHttp.getAccountPropertiesFromAccounts([conf_spec_1.TestingAccount.address]).subscribe((accountProperties) => {
-                chai_1.expect(accountProperties[0].accountProperties.address).not.to.be.equal(undefined);
-                done();
-            });
->>>>>>> jwt
         });
     });
     describe('getMultisigAccountGraphInfo', () => {

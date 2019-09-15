@@ -23,11 +23,7 @@ const TransactionType_1 = require("../../model/transaction/TransactionType");
 const NamespaceCreationTransactionBufferPackage = require("../buffers/NamespaceCreationTransactionBuffer");
 const NamespaceCreationTransactionSchema_1 = require("../schemas/NamespaceCreationTransactionSchema");
 const VerifiableTransaction_1 = require("./VerifiableTransaction");
-<<<<<<< HEAD
 const { RegisterNamespaceTransactionBuffer, } = NamespaceCreationTransactionBufferPackage.default.Buffers;
-=======
-const { NamespaceCreationTransactionBuffer, } = NamespaceCreationTransactionBufferPackage.default.Buffers;
->>>>>>> jwt
 const flatbuffers_1 = require("flatbuffers");
 class NamespaceCreationTransaction extends VerifiableTransaction_1.VerifiableTransaction {
     constructor(bytes) {
@@ -41,11 +37,7 @@ class Builder {
         this.maxFee = [0, 0];
         this.type = TransactionType_1.TransactionType.REGISTER_NAMESPACE;
     }
-<<<<<<< HEAD
     addMaxFee(maxFee) {
-=======
-    addFee(maxFee) {
->>>>>>> jwt
         this.maxFee = maxFee;
         return this;
     }
@@ -85,7 +77,6 @@ class Builder {
         const builder = new flatbuffers_1.flatbuffers.Builder(1);
         const namespaceNameLength = format_1.Convert.utf8ToHex(this.namespaceName).length / 2;
         // create vectors
-<<<<<<< HEAD
         const signatureVector = RegisterNamespaceTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
         const signerVector = RegisterNamespaceTransactionBuffer
@@ -115,37 +106,6 @@ class Builder {
         RegisterNamespaceTransactionBuffer.addNamespaceName(builder, name);
         // Calculate size
         const codedNamespace = RegisterNamespaceTransactionBuffer.endRegisterNamespaceTransactionBuffer(builder);
-=======
-        const signatureVector = NamespaceCreationTransactionBuffer
-            .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-        const signerVector = NamespaceCreationTransactionBuffer
-            .createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-        const deadlineVector = NamespaceCreationTransactionBuffer
-            .createDeadlineVector(builder, this.deadline);
-        const feeVector = NamespaceCreationTransactionBuffer
-            .createFeeVector(builder, this.maxFee);
-        const parentIdVector = 1 === this.namespaceType ? this.parentId : this.duration;
-        const durationParentIdVector = NamespaceCreationTransactionBuffer
-            .createDurationParentIdVector(builder, parentIdVector);
-        const namespaceIdVector = NamespaceCreationTransactionBuffer
-            .createNamespaceIdVector(builder, this.namespaceId);
-        const name = builder.createString(this.namespaceName);
-        NamespaceCreationTransactionBuffer.startNamespaceCreationTransactionBuffer(builder);
-        NamespaceCreationTransactionBuffer.addSize(builder, 138 + namespaceNameLength);
-        NamespaceCreationTransactionBuffer.addSignature(builder, signatureVector);
-        NamespaceCreationTransactionBuffer.addSigner(builder, signerVector);
-        NamespaceCreationTransactionBuffer.addVersion(builder, this.version);
-        NamespaceCreationTransactionBuffer.addType(builder, this.type);
-        NamespaceCreationTransactionBuffer.addFee(builder, feeVector);
-        NamespaceCreationTransactionBuffer.addDeadline(builder, deadlineVector);
-        NamespaceCreationTransactionBuffer.addNamespaceType(builder, this.namespaceType);
-        NamespaceCreationTransactionBuffer.addDurationParentId(builder, durationParentIdVector);
-        NamespaceCreationTransactionBuffer.addNamespaceId(builder, namespaceIdVector);
-        NamespaceCreationTransactionBuffer.addNamespaceNameSize(builder, namespaceNameLength);
-        NamespaceCreationTransactionBuffer.addNamespaceName(builder, name);
-        // Calculate size
-        const codedNamespace = NamespaceCreationTransactionBuffer.endNamespaceCreationTransactionBuffer(builder);
->>>>>>> jwt
         builder.finish(codedNamespace);
         const bytes = builder.asUint8Array();
         return new NamespaceCreationTransaction(bytes);

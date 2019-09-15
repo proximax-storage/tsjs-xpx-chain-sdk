@@ -38,17 +38,11 @@ class TransactionHttp extends Http_1.Http {
      * Constructor
      * @param url
      */
-<<<<<<< HEAD
-    constructor(url) {
-=======
     constructor(url, auth, headers) {
->>>>>>> jwt
         super();
         this.url = url;
         this.transactionRoutesApi = new api_1.TransactionRoutesApi(url);
         this.blockRoutesApi = new api_1.BlockRoutesApi(url);
-<<<<<<< HEAD
-=======
         if (auth) {
             this.transactionRoutesApi.setDefaultAuthentication(auth);
             this.blockRoutesApi.setDefaultAuthentication(auth);
@@ -57,7 +51,6 @@ class TransactionHttp extends Http_1.Http {
             this.transactionRoutesApi.setHeaders(headers);
             this.blockRoutesApi.setHeaders(headers);
         }
->>>>>>> jwt
     }
     /**
      * Gets a transaction for a transactionId

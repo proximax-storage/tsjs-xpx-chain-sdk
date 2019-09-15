@@ -80,11 +80,7 @@ class AccountLinkTransaction extends Transaction_1.Transaction {
     buildTransaction() {
         return new AccountLinkTransaction_1.Builder()
             .addDeadline(this.deadline.toDTO())
-<<<<<<< HEAD
             .addMaxFee(this.maxFee.toDTO())
-=======
-            .addFee(this.maxFee.toDTO())
->>>>>>> jwt
             .addVersion(this.versionToDTO())
             .addRemoteAccountKey(this.remoteAccountKey)
             .addLinkAction(this.linkAction)

@@ -31,7 +31,6 @@ class ConfUtils {
         });
     }
     static prepareE2eTestData() {
-<<<<<<< HEAD
         return Promise.all(Array.from(conf_spec_1.AllTestingAccounts.values()).map(ta => ConfUtils.seed(ta).then(accInfo => ConfUtils.checkIfNeedPubKey(ta, accInfo)))).then(accInfos => {
             // get all the msig roots; will traverse them with bfs, so all other in the middle nodes will be processed automatically
             const msigAccounts = Array.from(conf_spec_1.AllTestingAccounts.values()).filter(ta => ta.hasCosignatories() && !ta.isCosignatory());
@@ -43,18 +42,6 @@ class ConfUtils {
             return msigAccounts.reduce((prev, curr) => {
                 return prev.then(() => {
                     return ConfUtils.convertToMultisigIfNotConvertedYet(curr);
-=======
-        return Array.from(conf_spec_1.AllTestingAccounts.values()).reduce((prev, curr) => {
-            return prev.then(() => {
-                return ConfUtils.seed(curr).then((accInfo) => {
-                    return ConfUtils.checkIfNeedPubKey(curr, accInfo);
-                });
-            });
-        }, Promise.resolve()).then(() => {
-            return Array.from(conf_spec_1.AllTestingAccounts.values()).reduce((prev, curr) => {
-                return prev.then(() => {
-                    return ConfUtils.checkIfNeedMsig(curr);
->>>>>>> jwt
                 });
             }, Promise.resolve());
         }).then(() => {
@@ -62,7 +49,6 @@ class ConfUtils {
         }).then(() => {
             return ConfUtils.checkOrCreateMosaic(conf_spec_1.ConfTestingMosaic);
         }).then(() => {
-<<<<<<< HEAD
             return ConfUtils.simpleAccountRestrictionBLockAddress(conf_spec_1.TestingAccount, conf_spec_1.TestingRecipient.address);
         });
     }
@@ -79,32 +65,6 @@ class ConfUtils {
         }, error => {
             return ConfUtils.convertToMultisig(ta);
         });
-=======
-            return ConfUtils.simplePropertyModificationBLockAddress(conf_spec_1.TestingAccount, conf_spec_1.TestingRecipient.address);
-        });
-    }
-    static checkIfNeedMsig(ta) {
-        const accountHttp = conf_spec_1.ConfAccountHttp;
-        if (ta.hasCosignatories()) {
-            return accountHttp.getMultisigAccountInfo(ta.acc.address).toPromise().then(msigInfo => {
-                console.log(ta.conf.alias + " already is msig");
-                return Promise.resolve();
-            }, error => {
-                console.log(ta.conf.alias + " need msig");
-                if (ta.isCosignatory()) {
-                    // TODO: implement msig graphs
-                    console.log(ta.conf.alias + " in the middle of the graph, ignoring for now");
-                    return Promise.resolve();
-                }
-                else {
-                    return ConfUtils.convertToMultisig(ta);
-                }
-            });
-        }
-        else {
-            return Promise.resolve();
-        }
->>>>>>> jwt
     }
     static checkIfNeedPubKey(ta, accountInfo) {
         const accountHttp = conf_spec_1.ConfAccountHttp;
@@ -197,7 +157,6 @@ class ConfUtils {
             return new Promise((resolve, reject) => {
                 const listener = new infrastructure_1.Listener(conf_spec_1.APIUrl);
                 listener.open().then(() => {
-<<<<<<< HEAD
                     const convertIntoMultisigTransaction = model_1.ModifyMultisigAccountTransaction.create(model_1.Deadline.create(), ta.cosignatories.length <= 1 ? 1 : ta.cosignatories.length - 1, ta.cosignatories.length, ta.cosignatories.map(cos => new model_1.MultisigCosignatoryModification(model_1.MultisigCosignatoryModificationType.Add, cos.acc.publicAccount)), ta.acc.address.networkType);
                     const aggregateBonded = model_1.AggregateTransaction.createBonded(model_1.Deadline.create(), [convertIntoMultisigTransaction.toAggregate(ta.acc.publicAccount)], conf_spec_1.ConfNetworkType, []);
                     const signedAggregateBonded = aggregateBonded.signWith(ta.acc, nemesisBlockInfo.generationHash);
@@ -236,36 +195,17 @@ class ConfUtils {
                         transactionHttp.announceAggregateBonded(signedAggregateBonded);
                     }, signedLockFunds.hash);
                     transactionHttp.announce(signedLockFunds);
-=======
-                    const convertIntoMultisigTransaction = model_1.ModifyMultisigAccountTransaction.create(model_1.Deadline.create(), ta.cosignatories.length <= 1 ? 1 : ta.cosignatories.length - 1, 1, ta.cosignatories.map(cos => new model_1.MultisigCosignatoryModification(model_1.MultisigCosignatoryModificationType.Add, cos.acc.publicAccount)), ta.acc.address.networkType);
-                    const aggregateBonded = model_1.AggregateTransaction.createComplete(model_1.Deadline.create(), [convertIntoMultisigTransaction.toAggregate(ta.acc.publicAccount)], conf_spec_1.ConfNetworkType, []);
-                    const signedAggregateBondedComplete = aggregateBonded.signTransactionWithCosignatories(ta.acc, ta.cosignatories.map(ta => ta.acc), nemesisBlockInfo.generationHash);
-                    this.waitForConfirmation(listener, ta.acc.address, () => {
-                        listener.close();
-                        resolve();
-                    }, signedAggregateBondedComplete.hash);
-                    transactionHttp.announce(signedAggregateBondedComplete);
->>>>>>> jwt
                 });
             });
         });
     }
-<<<<<<< HEAD
     static simpleAccountRestrictionBLockAddress(account, blockAddress, transactionHttp = new infrastructure_1.TransactionHttp(conf_spec_1.APIUrl)) {
-=======
-    static simplePropertyModificationBLockAddress(account, blockAddress, transactionHttp = new infrastructure_1.TransactionHttp(conf_spec_1.APIUrl)) {
->>>>>>> jwt
         return conf_spec_1.NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
             return new Promise((resolve, reject) => {
                 const listener = new infrastructure_1.Listener(conf_spec_1.APIUrl);
                 listener.open().then(() => {
-<<<<<<< HEAD
                     const modifyAccountRestrictionAddressTransaction = model_1.AccountRestrictionTransaction.createAddressRestrictionModificationTransaction(model_1.Deadline.create(23, js_joda_1.ChronoUnit.HOURS), model_1.RestrictionType.BlockAddress, [new model_1.AccountRestrictionModification(model_1.RestrictionModificationType.Add, blockAddress.plain())], account.address.networkType);
                     const signedTransaction = account.sign(modifyAccountRestrictionAddressTransaction, nemesisBlockInfo.generationHash);
-=======
-                    const modifyAccountPropertyAddressTransaction = model_1.ModifyAccountPropertyAddressTransaction.create(model_1.Deadline.create(23, js_joda_1.ChronoUnit.HOURS), model_1.PropertyType.BlockAddress, [new model_1.AccountPropertyModification(model_1.PropertyModificationType.Add, blockAddress.plain())], account.address.networkType);
-                    const signedTransaction = account.sign(modifyAccountPropertyAddressTransaction, nemesisBlockInfo.generationHash);
->>>>>>> jwt
                     this.waitForConfirmation(listener, account.address, () => {
                         listener.close();
                         resolve();

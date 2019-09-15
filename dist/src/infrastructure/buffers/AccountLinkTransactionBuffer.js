@@ -98,82 +98,50 @@ Catapult.Buffers.AccountLinkTransactionBuffer.prototype.signer = function (index
  * @returns {number}
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.prototype.signerLength = function () {
-<<<<<<< HEAD
     var offset = this.bb.__offset(this.bb_pos, 8);
-=======
-    let offset = this.bb.__offset(this.bb_pos, 8);
->>>>>>> jwt
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint8Array}
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.prototype.signerArray = function () {
-<<<<<<< HEAD
     var offset = this.bb.__offset(this.bb_pos, 8);
-=======
-    let offset = this.bb.__offset(this.bb_pos, 8);
->>>>>>> jwt
     return offset ? new Uint8Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
 /**
  * @returns {number}
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.prototype.version = function () {
-<<<<<<< HEAD
     var offset = this.bb.__offset(this.bb_pos, 10);
     return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
-=======
-    let offset = this.bb.__offset(this.bb_pos, 10);
-    return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
->>>>>>> jwt
 };
 /**
  * @returns {number}
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.prototype.type = function () {
-<<<<<<< HEAD
     var offset = this.bb.__offset(this.bb_pos, 12);
-=======
-    let offset = this.bb.__offset(this.bb_pos, 12);
->>>>>>> jwt
     return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
 };
 /**
  * @param {number} index
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.AccountLinkTransactionBuffer.prototype.maxFee = function (index) {
     var offset = this.bb.__offset(this.bb_pos, 14);
-=======
-Catapult.Buffers.AccountLinkTransactionBuffer.prototype.fee = function (index) {
-    const offset = this.bb.__offset(this.bb_pos, 14);
->>>>>>> jwt
     return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 /**
  * @returns {number}
  */
-<<<<<<< HEAD
 Catapult.Buffers.AccountLinkTransactionBuffer.prototype.maxFeeLength = function () {
     var offset = this.bb.__offset(this.bb_pos, 14);
-=======
-Catapult.Buffers.AccountLinkTransactionBuffer.prototype.feeLength = function () {
-    const offset = this.bb.__offset(this.bb_pos, 14);
->>>>>>> jwt
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint32Array}
  */
-<<<<<<< HEAD
 Catapult.Buffers.AccountLinkTransactionBuffer.prototype.maxFeeArray = function () {
     var offset = this.bb.__offset(this.bb_pos, 14);
-=======
-Catapult.Buffers.AccountLinkTransactionBuffer.prototype.feeArray = function () {
-    const offset = this.bb.__offset(this.bb_pos, 14);
->>>>>>> jwt
     return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
 /**
@@ -181,33 +149,21 @@ Catapult.Buffers.AccountLinkTransactionBuffer.prototype.feeArray = function () {
  * @returns {number}
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.prototype.deadline = function (index) {
-<<<<<<< HEAD
     var offset = this.bb.__offset(this.bb_pos, 16);
-=======
-    const offset = this.bb.__offset(this.bb_pos, 16);
->>>>>>> jwt
     return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 /**
  * @returns {number}
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.prototype.deadlineLength = function () {
-<<<<<<< HEAD
     var offset = this.bb.__offset(this.bb_pos, 16);
-=======
-    const offset = this.bb.__offset(this.bb_pos, 16);
->>>>>>> jwt
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint32Array}
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.prototype.deadlineArray = function () {
-<<<<<<< HEAD
     var offset = this.bb.__offset(this.bb_pos, 16);
-=======
-    const offset = this.bb.__offset(this.bb_pos, 16);
->>>>>>> jwt
     return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
 /**
@@ -215,55 +171,35 @@ Catapult.Buffers.AccountLinkTransactionBuffer.prototype.deadlineArray = function
  * @returns {number}
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.prototype.remoteAccountKey = function (index) {
-<<<<<<< HEAD
     var offset = this.bb.__offset(this.bb_pos, 18);
-=======
-    const offset = this.bb.__offset(this.bb_pos, 18);
->>>>>>> jwt
     return offset ? this.bb.readUint8(this.bb.__vector(this.bb_pos + offset) + index) : 0;
 };
 /**
  * @returns {number}
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.prototype.remoteAccountKeyLength = function () {
-<<<<<<< HEAD
     var offset = this.bb.__offset(this.bb_pos, 18);
-=======
-    const offset = this.bb.__offset(this.bb_pos, 18);
->>>>>>> jwt
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint8Array}
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.prototype.remoteAccountKeyArray = function () {
-<<<<<<< HEAD
     var offset = this.bb.__offset(this.bb_pos, 18);
-=======
-    const offset = this.bb.__offset(this.bb_pos, 18);
->>>>>>> jwt
     return offset ? new Uint8Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
 /**
  * @returns {number}
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.prototype.linkAction = function () {
-<<<<<<< HEAD
     var offset = this.bb.__offset(this.bb_pos, 20);
-=======
-    const offset = this.bb.__offset(this.bb_pos, 20);
->>>>>>> jwt
     return offset ? this.bb.readUint8(this.bb_pos + offset) : 0;
 };
 /**
  * @param {flatbuffers.Builder} builder
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.startAccountLinkTransactionBuffer = function (builder) {
-<<<<<<< HEAD
     builder.startObject(9);
-=======
-    builder.startObject(12);
->>>>>>> jwt
 };
 /**
  * @param {flatbuffers.Builder} builder
@@ -286,11 +222,7 @@ Catapult.Buffers.AccountLinkTransactionBuffer.addSignature = function (builder, 
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.createSignatureVector = function (builder, data) {
     builder.startVector(1, data.length, 1);
-<<<<<<< HEAD
     for (var i = data.length - 1; i >= 0; i--) {
-=======
-    for (let i = data.length - 1; i >= 0; i--) {
->>>>>>> jwt
         builder.addInt8(data[i]);
     }
     return builder.endVector();
@@ -316,11 +248,7 @@ Catapult.Buffers.AccountLinkTransactionBuffer.addSigner = function (builder, sig
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.createSignerVector = function (builder, data) {
     builder.startVector(1, data.length, 1);
-<<<<<<< HEAD
     for (var i = data.length - 1; i >= 0; i--) {
-=======
-    for (let i = data.length - 1; i >= 0; i--) {
->>>>>>> jwt
         builder.addInt8(data[i]);
     }
     return builder.endVector();
@@ -337,11 +265,7 @@ Catapult.Buffers.AccountLinkTransactionBuffer.startSignerVector = function (buil
  * @param {number} version
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.addVersion = function (builder, version) {
-<<<<<<< HEAD
     builder.addFieldInt32(3, version, 0);
-=======
-    builder.addFieldInt16(3, version, 0);
->>>>>>> jwt
 };
 /**
  * @param {flatbuffers.Builder} builder
@@ -352,32 +276,19 @@ Catapult.Buffers.AccountLinkTransactionBuffer.addType = function (builder, type)
 };
 /**
  * @param {flatbuffers.Builder} builder
-<<<<<<< HEAD
  * @param {flatbuffers.Offset} maxFeeOffset
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.addMaxFee = function (builder, maxFeeOffset) {
     builder.addFieldOffset(5, maxFeeOffset, 0);
-=======
- * @param {flatbuffers.Offset} feeOffset
- */
-Catapult.Buffers.AccountLinkTransactionBuffer.addFee = function (builder, feeOffset) {
-    builder.addFieldOffset(5, feeOffset, 0);
->>>>>>> jwt
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
-<<<<<<< HEAD
 Catapult.Buffers.AccountLinkTransactionBuffer.createMaxFeeVector = function (builder, data) {
     builder.startVector(4, data.length, 4);
     for (var i = data.length - 1; i >= 0; i--) {
-=======
-Catapult.Buffers.AccountLinkTransactionBuffer.createFeeVector = function (builder, data) {
-    builder.startVector(4, data.length, 4);
-    for (let i = data.length - 1; i >= 0; i--) {
->>>>>>> jwt
         builder.addInt32(data[i]);
     }
     return builder.endVector();
@@ -386,11 +297,7 @@ Catapult.Buffers.AccountLinkTransactionBuffer.createFeeVector = function (builde
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-<<<<<<< HEAD
 Catapult.Buffers.AccountLinkTransactionBuffer.startMaxFeeVector = function (builder, numElems) {
-=======
-Catapult.Buffers.AccountLinkTransactionBuffer.startFeeVector = function (builder, numElems) {
->>>>>>> jwt
     builder.startVector(4, numElems, 4);
 };
 /**
@@ -407,11 +314,7 @@ Catapult.Buffers.AccountLinkTransactionBuffer.addDeadline = function (builder, d
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.createDeadlineVector = function (builder, data) {
     builder.startVector(4, data.length, 4);
-<<<<<<< HEAD
     for (var i = data.length - 1; i >= 0; i--) {
-=======
-    for (let i = data.length - 1; i >= 0; i--) {
->>>>>>> jwt
         builder.addInt32(data[i]);
     }
     return builder.endVector();
@@ -425,11 +328,7 @@ Catapult.Buffers.AccountLinkTransactionBuffer.startDeadlineVector = function (bu
 };
 /**
  * @param {flatbuffers.Builder} builder
-<<<<<<< HEAD
  * @param {flatbuffers.Offset} remoteAccountKeyOffset
-=======
- * @param {flatbuffers.Offset} remoteAccountKey
->>>>>>> jwt
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.addRemoteAccountKey = function (builder, remoteAccountKeyOffset) {
     builder.addFieldOffset(7, remoteAccountKeyOffset, 0);
@@ -441,11 +340,7 @@ Catapult.Buffers.AccountLinkTransactionBuffer.addRemoteAccountKey = function (bu
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.createRemoteAccountKeyVector = function (builder, data) {
     builder.startVector(1, data.length, 1);
-<<<<<<< HEAD
     for (var i = data.length - 1; i >= 0; i--) {
-=======
-    for (let i = data.length - 1; i >= 0; i--) {
->>>>>>> jwt
         builder.addInt8(data[i]);
     }
     return builder.endVector();
@@ -469,11 +364,7 @@ Catapult.Buffers.AccountLinkTransactionBuffer.addLinkAction = function (builder,
  * @returns {flatbuffers.Offset}
  */
 Catapult.Buffers.AccountLinkTransactionBuffer.endAccountLinkTransactionBuffer = function (builder) {
-<<<<<<< HEAD
     var offset = builder.endObject();
-=======
-    const offset = builder.endObject();
->>>>>>> jwt
     return offset;
 };
 /**
@@ -483,7 +374,6 @@ Catapult.Buffers.AccountLinkTransactionBuffer.endAccountLinkTransactionBuffer = 
 Catapult.Buffers.AccountLinkTransactionBuffer.finishAccountLinkTransactionBufferBuffer = function (builder, offset) {
     builder.finish(offset);
 };
-<<<<<<< HEAD
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} size
@@ -510,8 +400,6 @@ Catapult.Buffers.AccountLinkTransactionBuffer.createAccountLinkTransactionBuffer
     Catapult.Buffers.AccountLinkTransactionBuffer.addLinkAction(builder, linkAction);
     return Catapult.Buffers.AccountLinkTransactionBuffer.endAccountLinkTransactionBuffer(builder);
 };
-=======
->>>>>>> jwt
 // Exports for Node.js and RequireJS
 exports.default = Catapult;
 //# sourceMappingURL=AccountLinkTransactionBuffer.js.map

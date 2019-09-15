@@ -85,11 +85,7 @@ class MosaicAliasTransaction extends Transaction_1.Transaction {
     buildTransaction() {
         return new MosaicAliasTransaction_1.Builder()
             .addDeadline(this.deadline.toDTO())
-<<<<<<< HEAD
             .addMaxFee(this.maxFee.toDTO())
-=======
-            .addFee(this.maxFee.toDTO())
->>>>>>> jwt
             .addVersion(this.versionToDTO())
             .addActionType(this.actionType)
             .addNamespaceId(this.namespaceId.id.toDTO())

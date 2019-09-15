@@ -21,15 +21,9 @@ const js_sha3_1 = require("js-sha3");
 const format_1 = require("../../../src/core/format");
 const TransactionMapping_1 = require("../../../src/core/utils/TransactionMapping");
 const Address_1 = require("../../../src/model/account/Address");
-<<<<<<< HEAD
 const PublicAccount_1 = require("../../../src/model/account/PublicAccount");
 const RestrictionModificationType_1 = require("../../../src/model/account/RestrictionModificationType");
 const RestrictionType_1 = require("../../../src/model/account/RestrictionType");
-=======
-const PropertyModificationType_1 = require("../../../src/model/account/PropertyModificationType");
-const PropertyType_1 = require("../../../src/model/account/PropertyType");
-const PublicAccount_1 = require("../../../src/model/account/PublicAccount");
->>>>>>> jwt
 const NetworkType_1 = require("../../../src/model/blockchain/NetworkType");
 const model_1 = require("../../../src/model/model");
 const MosaicId_1 = require("../../../src/model/mosaic/MosaicId");
@@ -41,13 +35,8 @@ const AliasActionType_1 = require("../../../src/model/namespace/AliasActionType"
 const NamespaceId_1 = require("../../../src/model/namespace/NamespaceId");
 const NamespaceType_1 = require("../../../src/model/namespace/NamespaceType");
 const AccountLinkTransaction_1 = require("../../../src/model/transaction/AccountLinkTransaction");
-<<<<<<< HEAD
 const AccountRestrictionModification_1 = require("../../../src/model/transaction/AccountRestrictionModification");
 const AccountRestrictionTransaction_1 = require("../../../src/model/transaction/AccountRestrictionTransaction");
-=======
-const AccountPropertyModification_1 = require("../../../src/model/transaction/AccountPropertyModification");
-const AccountPropertyTransaction_1 = require("../../../src/model/transaction/AccountPropertyTransaction");
->>>>>>> jwt
 const AddressAliasTransaction_1 = require("../../../src/model/transaction/AddressAliasTransaction");
 const AggregateTransaction_1 = require("../../../src/model/transaction/AggregateTransaction");
 const Deadline_1 = require("../../../src/model/transaction/Deadline");
@@ -75,7 +64,6 @@ describe('TransactionMapping - createFromPayload', () => {
     before(() => {
         account = conf_spec_1.TestingAccount;
     });
-<<<<<<< HEAD
     it('should create AccountRestrictionAddressTransaction', () => {
         const address = Address_1.Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
         const addressRestrictionFilter = AccountRestrictionModification_1.AccountRestrictionModification.createForAddress(RestrictionModificationType_1.RestrictionModificationType.Add, address);
@@ -106,38 +94,6 @@ describe('TransactionMapping - createFromPayload', () => {
         chai_1.expect(transaction.restrictionType).to.be.equal(RestrictionType_1.RestrictionType.AllowTransaction);
         chai_1.expect(transaction.modifications[0].value).to.be.equal(operation);
         chai_1.expect(transaction.modifications[0].modificationType).to.be.equal(RestrictionModificationType_1.RestrictionModificationType.Add);
-=======
-    it('should create AccountPropertyAddressTransaction', () => {
-        const address = Address_1.Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
-        const addressPropertyFilter = AccountPropertyModification_1.AccountPropertyModification.createForAddress(PropertyModificationType_1.PropertyModificationType.Add, address);
-        const addressPropertyTransaction = AccountPropertyTransaction_1.AccountPropertyTransaction.createAddressPropertyModificationTransaction(Deadline_1.Deadline.create(), PropertyType_1.PropertyType.AllowAddress, [addressPropertyFilter], NetworkType_1.NetworkType.MIJIN_TEST);
-        const signedTransaction = addressPropertyTransaction.signWith(account, generationHash);
-        const transaction = TransactionMapping_1.TransactionMapping.createFromPayload(signedTransaction.payload);
-        chai_1.expect(transaction.propertyType).to.be.equal(PropertyType_1.PropertyType.AllowAddress);
-        chai_1.expect(transaction.modifications[0].modificationType).to.be.equal(PropertyModificationType_1.PropertyModificationType.Add);
-        chai_1.expect(transaction.modifications[0].value).to.be.equal('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
-    });
-    it('should create AccountPropertyMosaicTransaction', () => {
-        const mosaicId = new MosaicId_1.MosaicId([2262289484, 3405110546]);
-        const mosaicPropertyFilter = AccountPropertyModification_1.AccountPropertyModification.createForMosaic(PropertyModificationType_1.PropertyModificationType.Add, mosaicId);
-        const mosaicPropertyTransaction = AccountPropertyTransaction_1.AccountPropertyTransaction.createMosaicPropertyModificationTransaction(Deadline_1.Deadline.create(), PropertyType_1.PropertyType.AllowMosaic, [mosaicPropertyFilter], NetworkType_1.NetworkType.MIJIN_TEST);
-        const signedTransaction = mosaicPropertyTransaction.signWith(account, generationHash);
-        const transaction = TransactionMapping_1.TransactionMapping.createFromPayload(signedTransaction.payload);
-        chai_1.expect(transaction.propertyType).to.be.equal(PropertyType_1.PropertyType.AllowMosaic);
-        chai_1.expect(transaction.modifications[0].value[0]).to.be.equal(2262289484);
-        chai_1.expect(transaction.modifications[0].value[1]).to.be.equal(3405110546);
-        chai_1.expect(transaction.modifications[0].modificationType).to.be.equal(PropertyModificationType_1.PropertyModificationType.Add);
-    });
-    it('should create AccountPropertyMosaicTransaction', () => {
-        const entityType = TransactionType_1.TransactionType.ADDRESS_ALIAS;
-        const entityTypePropertyFilter = AccountPropertyModification_1.AccountPropertyModification.createForEntityType(PropertyModificationType_1.PropertyModificationType.Add, entityType);
-        const entityTypePropertyTransaction = AccountPropertyTransaction_1.AccountPropertyTransaction.createEntityTypePropertyModificationTransaction(Deadline_1.Deadline.create(), PropertyType_1.PropertyType.AllowTransaction, [entityTypePropertyFilter], NetworkType_1.NetworkType.MIJIN_TEST);
-        const signedTransaction = entityTypePropertyTransaction.signWith(account, generationHash);
-        const transaction = TransactionMapping_1.TransactionMapping.createFromPayload(signedTransaction.payload);
-        chai_1.expect(transaction.propertyType).to.be.equal(PropertyType_1.PropertyType.AllowTransaction);
-        chai_1.expect(transaction.modifications[0].value).to.be.equal(entityType);
-        chai_1.expect(transaction.modifications[0].modificationType).to.be.equal(PropertyModificationType_1.PropertyModificationType.Add);
->>>>>>> jwt
     });
     it('should create AddressAliasTransaction', () => {
         const namespaceId = new NamespaceId_1.NamespaceId([33347626, 3779697293]);
@@ -373,7 +329,6 @@ describe('TransactionMapping - createFromDTO (Transaction.toJSON() feed)', () =>
         chai_1.expect(transaction.remoteAccountKey).to.be.equal(account.publicKey);
         chai_1.expect(transaction.linkAction).to.be.equal(LinkAction_1.LinkAction.Link);
     });
-<<<<<<< HEAD
     it('should create AccountRestrictionAddressTransaction', () => {
         const address = Address_1.Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
         const addressRestrictionFilter = AccountRestrictionModification_1.AccountRestrictionModification.createForAddress(RestrictionModificationType_1.RestrictionModificationType.Add, address);
@@ -399,33 +354,6 @@ describe('TransactionMapping - createFromDTO (Transaction.toJSON() feed)', () =>
         const transaction = TransactionMapping_1.TransactionMapping.createFromDTO(operationRestrictionTransaction.toJSON());
         chai_1.expect(transaction.type).to.be.equal(TransactionType_1.TransactionType.MODIFY_ACCOUNT_RESTRICTION_OPERATION);
         chai_1.expect(transaction.restrictionType).to.be.equal(RestrictionType_1.RestrictionType.AllowTransaction);
-=======
-    it('should create AccountPropertyAddressTransaction', () => {
-        const address = Address_1.Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
-        const addressPropertyFilter = AccountPropertyModification_1.AccountPropertyModification.createForAddress(PropertyModificationType_1.PropertyModificationType.Add, address);
-        const addressPropertyTransaction = AccountPropertyTransaction_1.AccountPropertyTransaction.createAddressPropertyModificationTransaction(Deadline_1.Deadline.create(), PropertyType_1.PropertyType.AllowAddress, [addressPropertyFilter], NetworkType_1.NetworkType.MIJIN_TEST);
-        const transaction = TransactionMapping_1.TransactionMapping.createFromDTO(addressPropertyTransaction.toJSON());
-        chai_1.expect(transaction.modifications[0].value).to.be.equal('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
-        chai_1.expect(transaction.propertyType).to.be.equal(PropertyType_1.PropertyType.AllowAddress);
-        chai_1.expect(transaction.modifications[0].modificationType).to.be.equal(PropertyModificationType_1.PropertyModificationType.Add);
-    });
-    it('should create AccountPropertyMosaicTransaction', () => {
-        const mosaicId = new MosaicId_1.MosaicId([2262289484, 3405110546]);
-        const mosaicPropertyFilter = AccountPropertyModification_1.AccountPropertyModification.createForMosaic(PropertyModificationType_1.PropertyModificationType.Add, mosaicId);
-        const mosaicPropertyTransaction = AccountPropertyTransaction_1.AccountPropertyTransaction.createMosaicPropertyModificationTransaction(Deadline_1.Deadline.create(), PropertyType_1.PropertyType.AllowMosaic, [mosaicPropertyFilter], NetworkType_1.NetworkType.MIJIN_TEST);
-        const transaction = TransactionMapping_1.TransactionMapping.createFromDTO(mosaicPropertyTransaction.toJSON());
-        chai_1.expect(transaction.type).to.be.equal(TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_MOSAIC);
-        chai_1.expect(transaction.propertyType).to.be.equal(PropertyType_1.PropertyType.AllowMosaic);
-        chai_1.expect(transaction.modifications.length).to.be.equal(1);
-    });
-    it('should create AccountPropertyMosaicTransaction', () => {
-        const entityType = TransactionType_1.TransactionType.ADDRESS_ALIAS;
-        const entityTypePropertyFilter = AccountPropertyModification_1.AccountPropertyModification.createForEntityType(PropertyModificationType_1.PropertyModificationType.Add, entityType);
-        const entityTypePropertyTransaction = AccountPropertyTransaction_1.AccountPropertyTransaction.createEntityTypePropertyModificationTransaction(Deadline_1.Deadline.create(), PropertyType_1.PropertyType.AllowTransaction, [entityTypePropertyFilter], NetworkType_1.NetworkType.MIJIN_TEST);
-        const transaction = TransactionMapping_1.TransactionMapping.createFromDTO(entityTypePropertyTransaction.toJSON());
-        chai_1.expect(transaction.type).to.be.equal(TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_ENTITY_TYPE);
-        chai_1.expect(transaction.propertyType).to.be.equal(PropertyType_1.PropertyType.AllowTransaction);
->>>>>>> jwt
         chai_1.expect(transaction.modifications.length).to.be.equal(1);
     });
     it('should create AddressAliasTransaction', () => {

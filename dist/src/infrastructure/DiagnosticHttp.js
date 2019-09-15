@@ -31,11 +31,6 @@ class DiagnosticHttp extends Http_1.Http {
      * Constructor
      * @param url
      */
-<<<<<<< HEAD
-    constructor(url) {
-        super();
-        this.diagnosticRoutesApi = new api_1.DiagnosticRoutesApi(url);
-=======
     constructor(url, auth, headers) {
         super();
         this.diagnosticRoutesApi = new api_1.DiagnosticRoutesApi(url);
@@ -45,7 +40,6 @@ class DiagnosticHttp extends Http_1.Http {
         if (headers) {
             this.diagnosticRoutesApi.setHeaders(headers);
         }
->>>>>>> jwt
     }
     /**
      * Gets blockchain storage info.

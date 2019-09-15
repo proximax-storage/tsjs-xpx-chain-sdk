@@ -11,11 +11,7 @@ export declare class Builder {
     metadataId: any;
     modifications: any;
     constructor();
-<<<<<<< HEAD
     addMaxFee(fee: any): this;
-=======
-    addFee(fee: any): this;
->>>>>>> jwt
     addVersion(version: any): this;
     addType(type: any): this;
     addDeadline(deadline: any): this;

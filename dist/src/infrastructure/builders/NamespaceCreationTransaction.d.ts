@@ -13,11 +13,7 @@ export declare class Builder {
     namespaceId: any;
     namespaceName: any;
     constructor();
-<<<<<<< HEAD
     addMaxFee(maxFee: any): this;
-=======
-    addFee(maxFee: any): this;
->>>>>>> jwt
     addVersion(version: any): this;
     addType(type: any): this;
     addDeadline(deadline: any): this;

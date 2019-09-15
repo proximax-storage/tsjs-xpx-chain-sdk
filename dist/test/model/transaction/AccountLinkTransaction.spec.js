@@ -43,32 +43,19 @@ describe('AccountLinkTransaction', () => {
         chai_1.expect(accountLinkTransaction.linkAction).to.be.equal(0);
         chai_1.expect(accountLinkTransaction.remoteAccountKey).to.be.equal(account.publicKey);
         const signedTransaction = accountLinkTransaction.signWith(account, generationHash);
-<<<<<<< HEAD
         chai_1.expect(signedTransaction.payload.substring(244, signedTransaction.payload.length)).to.be.equal('C2F93346E27CE6AD1A9F8F5E3066F8326593A406BDF357ACB041E2F9AB402EFE00');
-=======
-        chai_1.expect(signedTransaction.payload.substring(240, signedTransaction.payload.length)).to.be.equal('C2F93346E27CE6AD1A9F8F5E3066F8326593A406BDF357ACB041E2F9AB402EFE00');
->>>>>>> jwt
     });
     it('should create an AccountLinkTransaction object with unlink action', () => {
         const accountLinkTransaction = AccountLinkTransaction_1.AccountLinkTransaction.create(Deadline_1.Deadline.create(), account.publicKey, LinkAction_1.LinkAction.Unlink, NetworkType_1.NetworkType.MIJIN_TEST);
         chai_1.expect(accountLinkTransaction.linkAction).to.be.equal(1);
         chai_1.expect(accountLinkTransaction.remoteAccountKey).to.be.equal(account.publicKey);
         const signedTransaction = accountLinkTransaction.signWith(account, generationHash);
-<<<<<<< HEAD
         chai_1.expect(signedTransaction.payload.substring(244, signedTransaction.payload.length)).to.be.equal('C2F93346E27CE6AD1A9F8F5E3066F8326593A406BDF357ACB041E2F9AB402EFE01');
     });
     describe('size', () => {
         it('should return 155 for AccountLinkTransaction byte size', () => {
             const accountLinkTransaction = AccountLinkTransaction_1.AccountLinkTransaction.create(Deadline_1.Deadline.create(), account.publicKey, LinkAction_1.LinkAction.Unlink, NetworkType_1.NetworkType.MIJIN_TEST);
             chai_1.expect(accountLinkTransaction.size).to.be.equal(155);
-=======
-        chai_1.expect(signedTransaction.payload.substring(240, signedTransaction.payload.length)).to.be.equal('C2F93346E27CE6AD1A9F8F5E3066F8326593A406BDF357ACB041E2F9AB402EFE01');
-    });
-    describe('size', () => {
-        it('should return 153 for AccountLinkTransaction byte size', () => {
-            const accountLinkTransaction = AccountLinkTransaction_1.AccountLinkTransaction.create(Deadline_1.Deadline.create(), account.publicKey, LinkAction_1.LinkAction.Unlink, NetworkType_1.NetworkType.MIJIN_TEST);
-            chai_1.expect(accountLinkTransaction.size).to.be.equal(153);
->>>>>>> jwt
         });
     });
 });

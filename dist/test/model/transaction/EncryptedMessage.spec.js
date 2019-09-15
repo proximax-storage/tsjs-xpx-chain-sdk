@@ -46,20 +46,12 @@ describe('EncryptedMessage', () => {
         const plainMessage = recipient.decryptMessage(new EncryptedMessage_1.EncryptedMessage(payload), sender.publicAccount);
         chai_1.expect(plainMessage.payload).to.be.equal('Testing simple transfer');
     });
-<<<<<<< HEAD
     it('should return decrepted message reading from message payload', () => {
-=======
-    it('should return should return decrepted message reading from message payload', () => {
->>>>>>> jwt
         const generationHash = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
         const transferTransaction = model_1.TransferTransaction.create(model_1.Deadline.create(), recipient.address, [model_1.NetworkCurrencyMosaic.createAbsolute(1)], sender.encryptMessage('Testing simple transfer', recipient.publicAccount), model_1.NetworkType.MIJIN_TEST);
         const signedTransaction = transferTransaction.signWith(sender, generationHash);
         const encryptMessage = EncryptedMessage_1.EncryptedMessage
-<<<<<<< HEAD
             .createFromPayload(signedTransaction.payload.substring(302, signedTransaction.payload.length - 32));
-=======
-            .createFromPayload(signedTransaction.payload.substring(298, signedTransaction.payload.length - 32));
->>>>>>> jwt
         const plainMessage = recipient.decryptMessage(encryptMessage, sender.publicAccount);
         chai_1.expect(plainMessage.payload).to.be.equal('Testing simple transfer');
     });

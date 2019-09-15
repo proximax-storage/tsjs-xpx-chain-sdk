@@ -37,11 +37,7 @@ class Builder {
         this.maxFee = [0, 0];
         this.type = TransactionType_1.TransactionType.SECRET_PROOF;
     }
-<<<<<<< HEAD
     addMaxFee(maxFee) {
-=======
-    addFee(maxFee) {
->>>>>>> jwt
         this.maxFee = maxFee;
         return this;
     }
@@ -80,31 +76,19 @@ class Builder {
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
         const signerVector = SecretProofTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
         const deadlineVector = SecretProofTransactionBuffer.createDeadlineVector(builder, this.deadline);
-<<<<<<< HEAD
         const feeVector = SecretProofTransactionBuffer.createMaxFeeVector(builder, this.maxFee);
-=======
-        const feeVector = SecretProofTransactionBuffer.createFeeVector(builder, this.maxFee);
->>>>>>> jwt
         const byteSecret = format_1.Convert.hexToUint8(64 > this.secret.length ? this.secret + '0'.repeat(64 - this.secret.length) : this.secret);
         const secretVector = SecretProofTransactionBuffer.createSecretVector(builder, byteSecret);
         const recipientVector = SecretProofTransactionBuffer.createRecipientVector(builder, this.recipient);
         const byteProof = format_1.Convert.hexToUint8(this.proof);
         const proofVector = SecretProofTransactionBuffer.createProofVector(builder, byteProof);
         SecretProofTransactionBuffer.startSecretProofTransactionBuffer(builder);
-<<<<<<< HEAD
         SecretProofTransactionBuffer.addSize(builder, 122 + 60 + byteProof.length);
-=======
-        SecretProofTransactionBuffer.addSize(builder, 180 + byteProof.length);
->>>>>>> jwt
         SecretProofTransactionBuffer.addSignature(builder, signatureVector);
         SecretProofTransactionBuffer.addSigner(builder, signerVector);
         SecretProofTransactionBuffer.addVersion(builder, this.version);
         SecretProofTransactionBuffer.addType(builder, this.type);
-<<<<<<< HEAD
         SecretProofTransactionBuffer.addMaxFee(builder, feeVector);
-=======
-        SecretProofTransactionBuffer.addFee(builder, feeVector);
->>>>>>> jwt
         SecretProofTransactionBuffer.addDeadline(builder, deadlineVector);
         SecretProofTransactionBuffer.addHashAlgorithm(builder, this.hashAlgorithm);
         SecretProofTransactionBuffer.addSecret(builder, secretVector);

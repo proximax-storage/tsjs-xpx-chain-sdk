@@ -87,11 +87,7 @@ class SecretProofTransaction extends Transaction_1.Transaction {
         return new SecretProofTransaction_1.Builder()
             .addDeadline(this.deadline.toDTO())
             .addType(this.type)
-<<<<<<< HEAD
             .addMaxFee(this.maxFee.toDTO())
-=======
-            .addFee(this.maxFee.toDTO())
->>>>>>> jwt
             .addVersion(this.versionToDTO())
             .addHashAlgorithm(this.hashType)
             .addSecret(this.secret)

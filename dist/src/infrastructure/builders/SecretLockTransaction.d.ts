@@ -14,11 +14,7 @@ export declare class Builder {
     secret: any;
     recipient: any;
     constructor();
-<<<<<<< HEAD
     addMaxFee(maxFee: any): this;
-=======
-    addFee(maxFee: any): this;
->>>>>>> jwt
     addVersion(version: any): this;
     addType(type: any): this;
     addDeadline(deadline: any): this;

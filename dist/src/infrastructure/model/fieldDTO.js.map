@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 {"version":3,"file":"fieldDTO.js","sourceRoot":"","sources":["../../../../src/infrastructure/model/fieldDTO.ts"],"names":[],"mappings":";AAAA,wDAAwD;AACxD,wDAAwD;AACxD,gDAAgD;;AAEhD;;;;;;;;;;GAUG;AAGH,MAAa,QAAQ;IAkBjB,MAAM,CAAC,mBAAmB;QACtB,OAAO,QAAQ,CAAC,gBAAgB,CAAC;IACrC,CAAC;;AAhBM,sBAAa,GAAuB,SAAS,CAAC;AAE9C,yBAAgB,GAA0D;IAC7E;QACI,MAAM,EAAE,KAAK;QACb,UAAU,EAAE,KAAK;QACjB,MAAM,EAAE,QAAQ;KACnB;IACD;QACI,MAAM,EAAE,OAAO;QACf,UAAU,EAAE,OAAO;QACnB,MAAM,EAAE,QAAQ;KACnB;CAAK,CAAC;AAhBf,4BAqBC"}
-=======
-{"version":3,"file":"fieldDTO.js","sourceRoot":"","sources":["../../../../src/infrastructure/model/fieldDTO.ts"],"names":[],"mappings":";AAAA;;;;;;;;;;;;;;GAcG;AACH;;;;;;;;;;GAUG;;AAGH,MAAa,QAAQ;IAkBjB,MAAM,CAAC,mBAAmB;QACtB,OAAO,QAAQ,CAAC,gBAAgB,CAAC;IACrC,CAAC;;AAhBM,sBAAa,GAAuB,SAAS,CAAC;AAE9C,yBAAgB,GAA0D;IAC7E;QACI,MAAM,EAAE,KAAK;QACb,UAAU,EAAE,KAAK;QACjB,MAAM,EAAE,QAAQ;KACnB;IACD;QACI,MAAM,EAAE,OAAO;QACf,UAAU,EAAE,OAAO;QACnB,MAAM,EAAE,QAAQ;KACnB;CAAK,CAAC;AAhBf,4BAqBC"}
->>>>>>> jwt

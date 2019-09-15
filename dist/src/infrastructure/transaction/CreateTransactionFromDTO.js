@@ -27,11 +27,7 @@ const MosaicProperties_1 = require("../../model/mosaic/MosaicProperties");
 const MosaicPropertyType_1 = require("../../model/mosaic/MosaicPropertyType");
 const NamespaceId_1 = require("../../model/namespace/NamespaceId");
 const AccountLinkTransaction_1 = require("../../model/transaction/AccountLinkTransaction");
-<<<<<<< HEAD
 const AccountRestrictionModification_1 = require("../../model/transaction/AccountRestrictionModification");
-=======
-const AccountPropertyModification_1 = require("../../model/transaction/AccountPropertyModification");
->>>>>>> jwt
 const AddressAliasTransaction_1 = require("../../model/transaction/AddressAliasTransaction");
 const AggregateTransaction_1 = require("../../model/transaction/AggregateTransaction");
 const AggregateTransactionCosignature_1 = require("../../model/transaction/AggregateTransactionCosignature");
@@ -39,15 +35,9 @@ const AggregateTransactionInfo_1 = require("../../model/transaction/AggregateTra
 const Deadline_1 = require("../../model/transaction/Deadline");
 const EncryptedMessage_1 = require("../../model/transaction/EncryptedMessage");
 const LockFundsTransaction_1 = require("../../model/transaction/LockFundsTransaction");
-<<<<<<< HEAD
 const AccountAddressRestrictionModificationTransaction_1 = require("../../model/transaction/AccountAddressRestrictionModificationTransaction");
 const AccountOperationRestrictionModificationTransaction_1 = require("../../model/transaction/AccountOperationRestrictionModificationTransaction");
 const AccountMosaicRestrictionModificationTransaction_1 = require("../../model/transaction/AccountMosaicRestrictionModificationTransaction");
-=======
-const ModifyAccountPropertyAddressTransaction_1 = require("../../model/transaction/ModifyAccountPropertyAddressTransaction");
-const ModifyAccountPropertyEntityTypeTransaction_1 = require("../../model/transaction/ModifyAccountPropertyEntityTypeTransaction");
-const ModifyAccountPropertyMosaicTransaction_1 = require("../../model/transaction/ModifyAccountPropertyMosaicTransaction");
->>>>>>> jwt
 const ModifyMultisigAccountTransaction_1 = require("../../model/transaction/ModifyMultisigAccountTransaction");
 const MosaicAliasTransaction_1 = require("../../model/transaction/MosaicAliasTransaction");
 const MosaicDefinitionTransaction_1 = require("../../model/transaction/MosaicDefinitionTransaction");
@@ -65,10 +55,7 @@ const UInt64_1 = require("../../model/UInt64");
 const ModifyMetadataTransaction_1 = require("../../model/transaction/ModifyMetadataTransaction");
 const MetadataType_1 = require("../../model/metadata/MetadataType");
 const ModifyContractTransaction_1 = require("../../model/transaction/ModifyContractTransaction");
-<<<<<<< HEAD
 const model_1 = require("../../model/model");
-=======
->>>>>>> jwt
 /**
  * @internal
  * @param transactionDTO
@@ -147,7 +134,6 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo) => 
     else if (transactionDTO.type === TransactionType_1.TransactionType.ADDRESS_ALIAS) {
         return new AddressAliasTransaction_1.AddressAliasTransaction(exports.extractNetworkType(transactionDTO.version), exports.extractTransactionVersion(transactionDTO.version), Deadline_1.Deadline.createFromDTO(transactionDTO.deadline), new UInt64_1.UInt64(transactionDTO.maxFee || [0, 0]), transactionDTO.action, new NamespaceId_1.NamespaceId(transactionDTO.namespaceId), exports.extractRecipient(transactionDTO.address), transactionDTO.signature, transactionDTO.signer ? PublicAccount_1.PublicAccount.createFromPublicKey(transactionDTO.signer, exports.extractNetworkType(transactionDTO.version)) : undefined, transactionInfo);
     }
-<<<<<<< HEAD
     else if (transactionDTO.type === TransactionType_1.TransactionType.MODIFY_ACCOUNT_RESTRICTION_ADDRESS) {
         return new AccountAddressRestrictionModificationTransaction_1.AccountAddressRestrictionModificationTransaction(exports.extractNetworkType(transactionDTO.version), exports.extractTransactionVersion(transactionDTO.version), Deadline_1.Deadline.createFromDTO(transactionDTO.deadline), new UInt64_1.UInt64(transactionDTO.maxFee || [0, 0]), transactionDTO.restrictionType, transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountRestrictionModification_1.AccountRestrictionModification(modificationDTO.type, modificationDTO.value)) : [], transactionDTO.signature, transactionDTO.signer ? PublicAccount_1.PublicAccount.createFromPublicKey(transactionDTO.signer, exports.extractNetworkType(transactionDTO.version)) : undefined, transactionInfo);
     }
@@ -156,16 +142,6 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo) => 
     }
     else if (transactionDTO.type === TransactionType_1.TransactionType.MODIFY_ACCOUNT_RESTRICTION_MOSAIC) {
         return new AccountMosaicRestrictionModificationTransaction_1.AccountMosaicRestrictionModificationTransaction(exports.extractNetworkType(transactionDTO.version), exports.extractTransactionVersion(transactionDTO.version), Deadline_1.Deadline.createFromDTO(transactionDTO.deadline), new UInt64_1.UInt64(transactionDTO.maxFee || [0, 0]), transactionDTO.restrictionType, transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountRestrictionModification_1.AccountRestrictionModification(modificationDTO.type, modificationDTO.value)) : [], transactionDTO.signature, transactionDTO.signer ? PublicAccount_1.PublicAccount.createFromPublicKey(transactionDTO.signer, exports.extractNetworkType(transactionDTO.version)) : undefined, transactionInfo);
-=======
-    else if (transactionDTO.type === TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_ADDRESS) {
-        return new ModifyAccountPropertyAddressTransaction_1.ModifyAccountPropertyAddressTransaction(exports.extractNetworkType(transactionDTO.version), exports.extractTransactionVersion(transactionDTO.version), Deadline_1.Deadline.createFromDTO(transactionDTO.deadline), new UInt64_1.UInt64(transactionDTO.maxFee || [0, 0]), transactionDTO.propertyType, transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountPropertyModification_1.AccountPropertyModification(modificationDTO.type, modificationDTO.value)) : [], transactionDTO.signature, transactionDTO.signer ? PublicAccount_1.PublicAccount.createFromPublicKey(transactionDTO.signer, exports.extractNetworkType(transactionDTO.version)) : undefined, transactionInfo);
-    }
-    else if (transactionDTO.type === TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_ENTITY_TYPE) {
-        return new ModifyAccountPropertyEntityTypeTransaction_1.ModifyAccountPropertyEntityTypeTransaction(exports.extractNetworkType(transactionDTO.version), exports.extractTransactionVersion(transactionDTO.version), Deadline_1.Deadline.createFromDTO(transactionDTO.deadline), new UInt64_1.UInt64(transactionDTO.maxFee || [0, 0]), transactionDTO.propertyType, transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountPropertyModification_1.AccountPropertyModification(modificationDTO.type, modificationDTO.value)) : [], transactionDTO.signature, transactionDTO.signer ? PublicAccount_1.PublicAccount.createFromPublicKey(transactionDTO.signer, exports.extractNetworkType(transactionDTO.version)) : undefined, transactionInfo);
-    }
-    else if (transactionDTO.type === TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_MOSAIC) {
-        return new ModifyAccountPropertyMosaicTransaction_1.ModifyAccountPropertyMosaicTransaction(exports.extractNetworkType(transactionDTO.version), exports.extractTransactionVersion(transactionDTO.version), Deadline_1.Deadline.createFromDTO(transactionDTO.deadline), new UInt64_1.UInt64(transactionDTO.maxFee || [0, 0]), transactionDTO.propertyType, transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountPropertyModification_1.AccountPropertyModification(modificationDTO.type, modificationDTO.value)) : [], transactionDTO.signature, transactionDTO.signer ? PublicAccount_1.PublicAccount.createFromPublicKey(transactionDTO.signer, exports.extractNetworkType(transactionDTO.version)) : undefined, transactionInfo);
->>>>>>> jwt
     }
     else if (transactionDTO.type === TransactionType_1.TransactionType.LINK_ACCOUNT) {
         return new AccountLinkTransaction_1.AccountLinkTransaction(exports.extractNetworkType(transactionDTO.version), exports.extractTransactionVersion(transactionDTO.version), Deadline_1.Deadline.createFromDTO(transactionDTO.deadline), new UInt64_1.UInt64(transactionDTO.maxFee || [0, 0]), transactionDTO.remoteAccountKey, transactionDTO.action, transactionDTO.signature, transactionDTO.signer ? PublicAccount_1.PublicAccount.createFromPublicKey(transactionDTO.signer, exports.extractNetworkType(transactionDTO.version)) : undefined, transactionInfo);
@@ -218,7 +194,6 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo) => 
             undefined;
         return ModifyContractTransaction_1.ModifyContractTransaction.create(networkType, deadline, durationDelta, hash, customers, executors, verifiers, maxFee, transactionDTO.signature, transactionDTO.signer ? PublicAccount_1.PublicAccount.createFromPublicKey(transactionDTO.signer, exports.extractNetworkType(transactionDTO.version)) : undefined, transactionInfo);
     }
-<<<<<<< HEAD
     else if (transactionDTO.type === TransactionType_1.TransactionType.CHAIN_UPGRADE) {
         return new model_1.ChainUpgradeTransaction(exports.extractNetworkType(transactionDTO.version), exports.extractTransactionVersion(transactionDTO.version), Deadline_1.Deadline.createFromDTO(transactionDTO.deadline), new UInt64_1.UInt64(transactionDTO.maxFee || [0, 0]), new UInt64_1.UInt64(transactionDTO.upgradePeriod), new UInt64_1.UInt64(transactionDTO.newCatapultVersion), transactionDTO.signature, transactionDTO.signer ? PublicAccount_1.PublicAccount.createFromPublicKey(transactionDTO.signer, exports.extractNetworkType(transactionDTO.version)) : undefined, transactionInfo);
     }
@@ -229,12 +204,6 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo) => 
 };
 exports.extractNetworkType = (version) => {
     const networkType = parseInt((version >>> 0).toString(16).substr(0, 2), 16); // ">>> 0" hack makes it effectively an Uint32
-=======
-    throw new Error('Unimplemented transaction with type ' + transactionDTO.type);
-};
-exports.extractNetworkType = (version) => {
-    const networkType = parseInt(version.toString(16).substr(0, 2), 16);
->>>>>>> jwt
     if (networkType === NetworkType_1.NetworkType.MAIN_NET) {
         return NetworkType_1.NetworkType.MAIN_NET;
     }
@@ -256,11 +225,7 @@ exports.extractNetworkType = (version) => {
     throw new Error('Unimplemented network type');
 };
 exports.extractTransactionVersion = (version) => {
-<<<<<<< HEAD
     return parseInt((version >>> 0).toString(16).substr(2, 4), 16); // ">>> 0" hack makes it effectively an Uint32
-=======
-    return parseInt(version.toString(16).substr(2, 2), 16);
->>>>>>> jwt
 };
 /**
  * Extract recipient value from encoded hexadecimal notation.
