@@ -37,7 +37,11 @@ class Builder {
         this.maxFee = [0, 0];
         this.type = TransactionType_1.TransactionType.SECRET_LOCK;
     }
+<<<<<<< HEAD
     addMaxFee(maxFee) {
+=======
+    addFee(maxFee) {
+>>>>>>> jwt
         this.maxFee = maxFee;
         return this;
     }
@@ -84,7 +88,11 @@ class Builder {
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
         const signerVector = SecretLockTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
         const deadlineVector = SecretLockTransactionBuffer.createDeadlineVector(builder, this.deadline);
+<<<<<<< HEAD
         const feeVector = SecretLockTransactionBuffer.createMaxFeeVector(builder, this.maxFee);
+=======
+        const feeVector = SecretLockTransactionBuffer.createFeeVector(builder, this.maxFee);
+>>>>>>> jwt
         const mosaicIdVector = SecretLockTransactionBuffer.createMosaicIdVector(builder, this.mosaicId);
         const mosaicAmountVector = SecretLockTransactionBuffer.createMosaicAmountVector(builder, this.mosaicAmount);
         const durationVector = SecretLockTransactionBuffer.createDurationVector(builder, this.duration);
@@ -92,12 +100,20 @@ class Builder {
         const secretVector = SecretLockTransactionBuffer.createSecretVector(builder, byteSecret);
         const recipientVector = SecretLockTransactionBuffer.createRecipientVector(builder, this.recipient);
         SecretLockTransactionBuffer.startSecretLockTransactionBuffer(builder);
+<<<<<<< HEAD
         SecretLockTransactionBuffer.addSize(builder, 122 + 82);
+=======
+        SecretLockTransactionBuffer.addSize(builder, 202);
+>>>>>>> jwt
         SecretLockTransactionBuffer.addSignature(builder, signatureVector);
         SecretLockTransactionBuffer.addSigner(builder, signerVector);
         SecretLockTransactionBuffer.addVersion(builder, this.version);
         SecretLockTransactionBuffer.addType(builder, this.type);
+<<<<<<< HEAD
         SecretLockTransactionBuffer.addMaxFee(builder, feeVector);
+=======
+        SecretLockTransactionBuffer.addFee(builder, feeVector);
+>>>>>>> jwt
         SecretLockTransactionBuffer.addDeadline(builder, deadlineVector);
         SecretLockTransactionBuffer.addMosaicId(builder, mosaicIdVector);
         SecretLockTransactionBuffer.addMosaicAmount(builder, mosaicAmountVector);

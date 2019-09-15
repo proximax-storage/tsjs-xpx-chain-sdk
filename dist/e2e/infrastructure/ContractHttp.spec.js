@@ -53,9 +53,14 @@ describe('ContractHttp', () => {
             const modifyContractTransaction = ModifyContractTransaction_1.ModifyContractTransaction.create(conf_spec_1.ConfNetworkType, model_1.Deadline.create(), model_1.UInt64.fromUint(1000), hash, [new model_1.MultisigCosignatoryModification(model_1.MultisigCosignatoryModificationType.Add, conf_spec_1.Customer1Account.publicAccount)], [new model_1.MultisigCosignatoryModification(model_1.MultisigCosignatoryModificationType.Add, conf_spec_1.Executor1Account.publicAccount),
                 new model_1.MultisigCosignatoryModification(model_1.MultisigCosignatoryModificationType.Add, conf_spec_1.Executor2Account.publicAccount)], [new model_1.MultisigCosignatoryModification(model_1.MultisigCosignatoryModificationType.Add, conf_spec_1.Verifier1Account.publicAccount),
                 new model_1.MultisigCosignatoryModification(model_1.MultisigCosignatoryModificationType.Add, conf_spec_1.Verifier2Account.publicAccount)]);
+<<<<<<< HEAD
             it('aggregate', (done) => {
                 const aggregateTransaction = model_1.AggregateTransaction.createComplete(model_1.Deadline.create(), [modifyContractTransaction.toAggregate(conf_spec_1.Customer1Account.publicAccount)], conf_spec_1.ConfNetworkType, []);
                 const signedTransaction = aggregateTransaction.signWith(conf_spec_1.Customer1Account, generationHash);
+=======
+            it('standalone', (done) => {
+                const signedTransaction = modifyContractTransaction.signWith(conf_spec_1.Customer1Account, generationHash);
+>>>>>>> jwt
                 validateTransactionAnnounceCorrectly(conf_spec_1.Customer1Account.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });

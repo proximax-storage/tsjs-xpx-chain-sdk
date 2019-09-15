@@ -1,7 +1,10 @@
 "use strict";
+<<<<<<< HEAD
 // Copyright 2019 ProximaX Limited. All rights reserved.
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file
+=======
+>>>>>>> jwt
 Object.defineProperty(exports, "__esModule", { value: true });
 const UInt64_1 = require("../UInt64");
 const Transaction_1 = require("./Transaction");
@@ -25,6 +28,7 @@ class ModifyContractTransaction extends Transaction_1.Transaction {
         this.verifiers = verifiers;
     }
     /**
+<<<<<<< HEAD
      * @description get the byte size of a transaction
      * @returns {number}
      * @memberof Transaction
@@ -39,6 +43,8 @@ class ModifyContractTransaction extends Transaction_1.Transaction {
         return super.size + byteSize;
     }
     /**
+=======
+>>>>>>> jwt
      * @internal
      * @returns {VerifiableTransaction}
      */
@@ -47,7 +53,11 @@ class ModifyContractTransaction extends Transaction_1.Transaction {
             .addType(this.type)
             .addVersion(this.versionToDTO())
             .addDeadline(this.deadline.toDTO())
+<<<<<<< HEAD
             .addMaxFee(this.maxFee.toDTO())
+=======
+            .addFee(this.maxFee.toDTO())
+>>>>>>> jwt
             .addHash(this.hash)
             .addDurationDelta(this.durationDelta.toDTO())
             .addCustomers(this.customers)

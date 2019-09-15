@@ -29,7 +29,11 @@ Catapult.Buffers = Catapult.Buffers || {};
 /**
  * @constructor
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer = function () {
+=======
+Catapult.Buffers.HashLockTransactionBuffer = function () {
+>>>>>>> jwt
     /**
      * @type {flatbuffers.ByteBuffer}
      */
@@ -42,25 +46,43 @@ Catapult.Buffers.LockFundsTransactionBuffer = function () {
 /**
  * @param {number} i
  * @param {flatbuffers.ByteBuffer} bb
+<<<<<<< HEAD
  * @returns {Catapult.Buffers.LockFundsTransactionBuffer}
  */
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.__init = function (i, bb) {
+=======
+ * @returns {Catapult.Buffers.HashLockTransactionBuffer}
+ */
+Catapult.Buffers.HashLockTransactionBuffer.prototype.__init = function (i, bb) {
+>>>>>>> jwt
     this.bb_pos = i;
     this.bb = bb;
     return this;
 };
 /**
  * @param {flatbuffers.ByteBuffer} bb
+<<<<<<< HEAD
  * @param {Catapult.Buffers.LockFundsTransactionBuffer=} obj
  * @returns {Catapult.Buffers.LockFundsTransactionBuffer}
  */
 Catapult.Buffers.LockFundsTransactionBuffer.getRootAsLockFundsTransactionBuffer = function (bb, obj) {
     return (obj || new Catapult.Buffers.LockFundsTransactionBuffer).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+=======
+ * @param {Catapult.Buffers.HashLockTransactionBuffer=} obj
+ * @returns {Catapult.Buffers.HashLockTransactionBuffer}
+ */
+Catapult.Buffers.HashLockTransactionBuffer.getRootAsHashLockTransactionBuffer = function (bb, obj) {
+    return (obj || new Catapult.Buffers.HashLockTransactionBuffer).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+>>>>>>> jwt
 };
 /**
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.size = function () {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.size = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 4);
     return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
 };
@@ -68,21 +90,33 @@ Catapult.Buffers.LockFundsTransactionBuffer.prototype.size = function () {
  * @param {number} index
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.signature = function (index) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.signature = function (index) {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 6);
     return offset ? this.bb.readUint8(this.bb.__vector(this.bb_pos + offset) + index) : 0;
 };
 /**
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.signatureLength = function () {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.signatureLength = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 6);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint8Array}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.signatureArray = function () {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.signatureArray = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 6);
     return offset ? new Uint8Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -90,35 +124,57 @@ Catapult.Buffers.LockFundsTransactionBuffer.prototype.signatureArray = function 
  * @param {number} index
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.signer = function (index) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.signer = function (index) {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 8);
     return offset ? this.bb.readUint8(this.bb.__vector(this.bb_pos + offset) + index) : 0;
 };
 /**
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.signerLength = function () {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.signerLength = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 8);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint8Array}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.signerArray = function () {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.signerArray = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 8);
     return offset ? new Uint8Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
 /**
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.version = function () {
     var offset = this.bb.__offset(this.bb_pos, 10);
     return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.version = function () {
+    var offset = this.bb.__offset(this.bb_pos, 10);
+    return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
+>>>>>>> jwt
 };
 /**
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.type = function () {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.type = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 12);
     return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
 };
@@ -126,21 +182,33 @@ Catapult.Buffers.LockFundsTransactionBuffer.prototype.type = function () {
  * @param {number} index
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.maxFee = function (index) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.fee = function (index) {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 14);
     return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 /**
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.maxFeeLength = function () {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.feeLength = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 14);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint32Array}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.maxFeeArray = function () {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.feeArray = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 14);
     return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -148,21 +216,33 @@ Catapult.Buffers.LockFundsTransactionBuffer.prototype.maxFeeArray = function () 
  * @param {number} index
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.deadline = function (index) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.deadline = function (index) {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 16);
     return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 /**
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.deadlineLength = function () {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.deadlineLength = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 16);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint32Array}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.deadlineArray = function () {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.deadlineArray = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 16);
     return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -170,21 +250,33 @@ Catapult.Buffers.LockFundsTransactionBuffer.prototype.deadlineArray = function (
  * @param {number} index
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.mosaicId = function (index) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.mosaicId = function (index) {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 18);
     return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 /**
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.mosaicIdLength = function () {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.mosaicIdLength = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 18);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint32Array}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.mosaicIdArray = function () {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.mosaicIdArray = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 18);
     return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -192,21 +284,33 @@ Catapult.Buffers.LockFundsTransactionBuffer.prototype.mosaicIdArray = function (
  * @param {number} index
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.mosaicAmount = function (index) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.mosaicAmount = function (index) {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 20);
     return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 /**
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.mosaicAmountLength = function () {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.mosaicAmountLength = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 20);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint32Array}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.mosaicAmountArray = function () {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.mosaicAmountArray = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 20);
     return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -214,21 +318,33 @@ Catapult.Buffers.LockFundsTransactionBuffer.prototype.mosaicAmountArray = functi
  * @param {number} index
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.duration = function (index) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.duration = function (index) {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 22);
     return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 /**
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.durationLength = function () {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.durationLength = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 22);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint32Array}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.durationArray = function () {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.durationArray = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 22);
     return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -236,42 +352,66 @@ Catapult.Buffers.LockFundsTransactionBuffer.prototype.durationArray = function (
  * @param {number} index
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.hash = function (index) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.hash = function (index) {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 24);
     return offset ? this.bb.readUint8(this.bb.__vector(this.bb_pos + offset) + index) : 0;
 };
 /**
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.hashLength = function () {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.hashLength = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 24);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint8Array}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.prototype.hashArray = function () {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.prototype.hashArray = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 24);
     return offset ? new Uint8Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
 /**
  * @param {flatbuffers.Builder} builder
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.startLockFundsTransactionBuffer = function (builder) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.startHashLockTransactionBuffer = function (builder) {
+>>>>>>> jwt
     builder.startObject(11);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} size
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.addSize = function (builder, size) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.addSize = function (builder, size) {
+>>>>>>> jwt
     builder.addFieldInt32(0, size, 0);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} signatureOffset
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.addSignature = function (builder, signatureOffset) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.addSignature = function (builder, signatureOffset) {
+>>>>>>> jwt
     builder.addFieldOffset(1, signatureOffset, 0);
 };
 /**
@@ -279,7 +419,11 @@ Catapult.Buffers.LockFundsTransactionBuffer.addSignature = function (builder, si
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.createSignatureVector = function (builder, data) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.createSignatureVector = function (builder, data) {
+>>>>>>> jwt
     builder.startVector(1, data.length, 1);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt8(data[i]);
@@ -290,14 +434,22 @@ Catapult.Buffers.LockFundsTransactionBuffer.createSignatureVector = function (bu
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.startSignatureVector = function (builder, numElems) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.startSignatureVector = function (builder, numElems) {
+>>>>>>> jwt
     builder.startVector(1, numElems, 1);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} signerOffset
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.addSigner = function (builder, signerOffset) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.addSigner = function (builder, signerOffset) {
+>>>>>>> jwt
     builder.addFieldOffset(2, signerOffset, 0);
 };
 /**
@@ -305,7 +457,11 @@ Catapult.Buffers.LockFundsTransactionBuffer.addSigner = function (builder, signe
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.createSignerVector = function (builder, data) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.createSignerVector = function (builder, data) {
+>>>>>>> jwt
     builder.startVector(1, data.length, 1);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt8(data[i]);
@@ -316,36 +472,60 @@ Catapult.Buffers.LockFundsTransactionBuffer.createSignerVector = function (build
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.startSignerVector = function (builder, numElems) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.startSignerVector = function (builder, numElems) {
+>>>>>>> jwt
     builder.startVector(1, numElems, 1);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} version
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.addVersion = function (builder, version) {
     builder.addFieldInt32(3, version, 0);
+=======
+Catapult.Buffers.HashLockTransactionBuffer.addVersion = function (builder, version) {
+    builder.addFieldInt16(3, version, 0);
+>>>>>>> jwt
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} type
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.addType = function (builder, type) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.addType = function (builder, type) {
+>>>>>>> jwt
     builder.addFieldInt16(4, type, 0);
 };
 /**
  * @param {flatbuffers.Builder} builder
+<<<<<<< HEAD
  * @param {flatbuffers.Offset} maxFeeOffset
  */
 Catapult.Buffers.LockFundsTransactionBuffer.addMaxFee = function (builder, maxFeeOffset) {
     builder.addFieldOffset(5, maxFeeOffset, 0);
+=======
+ * @param {flatbuffers.Offset} feeOffset
+ */
+Catapult.Buffers.HashLockTransactionBuffer.addFee = function (builder, feeOffset) {
+    builder.addFieldOffset(5, feeOffset, 0);
+>>>>>>> jwt
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.createMaxFeeVector = function (builder, data) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.createFeeVector = function (builder, data) {
+>>>>>>> jwt
     builder.startVector(4, data.length, 4);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt32(data[i]);
@@ -356,14 +536,22 @@ Catapult.Buffers.LockFundsTransactionBuffer.createMaxFeeVector = function (build
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.startMaxFeeVector = function (builder, numElems) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.startFeeVector = function (builder, numElems) {
+>>>>>>> jwt
     builder.startVector(4, numElems, 4);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} deadlineOffset
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.addDeadline = function (builder, deadlineOffset) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.addDeadline = function (builder, deadlineOffset) {
+>>>>>>> jwt
     builder.addFieldOffset(6, deadlineOffset, 0);
 };
 /**
@@ -371,7 +559,11 @@ Catapult.Buffers.LockFundsTransactionBuffer.addDeadline = function (builder, dea
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.createDeadlineVector = function (builder, data) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.createDeadlineVector = function (builder, data) {
+>>>>>>> jwt
     builder.startVector(4, data.length, 4);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt32(data[i]);
@@ -382,14 +574,22 @@ Catapult.Buffers.LockFundsTransactionBuffer.createDeadlineVector = function (bui
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.startDeadlineVector = function (builder, numElems) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.startDeadlineVector = function (builder, numElems) {
+>>>>>>> jwt
     builder.startVector(4, numElems, 4);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} mosaicIdOffset
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.addMosaicId = function (builder, mosaicIdOffset) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.addMosaicId = function (builder, mosaicIdOffset) {
+>>>>>>> jwt
     builder.addFieldOffset(7, mosaicIdOffset, 0);
 };
 /**
@@ -397,7 +597,11 @@ Catapult.Buffers.LockFundsTransactionBuffer.addMosaicId = function (builder, mos
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.createMosaicIdVector = function (builder, data) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.createMosaicIdVector = function (builder, data) {
+>>>>>>> jwt
     builder.startVector(4, data.length, 4);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt32(data[i]);
@@ -408,14 +612,22 @@ Catapult.Buffers.LockFundsTransactionBuffer.createMosaicIdVector = function (bui
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.startMosaicIdVector = function (builder, numElems) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.startMosaicIdVector = function (builder, numElems) {
+>>>>>>> jwt
     builder.startVector(4, numElems, 4);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} mosaicAmountOffset
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.addMosaicAmount = function (builder, mosaicAmountOffset) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.addMosaicAmount = function (builder, mosaicAmountOffset) {
+>>>>>>> jwt
     builder.addFieldOffset(8, mosaicAmountOffset, 0);
 };
 /**
@@ -423,7 +635,11 @@ Catapult.Buffers.LockFundsTransactionBuffer.addMosaicAmount = function (builder,
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.createMosaicAmountVector = function (builder, data) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.createMosaicAmountVector = function (builder, data) {
+>>>>>>> jwt
     builder.startVector(4, data.length, 4);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt32(data[i]);
@@ -434,14 +650,22 @@ Catapult.Buffers.LockFundsTransactionBuffer.createMosaicAmountVector = function 
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.startMosaicAmountVector = function (builder, numElems) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.startMosaicAmountVector = function (builder, numElems) {
+>>>>>>> jwt
     builder.startVector(4, numElems, 4);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} durationOffset
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.addDuration = function (builder, durationOffset) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.addDuration = function (builder, durationOffset) {
+>>>>>>> jwt
     builder.addFieldOffset(9, durationOffset, 0);
 };
 /**
@@ -449,7 +673,11 @@ Catapult.Buffers.LockFundsTransactionBuffer.addDuration = function (builder, dur
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.createDurationVector = function (builder, data) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.createDurationVector = function (builder, data) {
+>>>>>>> jwt
     builder.startVector(4, data.length, 4);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt32(data[i]);
@@ -460,14 +688,22 @@ Catapult.Buffers.LockFundsTransactionBuffer.createDurationVector = function (bui
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.startDurationVector = function (builder, numElems) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.startDurationVector = function (builder, numElems) {
+>>>>>>> jwt
     builder.startVector(4, numElems, 4);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} hashOffset
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.addHash = function (builder, hashOffset) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.addHash = function (builder, hashOffset) {
+>>>>>>> jwt
     builder.addFieldOffset(10, hashOffset, 0);
 };
 /**
@@ -475,7 +711,11 @@ Catapult.Buffers.LockFundsTransactionBuffer.addHash = function (builder, hashOff
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.createHashVector = function (builder, data) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.createHashVector = function (builder, data) {
+>>>>>>> jwt
     builder.startVector(1, data.length, 1);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt8(data[i]);
@@ -486,14 +726,22 @@ Catapult.Buffers.LockFundsTransactionBuffer.createHashVector = function (builder
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.startHashVector = function (builder, numElems) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.startHashVector = function (builder, numElems) {
+>>>>>>> jwt
     builder.startVector(1, numElems, 1);
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @returns {flatbuffers.Offset}
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.endLockFundsTransactionBuffer = function (builder) {
+=======
+Catapult.Buffers.HashLockTransactionBuffer.endHashLockTransactionBuffer = function (builder) {
+>>>>>>> jwt
     var offset = builder.endObject();
     return offset;
 };
@@ -501,6 +749,7 @@ Catapult.Buffers.LockFundsTransactionBuffer.endLockFundsTransactionBuffer = func
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} offset
  */
+<<<<<<< HEAD
 Catapult.Buffers.LockFundsTransactionBuffer.finishLockFundsTransactionBufferBuffer = function (builder, offset) {
     builder.finish(offset);
 };
@@ -534,6 +783,11 @@ Catapult.Buffers.LockFundsTransactionBuffer.createLockFundsTransactionBuffer = f
     Catapult.Buffers.LockFundsTransactionBuffer.addHash(builder, hashOffset);
     return Catapult.Buffers.LockFundsTransactionBuffer.endLockFundsTransactionBuffer(builder);
 };
+=======
+Catapult.Buffers.HashLockTransactionBuffer.finishHashLockTransactionBufferBuffer = function (builder, offset) {
+    builder.finish(offset);
+};
+>>>>>>> jwt
 // Exports for Node.js and RequireJS
 exports.default = Catapult;
 //# sourceMappingURL=HashLockTransactionBuffer.js.map

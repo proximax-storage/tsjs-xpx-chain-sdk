@@ -113,7 +113,11 @@ Catapult.Buffers.SecretLockTransactionBuffer.prototype.signerArray = function ()
  */
 Catapult.Buffers.SecretLockTransactionBuffer.prototype.version = function () {
     var offset = this.bb.__offset(this.bb_pos, 10);
+<<<<<<< HEAD
     return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
+=======
+    return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
+>>>>>>> jwt
 };
 /**
  * @returns {number}
@@ -126,21 +130,33 @@ Catapult.Buffers.SecretLockTransactionBuffer.prototype.type = function () {
  * @param {number} index
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.SecretLockTransactionBuffer.prototype.maxFee = function (index) {
+=======
+Catapult.Buffers.SecretLockTransactionBuffer.prototype.fee = function (index) {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 14);
     return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 /**
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.SecretLockTransactionBuffer.prototype.maxFeeLength = function () {
+=======
+Catapult.Buffers.SecretLockTransactionBuffer.prototype.feeLength = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 14);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint32Array}
  */
+<<<<<<< HEAD
 Catapult.Buffers.SecretLockTransactionBuffer.prototype.maxFeeArray = function () {
+=======
+Catapult.Buffers.SecretLockTransactionBuffer.prototype.feeArray = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 14);
     return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -353,7 +369,11 @@ Catapult.Buffers.SecretLockTransactionBuffer.startSignerVector = function (build
  * @param {number} version
  */
 Catapult.Buffers.SecretLockTransactionBuffer.addVersion = function (builder, version) {
+<<<<<<< HEAD
     builder.addFieldInt32(3, version, 0);
+=======
+    builder.addFieldInt16(3, version, 0);
+>>>>>>> jwt
 };
 /**
  * @param {flatbuffers.Builder} builder
@@ -364,17 +384,28 @@ Catapult.Buffers.SecretLockTransactionBuffer.addType = function (builder, type) 
 };
 /**
  * @param {flatbuffers.Builder} builder
+<<<<<<< HEAD
  * @param {flatbuffers.Offset} maxFeeOffset
  */
 Catapult.Buffers.SecretLockTransactionBuffer.addMaxFee = function (builder, maxFeeOffset) {
     builder.addFieldOffset(5, maxFeeOffset, 0);
+=======
+ * @param {flatbuffers.Offset} feeOffset
+ */
+Catapult.Buffers.SecretLockTransactionBuffer.addFee = function (builder, feeOffset) {
+    builder.addFieldOffset(5, feeOffset, 0);
+>>>>>>> jwt
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
+<<<<<<< HEAD
 Catapult.Buffers.SecretLockTransactionBuffer.createMaxFeeVector = function (builder, data) {
+=======
+Catapult.Buffers.SecretLockTransactionBuffer.createFeeVector = function (builder, data) {
+>>>>>>> jwt
     builder.startVector(4, data.length, 4);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt32(data[i]);
@@ -385,7 +416,11 @@ Catapult.Buffers.SecretLockTransactionBuffer.createMaxFeeVector = function (buil
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
+<<<<<<< HEAD
 Catapult.Buffers.SecretLockTransactionBuffer.startMaxFeeVector = function (builder, numElems) {
+=======
+Catapult.Buffers.SecretLockTransactionBuffer.startFeeVector = function (builder, numElems) {
+>>>>>>> jwt
     builder.startVector(4, numElems, 4);
 };
 /**
@@ -566,6 +601,7 @@ Catapult.Buffers.SecretLockTransactionBuffer.endSecretLockTransactionBuffer = fu
 Catapult.Buffers.SecretLockTransactionBuffer.finishSecretLockTransactionBufferBuffer = function (builder, offset) {
     builder.finish(offset);
 };
+<<<<<<< HEAD
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} size
@@ -600,6 +636,8 @@ Catapult.Buffers.SecretLockTransactionBuffer.createSecretLockTransactionBuffer =
     Catapult.Buffers.SecretLockTransactionBuffer.addRecipient(builder, recipientOffset);
     return Catapult.Buffers.SecretLockTransactionBuffer.endSecretLockTransactionBuffer(builder);
 };
+=======
+>>>>>>> jwt
 // Exports for Node.js and RequireJS
 exports.default = Catapult;
 //# sourceMappingURL=SecretLockTransactionBuffer.js.map

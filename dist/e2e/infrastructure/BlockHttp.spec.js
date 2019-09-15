@@ -19,11 +19,18 @@ const chai_1 = require("chai");
 const BlockHttp_1 = require("../../src/infrastructure/BlockHttp");
 const infrastructure_1 = require("../../src/infrastructure/infrastructure");
 const QueryParams_1 = require("../../src/infrastructure/QueryParams");
+<<<<<<< HEAD
+=======
+const NetworkCurrencyMosaic_1 = require("../../src/model/mosaic/NetworkCurrencyMosaic");
+>>>>>>> jwt
 const Deadline_1 = require("../../src/model/transaction/Deadline");
 const PlainMessage_1 = require("../../src/model/transaction/PlainMessage");
 const TransferTransaction_1 = require("../../src/model/transaction/TransferTransaction");
 const conf_spec_1 = require("../conf/conf.spec");
+<<<<<<< HEAD
 const model_1 = require("../../src/model/model");
+=======
+>>>>>>> jwt
 const assert_1 = require("assert");
 describe('BlockHttp', () => {
     const blockHttp = new BlockHttp_1.BlockHttp(conf_spec_1.APIUrl);
@@ -74,7 +81,11 @@ describe('BlockHttp', () => {
      */
     describe('Setup Test Data', () => {
         it('Announce TransferTransaction', (done) => {
+<<<<<<< HEAD
             const transferTransaction = TransferTransaction_1.TransferTransaction.create(Deadline_1.Deadline.create(), conf_spec_1.TestingRecipient.address, [new model_1.Mosaic(conf_spec_1.ConfNetworkMosaic, model_1.UInt64.fromUint(1000000))], PlainMessage_1.PlainMessage.create('test-message'), conf_spec_1.ConfNetworkType);
+=======
+            const transferTransaction = TransferTransaction_1.TransferTransaction.create(Deadline_1.Deadline.create(), conf_spec_1.TestingRecipient.address, [NetworkCurrencyMosaic_1.NetworkCurrencyMosaic.createAbsolute(1)], PlainMessage_1.PlainMessage.create('test-message'), conf_spec_1.ConfNetworkType);
+>>>>>>> jwt
             const signedTransaction = transferTransaction.signWith(conf_spec_1.TestingAccount, generationHash);
             validateTransactionAnnounceCorrectly(conf_spec_1.TestingRecipient.address, done, signedTransaction.hash);
             transactionHttp.announce(signedTransaction);

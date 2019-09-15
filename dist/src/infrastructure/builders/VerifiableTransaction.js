@@ -107,7 +107,11 @@ class VerifiableTransaction {
         let resultBytes = this.schema.serialize(Array.from(this.bytes));
         resultBytes.splice(0, 4 + 64 + 32);
         resultBytes = Array.from(signer).concat(resultBytes);
+<<<<<<< HEAD
         resultBytes.splice(32 + 4 + 2, 16);
+=======
+        resultBytes.splice(32 + 2 + 2, 16);
+>>>>>>> jwt
         return Array.from((new Uint8Array([
             (resultBytes.length + 4 & 0x000000ff),
             (resultBytes.length + 4 & 0x0000ff00) >> 8,

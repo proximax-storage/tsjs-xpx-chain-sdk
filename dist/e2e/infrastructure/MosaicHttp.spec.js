@@ -29,8 +29,12 @@ describe('MosaicHttp', () => {
     let generationHash;
     let namespaceId;
     let mosaicId = conf_spec_1.ConfNetworkMosaic;
+<<<<<<< HEAD
     let mosaicDivisibility = 6;
     let mosaicDuration = model_1.UInt64.fromUint(0);
+=======
+    const mosaicDivisibility = 6;
+>>>>>>> jwt
     const validateTransactionAnnounceCorrectly = (address, done, hash) => {
         const status = listener.status(address).subscribe(error => {
             console.error(error);
@@ -80,13 +84,20 @@ describe('MosaicHttp', () => {
             // overwrites mosaicId globally for the rest of the tests
             const nonce = model_1.MosaicNonce.createRandom();
             mosaicId = MosaicId_1.MosaicId.createFromNonce(nonce, conf_spec_1.TestingAccount.publicAccount);
+<<<<<<< HEAD
             mosaicDivisibility = 3;
             mosaicDuration = model_1.UInt64.fromUint(1000);
+=======
+>>>>>>> jwt
             const mosaicDefinitionTransaction = model_1.MosaicDefinitionTransaction.create(model_1.Deadline.create(), nonce, mosaicId, model_1.MosaicProperties.create({
                 supplyMutable: true,
                 transferable: true,
                 divisibility: mosaicDivisibility,
+<<<<<<< HEAD
                 duration: mosaicDuration,
+=======
+                duration: model_1.UInt64.fromUint(1000),
+>>>>>>> jwt
             }), conf_spec_1.ConfNetworkType);
             const signedTransaction = mosaicDefinitionTransaction.signWith(conf_spec_1.TestingAccount, generationHash);
             validateTransactionAnnounceCorrectly(conf_spec_1.TestingAccount.address, done, signedTransaction.hash);
@@ -112,7 +123,10 @@ describe('MosaicHttp', () => {
                 .subscribe((mosaicInfo) => {
                 chai_1.expect(mosaicInfo.height.lower).not.to.be.null;
                 chai_1.expect(mosaicInfo.divisibility).to.be.equal(mosaicDivisibility);
+<<<<<<< HEAD
                 chai_1.expect(mosaicInfo.duration.equals(mosaicDuration)).to.be.equal(true);
+=======
+>>>>>>> jwt
                 chai_1.expect(mosaicInfo.isSupplyMutable()).to.be.equal(true);
                 chai_1.expect(mosaicInfo.isTransferable()).to.be.equal(true);
                 done();
@@ -125,7 +139,10 @@ describe('MosaicHttp', () => {
                 .subscribe((mosaicInfos) => {
                 chai_1.expect(mosaicInfos[0].height.lower).not.to.be.null;
                 chai_1.expect(mosaicInfos[0].divisibility).to.be.equal(mosaicDivisibility);
+<<<<<<< HEAD
                 chai_1.expect(mosaicInfos[0].duration.equals(mosaicDuration)).to.be.equal(true);
+=======
+>>>>>>> jwt
                 chai_1.expect(mosaicInfos[0].isSupplyMutable()).to.be.equal(true);
                 chai_1.expect(mosaicInfos[0].isTransferable()).to.be.equal(true);
                 done();

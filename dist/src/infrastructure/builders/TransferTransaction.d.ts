@@ -11,7 +11,11 @@ export declare class Builder {
     message: any;
     mosaics: any;
     constructor();
+<<<<<<< HEAD
     addMaxFee(maxFee: any): this;
+=======
+    addFee(maxFee: any): this;
+>>>>>>> jwt
     addVersion(version: any): this;
     addType(type: any): this;
     addDeadline(deadline: any): this;

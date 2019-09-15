@@ -23,7 +23,11 @@ class Builder {
         this.fee = [0, 0];
         this.version = 1;
     }
+<<<<<<< HEAD
     addMaxFee(fee) {
+=======
+    addFee(fee) {
+>>>>>>> jwt
         this.fee = fee;
         return this;
     }
@@ -95,7 +99,11 @@ class Builder {
         }
         // TODO: different types/lengths
         const metadataIdVector = ModifyMetadataTransactionBuffer.createMetadataIdVector(builder, metadataIdDecoded);
+<<<<<<< HEAD
         const size = 122 + 1 + metadataIdDecoded.length + modificationsSumSize;
+=======
+        const size = 120 + 1 + metadataIdDecoded.length + modificationsSumSize;
+>>>>>>> jwt
         ModifyMetadataTransactionBuffer.startModifyMetadataTransactionBuffer(builder);
         ModifyMetadataTransactionBuffer.addSize(builder, size);
         ModifyMetadataTransactionBuffer.addSignature(builder, signatureVector);

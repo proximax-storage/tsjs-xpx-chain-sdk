@@ -19,9 +19,15 @@ const chai_1 = require("chai");
 const js_sha3_1 = require("js-sha3");
 const format_1 = require("../../src/core/format");
 const Address_1 = require("../../src/model/account/Address");
+<<<<<<< HEAD
 const PublicAccount_1 = require("../../src/model/account/PublicAccount");
 const RestrictionModificationType_1 = require("../../src/model/account/RestrictionModificationType");
 const RestrictionType_1 = require("../../src/model/account/RestrictionType");
+=======
+const PropertyModificationType_1 = require("../../src/model/account/PropertyModificationType");
+const PropertyType_1 = require("../../src/model/account/PropertyType");
+const PublicAccount_1 = require("../../src/model/account/PublicAccount");
+>>>>>>> jwt
 const NetworkType_1 = require("../../src/model/blockchain/NetworkType");
 const MosaicId_1 = require("../../src/model/mosaic/MosaicId");
 const MosaicNonce_1 = require("../../src/model/mosaic/MosaicNonce");
@@ -31,8 +37,13 @@ const NetworkCurrencyMosaic_1 = require("../../src/model/mosaic/NetworkCurrencyM
 const AliasActionType_1 = require("../../src/model/namespace/AliasActionType");
 const NamespaceId_1 = require("../../src/model/namespace/NamespaceId");
 const AccountLinkTransaction_1 = require("../../src/model/transaction/AccountLinkTransaction");
+<<<<<<< HEAD
 const AccountRestrictionModification_1 = require("../../src/model/transaction/AccountRestrictionModification");
 const AccountRestrictionTransaction_1 = require("../../src/model/transaction/AccountRestrictionTransaction");
+=======
+const AccountPropertyModification_1 = require("../../src/model/transaction/AccountPropertyModification");
+const AccountPropertyTransaction_1 = require("../../src/model/transaction/AccountPropertyTransaction");
+>>>>>>> jwt
 const AddressAliasTransaction_1 = require("../../src/model/transaction/AddressAliasTransaction");
 const AggregateTransaction_1 = require("../../src/model/transaction/AggregateTransaction");
 const Deadline_1 = require("../../src/model/transaction/Deadline");
@@ -64,6 +75,7 @@ describe('SerializeTransactionToJSON', () => {
         chai_1.expect(json.transaction.remoteAccountKey).to.be.equal(account.publicKey);
         chai_1.expect(json.transaction.action).to.be.equal(LinkAction_1.LinkAction.Link);
     });
+<<<<<<< HEAD
     it('should create AccountRestrictionAddressTransaction', () => {
         const address = Address_1.Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
         const addressRestrictionFilter = AccountRestrictionModification_1.AccountRestrictionModification.createForAddress(RestrictionModificationType_1.RestrictionModificationType.Add, address);
@@ -89,6 +101,33 @@ describe('SerializeTransactionToJSON', () => {
         const json = operationRestrictionTransaction.toJSON();
         chai_1.expect(json.transaction.type).to.be.equal(TransactionType_1.TransactionType.MODIFY_ACCOUNT_RESTRICTION_OPERATION);
         chai_1.expect(json.transaction.restrictionType).to.be.equal(RestrictionType_1.RestrictionType.AllowTransaction);
+=======
+    it('should create AccountPropertyAddressTransaction', () => {
+        const address = Address_1.Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
+        const addressPropertyFilter = AccountPropertyModification_1.AccountPropertyModification.createForAddress(PropertyModificationType_1.PropertyModificationType.Add, address);
+        const addressPropertyTransaction = AccountPropertyTransaction_1.AccountPropertyTransaction.createAddressPropertyModificationTransaction(Deadline_1.Deadline.create(), PropertyType_1.PropertyType.AllowAddress, [addressPropertyFilter], NetworkType_1.NetworkType.MIJIN_TEST);
+        const json = addressPropertyTransaction.toJSON();
+        chai_1.expect(json.transaction.type).to.be.equal(TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_ADDRESS);
+        chai_1.expect(json.transaction.propertyType).to.be.equal(PropertyType_1.PropertyType.AllowAddress);
+        chai_1.expect(json.transaction.modifications.length).to.be.equal(1);
+    });
+    it('should create AccountPropertyMosaicTransaction', () => {
+        const mosaicId = new MosaicId_1.MosaicId([2262289484, 3405110546]);
+        const mosaicPropertyFilter = AccountPropertyModification_1.AccountPropertyModification.createForMosaic(PropertyModificationType_1.PropertyModificationType.Add, mosaicId);
+        const mosaicPropertyTransaction = AccountPropertyTransaction_1.AccountPropertyTransaction.createMosaicPropertyModificationTransaction(Deadline_1.Deadline.create(), PropertyType_1.PropertyType.AllowMosaic, [mosaicPropertyFilter], NetworkType_1.NetworkType.MIJIN_TEST);
+        const json = mosaicPropertyTransaction.toJSON();
+        chai_1.expect(json.transaction.type).to.be.equal(TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_MOSAIC);
+        chai_1.expect(json.transaction.propertyType).to.be.equal(PropertyType_1.PropertyType.AllowMosaic);
+        chai_1.expect(json.transaction.modifications.length).to.be.equal(1);
+    });
+    it('should create AccountPropertyMosaicTransaction', () => {
+        const entityType = TransactionType_1.TransactionType.ADDRESS_ALIAS;
+        const entityTypePropertyFilter = AccountPropertyModification_1.AccountPropertyModification.createForEntityType(PropertyModificationType_1.PropertyModificationType.Add, entityType);
+        const entityTypePropertyTransaction = AccountPropertyTransaction_1.AccountPropertyTransaction.createEntityTypePropertyModificationTransaction(Deadline_1.Deadline.create(), PropertyType_1.PropertyType.AllowTransaction, [entityTypePropertyFilter], NetworkType_1.NetworkType.MIJIN_TEST);
+        const json = entityTypePropertyTransaction.toJSON();
+        chai_1.expect(json.transaction.type).to.be.equal(TransactionType_1.TransactionType.MODIFY_ACCOUNT_PROPERTY_ENTITY_TYPE);
+        chai_1.expect(json.transaction.propertyType).to.be.equal(PropertyType_1.PropertyType.AllowTransaction);
+>>>>>>> jwt
         chai_1.expect(json.transaction.modifications.length).to.be.equal(1);
     });
     it('should create AddressAliasTransaction', () => {

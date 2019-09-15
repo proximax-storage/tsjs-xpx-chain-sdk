@@ -62,6 +62,7 @@ export declare class TransactionType {
      */
     static readonly SECRET_PROOF;
     /**
+<<<<<<< HEAD
      * Account restriction address transaction type
      * @type {number}
      */
@@ -76,6 +77,22 @@ export declare class TransactionType {
      * @type {number}
      */
     static readonly MODIFY_ACCOUNT_RESTRICTION_OPERATION;
+=======
+     * Account property address transaction type
+     * @type {number}
+     */
+    static readonly MODIFY_ACCOUNT_PROPERTY_ADDRESS;
+    /**
+     * Account property mosaic transaction type
+     * @type {number}
+     */
+    static readonly MODIFY_ACCOUNT_PROPERTY_MOSAIC;
+    /**
+     * Account property entity type transaction type
+     * @type {number}
+     */
+    static readonly MODIFY_ACCOUNT_PROPERTY_ENTITY_TYPE;
+>>>>>>> jwt
     /**
      * Link account transaction type
      * @type {number}
@@ -100,6 +117,7 @@ export declare class TransactionType {
      * Modify contract transaction type
      */
     static readonly MODIFY_CONTRACT;
+<<<<<<< HEAD
     /**
      * Upgrade chain transaction type
      */
@@ -108,4 +126,6 @@ export declare class TransactionType {
      * Configure chain transaction type
      */
     static readonly CHAIN_CONFIGURE;
+=======
+>>>>>>> jwt
 }

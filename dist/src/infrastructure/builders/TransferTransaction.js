@@ -38,7 +38,11 @@ class Builder {
         this.maxFee = [0, 0];
         this.type = TransactionType_1.TransactionType.TRANSFER;
     }
+<<<<<<< HEAD
     addMaxFee(maxFee) {
+=======
+    addFee(maxFee) {
+>>>>>>> jwt
         this.maxFee = maxFee;
         return this;
     }
@@ -112,16 +116,28 @@ class Builder {
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
         const signerVector = TransferTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
         const deadlineVector = TransferTransactionBuffer.createDeadlineVector(builder, this.deadline);
+<<<<<<< HEAD
         const feeVector = TransferTransactionBuffer.createMaxFeeVector(builder, this.maxFee);
         const recipientVector = TransferTransactionBuffer.createRecipientVector(builder, this.recipient);
         const mosaicsVector = TransferTransactionBuffer.createMosaicsVector(builder, mosaics);
         TransferTransactionBuffer.startTransferTransactionBuffer(builder);
         TransferTransactionBuffer.addSize(builder, 122 + 29 + (16 * this.mosaics.length) + bytePayload.length);
+=======
+        const feeVector = TransferTransactionBuffer.createFeeVector(builder, this.maxFee);
+        const recipientVector = TransferTransactionBuffer.createRecipientVector(builder, this.recipient);
+        const mosaicsVector = TransferTransactionBuffer.createMosaicsVector(builder, mosaics);
+        TransferTransactionBuffer.startTransferTransactionBuffer(builder);
+        TransferTransactionBuffer.addSize(builder, 149 + (16 * this.mosaics.length) + bytePayload.length);
+>>>>>>> jwt
         TransferTransactionBuffer.addSignature(builder, signatureVector);
         TransferTransactionBuffer.addSigner(builder, signerVector);
         TransferTransactionBuffer.addVersion(builder, this.version);
         TransferTransactionBuffer.addType(builder, this.type);
+<<<<<<< HEAD
         TransferTransactionBuffer.addMaxFee(builder, feeVector);
+=======
+        TransferTransactionBuffer.addFee(builder, feeVector);
+>>>>>>> jwt
         TransferTransactionBuffer.addDeadline(builder, deadlineVector);
         TransferTransactionBuffer.addRecipient(builder, recipientVector);
         TransferTransactionBuffer.addNumMosaics(builder, this.mosaics.length);

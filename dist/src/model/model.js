@@ -27,11 +27,19 @@ __export(require("./account/Address"));
 __export(require("./account/MultisigAccountGraphInfo"));
 __export(require("./account/MultisigAccountInfo"));
 __export(require("./account/PublicAccount"));
+<<<<<<< HEAD
 __export(require("./account/AccountRestrictions"));
 __export(require("./account/AccountRestrictionsInfo"));
 __export(require("./account/AccountRestriction"));
 __export(require("./account/RestrictionModificationType"));
 __export(require("./account/RestrictionType"));
+=======
+__export(require("./account/AccountProperties"));
+__export(require("./account/AccountPropertiesInfo"));
+__export(require("./account/AccountProperty"));
+__export(require("./account/PropertyModificationType"));
+__export(require("./account/PropertyType"));
+>>>>>>> jwt
 __export(require("./account/AccountNames"));
 // Blockchain
 __export(require("./blockchain/BlockchainScore"));
@@ -41,8 +49,11 @@ __export(require("./blockchain/NetworkType"));
 __export(require("./blockchain/MerklePathItem"));
 __export(require("./blockchain/MerkleProofInfo"));
 __export(require("./blockchain/MerkleProofInfoPayload"));
+<<<<<<< HEAD
 // Config
 __export(require("./config/ChainConfig"));
+=======
+>>>>>>> jwt
 // Contract
 __export(require("./contract/Contract"));
 // Diagnostic
@@ -96,18 +107,29 @@ __export(require("./receipt/InflationReceipt"));
 __export(require("./receipt/Statement"));
 // Transaction
 __export(require("./transaction/AccountLinkTransaction"));
+<<<<<<< HEAD
 __export(require("./transaction/AccountRestrictionTransaction"));
 __export(require("./transaction/AccountAddressRestrictionModificationTransaction"));
 __export(require("./transaction/AccountOperationRestrictionModificationTransaction"));
 __export(require("./transaction/AccountMosaicRestrictionModificationTransaction"));
 __export(require("./transaction/AccountRestrictionModification"));
+=======
+__export(require("./transaction/AccountPropertyTransaction"));
+__export(require("./transaction/ModifyAccountPropertyAddressTransaction"));
+__export(require("./transaction/ModifyAccountPropertyEntityTypeTransaction"));
+__export(require("./transaction/ModifyAccountPropertyMosaicTransaction"));
+__export(require("./transaction/AccountPropertyModification"));
+>>>>>>> jwt
 __export(require("./transaction/AddressAliasTransaction"));
 __export(require("./transaction/AggregateTransaction"));
 __export(require("./transaction/AggregateTransactionCosignature"));
 __export(require("./transaction/AggregateTransactionInfo"));
 __export(require("./transaction/AliasTransaction"));
+<<<<<<< HEAD
 __export(require("./transaction/ChainConfigTransaction"));
 __export(require("./transaction/ChainUpgradeTransaction"));
+=======
+>>>>>>> jwt
 __export(require("./transaction/CosignatureSignedTransaction"));
 __export(require("./transaction/CosignatureTransaction"));
 __export(require("./transaction/Deadline"));
@@ -117,8 +139,11 @@ __export(require("./transaction/HashType"));
 __export(require("./transaction/LinkAction"));
 __export(require("./transaction/LockFundsTransaction"));
 __export(require("./transaction/Message"));
+<<<<<<< HEAD
 __export(require("./transaction/ModifyContractTransaction"));
 __export(require("./transaction/ModifyMetadataTransaction"));
+=======
+>>>>>>> jwt
 __export(require("./transaction/ModifyMultisigAccountTransaction"));
 __export(require("./transaction/MosaicAliasTransaction"));
 __export(require("./transaction/MosaicDefinitionTransaction"));
@@ -138,8 +163,11 @@ __export(require("./transaction/TransactionStatus"));
 __export(require("./transaction/TransactionStatusError"));
 __export(require("./transaction/TransactionType"));
 __export(require("./transaction/TransferTransaction"));
+<<<<<<< HEAD
 // Upgrade
 __export(require("./upgrade/ChainUpgrade"));
+=======
+>>>>>>> jwt
 // Wallet
 __export(require("./wallet/EncryptedPrivateKey"));
 __export(require("./wallet/Password"));

@@ -30,6 +30,7 @@ import {NamespaceName} from '../model/namespace/NamespaceName';
 import {UInt64} from '../model/UInt64';
 import { NamespaceInfoDTO, NamespaceNameDTO, NamespaceRoutesApi } from './api';
 import {Http} from './Http';
+import { Authentication } from './model/models';
 import {NamespaceRepository} from './NamespaceRepository';
 import {NetworkHttp} from './NetworkHttp';
 import {QueryParams} from './QueryParams';
@@ -51,10 +52,16 @@ export class NamespaceHttp extends Http implements NamespaceRepository {
      * @param url
      * @param networkHttp
      */
-    constructor(url: string, networkHttp?: NetworkHttp) {
+    constructor(url: string, networkHttp?: NetworkHttp, auth?: Authentication, headers?: {}) {
         networkHttp = networkHttp == null ? new NetworkHttp(url) : networkHttp;
         super(networkHttp);
         this.namespaceRoutesApi = new NamespaceRoutesApi(url);
+        if (auth) {
+            this.namespaceRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.namespaceRoutesApi.setHeaders(headers);
+        }
     }
 
     /**

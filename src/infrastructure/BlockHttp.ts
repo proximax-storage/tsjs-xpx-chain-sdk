@@ -31,6 +31,7 @@ import { BlockInfoDTO,
          TransactionInfoDTO } from './api';
 import {BlockRepository} from './BlockRepository';
 import {Http} from './Http';
+import { Authentication } from './model/models';
 import { NetworkHttp } from './NetworkHttp';
 import {QueryParams} from './QueryParams';
 import { CreateStatementFromDTO } from './receipt/CreateReceiptFromDTO';
@@ -67,10 +68,16 @@ export class BlockHttp extends Http implements BlockRepository {
      * @param url
      * @param networkHttp
      */
-    constructor(url: string, networkHttp?: NetworkHttp) {
+    constructor(url: string, networkHttp?: NetworkHttp, auth?: Authentication, headers?: {}) {
         networkHttp = networkHttp == null ? new NetworkHttp(url) : networkHttp;
         super(networkHttp);
         this.blockRoutesApi = new BlockRoutesApi(url);
+        if (auth) {
+            this.blockRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.blockRoutesApi.setHeaders(headers);
+        }
     }
 
     /**

@@ -51,6 +51,7 @@ export class PublicAccount {
      * @returns {PublicAccount}
      */
     static createFromPublicKey(publicKey: string, networkType: NetworkType, signSchema = SignSchema.SHA3): PublicAccount {
+        publicKey = typeof publicKey === 'object' ? publicKey['publicKey'] : publicKey;
         if (publicKey == null || (publicKey.length !== 64 && publicKey.length !== 66)) {
             throw new Error('Not a valid public key');
         }

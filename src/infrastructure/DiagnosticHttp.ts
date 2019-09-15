@@ -21,6 +21,7 @@ import { ServerInfo } from '../model/diagnostic/ServerInfo';
 import { DiagnosticRoutesApi, ServerDTO, StorageInfoDTO } from './api';
 import {DiagnosticRepository} from './DiagnosticRepository';
 import {Http} from './Http';
+import { Authentication } from './model/models';
 
 /**
  * Diagnostic http repository.
@@ -38,9 +39,15 @@ export class DiagnosticHttp extends Http implements DiagnosticRepository {
      * Constructor
      * @param url
      */
-    constructor(url: string) {
+    constructor(url: string, auth?: Authentication, headers?: {}) {
         super();
         this.diagnosticRoutesApi = new DiagnosticRoutesApi(url);
+        if (auth) {
+            this.diagnosticRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.diagnosticRoutesApi.setHeaders(headers);
+        }
     }
 
     /**

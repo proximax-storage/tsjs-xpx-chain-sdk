@@ -88,6 +88,7 @@ TransactionVersion.ADDRESS_ALIAS = 1;
  */
 TransactionVersion.MOSAIC_ALIAS = 1;
 /**
+<<<<<<< HEAD
  * Account Restriction address transaction version
  * @type {number}
  */
@@ -102,6 +103,22 @@ TransactionVersion.MODIFY_ACCOUNT_RESTRICTION_MOSAIC = 1;
  * @type {number}
  */
 TransactionVersion.MODIFY_ACCOUNT_RESTRICTION_ENTITY_TYPE = 1;
+=======
+ * Account Property address transaction version
+ * @type {number}
+ */
+TransactionVersion.MODIFY_ACCOUNT_PROPERTY_ADDRESS = 1;
+/**
+ * Account Property mosaic transaction version
+ * @type {number}
+ */
+TransactionVersion.MODIFY_ACCOUNT_PROPERTY_MOSAIC = 1;
+/**
+ * Account Property entity type transaction version
+ * @type {number}
+ */
+TransactionVersion.MODIFY_ACCOUNT_PROPERTY_ENTITY_TYPE = 1;
+>>>>>>> jwt
 /**
  * Link account transaction version
  * @type {number}
@@ -117,6 +134,7 @@ TransactionVersion.MODIFY_METADATA = 1;
  * @type {number}
  */
 TransactionVersion.MODIFY_CONTRACT = 3;
+<<<<<<< HEAD
 /**
  * Chain configuration transaction version
  * @type {number}
@@ -127,5 +145,7 @@ TransactionVersion.CHAIN_CONFIG = 1;
  * @type {number}
  */
 TransactionVersion.CHAIN_UPGRADE = 1;
+=======
+>>>>>>> jwt
 exports.TransactionVersion = TransactionVersion;
 //# sourceMappingURL=TransactionVersion.js.map

@@ -31,9 +31,21 @@ class NodeHttp extends Http_1.Http {
      * Constructor
      * @param url
      */
+<<<<<<< HEAD
     constructor(url) {
         super();
         this.nodeRoutesApi = new api_1.NodeRoutesApi(url);
+=======
+    constructor(url, auth, headers) {
+        super();
+        this.nodeRoutesApi = new api_1.NodeRoutesApi(url);
+        if (auth) {
+            this.nodeRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.nodeRoutesApi.setHeaders(headers);
+        }
+>>>>>>> jwt
     }
     /**
      * Supplies additional information about the application running on a node.

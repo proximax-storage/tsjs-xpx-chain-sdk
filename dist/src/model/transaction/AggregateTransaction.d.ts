@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+import { SignSchema } from '../../core/crypto';
+import { Account } from '../account/Account';
+>>>>>>> jwt
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
@@ -6,6 +11,10 @@ import { Deadline } from './Deadline';
 import { InnerTransaction } from './InnerTransaction';
 import { Transaction } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
+<<<<<<< HEAD
+=======
+
+>>>>>>> jwt
 /**
  * Aggregate innerTransactions contain multiple innerTransactions that can be initiated by different accounts.
  */
@@ -60,6 +69,15 @@ export declare class AggregateTransaction extends Transaction {
      */
     static createBonded(deadline: Deadline, innerTransactions: InnerTransaction[], networkType: NetworkType, cosignatures?: AggregateTransactionCosignature[], maxFee?: UInt64): AggregateTransaction;
     /**
+<<<<<<< HEAD
+=======
+     * Check if account has signed transaction
+     * @param publicAccount - Signer public account
+     * @returns {boolean}
+     */
+    signedByAccount(publicAccount: PublicAccount): boolean;
+    /**
+>>>>>>> jwt
      * @internal
      * Sign transaction with cosignatories creating a new SignedTransaction
      * @param initiatorAccount - Initiator account
@@ -68,6 +86,7 @@ export declare class AggregateTransaction extends Transaction {
      * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {SignedTransaction}
      */
+<<<<<<< HEAD
     signTransactionWithCosignatories(initiatorAccount, cosignatories, generationHash, signSchema?)
     /**
      * @internal
@@ -86,6 +105,9 @@ export declare class AggregateTransaction extends Transaction {
      * @returns {boolean}
      */
     signedByAccount(publicAccount: PublicAccount): boolean;
+=======
+    public signTransactionWithCosignatories(initiatorAccount: Account, cosignatories: Account[], generationHash: string, signSchema?: SignSchema)
+>>>>>>> jwt
     /**
      * @override Transaction.size()
      * @description get the byte size of a AggregateTransaction

@@ -54,6 +54,7 @@ describe('MosaicAliasTransaction', () => {
         chai_1.expect(mosaicAliasTransaction.mosaicId.id.lower).to.be.equal(2262289484);
         chai_1.expect(mosaicAliasTransaction.mosaicId.id.higher).to.be.equal(3405110546);
         const signedTransaction = mosaicAliasTransaction.signWith(account, generationHash);
+<<<<<<< HEAD
         chai_1.expect(signedTransaction.payload.substring(244, signedTransaction.payload.length)).to.be.equal('002AD8FC018D9A49E14CCCD78612DDF5CA');
     });
     describe('size', () => {
@@ -62,6 +63,16 @@ describe('MosaicAliasTransaction', () => {
             const mosaicId = new MosaicId_1.MosaicId([2262289484, 3405110546]);
             const mosaicAliasTransaction = MosaicAliasTransaction_1.MosaicAliasTransaction.create(Deadline_1.Deadline.create(), AliasActionType_1.AliasActionType.Link, namespaceId, mosaicId, NetworkType_1.NetworkType.MIJIN_TEST);
             chai_1.expect(mosaicAliasTransaction.size).to.be.equal(139);
+=======
+        chai_1.expect(signedTransaction.payload.substring(240, signedTransaction.payload.length)).to.be.equal('002AD8FC018D9A49E14CCCD78612DDF5CA');
+    });
+    describe('size', () => {
+        it('should return 137 for MosaicAliasTransaction transaction byte size', () => {
+            const namespaceId = new NamespaceId_1.NamespaceId([33347626, 3779697293]);
+            const mosaicId = new MosaicId_1.MosaicId([2262289484, 3405110546]);
+            const mosaicAliasTransaction = MosaicAliasTransaction_1.MosaicAliasTransaction.create(Deadline_1.Deadline.create(), AliasActionType_1.AliasActionType.Link, namespaceId, mosaicId, NetworkType_1.NetworkType.MIJIN_TEST);
+            chai_1.expect(mosaicAliasTransaction.size).to.be.equal(137);
+>>>>>>> jwt
         });
     });
 });

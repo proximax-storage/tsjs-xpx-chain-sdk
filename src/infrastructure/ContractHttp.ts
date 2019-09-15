@@ -6,6 +6,9 @@ import {from as observableFrom, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {PublicAccount} from '../model/account/PublicAccount';
 import {Http} from './Http';
+import { Authentication } from './model/models';
+import {NetworkHttp} from './NetworkHttp';
+import { AddressMetadata } from '../model/metadata/AddressMetadata';
 import { Address, Contract } from '../model/model';
 import { ContractRoutesApi } from './api/contractRoutesApi';
 import { ContractInfoDTO } from './model/contractInfoDTO';
@@ -29,10 +32,16 @@ export class ContractHttp extends Http implements ContractRepository {
      * @param url
      * @param networkHttp
      */
-    constructor(url: string, networkHttp?: NetworkHttp) {
+    constructor(url: string, networkHttp?: NetworkHttp, auth?: Authentication, headers?: {}) {
         networkHttp = networkHttp == null ? new NetworkHttp(url) : networkHttp;
         super(networkHttp);
         this.contractRoutesApi = new ContractRoutesApi(url);
+        if (auth) {
+            this.contractRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.contractRoutesApi.setHeaders(headers);
+        }
     }
 
     public getAccountContract(publicAccount: PublicAccount): Observable<Contract[]> {

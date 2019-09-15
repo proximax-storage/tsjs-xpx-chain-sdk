@@ -7,7 +7,11 @@ import { PublicAccount } from '../model/account/PublicAccount';
 import { AggregateTransaction } from '../model/transaction/AggregateTransaction';
 import { Transaction } from '../model/transaction/Transaction';
 import { QueryParams } from './QueryParams';
+<<<<<<< HEAD
 import { AccountRestrictionsInfo } from "../model/account/AccountRestrictionsInfo";
+=======
+import { AccountPropertiesInfo } from "../model/account/AccountPropertiesInfo";
+>>>>>>> jwt
 import { AccountNames } from '../model/account/AccountNames';
 /**
  * Account interface repository.
@@ -35,6 +39,7 @@ export interface AccountRepository {
      */
     getAccountsNames(accountIds: Address[]): Observable<AccountNames[]>;
     /**
+<<<<<<< HEAD
      * Gets Account restrictions.
      * @param publicAccount public account
      * @returns Observable<AccountRestrictionsInfo>
@@ -46,6 +51,19 @@ export interface AccountRepository {
      * @returns Observable<AccountRestrictionsInfo[]>
      */
     getAccountRestrictionsFromAccounts(addresses: Address[]): Observable<AccountRestrictionsInfo[]>;
+=======
+     * Gets Account property.
+     * @param publicAccount public account
+     * @returns Observable<AccountPropertiesInfo>
+     */
+    getAccountProperties(address: Address): Observable<AccountPropertiesInfo>;
+    /**
+     * Gets Account properties.
+     * @param address list of addresses
+     * @returns Observable<AccountPropertiesInfo[]>
+     */
+    getAccountPropertiesFromAccounts(addresses: Address[]): Observable<AccountPropertiesInfo[]>;
+>>>>>>> jwt
     /**
      * Gets a MultisigAccountInfo for an account.
      * @param address - User address

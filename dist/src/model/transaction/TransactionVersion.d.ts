@@ -70,6 +70,7 @@ export declare class TransactionVersion {
      */
     static readonly MOSAIC_ALIAS = 1;
     /**
+<<<<<<< HEAD
      * Account Restriction address transaction version
      * @type {number}
      */
@@ -84,6 +85,22 @@ export declare class TransactionVersion {
      * @type {number}
      */
     static readonly MODIFY_ACCOUNT_RESTRICTION_ENTITY_TYPE = 1;
+=======
+     * Account Property address transaction version
+     * @type {number}
+     */
+    static readonly MODIFY_ACCOUNT_PROPERTY_ADDRESS = 1;
+    /**
+     * Account Property mosaic transaction version
+     * @type {number}
+     */
+    static readonly MODIFY_ACCOUNT_PROPERTY_MOSAIC = 1;
+    /**
+     * Account Property entity type transaction version
+     * @type {number}
+     */
+    static readonly MODIFY_ACCOUNT_PROPERTY_ENTITY_TYPE = 1;
+>>>>>>> jwt
     /**
      * Link account transaction version
      * @type {number}
@@ -99,6 +116,7 @@ export declare class TransactionVersion {
      * @type {number}
      */
     static readonly MODIFY_CONTRACT = 3;
+<<<<<<< HEAD
     /**
      * Chain configuration transaction version
      * @type {number}
@@ -109,4 +127,6 @@ export declare class TransactionVersion {
      * @type {number}
      */
     static readonly CHAIN_UPGRADE = 1;
+=======
+>>>>>>> jwt
 }

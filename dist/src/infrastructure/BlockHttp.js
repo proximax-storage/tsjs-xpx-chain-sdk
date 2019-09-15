@@ -53,10 +53,23 @@ class BlockHttp extends Http_1.Http {
      * @param url
      * @param networkHttp
      */
+<<<<<<< HEAD
     constructor(url, networkHttp) {
         networkHttp = networkHttp == null ? new NetworkHttp_1.NetworkHttp(url) : networkHttp;
         super(networkHttp);
         this.blockRoutesApi = new api_1.BlockRoutesApi(url);
+=======
+    constructor(url, networkHttp, auth, headers) {
+        networkHttp = networkHttp == null ? new NetworkHttp_1.NetworkHttp(url) : networkHttp;
+        super(networkHttp);
+        this.blockRoutesApi = new api_1.BlockRoutesApi(url);
+        if (auth) {
+            this.blockRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.blockRoutesApi.setHeaders(headers);
+        }
+>>>>>>> jwt
     }
     /**
      * Gets a BlockInfo for a given block height
@@ -65,8 +78,13 @@ class BlockHttp extends Http_1.Http {
      */
     getBlockByHeight(height) {
         return rxjs_1.from(this.blockRoutesApi.getBlockByHeight(height)).pipe(operators_1.map((blockDTO) => {
+<<<<<<< HEAD
             const networkType = parseInt((blockDTO.block.version >>> 0).toString(16).substr(0, 2), 16); // ">>> 0" hack makes it effectively an Uint32
             return new BlockInfo_1.BlockInfo(blockDTO.meta.hash, blockDTO.meta.generationHash, new UInt64_1.UInt64(blockDTO.meta.totalFee), blockDTO.meta.numTransactions, blockDTO.block.signature, PublicAccount_1.PublicAccount.createFromPublicKey(blockDTO.block.signer, networkType), networkType, parseInt((blockDTO.block.version >>> 0).toString(16).substr(2, 2), 16), // Tx version
+=======
+            const networkType = parseInt(blockDTO.block.version.toString(16).substr(0, 2), 16);
+            return new BlockInfo_1.BlockInfo(blockDTO.meta.hash, blockDTO.meta.generationHash, new UInt64_1.UInt64(blockDTO.meta.totalFee), blockDTO.meta.numTransactions, blockDTO.block.signature, PublicAccount_1.PublicAccount.createFromPublicKey(blockDTO.block.signer, networkType), networkType, parseInt(blockDTO.block.version.toString(16).substr(2, 2), 16), // Tx version
+>>>>>>> jwt
             blockDTO.block.type, new UInt64_1.UInt64(blockDTO.block.height), new UInt64_1.UInt64(blockDTO.block.timestamp), new UInt64_1.UInt64(blockDTO.block.difficulty), blockDTO.block.feeMultiplier, blockDTO.block.previousBlockHash, blockDTO.block.blockTransactionsHash, blockDTO.block.blockReceiptsHash, blockDTO.block.stateHash, CreateTransactionFromDTO_1.extractBeneficiary(blockDTO, networkType));
         }));
     }
@@ -93,8 +111,13 @@ class BlockHttp extends Http_1.Http {
     getBlocksByHeightWithLimit(height, limit = LimitType.N_25) {
         return rxjs_1.from(this.blockRoutesApi.getBlocksByHeightWithLimit(height, limit)).pipe(operators_1.map((blocksDTO) => {
             return blocksDTO.map((blockDTO) => {
+<<<<<<< HEAD
                 const networkType = parseInt((blockDTO.block.version >>> 0).toString(16).substr(0, 2), 16);
                 return new BlockInfo_1.BlockInfo(blockDTO.meta.hash, blockDTO.meta.generationHash, new UInt64_1.UInt64(blockDTO.meta.totalFee), blockDTO.meta.numTransactions, blockDTO.block.signature, PublicAccount_1.PublicAccount.createFromPublicKey(blockDTO.block.signer, networkType), networkType, parseInt((blockDTO.block.version >>> 0).toString(16).substr(2, 2), 16), // Tx version
+=======
+                const networkType = parseInt(blockDTO.block.version.toString(16).substr(0, 2), 16);
+                return new BlockInfo_1.BlockInfo(blockDTO.meta.hash, blockDTO.meta.generationHash, new UInt64_1.UInt64(blockDTO.meta.totalFee), blockDTO.meta.numTransactions, blockDTO.block.signature, PublicAccount_1.PublicAccount.createFromPublicKey(blockDTO.block.signer, networkType), networkType, parseInt(blockDTO.block.version.toString(16).substr(2, 2), 16), // Tx version
+>>>>>>> jwt
                 blockDTO.block.type, new UInt64_1.UInt64(blockDTO.block.height), new UInt64_1.UInt64(blockDTO.block.timestamp), new UInt64_1.UInt64(blockDTO.block.difficulty), blockDTO.block.feeMultiplier, blockDTO.block.previousBlockHash, blockDTO.block.blockTransactionsHash, blockDTO.block.blockReceiptsHash, blockDTO.block.stateHash, CreateTransactionFromDTO_1.extractBeneficiary(blockDTO, networkType));
             });
         }));

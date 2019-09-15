@@ -50,6 +50,7 @@ const validateTransactionAnnounceCorrectly = (address, done, hash) => {
 describe('MetadataHttp', () => {
     describe('add ,modify, get Metadata', () => {
         describe('should add metadata to an account', () => {
+<<<<<<< HEAD
             const modifyMetadataTransaction1 = ModifyMetadataTransaction_1.ModifyMetadataTransaction.createWithAddress(conf_spec_1.ConfNetworkType, model_1.Deadline.create(), undefined, conf_spec_1.TestingAccount.address, [new ModifyMetadataTransaction_1.MetadataModification(ModifyMetadataTransaction_1.MetadataModificationType.ADD, "key1", "x".repeat(256))]);
             const modifyMetadataTransaction2 = ModifyMetadataTransaction_1.ModifyMetadataTransaction.createWithAddress(conf_spec_1.ConfNetworkType, model_1.Deadline.create(), undefined, conf_spec_1.TestingAccount.address, [new ModifyMetadataTransaction_1.MetadataModification(ModifyMetadataTransaction_1.MetadataModificationType.ADD, "key2", "x".repeat(256))]);
             it('standalone', (done) => {
@@ -60,6 +61,11 @@ describe('MetadataHttp', () => {
             it('aggregate', (done) => {
                 const aggregateTransaction = model_1.AggregateTransaction.createComplete(model_1.Deadline.create(), [modifyMetadataTransaction2.toAggregate(conf_spec_1.TestingAccount.publicAccount)], conf_spec_1.ConfNetworkType, []);
                 const signedTransaction = aggregateTransaction.signWith(conf_spec_1.TestingAccount, generationHash);
+=======
+            const modifyMetadataTransaction = ModifyMetadataTransaction_1.ModifyMetadataTransaction.createWithAddress(conf_spec_1.ConfNetworkType, model_1.Deadline.create(), undefined, conf_spec_1.TestingAccount.address, [new ModifyMetadataTransaction_1.MetadataModification(ModifyMetadataTransaction_1.MetadataModificationType.ADD, "key1", "x".repeat(256))]);
+            it('standalone', (done) => {
+                const signedTransaction = modifyMetadataTransaction.signWith(conf_spec_1.TestingAccount, generationHash);
+>>>>>>> jwt
                 validateTransactionAnnounceCorrectly(conf_spec_1.TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });
@@ -68,14 +74,20 @@ describe('MetadataHttp', () => {
             it('standalone', (done) => {
                 metadataHttp.getAccountMetadata(conf_spec_1.TestingAccount.address.plain())
                     .subscribe((addressMetadata) => {
+<<<<<<< HEAD
                     chai_1.expect(addressMetadata).not.to.be.equal(undefined);
                     chai_1.expect(addressMetadata.fields[0].value.length).to.be.equal(256);
                     chai_1.expect(addressMetadata.fields[1].value.length).to.be.equal(256);
+=======
+                    chai_1.expect(addressMetadata.fields[0].value.length).to.be.equal(256);
+                    chai_1.expect(addressMetadata).not.to.be.equal(undefined);
+>>>>>>> jwt
                     done();
                 });
             });
         });
         describe('should remove metadata from an account', () => {
+<<<<<<< HEAD
             const modifyMetadataTransaction1 = ModifyMetadataTransaction_1.ModifyMetadataTransaction.createWithAddress(conf_spec_1.ConfNetworkType, model_1.Deadline.create(), undefined, conf_spec_1.TestingAccount.address, [new ModifyMetadataTransaction_1.MetadataModification(ModifyMetadataTransaction_1.MetadataModificationType.REMOVE, "key1")]);
             const modifyMetadataTransaction2 = ModifyMetadataTransaction_1.ModifyMetadataTransaction.createWithAddress(conf_spec_1.ConfNetworkType, model_1.Deadline.create(), undefined, conf_spec_1.TestingAccount.address, [new ModifyMetadataTransaction_1.MetadataModification(ModifyMetadataTransaction_1.MetadataModificationType.REMOVE, "key2")]);
             it('standalone', (done) => {
@@ -86,11 +98,17 @@ describe('MetadataHttp', () => {
             it('aggregate', (done) => {
                 const aggregateTransaction = model_1.AggregateTransaction.createComplete(model_1.Deadline.create(), [modifyMetadataTransaction2.toAggregate(conf_spec_1.TestingAccount.publicAccount)], conf_spec_1.ConfNetworkType, []);
                 const signedTransaction = aggregateTransaction.signWith(conf_spec_1.TestingAccount, generationHash);
+=======
+            const modifyMetadataTransaction = ModifyMetadataTransaction_1.ModifyMetadataTransaction.createWithAddress(conf_spec_1.ConfNetworkType, model_1.Deadline.create(), undefined, conf_spec_1.TestingAccount.address, [new ModifyMetadataTransaction_1.MetadataModification(ModifyMetadataTransaction_1.MetadataModificationType.REMOVE, "key1")]);
+            it('standalone', (done) => {
+                const signedTransaction = modifyMetadataTransaction.signWith(conf_spec_1.TestingAccount, generationHash);
+>>>>>>> jwt
                 validateTransactionAnnounceCorrectly(conf_spec_1.TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });
         });
         describe('should add metadata to a namespace', () => {
+<<<<<<< HEAD
             const modifyMetadataTransaction1 = ModifyMetadataTransaction_1.ModifyMetadataTransaction.createWithNamespaceId(conf_spec_1.ConfNetworkType, model_1.Deadline.create(), undefined, conf_spec_1.ConfTestingNamespace, [new ModifyMetadataTransaction_1.MetadataModification(ModifyMetadataTransaction_1.MetadataModificationType.ADD, "key1", "some value")]);
             const modifyMetadataTransaction2 = ModifyMetadataTransaction_1.ModifyMetadataTransaction.createWithNamespaceId(conf_spec_1.ConfNetworkType, model_1.Deadline.create(), undefined, conf_spec_1.ConfTestingNamespace, [new ModifyMetadataTransaction_1.MetadataModification(ModifyMetadataTransaction_1.MetadataModificationType.ADD, "key2", "some value")]);
             it('standalone', (done) => {
@@ -101,6 +119,11 @@ describe('MetadataHttp', () => {
             it('aggregate', (done) => {
                 const aggregateTransaction = model_1.AggregateTransaction.createComplete(model_1.Deadline.create(), [modifyMetadataTransaction2.toAggregate(conf_spec_1.TestingAccount.publicAccount)], conf_spec_1.ConfNetworkType, []);
                 const signedTransaction = aggregateTransaction.signWith(conf_spec_1.TestingAccount, generationHash);
+=======
+            const modifyMetadataTransaction = ModifyMetadataTransaction_1.ModifyMetadataTransaction.createWithNamespaceId(conf_spec_1.ConfNetworkType, model_1.Deadline.create(), undefined, conf_spec_1.ConfTestingNamespace, [new ModifyMetadataTransaction_1.MetadataModification(ModifyMetadataTransaction_1.MetadataModificationType.ADD, "key1", "some value")]);
+            it('standalone', (done) => {
+                const signedTransaction = modifyMetadataTransaction.signWith(conf_spec_1.TestingAccount, generationHash);
+>>>>>>> jwt
                 validateTransactionAnnounceCorrectly(conf_spec_1.TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });
@@ -115,6 +138,7 @@ describe('MetadataHttp', () => {
             });
         });
         describe('should remove metadata from a namespace', () => {
+<<<<<<< HEAD
             const modifyMetadataTransaction1 = ModifyMetadataTransaction_1.ModifyMetadataTransaction.createWithNamespaceId(conf_spec_1.ConfNetworkType, model_1.Deadline.create(), undefined, conf_spec_1.ConfTestingNamespace, [new ModifyMetadataTransaction_1.MetadataModification(ModifyMetadataTransaction_1.MetadataModificationType.REMOVE, "key1")]);
             const modifyMetadataTransaction2 = ModifyMetadataTransaction_1.ModifyMetadataTransaction.createWithNamespaceId(conf_spec_1.ConfNetworkType, model_1.Deadline.create(), undefined, conf_spec_1.ConfTestingNamespace, [new ModifyMetadataTransaction_1.MetadataModification(ModifyMetadataTransaction_1.MetadataModificationType.REMOVE, "key2")]);
             it('standalone', (done) => {
@@ -125,11 +149,17 @@ describe('MetadataHttp', () => {
             it('aggregate', (done) => {
                 const aggregateTransaction = model_1.AggregateTransaction.createComplete(model_1.Deadline.create(), [modifyMetadataTransaction2.toAggregate(conf_spec_1.TestingAccount.publicAccount)], conf_spec_1.ConfNetworkType, []);
                 const signedTransaction = aggregateTransaction.signWith(conf_spec_1.TestingAccount, generationHash);
+=======
+            const modifyMetadataTransaction = ModifyMetadataTransaction_1.ModifyMetadataTransaction.createWithNamespaceId(conf_spec_1.ConfNetworkType, model_1.Deadline.create(), undefined, conf_spec_1.ConfTestingNamespace, [new ModifyMetadataTransaction_1.MetadataModification(ModifyMetadataTransaction_1.MetadataModificationType.REMOVE, "key1")]);
+            it('standalone', (done) => {
+                const signedTransaction = modifyMetadataTransaction.signWith(conf_spec_1.TestingAccount, generationHash);
+>>>>>>> jwt
                 validateTransactionAnnounceCorrectly(conf_spec_1.TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });
         });
         describe('should add metadata to a mosaic', () => {
+<<<<<<< HEAD
             const modifyMetadataTransaction1 = ModifyMetadataTransaction_1.ModifyMetadataTransaction.createWithMosaicId(conf_spec_1.ConfNetworkType, model_1.Deadline.create(), undefined, conf_spec_1.ConfTestingMosaic, [new ModifyMetadataTransaction_1.MetadataModification(ModifyMetadataTransaction_1.MetadataModificationType.ADD, "key1", "some value")]);
             const modifyMetadataTransaction2 = ModifyMetadataTransaction_1.ModifyMetadataTransaction.createWithMosaicId(conf_spec_1.ConfNetworkType, model_1.Deadline.create(), undefined, conf_spec_1.ConfTestingMosaic, [new ModifyMetadataTransaction_1.MetadataModification(ModifyMetadataTransaction_1.MetadataModificationType.ADD, "key2", "some value")]);
             it('standalone', (done) => {
@@ -140,6 +170,11 @@ describe('MetadataHttp', () => {
             it('aggregate', (done) => {
                 const aggregateTransaction = model_1.AggregateTransaction.createComplete(model_1.Deadline.create(), [modifyMetadataTransaction2.toAggregate(conf_spec_1.TestingAccount.publicAccount)], conf_spec_1.ConfNetworkType, []);
                 const signedTransaction = aggregateTransaction.signWith(conf_spec_1.TestingAccount, generationHash);
+=======
+            const modifyMetadataTransaction = ModifyMetadataTransaction_1.ModifyMetadataTransaction.createWithMosaicId(conf_spec_1.ConfNetworkType, model_1.Deadline.create(), undefined, conf_spec_1.ConfTestingMosaic, [new ModifyMetadataTransaction_1.MetadataModification(ModifyMetadataTransaction_1.MetadataModificationType.ADD, "key1", "some value")]);
+            it('standalone', (done) => {
+                const signedTransaction = modifyMetadataTransaction.signWith(conf_spec_1.TestingAccount, generationHash);
+>>>>>>> jwt
                 validateTransactionAnnounceCorrectly(conf_spec_1.TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });
@@ -154,6 +189,7 @@ describe('MetadataHttp', () => {
             });
         });
         describe('should remove metadata from a mosaic', () => {
+<<<<<<< HEAD
             const modifyMetadataTransaction1 = ModifyMetadataTransaction_1.ModifyMetadataTransaction.createWithMosaicId(conf_spec_1.ConfNetworkType, model_1.Deadline.create(), undefined, conf_spec_1.ConfTestingMosaic, [new ModifyMetadataTransaction_1.MetadataModification(ModifyMetadataTransaction_1.MetadataModificationType.REMOVE, "key1")]);
             const modifyMetadataTransaction2 = ModifyMetadataTransaction_1.ModifyMetadataTransaction.createWithMosaicId(conf_spec_1.ConfNetworkType, model_1.Deadline.create(), undefined, conf_spec_1.ConfTestingMosaic, [new ModifyMetadataTransaction_1.MetadataModification(ModifyMetadataTransaction_1.MetadataModificationType.REMOVE, "key2")]);
             it('standalone', (done) => {
@@ -164,6 +200,11 @@ describe('MetadataHttp', () => {
             it('aggregate', (done) => {
                 const aggregateTransaction = model_1.AggregateTransaction.createComplete(model_1.Deadline.create(), [modifyMetadataTransaction2.toAggregate(conf_spec_1.TestingAccount.publicAccount)], conf_spec_1.ConfNetworkType, []);
                 const signedTransaction = aggregateTransaction.signWith(conf_spec_1.TestingAccount, generationHash);
+=======
+            const modifyMetadataTransaction = ModifyMetadataTransaction_1.ModifyMetadataTransaction.createWithMosaicId(conf_spec_1.ConfNetworkType, model_1.Deadline.create(), undefined, conf_spec_1.ConfTestingMosaic, [new ModifyMetadataTransaction_1.MetadataModification(ModifyMetadataTransaction_1.MetadataModificationType.REMOVE, "key1")]);
+            it('standalone', (done) => {
+                const signedTransaction = modifyMetadataTransaction.signWith(conf_spec_1.TestingAccount, generationHash);
+>>>>>>> jwt
                 validateTransactionAnnounceCorrectly(conf_spec_1.TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });

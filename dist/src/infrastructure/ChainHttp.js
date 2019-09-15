@@ -22,7 +22,11 @@ const UInt64_1 = require("../model/UInt64");
 const api_1 = require("./api");
 const Http_1 = require("./Http");
 /**
+<<<<<<< HEAD
  * Chain http repository.
+=======
+ * Chian http repository.
+>>>>>>> jwt
  *
  * @since 1.0
  */
@@ -31,9 +35,21 @@ class ChainHttp extends Http_1.Http {
      * Constructor
      * @param url
      */
+<<<<<<< HEAD
     constructor(url) {
         super();
         this.chainRoutesApi = new api_1.ChainRoutesApi(url);
+=======
+    constructor(url, auth, headers) {
+        super();
+        this.chainRoutesApi = new api_1.ChainRoutesApi(url);
+        if (auth) {
+            this.chainRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.chainRoutesApi.setHeaders(headers);
+        }
+>>>>>>> jwt
     }
     /**
      * Gets current blockchain height

@@ -20,6 +20,7 @@ import { NodeInfo } from '../model/node/NodeInfo';
 import { NodeTime } from '../model/node/NodeTime';
 import { NodeInfoDTO, NodeRoutesApi, NodeTimeDTO } from './api';
 import {Http} from './Http';
+import { Authentication } from './model/models';
 import {NodeRepository} from './NodeRepository';
 
 /**
@@ -38,10 +39,15 @@ export class NodeHttp extends Http implements NodeRepository {
      * Constructor
      * @param url
      */
-    constructor(url: string) {
+    constructor(url: string, auth?: Authentication, headers?: {}) {
         super();
         this.nodeRoutesApi = new NodeRoutesApi(url);
-
+        if (auth) {
+            this.nodeRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.nodeRoutesApi.setHeaders(headers);
+        }
     }
 
     /**

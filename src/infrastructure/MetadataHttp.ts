@@ -23,6 +23,7 @@ import { Address } from '../model/model';
 import { NamespaceMetadata } from '../model/metadata/NamespaceMetadata';
 import { MosaicMetadata } from '../model/metadata/MosaicMetadata';
 import { MetadataRoutesApi } from './api/metadataRoutesApi';
+import { Authentication } from './model/models';
 
 /**
  export declare class MetadataRoutesApi {
@@ -67,10 +68,16 @@ export class MetadataHttp extends Http implements MetadataRepository {
      * @param url
      * @param networkHttp
      */
-    constructor(url: string, networkHttp?: NetworkHttp) {
+    constructor(url: string, networkHttp?: NetworkHttp, auth?: Authentication, headers?: {}) {
         networkHttp = networkHttp == null ? new NetworkHttp(url) : networkHttp;
         super(networkHttp);
         this.metadataRoutesApi = new MetadataRoutesApi(url);
+        if (auth) {
+            this.metadataRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.metadataRoutesApi.setHeaders(headers);
+        }
     }
 
     /**

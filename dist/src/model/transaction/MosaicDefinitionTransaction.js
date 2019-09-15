@@ -93,7 +93,11 @@ class MosaicDefinitionTransaction extends Transaction_1.Transaction {
     buildTransaction() {
         let mosaicDefinitionTransaction = new MosaicCreationTransaction_1.Builder()
             .addDeadline(this.deadline.toDTO())
+<<<<<<< HEAD
             .addMaxFee(this.maxFee.toDTO())
+=======
+            .addFee(this.maxFee.toDTO())
+>>>>>>> jwt
             .addVersion(this.versionToDTO())
             .addDivisibility(this.mosaicProperties.divisibility)
             .addDuration(this.mosaicProperties.duration ? this.mosaicProperties.duration.toDTO() : [])

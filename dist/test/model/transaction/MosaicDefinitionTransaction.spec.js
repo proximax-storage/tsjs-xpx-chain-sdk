@@ -69,7 +69,11 @@ describe('MosaicDefinitionTransaction', () => {
         chai_1.expect(mosaicDefinitionTransaction.mosaicProperties.supplyMutable).to.be.equal(true);
         chai_1.expect(mosaicDefinitionTransaction.mosaicProperties.transferable).to.be.equal(true);
         const signedTransaction = mosaicDefinitionTransaction.signWith(account, generationHash);
+<<<<<<< HEAD
         chai_1.expect(signedTransaction.payload.substring(244, signedTransaction.payload.length)).to.be.equal('E6DE84B8010000000000000001030302E803000000000000');
+=======
+        chai_1.expect(signedTransaction.payload.substring(240, signedTransaction.payload.length)).to.be.equal('E6DE84B8010000000000000001030302E803000000000000');
+>>>>>>> jwt
     });
     it('should createComplete an MosaicDefinitionTransaction object and sign it with flags 0', () => {
         const mosaicDefinitionTransaction = MosaicDefinitionTransaction_1.MosaicDefinitionTransaction.create(Deadline_1.Deadline.create(), new MosaicNonce_1.MosaicNonce(new Uint8Array([0xE6, 0xDE, 0x84, 0xB8])), // nonce
@@ -86,10 +90,17 @@ describe('MosaicDefinitionTransaction', () => {
         chai_1.expect(mosaicDefinitionTransaction.mosaicProperties.supplyMutable).to.be.equal(false);
         chai_1.expect(mosaicDefinitionTransaction.mosaicProperties.transferable).to.be.equal(false);
         const signedTransaction = mosaicDefinitionTransaction.signWith(account, generationHash);
+<<<<<<< HEAD
         chai_1.expect(signedTransaction.payload.substring(244, signedTransaction.payload.length)).to.be.equal('E6DE84B8010000000000000001000302E803000000000000');
     });
     describe('size', () => {
         it('should return 146 for MosaicDefinition transaction byte size', () => {
+=======
+        chai_1.expect(signedTransaction.payload.substring(240, signedTransaction.payload.length)).to.be.equal('E6DE84B8010000000000000001000302E803000000000000');
+    });
+    describe('size', () => {
+        it('should return 144 for MosaicDefinition transaction byte size', () => {
+>>>>>>> jwt
             const mosaicDefinitionTransaction = MosaicDefinitionTransaction_1.MosaicDefinitionTransaction.create(Deadline_1.Deadline.create(), new MosaicNonce_1.MosaicNonce(new Uint8Array([0xE6, 0xDE, 0x84, 0xB8])), // nonce
             new MosaicId_1.MosaicId(UInt64_1.UInt64.fromUint(1).toDTO()), // ID
             MosaicProperties_1.MosaicProperties.create({
@@ -98,7 +109,11 @@ describe('MosaicDefinitionTransaction', () => {
                 divisibility: 3,
                 duration: UInt64_1.UInt64.fromUint(1000),
             }), NetworkType_1.NetworkType.MIJIN_TEST);
+<<<<<<< HEAD
             chai_1.expect(mosaicDefinitionTransaction.size).to.be.equal(146);
+=======
+            chai_1.expect(mosaicDefinitionTransaction.size).to.be.equal(144);
+>>>>>>> jwt
         });
     });
     it('should createComplete an MosaicDefinitionTransaction object and sign it without duration', () => {
@@ -113,6 +128,7 @@ describe('MosaicDefinitionTransaction', () => {
         chai_1.expect(mosaicDefinitionTransaction.mosaicProperties.supplyMutable).to.be.equal(false);
         chai_1.expect(mosaicDefinitionTransaction.mosaicProperties.transferable).to.be.equal(false);
         const signedTransaction = mosaicDefinitionTransaction.signWith(account, generationHash);
+<<<<<<< HEAD
         chai_1.expect(signedTransaction.payload.substring(244, signedTransaction.payload.length)).to.be.equal('E6DE84B80100000000000000000003');
     });
     it('should createComplete an MosaicDefinitionTransaction object and sign it without duration with zero nonce', () => {
@@ -128,6 +144,9 @@ describe('MosaicDefinitionTransaction', () => {
         chai_1.expect(mosaicDefinitionTransaction.mosaicProperties.transferable).to.be.equal(false);
         const signedTransaction = mosaicDefinitionTransaction.signWith(account, generationHash);
         chai_1.expect(signedTransaction.payload.substring(244, signedTransaction.payload.length)).to.be.equal('000000000100000000000000000003');
+=======
+        chai_1.expect(signedTransaction.payload.substring(240, signedTransaction.payload.length)).to.be.equal('E6DE84B80100000000000000000003');
+>>>>>>> jwt
     });
 });
 //# sourceMappingURL=MosaicDefinitionTransaction.spec.js.map

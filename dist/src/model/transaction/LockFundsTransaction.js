@@ -92,7 +92,11 @@ class LockFundsTransaction extends Transaction_1.Transaction {
         return new HashLockTransaction_1.Builder()
             .addDeadline(this.deadline.toDTO())
             .addType(this.type)
+<<<<<<< HEAD
             .addMaxFee(this.maxFee.toDTO())
+=======
+            .addFee(this.maxFee.toDTO())
+>>>>>>> jwt
             .addVersion(this.versionToDTO())
             .addMosaicId(this.mosaic.id.id.toDTO())
             .addMosaicAmount(this.mosaic.amount.toDTO())

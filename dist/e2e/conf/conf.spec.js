@@ -51,21 +51,30 @@ exports.TestAccount = TestAccount;
 const loadEnvKeys = () => {
     return new Map([
         ["seed", systemEnv.TEST_SEED_ACCOUNT_KEY],
+<<<<<<< HEAD
         ["nemesis", systemEnv.TEST_NEMESIS_ACCOUNT_KEY],
+=======
+>>>>>>> jwt
         ["testing", systemEnv.TEST_TEST_ACCOUNT1_KEY],
         ["recipient", systemEnv.TEST_TEST_ACCOUNT2_KEY],
         ["multisig", systemEnv.TEST_TEST_ACCOUNT3_KEY],
         ["cosignatory1", systemEnv.TEST_TEST_ACCOUNT4_KEY],
         ["cosignatory2", systemEnv.TEST_TEST_ACCOUNT5_KEY],
         ["cosignatory3", systemEnv.TEST_TEST_ACCOUNT6_KEY],
+<<<<<<< HEAD
         ["cosignatory4", systemEnv.TEST_TEST_ACCOUNT13_KEY],
         ["cosignatory5", systemEnv.TEST_TEST_ACCOUNT14_KEY],
+=======
+>>>>>>> jwt
         ["customer1", systemEnv.TEST_TEST_ACCOUNT7_KEY],
         ["executor1", systemEnv.TEST_TEST_ACCOUNT8_KEY],
         ["executor2", systemEnv.TEST_TEST_ACCOUNT9_KEY],
         ["verifier1", systemEnv.TEST_TEST_ACCOUNT10_KEY],
         ["verifier2", systemEnv.TEST_TEST_ACCOUNT11_KEY],
+<<<<<<< HEAD
         ["multilevelmultisig", systemEnv.TEST_TEST_ACCOUNT12_KEY],
+=======
+>>>>>>> jwt
     ]);
 };
 const loadBlockchainConfAccouns = (conf) => {
@@ -95,8 +104,11 @@ const getMosId = (alias) => {
 const accounts = loadBlockchainConfAccouns(blockchain);
 const SeedAccount = accounts.get("seed").acc;
 exports.SeedAccount = SeedAccount;
+<<<<<<< HEAD
 const NemesisAccount = accounts.get("nemesis").acc;
 exports.NemesisAccount = NemesisAccount;
+=======
+>>>>>>> jwt
 const TestingAccount = accounts.get("testing").acc;
 exports.TestingAccount = TestingAccount;
 const TestingRecipient = accounts.get("recipient").acc;
@@ -109,10 +121,13 @@ const Cosignatory2Account = accounts.get("cosignatory2").acc;
 exports.Cosignatory2Account = Cosignatory2Account;
 const Cosignatory3Account = accounts.get("cosignatory3").acc;
 exports.Cosignatory3Account = Cosignatory3Account;
+<<<<<<< HEAD
 const Cosignatory4Account = accounts.get("cosignatory4").acc;
 exports.Cosignatory4Account = Cosignatory4Account;
 const Cosignatory5Account = accounts.get("cosignatory5").acc;
 exports.Cosignatory5Account = Cosignatory5Account;
+=======
+>>>>>>> jwt
 const Customer1Account = accounts.get("customer1").acc;
 exports.Customer1Account = Customer1Account;
 const Executor1Account = accounts.get("executor1").acc;
@@ -123,8 +138,11 @@ const Verifier1Account = accounts.get("verifier1").acc;
 exports.Verifier1Account = Verifier1Account;
 const Verifier2Account = accounts.get("verifier2").acc;
 exports.Verifier2Account = Verifier2Account;
+<<<<<<< HEAD
 const MultilevelMultisigAccount = accounts.get("multilevelmultisig").acc;
 exports.MultilevelMultisigAccount = MultilevelMultisigAccount;
+=======
+>>>>>>> jwt
 const AllTestingAccounts = accounts;
 exports.AllTestingAccounts = AllTestingAccounts;
 console.log("Accounts loaded:");
@@ -173,11 +191,18 @@ const GetNemesisBlockDataPromise = () => {
         return blockHttp.getBlockTransactions(1, new QueryParams_1.QueryParams(100)).toPromise()
             .then(txs => {
             const regNamespaceTxs = txs.filter(tx => tx.type === model_1.TransactionType.REGISTER_NAMESPACE);
+<<<<<<< HEAD
             const currencyNamespace = regNamespaceTxs.find(tx => tx.namespaceName === "xpx");
             const testNamespace = currencyNamespace ? currencyNamespace : regNamespaceTxs[0];
             const regMosaicTx = txs.find(tx => tx.type === model_1.TransactionType.MOSAIC_DEFINITION);
             const transferTx = txs.find(tx => tx.type === model_1.TransactionType.TRANSFER);
             const config = txs.find(tx => tx.type === model_1.TransactionType.CHAIN_CONFIGURE);
+=======
+            const currencyNamespace = regNamespaceTxs.find(tx => tx.namespaceName === "currency");
+            const testNamespace = currencyNamespace ? currencyNamespace : regNamespaceTxs[0];
+            const regMosaicTx = txs.find(tx => tx.type === model_1.TransactionType.MOSAIC_DEFINITION);
+            const transferTx = txs.find(tx => tx.type === model_1.TransactionType.TRANSFER);
+>>>>>>> jwt
             return {
                 nemesisBlockInfo,
                 testNamespace: {
@@ -190,7 +215,10 @@ const GetNemesisBlockDataPromise = () => {
                 },
                 testTxHash: transferTx.transactionInfo.hash,
                 testTxId: transferTx.transactionInfo.id,
+<<<<<<< HEAD
                 config,
+=======
+>>>>>>> jwt
             };
         });
     });

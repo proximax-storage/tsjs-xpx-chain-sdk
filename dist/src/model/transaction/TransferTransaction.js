@@ -106,7 +106,11 @@ class TransferTransaction extends Transaction_1.Transaction {
     buildTransaction() {
         return new TransferTransaction_1.Builder()
             .addDeadline(this.deadline.toDTO())
+<<<<<<< HEAD
             .addMaxFee(this.maxFee.toDTO())
+=======
+            .addFee(this.maxFee.toDTO())
+>>>>>>> jwt
             .addVersion(this.versionToDTO())
             .addRecipient(this.recipientToString())
             .addMosaics(this.mosaics.map((mosaic) => mosaic.toDTO()))

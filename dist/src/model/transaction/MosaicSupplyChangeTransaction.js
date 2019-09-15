@@ -89,7 +89,11 @@ class MosaicSupplyChangeTransaction extends Transaction_1.Transaction {
     buildTransaction() {
         return new MosaicSupplyChangeTransaction_1.Builder()
             .addDeadline(this.deadline.toDTO())
+<<<<<<< HEAD
             .addMaxFee(this.maxFee.toDTO())
+=======
+            .addFee(this.maxFee.toDTO())
+>>>>>>> jwt
             .addVersion(this.versionToDTO())
             .addMosaicId(this.mosaicId.id.toDTO())
             .addDirection(this.direction)

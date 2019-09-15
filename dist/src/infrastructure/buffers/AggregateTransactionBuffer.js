@@ -113,7 +113,11 @@ Catapult.Buffers.AggregateTransactionBuffer.prototype.signerArray = function () 
  */
 Catapult.Buffers.AggregateTransactionBuffer.prototype.version = function () {
     var offset = this.bb.__offset(this.bb_pos, 10);
+<<<<<<< HEAD
     return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
+=======
+    return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
+>>>>>>> jwt
 };
 /**
  * @returns {number}
@@ -126,21 +130,33 @@ Catapult.Buffers.AggregateTransactionBuffer.prototype.type = function () {
  * @param {number} index
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.AggregateTransactionBuffer.prototype.maxFee = function (index) {
+=======
+Catapult.Buffers.AggregateTransactionBuffer.prototype.fee = function (index) {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 14);
     return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 /**
  * @returns {number}
  */
+<<<<<<< HEAD
 Catapult.Buffers.AggregateTransactionBuffer.prototype.maxFeeLength = function () {
+=======
+Catapult.Buffers.AggregateTransactionBuffer.prototype.feeLength = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 14);
     return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 /**
  * @returns {Uint32Array}
  */
+<<<<<<< HEAD
 Catapult.Buffers.AggregateTransactionBuffer.prototype.maxFeeArray = function () {
+=======
+Catapult.Buffers.AggregateTransactionBuffer.prototype.feeArray = function () {
+>>>>>>> jwt
     var offset = this.bb.__offset(this.bb_pos, 14);
     return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -265,7 +281,11 @@ Catapult.Buffers.AggregateTransactionBuffer.startSignerVector = function (builde
  * @param {number} version
  */
 Catapult.Buffers.AggregateTransactionBuffer.addVersion = function (builder, version) {
+<<<<<<< HEAD
     builder.addFieldInt32(3, version, 0);
+=======
+    builder.addFieldInt16(3, version, 0);
+>>>>>>> jwt
 };
 /**
  * @param {flatbuffers.Builder} builder
@@ -276,17 +296,28 @@ Catapult.Buffers.AggregateTransactionBuffer.addType = function (builder, type) {
 };
 /**
  * @param {flatbuffers.Builder} builder
+<<<<<<< HEAD
  * @param {flatbuffers.Offset} maxFeeOffset
  */
 Catapult.Buffers.AggregateTransactionBuffer.addMaxFee = function (builder, maxFeeOffset) {
     builder.addFieldOffset(5, maxFeeOffset, 0);
+=======
+ * @param {flatbuffers.Offset} feeOffset
+ */
+Catapult.Buffers.AggregateTransactionBuffer.addFee = function (builder, feeOffset) {
+    builder.addFieldOffset(5, feeOffset, 0);
+>>>>>>> jwt
 };
 /**
  * @param {flatbuffers.Builder} builder
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
+<<<<<<< HEAD
 Catapult.Buffers.AggregateTransactionBuffer.createMaxFeeVector = function (builder, data) {
+=======
+Catapult.Buffers.AggregateTransactionBuffer.createFeeVector = function (builder, data) {
+>>>>>>> jwt
     builder.startVector(4, data.length, 4);
     for (var i = data.length - 1; i >= 0; i--) {
         builder.addInt32(data[i]);
@@ -297,7 +328,11 @@ Catapult.Buffers.AggregateTransactionBuffer.createMaxFeeVector = function (build
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
+<<<<<<< HEAD
 Catapult.Buffers.AggregateTransactionBuffer.startMaxFeeVector = function (builder, numElems) {
+=======
+Catapult.Buffers.AggregateTransactionBuffer.startFeeVector = function (builder, numElems) {
+>>>>>>> jwt
     builder.startVector(4, numElems, 4);
 };
 /**
@@ -374,6 +409,7 @@ Catapult.Buffers.AggregateTransactionBuffer.endAggregateTransactionBuffer = func
 Catapult.Buffers.AggregateTransactionBuffer.finishAggregateTransactionBufferBuffer = function (builder, offset) {
     builder.finish(offset);
 };
+<<<<<<< HEAD
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} size
@@ -400,6 +436,8 @@ Catapult.Buffers.AggregateTransactionBuffer.createAggregateTransactionBuffer = f
     Catapult.Buffers.AggregateTransactionBuffer.addTransactions(builder, transactionsOffset);
     return Catapult.Buffers.AggregateTransactionBuffer.endAggregateTransactionBuffer(builder);
 };
+=======
+>>>>>>> jwt
 // Exports for Node.js and RequireJS
 exports.default = Catapult;
 //# sourceMappingURL=AggregateTransactionBuffer.js.map

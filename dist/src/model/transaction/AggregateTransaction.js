@@ -83,7 +83,11 @@ class AggregateTransaction extends Transaction_1.Transaction {
         return new AggregateTransaction_1.Builder()
             .addDeadline(this.deadline.toDTO())
             .addType(this.type)
+<<<<<<< HEAD
             .addMaxFee(this.maxFee.toDTO())
+=======
+            .addFee(this.maxFee.toDTO())
+>>>>>>> jwt
             .addVersion(this.versionToDTO())
             .addTransactions(this.innerTransactions.map((transaction) => {
             return transaction.aggregateTransaction();

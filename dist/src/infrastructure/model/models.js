@@ -34,10 +34,17 @@ __export(require("./accountIds"));
 __export(require("./accountInfoDTO"));
 __export(require("./accountMetaDTO"));
 __export(require("./accountNamesDTO"));
+<<<<<<< HEAD
 __export(require("./accountRestrictionDTO"));
 __export(require("./accountRestrictionTypeEnum"));
 __export(require("./accountRestrictionsDTO"));
 __export(require("./accountRestrictionsInfoDTO"));
+=======
+__export(require("./accountPropertiesDTO"));
+__export(require("./accountPropertiesInfoDTO"));
+__export(require("./accountPropertyDTO"));
+__export(require("./accountPropertyTypeEnum"));
+>>>>>>> jwt
 __export(require("./aliasDTO"));
 __export(require("./aliasTypeEnum"));
 __export(require("./announceTransactionInfoDTO"));
@@ -93,12 +100,19 @@ const accountIds_1 = require("./accountIds");
 const accountInfoDTO_1 = require("./accountInfoDTO");
 const accountMetaDTO_1 = require("./accountMetaDTO");
 const accountNamesDTO_1 = require("./accountNamesDTO");
+<<<<<<< HEAD
 const accountRestrictionDTO_1 = require("./accountRestrictionDTO");
 const accountRestrictionTypeEnum_1 = require("./accountRestrictionTypeEnum");
 const accountRestrictionsDTO_1 = require("./accountRestrictionsDTO");
 const accountRestrictionsInfoDTO_1 = require("./accountRestrictionsInfoDTO");
 const addressMetadataDTO_1 = require("./addressMetadataDTO");
 const addressMetadataInfoDTO_1 = require("./addressMetadataInfoDTO");
+=======
+const accountPropertiesDTO_1 = require("./accountPropertiesDTO");
+const accountPropertiesInfoDTO_1 = require("./accountPropertiesInfoDTO");
+const accountPropertyDTO_1 = require("./accountPropertyDTO");
+const accountPropertyTypeEnum_1 = require("./accountPropertyTypeEnum");
+>>>>>>> jwt
 const aliasDTO_1 = require("./aliasDTO");
 const aliasTypeEnum_1 = require("./aliasTypeEnum");
 const announceTransactionInfoDTO_1 = require("./announceTransactionInfoDTO");
@@ -116,8 +130,11 @@ const mosaicDTO_1 = require("./mosaicDTO");
 const mosaicDefinitionDTO_1 = require("./mosaicDefinitionDTO");
 const mosaicIds_1 = require("./mosaicIds");
 const mosaicInfoDTO_1 = require("./mosaicInfoDTO");
+<<<<<<< HEAD
 const mosaicMetadataDTO_1 = require("./mosaicMetadataDTO");
 const mosaicMetadataInfoDTO_1 = require("./mosaicMetadataInfoDTO");
+=======
+>>>>>>> jwt
 const mosaicMetaDTO_1 = require("./mosaicMetaDTO");
 const mosaicNamesDTO_1 = require("./mosaicNamesDTO");
 const mosaicPropertyDTO_1 = require("./mosaicPropertyDTO");
@@ -130,8 +147,11 @@ const namespaceDTO_1 = require("./namespaceDTO");
 const namespaceIds_1 = require("./namespaceIds");
 const namespaceInfoDTO_1 = require("./namespaceInfoDTO");
 const namespaceMetaDTO_1 = require("./namespaceMetaDTO");
+<<<<<<< HEAD
 const namespaceMetadataDTO_1 = require("./namespaceMetadataDTO");
 const namespaceMetadataInfoDTO_1 = require("./namespaceMetadataInfoDTO");
+=======
+>>>>>>> jwt
 const namespaceNameDTO_1 = require("./namespaceNameDTO");
 const namespaceTypeEnum_1 = require("./namespaceTypeEnum");
 const networkTypeDTO_1 = require("./networkTypeDTO");
@@ -167,7 +187,11 @@ let primitives = [
     "any"
 ];
 let enumsMap = {
+<<<<<<< HEAD
     "AccountRestrictionTypeEnum": accountRestrictionTypeEnum_1.AccountRestrictionTypeEnum,
+=======
+    "AccountPropertyTypeEnum": accountPropertyTypeEnum_1.AccountPropertyTypeEnum,
+>>>>>>> jwt
     "AliasTypeEnum": aliasTypeEnum_1.AliasTypeEnum,
     "MosaicPropertyIdEnum": mosaicPropertyIdEnum_1.MosaicPropertyIdEnum,
     "MultisigModificationTypeEnum": multisigModificationTypeEnum_1.MultisigModificationTypeEnum,
@@ -181,12 +205,18 @@ let typeMap = {
     "AccountInfoDTO": accountInfoDTO_1.AccountInfoDTO,
     "AccountMetaDTO": accountMetaDTO_1.AccountMetaDTO,
     "AccountNamesDTO": accountNamesDTO_1.AccountNamesDTO,
+<<<<<<< HEAD
     "AccountRestrictionDTO": accountRestrictionDTO_1.AccountRestrictionDTO,
     "AccountRestrictionTypeEnum": accountRestrictionTypeEnum_1.AccountRestrictionTypeEnum,
     "AccountRestrictionsDTO": accountRestrictionsDTO_1.AccountRestrictionsDTO,
     "AccountRestrictionsInfoDTO": accountRestrictionsInfoDTO_1.AccountRestrictionsInfoDTO,
     "AddressMetadataDTO": addressMetadataDTO_1.AddressMetadataDTO,
     "AddressMetadataInfoDTO": addressMetadataInfoDTO_1.AddressMetadataInfoDTO,
+=======
+    "AccountPropertiesDTO": accountPropertiesDTO_1.AccountPropertiesDTO,
+    "AccountPropertiesInfoDTO": accountPropertiesInfoDTO_1.AccountPropertiesInfoDTO,
+    "AccountPropertyDTO": accountPropertyDTO_1.AccountPropertyDTO,
+>>>>>>> jwt
     "AliasDTO": aliasDTO_1.AliasDTO,
     "AnnounceTransactionInfoDTO": announceTransactionInfoDTO_1.AnnounceTransactionInfoDTO,
     "BlockDTO": blockDTO_1.BlockDTO,
@@ -206,8 +236,11 @@ let typeMap = {
     "MosaicIds": mosaicIds_1.MosaicIds,
     "MosaicInfoDTO": mosaicInfoDTO_1.MosaicInfoDTO,
     "MosaicMetaDTO": mosaicMetaDTO_1.MosaicMetaDTO,
+<<<<<<< HEAD
     "MosaicMetadataDTO": mosaicMetadataDTO_1.MosaicMetadataDTO,
     "MosaicMetadataInfoDTO": mosaicMetadataInfoDTO_1.MosaicMetadataInfoDTO,
+=======
+>>>>>>> jwt
     "MosaicNamesDTO": mosaicNamesDTO_1.MosaicNamesDTO,
     "MosaicPropertyDTO": mosaicPropertyDTO_1.MosaicPropertyDTO,
     "MultisigAccountGraphInfoDTO": multisigAccountGraphInfoDTO_1.MultisigAccountGraphInfoDTO,
@@ -217,8 +250,11 @@ let typeMap = {
     "NamespaceIds": namespaceIds_1.NamespaceIds,
     "NamespaceInfoDTO": namespaceInfoDTO_1.NamespaceInfoDTO,
     "NamespaceMetaDTO": namespaceMetaDTO_1.NamespaceMetaDTO,
+<<<<<<< HEAD
     "NamespaceMetadataDTO": namespaceMetadataDTO_1.NamespaceMetadataDTO,
     "NamespaceMetadataInfoDTO": namespaceMetadataInfoDTO_1.NamespaceMetadataInfoDTO,
+=======
+>>>>>>> jwt
     "NamespaceNameDTO": namespaceNameDTO_1.NamespaceNameDTO,
     "NetworkTypeDTO": networkTypeDTO_1.NetworkTypeDTO,
     "NodeInfoDTO": nodeInfoDTO_1.NodeInfoDTO,

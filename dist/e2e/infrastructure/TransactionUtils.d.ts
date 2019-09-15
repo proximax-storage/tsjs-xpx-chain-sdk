@@ -7,7 +7,11 @@ import { MultisigCosignatoryModificationType } from '../../src/model/transaction
 export declare class TransactionUtils {
     static createAndAnnounce(recipient?: Address, transactionHttp?: TransactionHttp): Promise<import("../../src/model/model").TransactionAnnounceResponse>;
     static createAndAnnounceWithInsufficientBalance(transactionHttp?: TransactionHttp): Promise<import("rxjs").Observable<import("../../src/model/model").TransactionAnnounceResponse>>;
+<<<<<<< HEAD
     static createAggregateBondedTransactionAndAnnounce(transactionHttp?: TransactionHttp): Promise<unknown>;
+=======
+    static createAggregateBondedTransactionAndAnnounce(transactionHttp?: TransactionHttp): Promise<{}>;
+>>>>>>> jwt
     static cosignTransaction(transaction: AggregateTransaction, account: Account, transactionHttp?: TransactionHttp): void;
     static createModifyMultisigAccountTransaction(account: PublicAccount, type: MultisigCosignatoryModificationType, transactionHttp?: TransactionHttp): Promise<import("rxjs").Observable<import("../../src/model/model").TransactionAnnounceResponse>>;
 }

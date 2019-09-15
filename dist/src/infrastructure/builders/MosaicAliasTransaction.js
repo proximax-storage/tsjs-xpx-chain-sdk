@@ -16,10 +16,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * limitations under the License.
  */
 const TransactionType_1 = require("../../model/transaction/TransactionType");
+<<<<<<< HEAD
 const AliasTransactionBuffer_1 = require("../buffers/AliasTransactionBuffer");
 const MosaicAliasTransactionSchema_1 = require("../schemas/MosaicAliasTransactionSchema");
 const VerifiableTransaction_1 = require("./VerifiableTransaction");
 const { AliasTransactionBuffer, } = AliasTransactionBuffer_1.default.Buffers;
+=======
+const MosaicAliasTransactionBuffer_1 = require("../buffers/MosaicAliasTransactionBuffer");
+const MosaicAliasTransactionSchema_1 = require("../schemas/MosaicAliasTransactionSchema");
+const VerifiableTransaction_1 = require("./VerifiableTransaction");
+const { MosaicAliasTransactionBuffer, } = MosaicAliasTransactionBuffer_1.default.Buffers;
+>>>>>>> jwt
 const flatbuffers_1 = require("flatbuffers");
 /**
  * @module transactions/MosaicAliasTransaction
@@ -36,7 +43,11 @@ class Builder {
         this.maxFee = [0, 0];
         this.type = TransactionType_1.TransactionType.MOSAIC_ALIAS;
     }
+<<<<<<< HEAD
     addMaxFee(maxFee) {
+=======
+    addFee(maxFee) {
+>>>>>>> jwt
         this.maxFee = maxFee;
         return this;
     }
@@ -67,6 +78,7 @@ class Builder {
     build() {
         const builder = new flatbuffers_1.flatbuffers.Builder(1);
         // Create vectors
+<<<<<<< HEAD
         const signatureVector = AliasTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
         const signerVector = AliasTransactionBuffer
@@ -101,6 +113,33 @@ class Builder {
         AliasTransactionBuffer.addAliasId(builder, mosaicIdVector);
         // Calculate size
         const codedMosaicChangeSupply = AliasTransactionBuffer.endAliasTransactionBuffer(builder);
+=======
+        const signatureVector = MosaicAliasTransactionBuffer
+            .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
+        const signerVector = MosaicAliasTransactionBuffer
+            .createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
+        const deadlineVector = MosaicAliasTransactionBuffer
+            .createDeadlineVector(builder, this.deadline);
+        const feeVector = MosaicAliasTransactionBuffer
+            .createFeeVector(builder, this.maxFee);
+        const namespaceIdVector = MosaicAliasTransactionBuffer
+            .createNamespaceIdVector(builder, this.namespaceId);
+        const mosaicIdVector = MosaicAliasTransactionBuffer
+            .createMosaicIdVector(builder, this.mosaicId);
+        MosaicAliasTransactionBuffer.startMosaicAliasTransactionBuffer(builder);
+        MosaicAliasTransactionBuffer.addSize(builder, 137);
+        MosaicAliasTransactionBuffer.addSignature(builder, signatureVector);
+        MosaicAliasTransactionBuffer.addSigner(builder, signerVector);
+        MosaicAliasTransactionBuffer.addVersion(builder, this.version);
+        MosaicAliasTransactionBuffer.addType(builder, this.type);
+        MosaicAliasTransactionBuffer.addFee(builder, feeVector);
+        MosaicAliasTransactionBuffer.addDeadline(builder, deadlineVector);
+        MosaicAliasTransactionBuffer.addActionType(builder, this.actionType);
+        MosaicAliasTransactionBuffer.addNamespaceId(builder, namespaceIdVector);
+        MosaicAliasTransactionBuffer.addMosaicId(builder, mosaicIdVector);
+        // Calculate size
+        const codedMosaicChangeSupply = MosaicAliasTransactionBuffer.endMosaicAliasTransactionBuffer(builder);
+>>>>>>> jwt
         builder.finish(codedMosaicChangeSupply);
         const bytes = builder.asUint8Array();
         return new MosaicAliasTransaction(bytes);

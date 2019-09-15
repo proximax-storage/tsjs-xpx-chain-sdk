@@ -141,13 +141,21 @@ class Transaction {
      * @internal
      */
     versionToDTO() {
+<<<<<<< HEAD
         return (this.networkType << 24) + this.version;
+=======
+        return (this.networkType << 8) + this.version;
+>>>>>>> jwt
     }
     /**
      * @internal
      */
     versionToHex() {
+<<<<<<< HEAD
         return '0x' + (this.versionToDTO() >>> 0).toString(16); // ">>> 0" hack makes it effectively an Uint32
+=======
+        return '0x' + this.versionToDTO().toString(16);
+>>>>>>> jwt
     }
     /**
      * @description reapply a given value to the transaction in an immutable way
@@ -170,7 +178,11 @@ class Transaction {
         const byteSize = 4 // size
             + 64 // signature
             + 32 // signer
+<<<<<<< HEAD
             + 4 // version
+=======
+            + 2 // version
+>>>>>>> jwt
             + 2 // type
             + 8 // maxFee
             + 8; // deadline

@@ -57,11 +57,19 @@ describe('LockFundsTransaction', () => {
         }).to.throw(Error);
     });
     describe('size', () => {
+<<<<<<< HEAD
         it('should return 178 for LockFundsTransaction transaction byte size', () => {
             const aggregateTransaction = AggregateTransaction_1.AggregateTransaction.createBonded(Deadline_1.Deadline.create(), [], NetworkType_1.NetworkType.MIJIN_TEST, []);
             const signedTransaction = account.sign(aggregateTransaction, generationHash);
             const lockFundsTransaction = LockFundsTransaction_1.LockFundsTransaction.create(Deadline_1.Deadline.create(), NetworkCurrencyMosaic_1.NetworkCurrencyMosaic.createRelative(10), UInt64_1.UInt64.fromUint(10), signedTransaction, NetworkType_1.NetworkType.MIJIN_TEST);
             chai_1.expect(lockFundsTransaction.size).to.be.equal(178);
+=======
+        it('should return 176 for LockFundsTransaction transaction byte size', () => {
+            const aggregateTransaction = AggregateTransaction_1.AggregateTransaction.createBonded(Deadline_1.Deadline.create(), [], NetworkType_1.NetworkType.MIJIN_TEST, []);
+            const signedTransaction = account.sign(aggregateTransaction, generationHash);
+            const lockFundsTransaction = LockFundsTransaction_1.LockFundsTransaction.create(Deadline_1.Deadline.create(), NetworkCurrencyMosaic_1.NetworkCurrencyMosaic.createRelative(10), UInt64_1.UInt64.fromUint(10), signedTransaction, NetworkType_1.NetworkType.MIJIN_TEST);
+            chai_1.expect(lockFundsTransaction.size).to.be.equal(176);
+>>>>>>> jwt
         });
     });
 });

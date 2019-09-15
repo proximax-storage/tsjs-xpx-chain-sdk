@@ -27,6 +27,7 @@ import { NamespaceName } from '../model/namespace/NamespaceName';
 import {UInt64} from '../model/UInt64';
 import { MosaicInfoDTO, MosaicNamesDTO, MosaicRoutesApi } from './api';
 import {Http} from './Http';
+import { Authentication } from './model/models';
 import {MosaicRepository} from './MosaicRepository';
 import {NetworkHttp} from './NetworkHttp';
 
@@ -47,10 +48,16 @@ export class MosaicHttp extends Http implements MosaicRepository {
      * @param url
      * @param networkHttp
      */
-    constructor(url: string, networkHttp?: NetworkHttp) {
+    constructor(url: string, networkHttp?: NetworkHttp, auth?: Authentication, headers?: {}) {
         networkHttp = networkHttp == null ? new NetworkHttp(url) : networkHttp;
         super(networkHttp);
         this.mosaicRoutesApi = new MosaicRoutesApi(url);
+        if (auth) {
+            this.mosaicRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.mosaicRoutesApi.setHeaders(headers);
+        }
     }
 
     /**

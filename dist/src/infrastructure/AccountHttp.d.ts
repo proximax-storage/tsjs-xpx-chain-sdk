@@ -1,7 +1,11 @@
 import { Observable } from 'rxjs';
 import { AccountInfo } from '../model/account/AccountInfo';
 import { AccountNames } from '../model/account/AccountNames';
+<<<<<<< HEAD
 import { AccountRestrictionsInfo } from '../model/account/AccountRestrictionsInfo';
+=======
+import { AccountPropertiesInfo } from '../model/account/AccountPropertiesInfo';
+>>>>>>> jwt
 import { Address } from '../model/account/Address';
 import { MultisigAccountGraphInfo } from '../model/account/MultisigAccountGraphInfo';
 import { MultisigAccountInfo } from '../model/account/MultisigAccountInfo';
@@ -12,6 +16,10 @@ import { AccountRepository } from './AccountRepository';
 import { Http } from './Http';
 import { NetworkHttp } from './NetworkHttp';
 import { QueryParams } from './QueryParams';
+<<<<<<< HEAD
+=======
+import { Authentication } from './model/models';
+>>>>>>> jwt
 /**
  * Account http repository.
  *
@@ -23,7 +31,11 @@ export declare class AccountHttp extends Http implements AccountRepository {
      * @param url
      * @param networkHttp
      */
+<<<<<<< HEAD
     constructor(url: string, networkHttp?: NetworkHttp);
+=======
+    constructor(url: string, networkHttp?: NetworkHttp, auth?: Authentication, headers?: {});
+>>>>>>> jwt
     /**
      * Gets an AccountInfo for an account.
      * @param address Address
@@ -31,6 +43,7 @@ export declare class AccountHttp extends Http implements AccountRepository {
      */
     getAccountInfo(address: Address): Observable<AccountInfo>;
     /**
+<<<<<<< HEAD
      * Get Account restrictions.
      * @param publicAccount public account
      * @returns Observable<AccountRestrictionsInfo>
@@ -42,6 +55,19 @@ export declare class AccountHttp extends Http implements AccountRepository {
      * @returns Observable<AccountRestrictionsInfo[]>
      */
     getAccountRestrictionsFromAccounts(addresses: Address[]): Observable<AccountRestrictionsInfo[]>;
+=======
+     * Gets Account property.
+     * @param publicAccount public account
+     * @returns Observable<AccountPropertiesInfo>
+     */
+    getAccountProperties(address: Address): Observable<AccountPropertiesInfo>;
+    /**
+     * Gets Account properties.
+     * @param address list of addresses
+     * @returns Observable<AccountPropertiesInfo[]>
+     */
+    getAccountPropertiesFromAccounts(addresses: Address[]): Observable<AccountPropertiesInfo[]>;
+>>>>>>> jwt
     /**
      * Gets AccountsInfo for different accounts.
      * @param addresses List of Address

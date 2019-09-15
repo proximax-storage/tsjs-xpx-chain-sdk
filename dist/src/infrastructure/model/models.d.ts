@@ -14,10 +14,17 @@ export * from './accountIds';
 export * from './accountInfoDTO';
 export * from './accountMetaDTO';
 export * from './accountNamesDTO';
+<<<<<<< HEAD
 export * from './accountRestrictionDTO';
 export * from './accountRestrictionTypeEnum';
 export * from './accountRestrictionsDTO';
 export * from './accountRestrictionsInfoDTO';
+=======
+export * from './accountPropertiesDTO';
+export * from './accountPropertiesInfoDTO';
+export * from './accountPropertyDTO';
+export * from './accountPropertyTypeEnum';
+>>>>>>> jwt
 export * from './aliasDTO';
 export * from './aliasTypeEnum';
 export * from './announceTransactionInfoDTO';

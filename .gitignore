@@ -86,5 +86,7 @@ modules.xml
 *.ipr
 
 # End of https://www.gitignore.io/api/intellij+iml
+!dist/
 ts-docs
 docs/
+dist/

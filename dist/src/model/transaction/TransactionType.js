@@ -80,6 +80,7 @@ TransactionType.SECRET_LOCK = 0x4152;
  */
 TransactionType.SECRET_PROOF = 0x4252;
 /**
+<<<<<<< HEAD
  * Account restriction address transaction type
  * @type {number}
  */
@@ -94,6 +95,22 @@ TransactionType.MODIFY_ACCOUNT_RESTRICTION_MOSAIC = 0x4250;
  * @type {number}
  */
 TransactionType.MODIFY_ACCOUNT_RESTRICTION_OPERATION = 0x4350;
+=======
+ * Account property address transaction type
+ * @type {number}
+ */
+TransactionType.MODIFY_ACCOUNT_PROPERTY_ADDRESS = 0x4150;
+/**
+ * Account property mosaic transaction type
+ * @type {number}
+ */
+TransactionType.MODIFY_ACCOUNT_PROPERTY_MOSAIC = 0x4250;
+/**
+ * Account property entity type transaction type
+ * @type {number}
+ */
+TransactionType.MODIFY_ACCOUNT_PROPERTY_ENTITY_TYPE = 0x4350;
+>>>>>>> jwt
 /**
  * Link account transaction type
  * @type {number}
@@ -118,6 +135,7 @@ TransactionType.MODIFY_NAMESPACE_METADATA = 0x433D;
  * Modify contract transaction type
  */
 TransactionType.MODIFY_CONTRACT = 0x4157;
+<<<<<<< HEAD
 /**
  * Upgrade chain transaction type
  */
@@ -126,5 +144,7 @@ TransactionType.CHAIN_UPGRADE = 0x4158;
  * Configure chain transaction type
  */
 TransactionType.CHAIN_CONFIGURE = 0x4159;
+=======
+>>>>>>> jwt
 exports.TransactionType = TransactionType;
 //# sourceMappingURL=TransactionType.js.map

@@ -1,4 +1,5 @@
 "use strict";
+<<<<<<< HEAD
 // Copyright 2019 ProximaX Limited. All rights reserved.
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file
@@ -8,6 +9,10 @@ const UInt64_1 = require("../UInt64");
  * The contract structure stores a supercontract definition as returned from http contractApi.
  * The contract can be created on blockachain using ModifyContractTransaction
  */
+=======
+Object.defineProperty(exports, "__esModule", { value: true });
+const UInt64_1 = require("../UInt64");
+>>>>>>> jwt
 class Contract {
     constructor(multisig, multisigAddress, start, duration, hash, customers, executors, verifiers) {
         this.multisig = multisig;

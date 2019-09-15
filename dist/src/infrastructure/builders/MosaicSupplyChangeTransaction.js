@@ -36,7 +36,11 @@ class Builder {
         this.maxFee = [0, 0];
         this.type = TransactionType_1.TransactionType.MOSAIC_SUPPLY_CHANGE;
     }
+<<<<<<< HEAD
     addMaxFee(maxFee) {
+=======
+    addFee(maxFee) {
+>>>>>>> jwt
         this.maxFee = maxFee;
         return this;
     }
@@ -74,6 +78,7 @@ class Builder {
         const deadlineVector = MosaicSupplyChangeTransactionBuffer
             .createDeadlineVector(builder, this.deadline);
         const feeVector = MosaicSupplyChangeTransactionBuffer
+<<<<<<< HEAD
             .createMaxFeeVector(builder, this.maxFee);
         const mosaicIdVector = MosaicSupplyChangeTransactionBuffer
             .createMaxFeeVector(builder, this.mosaicId);
@@ -81,11 +86,24 @@ class Builder {
             .createMaxFeeVector(builder, this.delta);
         MosaicSupplyChangeTransactionBuffer.startMosaicSupplyChangeTransactionBuffer(builder);
         MosaicSupplyChangeTransactionBuffer.addSize(builder, 122 + 17);
+=======
+            .createFeeVector(builder, this.maxFee);
+        const mosaicIdVector = MosaicSupplyChangeTransactionBuffer
+            .createFeeVector(builder, this.mosaicId);
+        const deltaVector = MosaicSupplyChangeTransactionBuffer
+            .createFeeVector(builder, this.delta);
+        MosaicSupplyChangeTransactionBuffer.startMosaicSupplyChangeTransactionBuffer(builder);
+        MosaicSupplyChangeTransactionBuffer.addSize(builder, 137);
+>>>>>>> jwt
         MosaicSupplyChangeTransactionBuffer.addSignature(builder, signatureVector);
         MosaicSupplyChangeTransactionBuffer.addSigner(builder, signerVector);
         MosaicSupplyChangeTransactionBuffer.addVersion(builder, this.version);
         MosaicSupplyChangeTransactionBuffer.addType(builder, this.type);
+<<<<<<< HEAD
         MosaicSupplyChangeTransactionBuffer.addMaxFee(builder, feeVector);
+=======
+        MosaicSupplyChangeTransactionBuffer.addFee(builder, feeVector);
+>>>>>>> jwt
         MosaicSupplyChangeTransactionBuffer.addDeadline(builder, deadlineVector);
         MosaicSupplyChangeTransactionBuffer.addMosaicId(builder, mosaicIdVector);
         MosaicSupplyChangeTransactionBuffer.addDirection(builder, this.direction);

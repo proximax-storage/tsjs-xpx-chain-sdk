@@ -40,10 +40,23 @@ class MosaicHttp extends Http_1.Http {
      * @param url
      * @param networkHttp
      */
+<<<<<<< HEAD
     constructor(url, networkHttp) {
         networkHttp = networkHttp == null ? new NetworkHttp_1.NetworkHttp(url) : networkHttp;
         super(networkHttp);
         this.mosaicRoutesApi = new api_1.MosaicRoutesApi(url);
+=======
+    constructor(url, networkHttp, auth, headers) {
+        networkHttp = networkHttp == null ? new NetworkHttp_1.NetworkHttp(url) : networkHttp;
+        super(networkHttp);
+        this.mosaicRoutesApi = new api_1.MosaicRoutesApi(url);
+        if (auth) {
+            this.mosaicRoutesApi.setDefaultAuthentication(auth);
+        }
+        if (headers) {
+            this.mosaicRoutesApi.setHeaders(headers);
+        }
+>>>>>>> jwt
     }
     /**
      * Gets the MosaicInfo for a given mosaicId
@@ -62,7 +75,11 @@ class MosaicHttp extends Http_1.Http {
                 divisibility = mosaicInfoDTO.mosaic.properties[MosaicPropertyType_1.MosaicPropertyType.Divisibility].value;
             }
             if (mosaicInfoDTO.mosaic.properties[MosaicPropertyType_1.MosaicPropertyType.Duration].value) {
+<<<<<<< HEAD
                 duration = mosaicInfoDTO.mosaic.properties[MosaicPropertyType_1.MosaicPropertyType.Duration].value;
+=======
+                duration = mosaicInfoDTO.mosaic.properties[MosaicPropertyType_1.MosaicPropertyType.Divisibility].value;
+>>>>>>> jwt
             }
             return new MosaicInfo_1.MosaicInfo(mosaicInfoDTO.meta.id, new MosaicId_1.MosaicId(mosaicInfoDTO.mosaic.mosaicId), new UInt64_1.UInt64(mosaicInfoDTO.mosaic.supply), new UInt64_1.UInt64(mosaicInfoDTO.mosaic.height), PublicAccount_1.PublicAccount.createFromPublicKey(mosaicInfoDTO.mosaic.owner, networkType), mosaicInfoDTO.mosaic.revision, new MosaicProperties_1.MosaicProperties(mosaicFlag ? new UInt64_1.UInt64(mosaicFlag) : UInt64_1.UInt64.fromUint(0), (divisibility ? new UInt64_1.UInt64(divisibility) : UInt64_1.UInt64.fromUint(0)).compact(), duration ? new UInt64_1.UInt64(duration) : undefined));
         }))));

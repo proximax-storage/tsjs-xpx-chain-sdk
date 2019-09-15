@@ -603,7 +603,12 @@ exports.crypto_shared_key_hash = (shared, pk, sk, hashfunc, signSchema) => {
     d[31] &= 127;
     d[31] |= 64;
     let q = [exports.gf(), exports.gf(), exports.gf(), exports.gf()];
+<<<<<<< HEAD
     exports.unpackneg(q, pk);
+=======
+    // unpackneg(q, pk);
+    exports.unpack(q, pk); // unpackneg/unpack call here is the only difference between xpx and nem regarding shared key derivation
+>>>>>>> jwt
     exports.scalarmult(p, q, d);
     exports.pack(shared, p);
 };

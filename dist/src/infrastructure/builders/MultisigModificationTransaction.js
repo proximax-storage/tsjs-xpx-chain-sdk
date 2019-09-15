@@ -21,7 +21,11 @@ const MultisigModificationTransactionBuffer_1 = require("../buffers/MultisigModi
 const MultisigModificationTransactionSchema_1 = require("../schemas/MultisigModificationTransactionSchema");
 const VerifiableTransaction_1 = require("./VerifiableTransaction");
 const flatbuffers_1 = require("flatbuffers");
+<<<<<<< HEAD
 const { ModifyMultisigAccountTransactionBuffer, CosignatoryModificationBuffer, } = MultisigModificationTransactionBuffer_1.default.Buffers;
+=======
+const { MultisigModificationTransactionBuffer, CosignatoryModificationBuffer, } = MultisigModificationTransactionBuffer_1.default.Buffers;
+>>>>>>> jwt
 /**
  * @module transactions/MultisigModificationTransaction
  */
@@ -37,7 +41,11 @@ class Builder {
         this.maxFee = [0, 0];
         this.type = TransactionType_1.TransactionType.MODIFY_MULTISIG_ACCOUNT;
     }
+<<<<<<< HEAD
     addMaxFee(maxFee) {
+=======
+    addFee(maxFee) {
+>>>>>>> jwt
         this.maxFee = maxFee;
         return this;
     }
@@ -78,6 +86,7 @@ class Builder {
             modificationsArray.push(CosignatoryModificationBuffer.endCosignatoryModificationBuffer(builder));
         });
         // Create vectors
+<<<<<<< HEAD
         const signatureVector = ModifyMultisigAccountTransactionBuffer
             .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
         const signerVector = ModifyMultisigAccountTransactionBuffer
@@ -103,6 +112,33 @@ class Builder {
         // Calculate size
         const codedMultisigAggregate = ModifyMultisigAccountTransactionBuffer
             .endModifyMultisigAccountTransactionBuffer(builder);
+=======
+        const signatureVector = MultisigModificationTransactionBuffer
+            .createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
+        const signerVector = MultisigModificationTransactionBuffer
+            .createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
+        const deadlineVector = MultisigModificationTransactionBuffer
+            .createDeadlineVector(builder, this.deadline);
+        const feeVector = MultisigModificationTransactionBuffer
+            .createFeeVector(builder, this.maxFee);
+        const modificationsVector = MultisigModificationTransactionBuffer
+            .createModificationsVector(builder, modificationsArray);
+        MultisigModificationTransactionBuffer.startMultisigModificationTransactionBuffer(builder);
+        MultisigModificationTransactionBuffer.addSize(builder, 123 + (33 * this.modifications.length));
+        MultisigModificationTransactionBuffer.addSignature(builder, signatureVector);
+        MultisigModificationTransactionBuffer.addSigner(builder, signerVector);
+        MultisigModificationTransactionBuffer.addVersion(builder, this.version);
+        MultisigModificationTransactionBuffer.addType(builder, this.type);
+        MultisigModificationTransactionBuffer.addFee(builder, feeVector);
+        MultisigModificationTransactionBuffer.addDeadline(builder, deadlineVector);
+        MultisigModificationTransactionBuffer.addMinRemovalDelta(builder, this.minRemovalDelta);
+        MultisigModificationTransactionBuffer.addMinApprovalDelta(builder, this.minApprovalDelta);
+        MultisigModificationTransactionBuffer.addNumModifications(builder, this.modifications.length);
+        MultisigModificationTransactionBuffer.addModifications(builder, modificationsVector);
+        // Calculate size
+        const codedMultisigAggregate = MultisigModificationTransactionBuffer
+            .endMultisigModificationTransactionBuffer(builder);
+>>>>>>> jwt
         builder.finish(codedMultisigAggregate);
         const bytes = builder.asUint8Array();
         return new MultisigModificationTransaction(bytes);

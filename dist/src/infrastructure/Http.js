@@ -26,10 +26,23 @@ class Http {
      * @param url
      * @param networkHttp
      */
+<<<<<<< HEAD
     constructor(networkHttp) {
         if (networkHttp) {
             this.networkHttp = networkHttp;
         }
+=======
+    constructor(networkHttp, auth, headers) {
+        if (networkHttp) {
+            this.networkHttp = networkHttp;
+        }
+        if (auth) {
+            this.auth = auth;
+        }
+        if (headers) {
+            this.headers = headers;
+        }
+>>>>>>> jwt
     }
     getNetworkTypeObservable() {
         let networkTypeResolve;

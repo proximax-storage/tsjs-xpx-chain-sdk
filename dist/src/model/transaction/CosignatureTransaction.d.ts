@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import { SignSchema } from '../../core/crypto';
+=======
+>>>>>>> jwt
 import { Account } from '../account/Account';
 import { AggregateTransaction } from './AggregateTransaction';
 import { CosignatureSignedTransaction } from './CosignatureSignedTransaction';
@@ -24,6 +27,7 @@ export declare class CosignatureTransaction {
      * Creating a new CosignatureSignedTransaction
      * @param account - The signing account
      * @param payload - off transaction payload (aggregated transaction is unannounced)
+<<<<<<< HEAD
      * @param generationHash - Network generation hash
      * @returns {CosignatureSignedTransaction}
      */
@@ -36,4 +40,10 @@ export declare class CosignatureTransaction {
      * @returns {CosignatureSignedTransaction}
      */
     signWith(account: Account, signSchema?)
+=======
+     * @param gernationHash - Network generation hash
+     * @returns {CosignatureSignedTransaction}
+     */
+    static signTransactionPayload(account: Account, payload: string, gernationHash: string): CosignatureSignedTransaction;
+>>>>>>> jwt
 }
