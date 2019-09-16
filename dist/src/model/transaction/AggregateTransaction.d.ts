@@ -1,7 +1,9 @@
+import { Account } from '../account/Account';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
 import { AggregateTransactionCosignature } from './AggregateTransactionCosignature';
+import { CosignatureSignedTransaction } from './CosignatureSignedTransaction';
 import { Deadline } from './Deadline';
 import { InnerTransaction } from './InnerTransaction';
 import { Transaction } from './Transaction';
@@ -39,6 +41,27 @@ export declare class AggregateTransaction extends Transaction {
      * The array of transaction cosigners signatures.
      */
     cosignatures: AggregateTransactionCosignature[], signature?: string, signer?: PublicAccount, transactionInfo?: TransactionInfo);
+    /**
+     * @internal
+     * Sign transaction with cosignatories creating a new SignedTransaction
+     * @param initiatorAccount - Initiator account
+     * @param cosignatories - The array of accounts that will cosign the transaction
+     * @param generationHash - Network generation hash hex
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @returns {SignedTransaction}
+     */
+    signTransactionWithCosignatories(initiatorAccount: Account, cosignatories: Account[], generationHash: string, signSchema?)
+    /**
+     * @internal
+     * Sign transaction with cosignatories collected from cosigned transactions and creating a new SignedTransaction
+     * For off chain Aggregated Complete Transaction co-signing.
+     * @param initiatorAccount - Initiator account
+     * @param {CosignatureSignedTransaction[]} cosignatureSignedTransactions - Array of cosigned transaction
+     * @param generationHash - Network generation hash hex
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @return {SignedTransaction}
+     */
+    signTransactionGivenSignatures(initiatorAccount: Account, cosignatureSignedTransactions: CosignatureSignedTransaction[], generationHash: string, signSchema?)
     /**
      * Create an aggregate complete transaction object
      * @param deadline - The deadline to include the transaction.

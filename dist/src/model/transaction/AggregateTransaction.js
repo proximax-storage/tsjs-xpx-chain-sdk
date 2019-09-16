@@ -22,6 +22,7 @@ const SignedTransaction_1 = require("./SignedTransaction");
 const Transaction_1 = require("./Transaction");
 const TransactionType_1 = require("./TransactionType");
 const TransactionVersion_1 = require("./TransactionVersion");
+
 /**
  * Aggregate innerTransactions contain multiple innerTransactions that can be initiated by different accounts.
  */
