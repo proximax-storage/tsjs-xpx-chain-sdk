@@ -20,8 +20,8 @@ describe('FeeCalculationStrategy', () => {
 
         it('should return default FeeCalculationStrategy values', () => {
             expect(DefaultMaxFee).to.be.equal(5000000);
-            expect(calculateFee(1)).to.be.eql(UInt64.fromUint(0));
-            expect(calculateFee(1, DefaultFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(0));
+            expect(calculateFee(1)).to.be.eql(UInt64.fromUint(DefaultFeeCalculationStrategy));
+            expect(calculateFee(1, DefaultFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(FeeCalculationStrategy.MiddleFeeCalculationStrategy));
             expect(calculateFee(1, FeeCalculationStrategy.ZeroFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(0));
             expect(calculateFee(1, FeeCalculationStrategy.LowFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(25));
             expect(calculateFee(1, FeeCalculationStrategy.MiddleFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(250));
@@ -30,8 +30,8 @@ describe('FeeCalculationStrategy', () => {
 
         for (let length of [10, 100, 1000]) {
             it('should return correctly computed maxFee with length ' + length + ' for all FeeCalculationStrategy values', () => {
-                expect(calculateFee(length)).to.be.eql(UInt64.fromUint(0));
-                expect(calculateFee(length, DefaultFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(0));
+                expect(calculateFee(length)).to.be.eql(UInt64.fromUint(length * DefaultFeeCalculationStrategy));
+                expect(calculateFee(length, DefaultFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(length * FeeCalculationStrategy.MiddleFeeCalculationStrategy));
                 expect(calculateFee(length, FeeCalculationStrategy.ZeroFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(0));
                 expect(calculateFee(length, FeeCalculationStrategy.LowFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(length * 25));
                 expect(calculateFee(length, FeeCalculationStrategy.MiddleFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(length * 250));
@@ -57,9 +57,10 @@ describe('FeeCalculationStrategy', () => {
     describe('TransactionBuilderFactory', () => {
         describe('should return correct maxFee for created tx with FeeCalculationStrategy configured', () => {
             const emptyTransferTxSize = 149;
-            it('should return 0 as default', () => {
+            it('should return DefaultFeeCalculationStrategy as default', () => {
                 const factory = new TransactionBuilderFactory();
-                expect(factory.transfer().build().maxFee).to.be.eql(UInt64.fromUint(0));
+                const transfer = factory.transfer().build();
+                expect(transfer.maxFee.compact()).to.be.eql(transfer.size * DefaultFeeCalculationStrategy);
             });
             it('should return 3725 for LowFeeCalculationStrategy', () => {
                 const factory = new TransactionBuilderFactory();
