@@ -151,7 +151,7 @@ export class ModifyContractTransactionBuilder extends TransactionBuilder {
             this._customers,
             this._executors,
             this._verifiers,
-            this._maxFee ? this._maxFee : calculateFee(ModifyContractTransaction.calculateSize(this._hash.length, this._customers.length, this._executors.length, this._verifiers.length)),
+            this._maxFee ? this._maxFee : calculateFee(ModifyContractTransaction.calculateSize(this._hash.length, this._customers.length, this._executors.length, this._verifiers.length), this._feeCalculationStrategy),
             this._signature,
             this._signer,
             this._transactionInfo

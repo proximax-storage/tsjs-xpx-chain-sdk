@@ -42,6 +42,7 @@ import { TransactionType } from '../../../src/model/transaction/TransactionType'
 import {TransferTransaction} from '../../../src/model/transaction/TransferTransaction';
 import {UInt64} from '../../../src/model/UInt64';
 import {Cosignatory2Account, CosignatoryAccount, MultisigAccount, TestingAccount} from '../../conf/conf.spec';
+import { DefaultFeeCalculationStrategy } from '../../../src/model/transaction/FeeCalculationStrategy';
 
 describe('AggregateTransaction', () => {
     let account: Account;
@@ -50,7 +51,7 @@ describe('AggregateTransaction', () => {
         account = TestingAccount;
     });
 
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
         const transferTransaction = TransferTransaction.create(
             Deadline.create(1, ChronoUnit.HOURS),
             Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC'),
@@ -66,8 +67,7 @@ describe('AggregateTransaction', () => {
             [],
         );
 
-        expect(aggregateTransaction.maxFee.higher).to.be.equal(0);
-        expect(aggregateTransaction.maxFee.lower).to.be.equal(0);
+        expect(aggregateTransaction.maxFee.compact()).to.be.equal(aggregateTransaction.size * DefaultFeeCalculationStrategy);
     });
 
     it('should filled maxFee override transaction maxFee', () => {

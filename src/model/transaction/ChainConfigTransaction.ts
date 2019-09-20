@@ -12,7 +12,7 @@ import { TransactionInfo } from './TransactionInfo';
 import { Builder } from '../../infrastructure/builders/ChainConfigTransaction';
 import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
 import { TransactionVersion } from './TransactionVersion';
-import { calculateFee } from './FeeCalculationStrategy';
+import { calculateFee, FeeCalculationStrategy } from './FeeCalculationStrategy';
 
 export class ChainConfigTransaction extends Transaction {
     /**
@@ -97,6 +97,11 @@ export class ChainConfigTransactionBuilder extends TransactionBuilder {
     private _blockChainConfig: string;
     private _supportedEntityVersions: string;
 
+    constructor() {
+        super();
+        this._feeCalculationStrategy = FeeCalculationStrategy.ZeroFeeCalculationStrategy;
+    }
+
     public applyHeightDelta(applyHeightDelta: UInt64) {
         this._applyHeightDelta = applyHeightDelta;
         return this;
@@ -117,7 +122,7 @@ export class ChainConfigTransactionBuilder extends TransactionBuilder {
             this._networkType,
             TransactionVersion.CHAIN_CONFIG,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._maxFee ? this._maxFee : calculateFee(ChainConfigTransaction.calculateSize(this._blockChainConfig.length, this._supportedEntityVersions.length)),
+            this._maxFee ? this._maxFee : calculateFee(ChainConfigTransaction.calculateSize(this._blockChainConfig.length, this._supportedEntityVersions.length), this._feeCalculationStrategy),
             this._applyHeightDelta,
             this._blockChainConfig,
             this._supportedEntityVersions,

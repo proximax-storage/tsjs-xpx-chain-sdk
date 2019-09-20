@@ -157,7 +157,7 @@ export class AddressAliasTransactionBuilder extends TransactionBuilder {
             this._networkType,
             TransactionVersion.ADDRESS_ALIAS,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._maxFee ? this._maxFee : calculateFee(AddressAliasTransaction.calculateSize()),
+            this._maxFee ? this._maxFee : calculateFee(AddressAliasTransaction.calculateSize(), this._feeCalculationStrategy),
             this._actionType,
             this._namespaceId,
             this._address,

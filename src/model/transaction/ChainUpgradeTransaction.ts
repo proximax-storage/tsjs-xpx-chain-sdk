@@ -12,7 +12,7 @@ import { TransactionInfo } from './TransactionInfo';
 import { Builder } from '../../infrastructure/builders/ChainUpgradeTransaction';
 import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
 import { TransactionVersion } from './TransactionVersion';
-import { calculateFee } from './FeeCalculationStrategy';
+import { calculateFee, FeeCalculationStrategy } from './FeeCalculationStrategy';
 
 export class ChainUpgradeTransaction extends Transaction {
     /**
@@ -85,6 +85,11 @@ export class ChainUpgradeTransaction extends Transaction {
 export class ChainUpgradeTransactionBuilder extends TransactionBuilder {
     private _upgradePeriod: UInt64;
     private _newCatapultVersion: UInt64;
+
+    constructor() {
+        super();
+        this._feeCalculationStrategy = FeeCalculationStrategy.ZeroFeeCalculationStrategy;
+    }
 
     public upgradePeriod(upgradePeriod: UInt64) {
         this._upgradePeriod = upgradePeriod;

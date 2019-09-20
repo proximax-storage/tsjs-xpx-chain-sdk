@@ -22,11 +22,12 @@ import {Deadline} from '../../../src/model/transaction/Deadline';
 import {LockFundsTransaction} from '../../../src/model/transaction/LockFundsTransaction';
 import {UInt64} from '../../../src/model/UInt64';
 import {TestingAccount} from '../../conf/conf.spec';
+import { DefaultFeeCalculationStrategy } from '../../../src/model/transaction/FeeCalculationStrategy';
 
 describe('LockFundsTransaction', () => {
     const account = TestingAccount;
     const generationHash = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
         const aggregateTransaction = AggregateTransaction.createBonded(
             Deadline.create(),
             [],
@@ -41,8 +42,7 @@ describe('LockFundsTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        expect(lockFundsTransaction.maxFee.higher).to.be.equal(0);
-        expect(lockFundsTransaction.maxFee.lower).to.be.equal(0);
+        expect(lockFundsTransaction.maxFee.compact()).to.be.equal(lockFundsTransaction.size * DefaultFeeCalculationStrategy);
     });
 
     it('should filled maxFee override transaction maxFee', () => {

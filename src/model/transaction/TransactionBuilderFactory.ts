@@ -136,13 +136,17 @@ export class TransactionBuilderFactory {
 
     public chainConfig(): ChainConfigTransactionBuilder {
         const builder = new ChainConfigTransactionBuilder();
-        this.configureBuilder(builder);
+        builder.networkType(this.networkType)
+            .generationHash(this.generationHash)
+            .createNewDeadlineFn(this.createNewDeadlineFn);
         return builder;
     }
 
     public chainUpgrade(): ChainUpgradeTransactionBuilder {
         const builder = new ChainUpgradeTransactionBuilder();
-        this.configureBuilder(builder);
+        builder.networkType(this.networkType)
+            .generationHash(this.generationHash)
+            .createNewDeadlineFn(this.createNewDeadlineFn);
         return builder;
     }
 

@@ -27,7 +27,7 @@ import { InnerTransaction } from './InnerTransaction';
 import { SignedTransaction } from './SignedTransaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
-import { FeeCalculationStrategy } from './FeeCalculationStrategy';
+import { FeeCalculationStrategy, DefaultFeeCalculationStrategy } from './FeeCalculationStrategy';
 
 /**
  * An abstract transaction class that serves as the base class of all NEM transactions.
@@ -247,7 +247,7 @@ export abstract class TransactionBuilder {
     protected _networkType: NetworkType;
     protected _deadline: Deadline;
     protected _generationHash: string;
-    protected _feeCalculationStrategy: FeeCalculationStrategy = FeeCalculationStrategy.ZeroFeeCalculationStrategy;
+    protected _feeCalculationStrategy: FeeCalculationStrategy = DefaultFeeCalculationStrategy;
     protected _maxFee: UInt64 | undefined;
     protected _signature: string;
     protected _signer: PublicAccount;
