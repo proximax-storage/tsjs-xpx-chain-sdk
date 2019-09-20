@@ -26,7 +26,7 @@ import {
 import { VerifiableTransaction } from './VerifiableTransaction';
 
 import {flatbuffers} from 'flatbuffers';
-import { MosaicPropertyType } from '../../model/model';
+import { MosaicPropertyType } from '../../model/mosaic/MosaicPropertyType';
 
 const {
     MosaicDefinitionTransactionBuffer,

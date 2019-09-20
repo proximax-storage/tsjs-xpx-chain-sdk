@@ -30,6 +30,8 @@ import {AddressAliasTransaction} from '../../model/transaction/AddressAliasTrans
 import {AggregateTransaction} from '../../model/transaction/AggregateTransaction';
 import {AggregateTransactionCosignature} from '../../model/transaction/AggregateTransactionCosignature';
 import {AggregateTransactionInfo} from '../../model/transaction/AggregateTransactionInfo';
+import {ChainConfigTransaction} from '../../model/transaction/ChainConfigTransaction';
+import {ChainUpgradeTransaction} from '../../model/transaction/ChainUpgradeTransaction';
 import {Deadline} from '../../model/transaction/Deadline';
 import { EncryptedMessage } from '../../model/transaction/EncryptedMessage';
 import {LockFundsTransaction} from '../../model/transaction/LockFundsTransaction';
@@ -54,7 +56,6 @@ import {UInt64} from '../../model/UInt64';
 import { ModifyMetadataTransaction, MetadataModification } from '../../model/transaction/ModifyMetadataTransaction';
 import { MetadataType } from '../../model/metadata/MetadataType';
 import { ModifyContractTransaction } from '../../model/transaction/ModifyContractTransaction';
-import { ChainConfigTransaction, ChainUpgradeTransaction } from '../../model/model';
 
 /**
  * @internal
