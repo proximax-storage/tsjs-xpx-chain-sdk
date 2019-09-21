@@ -22,10 +22,11 @@ import { Mosaic } from '../mosaic/Mosaic';
 import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
 import { SignedTransaction } from './SignedTransaction';
-import { Transaction } from './Transaction';
+import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
 import { TransactionVersion } from './TransactionVersion';
+import { calculateFee } from './FeeCalculationStrategy';
 
 /**
  * Lock funds transaction is used before sending an Aggregate bonded transaction, as a deposit to announce the transaction.
@@ -55,16 +56,15 @@ export class LockFundsTransaction extends Transaction {
                          duration: UInt64,
                          signedTransaction: SignedTransaction,
                          networkType: NetworkType,
-                         maxFee: UInt64 = new UInt64([0, 0])): LockFundsTransaction {
-        return new LockFundsTransaction(
-            networkType,
-            TransactionVersion.LOCK,
-            deadline,
-            maxFee,
-            mosaic,
-            duration,
-            signedTransaction,
-        );
+                         maxFee?: UInt64): LockFundsTransaction {
+        return new LockFundsTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .mosaic(mosaic)
+            .duration(duration)
+            .signedTransaction(signedTransaction)
+            .build();
     }
 
     /**
@@ -109,7 +109,11 @@ export class LockFundsTransaction extends Transaction {
      * @memberof LockFundsTransaction
      */
     public get size(): number {
-        const byteSize = super.size;
+        return LockFundsTransaction.calculateSize();
+    }
+
+    public static calculateSize(): number {
+        const byteSize = Transaction.getHeaderSize();
 
         // set static byte size fields
         const byteMosaicId = 8;
@@ -136,5 +140,39 @@ export class LockFundsTransaction extends Transaction {
             .addHash(this.hash)
             .build();
     }
+}
+export class LockFundsTransactionBuilder extends TransactionBuilder {
+    private _mosaic: Mosaic;
+    private _duration: UInt64;
+    private _signedTransaction: SignedTransaction;
 
+    public mosaic(mosaic: Mosaic) {
+        this._mosaic = mosaic;
+        return this;
+    }
+
+    public duration(duration: UInt64) {
+        this._duration = duration;
+        return this;
+    }
+
+    public signedTransaction(signedTransaction: SignedTransaction) {
+        this._signedTransaction = signedTransaction;
+        return this;
+    }
+
+    public build(): LockFundsTransaction {
+        return new LockFundsTransaction(
+            this._networkType,
+            TransactionVersion.LOCK,
+            this._deadline ? this._deadline : this._createNewDeadlineFn(),
+            this._maxFee ? this._maxFee : calculateFee(LockFundsTransaction.calculateSize(), this._feeCalculationStrategy),
+            this._mosaic,
+            this._duration,
+            this._signedTransaction,
+            this._signature,
+            this._signer,
+            this._transactionInfo
+        );
+    }
 }

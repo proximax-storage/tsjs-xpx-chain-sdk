@@ -24,6 +24,7 @@ import {MultisigCosignatoryModification} from '../../../src/model/transaction/Mu
 import {MultisigCosignatoryModificationType} from '../../../src/model/transaction/MultisigCosignatoryModificationType';
 import {UInt64} from '../../../src/model/UInt64';
 import {TestingAccount} from '../../conf/conf.spec';
+import { DefaultFeeCalculationStrategy } from '../../../src/model/transaction/FeeCalculationStrategy';
 
 describe('ModifyMultisigAccountTransaction', () => {
     let account: Account;
@@ -32,7 +33,7 @@ describe('ModifyMultisigAccountTransaction', () => {
         account = TestingAccount;
     });
 
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
         const modifyMultisigAccountTransaction = ModifyMultisigAccountTransaction.create(
             Deadline.create(),
             2,
@@ -50,8 +51,7 @@ describe('ModifyMultisigAccountTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        expect(modifyMultisigAccountTransaction.maxFee.higher).to.be.equal(0);
-        expect(modifyMultisigAccountTransaction.maxFee.lower).to.be.equal(0);
+        expect(modifyMultisigAccountTransaction.maxFee.compact()).to.be.equal(modifyMultisigAccountTransaction.size * DefaultFeeCalculationStrategy);
     });
 
     it('should filled maxFee override transaction maxFee', () => {

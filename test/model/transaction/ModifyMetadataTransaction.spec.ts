@@ -25,9 +25,9 @@ describe('MetadataTransaction', () => {
             const modifyMetadataTransaction = ModifyMetadataTransaction.createWithMosaicId(
                 NetworkType.MIJIN_TEST,
                 Deadline.create(),
-                UInt64.fromUint(0),
                 mosaicId,
-                [modification]
+                [modification],
+                UInt64.fromUint(0)
             );
             const signedTransaction = modifyMetadataTransaction.signWith(account, generationHash);
 
@@ -45,9 +45,9 @@ describe('MetadataTransaction', () => {
             const modifyMetadataTransaction = ModifyMetadataTransaction.createWithNamespaceId(
                 NetworkType.MIJIN_TEST,
                 Deadline.create(),
-                UInt64.fromUint(0),
                 namespaceId,
-                [modification1, modification2]
+                [modification1, modification2],
+                UInt64.fromUint(0)
             );
             const signedTransaction = modifyMetadataTransaction.signWith(account, generationHash);
 
@@ -65,9 +65,9 @@ describe('MetadataTransaction', () => {
             const modifyMetadataTransaction = ModifyMetadataTransaction.createWithAddress(
                 NetworkType.MIJIN_TEST,
                 Deadline.create(),
-                UInt64.fromUint(0),
                 address,
-                [modification]
+                [modification],
+                UInt64.fromUint(0)
             );
             const signedTransaction = modifyMetadataTransaction.signWith(account, generationHash);
 

@@ -23,6 +23,7 @@ import {Deadline} from '../../../src/model/transaction/Deadline';
 import {MosaicSupplyChangeTransaction,} from '../../../src/model/transaction/MosaicSupplyChangeTransaction';
 import {UInt64} from '../../../src/model/UInt64';
 import {TestingAccount} from '../../conf/conf.spec';
+import { DefaultFeeCalculationStrategy } from '../../../src/model/transaction/FeeCalculationStrategy';
 
 describe('MosaicSupplyChangeTransaction', () => {
     let account: Account;
@@ -31,7 +32,7 @@ describe('MosaicSupplyChangeTransaction', () => {
         account = TestingAccount;
     });
 
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
         const mosaicId = new MosaicId([2262289484, 3405110546]);
         const mosaicSupplyChangeTransaction = MosaicSupplyChangeTransaction.create(
             Deadline.create(),
@@ -41,8 +42,7 @@ describe('MosaicSupplyChangeTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        expect(mosaicSupplyChangeTransaction.maxFee.higher).to.be.equal(0);
-        expect(mosaicSupplyChangeTransaction.maxFee.lower).to.be.equal(0);
+        expect(mosaicSupplyChangeTransaction.maxFee.compact()).to.be.equal(mosaicSupplyChangeTransaction.size * DefaultFeeCalculationStrategy);
     });
 
     it('should filled maxFee override transaction maxFee', () => {

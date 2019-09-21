@@ -22,10 +22,11 @@ import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
 import { AccountRestrictionModification } from './AccountRestrictionModification';
 import { Deadline } from './Deadline';
-import { Transaction } from './Transaction';
+import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
 import { TransactionVersion } from './TransactionVersion';
+import { calculateFee } from './FeeCalculationStrategy';
 
 export class AccountOperationRestrictionModificationTransaction extends Transaction {
 
@@ -42,13 +43,14 @@ export class AccountOperationRestrictionModificationTransaction extends Transact
                          restrictionType: RestrictionType,
                          modifications: Array<AccountRestrictionModification<TransactionType>>,
                          networkType: NetworkType,
-                         maxFee: UInt64 = new UInt64([0, 0])): AccountOperationRestrictionModificationTransaction {
-        return new AccountOperationRestrictionModificationTransaction(networkType,
-            TransactionVersion.MODIFY_ACCOUNT_RESTRICTION_ENTITY_TYPE,
-            deadline,
-            maxFee,
-            restrictionType,
-            modifications);
+                         maxFee?: UInt64): AccountOperationRestrictionModificationTransaction {
+        return new AccountOperationRestrictionModificationTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .restrictionType(restrictionType)
+            .modifications(modifications)
+            .build();
     }
 
     /**
@@ -82,7 +84,11 @@ export class AccountOperationRestrictionModificationTransaction extends Transact
      * @memberof AccountOperationRestrictionModificationTransaction
      */
     public get size(): number {
-        const byteSize = super.size;
+        return AccountOperationRestrictionModificationTransaction.calculateSize(this.modifications.length);
+    }
+
+    public static calculateSize(modificationCount: number): number {
+        const byteSize = Transaction.getHeaderSize();
 
         // set static byte size fields
         const byteRestrictionType = 1;
@@ -91,7 +97,7 @@ export class AccountOperationRestrictionModificationTransaction extends Transact
         // each modification contains :
         // - 1 byte for modificationType
         // - 2 bytes for the modification value (transaction type)
-        const byteModifications = 3 * this.modifications.length;
+        const byteModifications = 3 * modificationCount;
 
         return byteSize + byteRestrictionType + byteModificationCount + byteModifications;
     }
@@ -109,5 +115,37 @@ export class AccountOperationRestrictionModificationTransaction extends Transact
             .addModifications(this.modifications.map((modification) => modification.toDTO()))
             .build();
     }
+}
 
+export class AccountOperationRestrictionModificationTransactionBuilder extends TransactionBuilder {
+    private _modifications: Array<AccountRestrictionModification<TransactionType>>;
+    private _restrictionType: RestrictionType;
+
+    public restrictionType(restrictionType: RestrictionType) {
+        if (! (restrictionType === RestrictionType.AllowTransaction || restrictionType === RestrictionType.BlockTransaction)) {
+            throw new Error('Restriction type is not allowed.');
+        };
+
+        this._restrictionType = restrictionType;
+        return this;
+    }
+
+    public modifications(modifications: Array<AccountRestrictionModification<TransactionType>>) {
+        this._modifications = modifications;
+        return this;
+    }
+
+    public build(): AccountOperationRestrictionModificationTransaction {
+        return new AccountOperationRestrictionModificationTransaction(
+            this._networkType,
+            TransactionVersion.MODIFY_ACCOUNT_RESTRICTION_ADDRESS,
+            this._deadline ? this._deadline : this._createNewDeadlineFn(),
+            this._maxFee ? this._maxFee : calculateFee(AccountOperationRestrictionModificationTransaction.calculateSize(this._modifications.length), this._feeCalculationStrategy),
+            this._restrictionType,
+            this._modifications,
+            this._signature,
+            this._signer,
+            this._transactionInfo
+        );
+    }
 }

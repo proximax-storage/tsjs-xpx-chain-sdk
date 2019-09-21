@@ -22,10 +22,11 @@ import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
 import { AccountRestrictionModification } from './AccountRestrictionModification';
 import { Deadline } from './Deadline';
-import { Transaction } from './Transaction';
+import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
 import { TransactionVersion } from './TransactionVersion';
+import { calculateFee } from './FeeCalculationStrategy';
 
 export class AccountMosaicRestrictionModificationTransaction extends Transaction {
 
@@ -42,13 +43,14 @@ export class AccountMosaicRestrictionModificationTransaction extends Transaction
                          restrictionType: RestrictionType,
                          modifications: Array<AccountRestrictionModification<number[]>>,
                          networkType: NetworkType,
-                         maxFee: UInt64 = new UInt64([0, 0])): AccountMosaicRestrictionModificationTransaction {
-        return new AccountMosaicRestrictionModificationTransaction(networkType,
-            TransactionVersion.MODIFY_ACCOUNT_RESTRICTION_MOSAIC,
-            deadline,
-            maxFee,
-            restrictionType,
-            modifications);
+                         maxFee?: UInt64): AccountMosaicRestrictionModificationTransaction {
+        return new AccountMosaicRestrictionModificationTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .restrictionType(restrictionType)
+            .modifications(modifications)
+            .build();
     }
 
     /**
@@ -82,7 +84,11 @@ export class AccountMosaicRestrictionModificationTransaction extends Transaction
      * @memberof AccountMosaicRestrictionModificationTransaction
      */
     public get size(): number {
-        const byteSize = super.size;
+        return AccountMosaicRestrictionModificationTransaction.calculateSize(this.modifications.length);
+    }
+
+    public static calculateSize(modificationCount: number): number {
+        const byteSize = Transaction.getHeaderSize();
 
         // set static byte size fields
         const byteRestrictionType = 1;
@@ -91,7 +97,7 @@ export class AccountMosaicRestrictionModificationTransaction extends Transaction
         // each modification contains :
         // - 1 byte for modificationType
         // - 8 bytes for the modification value (mosaicId)
-        const byteModifications = 9 * this.modifications.length;
+        const byteModifications = 9 * modificationCount;
 
         return byteSize + byteRestrictionType + byteModificationCount + byteModifications;
     }
@@ -110,4 +116,36 @@ export class AccountMosaicRestrictionModificationTransaction extends Transaction
             .build();
     }
 
+}
+
+export class AccountMosaicRestrictionModificationTransactionBuilder extends TransactionBuilder {
+    private _modifications: Array<AccountRestrictionModification<number[]>>;
+    private _restrictionType: RestrictionType;
+
+    public restrictionType(restrictionType: RestrictionType) {
+        if (! (restrictionType === RestrictionType.AllowMosaic || restrictionType === RestrictionType.BlockMosaic)) {
+            throw new Error('Restriction type is not allowed.');
+        };
+        this._restrictionType = restrictionType;
+        return this;
+    }
+
+    public modifications(modifications: Array<AccountRestrictionModification<number[]>>) {
+        this._modifications = modifications;
+        return this;
+    }
+
+    public build(): AccountMosaicRestrictionModificationTransaction {
+        return new AccountMosaicRestrictionModificationTransaction(
+            this._networkType,
+            TransactionVersion.MODIFY_ACCOUNT_RESTRICTION_ADDRESS,
+            this._deadline ? this._deadline : this._createNewDeadlineFn(),
+            this._maxFee ? this._maxFee : calculateFee(AccountMosaicRestrictionModificationTransaction.calculateSize(this._modifications.length), this._feeCalculationStrategy),
+            this._restrictionType,
+            this._modifications,
+            this._signature,
+            this._signer,
+            this._transactionInfo
+        );
+    }
 }

@@ -24,6 +24,7 @@ import {Deadline} from '../../../src/model/transaction/Deadline';
 import {MosaicAliasTransaction} from '../../../src/model/transaction/MosaicAliasTransaction';
 import {UInt64} from '../../../src/model/UInt64';
 import {TestingAccount} from '../../conf/conf.spec';
+import { DefaultFeeCalculationStrategy } from '../../../src/model/transaction/FeeCalculationStrategy';
 
 describe('MosaicAliasTransaction', () => {
     let account: Account;
@@ -32,7 +33,7 @@ describe('MosaicAliasTransaction', () => {
         account = TestingAccount;
     });
 
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
         const namespaceId = new NamespaceId([33347626, 3779697293]);
         const mosaicId = new MosaicId([2262289484, 3405110546]);
         const mosaicAliasTransaction = MosaicAliasTransaction.create(
@@ -43,8 +44,7 @@ describe('MosaicAliasTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        expect(mosaicAliasTransaction.maxFee.higher).to.be.equal(0);
-        expect(mosaicAliasTransaction.maxFee.lower).to.be.equal(0);
+        expect(mosaicAliasTransaction.maxFee.compact()).to.be.equal(mosaicAliasTransaction.size * DefaultFeeCalculationStrategy);
     });
 
     it('should filled maxFee override transaction maxFee', () => {

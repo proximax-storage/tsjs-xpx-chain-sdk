@@ -25,6 +25,7 @@ import { PlainMessage } from '../../../src/model/transaction/PlainMessage';
 import { TransferTransaction } from '../../../src/model/transaction/TransferTransaction';
 import {UInt64} from '../../../src/model/UInt64';
 import { TestingAccount } from '../../conf/conf.spec';
+import { DefaultFeeCalculationStrategy } from '../../../src/model/transaction/FeeCalculationStrategy';
 
 describe('TransferTransaction', () => {
     let account: Account;
@@ -33,7 +34,7 @@ describe('TransferTransaction', () => {
         account = TestingAccount;
     });
 
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
         const transferTransaction = TransferTransaction.create(
             Deadline.create(),
             Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC'),
@@ -42,8 +43,7 @@ describe('TransferTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        expect(transferTransaction.maxFee.higher).to.be.equal(0);
-        expect(transferTransaction.maxFee.lower).to.be.equal(0);
+        expect(transferTransaction.maxFee.compact()).to.be.equal(transferTransaction.size * DefaultFeeCalculationStrategy);
     });
 
     it('should filled maxFee override transaction maxFee', () => {

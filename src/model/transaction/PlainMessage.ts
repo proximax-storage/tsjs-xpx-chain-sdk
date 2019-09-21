@@ -16,6 +16,7 @@
 
 import {Message} from './Message';
 import {MessageType} from './MessageType';
+import { Convert as convert } from '../../core/format';
 
 /**
  * The plain message model defines a plain string. When sending it to the network we transform the payload to hex-string.
@@ -42,6 +43,10 @@ export class PlainMessage extends Message {
      */
     constructor(payload: string) {
         super(MessageType.PlainMessage, payload);
+    }
+
+    public size(): number {
+        return convert.utf8ToHex(this.payload || '').length / 2;
     }
 
 }

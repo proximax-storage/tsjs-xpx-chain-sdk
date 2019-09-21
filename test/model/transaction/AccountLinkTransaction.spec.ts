@@ -22,6 +22,7 @@ import { Deadline } from '../../../src/model/transaction/Deadline';
 import { LinkAction } from '../../../src/model/transaction/LinkAction';
 import { UInt64 } from '../../../src/model/UInt64';
 import { TestingAccount } from '../../conf/conf.spec';
+import { DefaultFeeCalculationStrategy } from '../../../src/model/transaction/FeeCalculationStrategy';
 
 describe('AccountLinkTransaction', () => {
     let account: Account;
@@ -30,7 +31,7 @@ describe('AccountLinkTransaction', () => {
         account = TestingAccount;
     });
 
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
         const accountLinkTransaction = AccountLinkTransaction.create(
             Deadline.create(),
             account.publicKey,
@@ -38,8 +39,7 @@ describe('AccountLinkTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        expect(accountLinkTransaction.maxFee.higher).to.be.equal(0);
-        expect(accountLinkTransaction.maxFee.lower).to.be.equal(0);
+        expect(accountLinkTransaction.maxFee.compact()).to.be.equal(accountLinkTransaction.size * DefaultFeeCalculationStrategy);
     });
 
     it('should filled maxFee override transaction maxFee', () => {

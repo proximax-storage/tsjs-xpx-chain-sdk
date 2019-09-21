@@ -1,16 +1,12 @@
 import {expect} from 'chai';
-import {APIUrl, TestingAccount, ConfNetworkType, ConfTestingNamespace, ConfTestingMosaic, NemesisBlockInfo, Customer1Account, Executor1Account, Executor2Account, Verifier1Account, Verifier2Account} from '../conf/conf.spec';
-import { MetadataHttp } from '../../src/infrastructure/MetadataHttp';
-import { MosaicId, NamespaceId, Deadline, Address, Transaction, SignedTransaction, UInt64, MultisigCosignatoryModification, MultisigCosignatoryModificationType, AggregateTransaction } from '../../src/model/model';
-import { ModifyMetadataTransaction, MetadataModification, MetadataModificationType } from '../../src/model/transaction/ModifyMetadataTransaction';
+import {APIUrl, Customer1Account, Executor1Account, Executor2Account, Verifier1Account, Verifier2Account, Configuration} from '../conf/conf.spec';
+import { Address, Transaction, UInt64, MultisigCosignatoryModification, MultisigCosignatoryModificationType, TransactionBuilderFactory } from '../../src/model/model';
 import { TransactionHttp, Listener, ContractHttp } from '../../src/infrastructure/infrastructure';
-import { ConfUtils } from '../conf/ConfUtils';
-import { ModifyContractTransaction } from '../../src/model/transaction/ModifyContractTransaction';
 
 let listener: Listener;
 let contractHttp: ContractHttp;
 let transactionHttp: TransactionHttp;
-let generationHash: string;
+let factory: TransactionBuilderFactory;
 
 before(() => {
     contractHttp = new ContractHttp(APIUrl);
@@ -18,8 +14,8 @@ before(() => {
 
     listener = new Listener(APIUrl);
     return listener.open().then(() => {
-        return NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
-            generationHash = nemesisBlockInfo.generationHash;
+        return Configuration.getTransactionBuilderFactory().then(f => {
+            factory = f;
         })
     });
 });
@@ -57,23 +53,22 @@ describe('ContractHttp', () => {
     describe('add, get Contract', () => {
         describe('should add contract to an account', () => {
             const hash = '5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03'; // echo hello | sha256sum
-            const modifyContractTransaction = ModifyContractTransaction.create(
-                ConfNetworkType,
-                Deadline.create(),
-                UInt64.fromUint(1000),
-                hash,
-                [new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, Customer1Account.publicAccount)],
-                [new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, Executor1Account.publicAccount),
-                 new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, Executor2Account.publicAccount)],
-                [new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, Verifier1Account.publicAccount),
-                 new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, Verifier2Account.publicAccount)]
-            );
             it('aggregate', (done) => {
-                const aggregateTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                [modifyContractTransaction.toAggregate(Customer1Account.publicAccount)],
-                ConfNetworkType,
-                []);
-                const signedTransaction = aggregateTransaction.signWith(Customer1Account, generationHash);
+                const modifyContractTransaction = factory.modifyContract()
+                    .hash(hash)
+                    .durationDelta(UInt64.fromUint(1000))
+                    .customers([new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, Customer1Account.publicAccount)])
+                    .executors([new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, Executor1Account.publicAccount),
+                        new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, Executor2Account.publicAccount)])
+                    .verifiers([new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, Verifier1Account.publicAccount),
+                        new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, Verifier2Account.publicAccount)])
+                    .build();
+
+                const aggregateTransaction = factory.aggregateComplete()
+                    .innerTransactions([modifyContractTransaction.toAggregate(Customer1Account.publicAccount)])
+                    .build();
+
+                const signedTransaction = aggregateTransaction.signWith(Customer1Account, factory.generationHash);
                 validateTransactionAnnounceCorrectly(Customer1Account.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });

@@ -82,3 +82,5 @@ export class Deadline {
         ).toDTO();
     }
 }
+
+export const DefaultCreateNewDeadline = () => Deadline.create()
