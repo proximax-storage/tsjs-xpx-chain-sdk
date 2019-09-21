@@ -42,7 +42,7 @@ export class TransactionUtils {
             const account = TestingAccount;
             const transferTransaction = factory.transfer()
                 .recipient(recipient)
-                .mosaics([new Mosaic(ConfNetworkMosaic, UInt64.fromUint(0))])
+                .mosaics([new Mosaic(ConfNetworkMosaic, UInt64.fromUint(1))])
                 .message(PlainMessage.create('test-message'))
                 .build();
 
@@ -57,7 +57,7 @@ export class TransactionUtils {
             const account = TestingAccount;
             const transferTransaction = factory.transfer()
                 .recipient(TestingRecipient.address)
-                .mosaics([new Mosaic(ConfNetworkMosaic, UInt64.fromUint(100000000000))])
+                .mosaics([new Mosaic(ConfNetworkMosaic, UInt64.fromUint(1000000000000000))])
                 .message(PlainMessage.create('test-message'))
                 .build();
 

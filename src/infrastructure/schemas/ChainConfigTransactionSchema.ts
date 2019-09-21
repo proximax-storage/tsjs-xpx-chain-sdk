@@ -30,9 +30,9 @@ const schema = new Schema([
     array('fee', TypeSize.INT),
     array('deadline', TypeSize.INT),
     array('applyHeightDelta', TypeSize.INT),
-    ushort('blockChainConfigSize'),
+    ushort('networkConfigSize'),
     ushort('supportedEntityVersionsSize'),
-    array('blockChainConfig'),
+    array('networkConfig'),
     array('supportedEntityVersions'),
 ]);
 

@@ -12,7 +12,7 @@ import { UInt64 } from "../UInt64";
 export class ChainConfig {
     constructor(
         public readonly height: UInt64,
-        public readonly blockChainConfig: string,
+        public readonly networkConfig: string,
         public readonly supportedEntityVersions: string
     ) {
 
@@ -21,7 +21,7 @@ export class ChainConfig {
     public static createFromDTO(configDTO: ConfigDTO) {
         return new ChainConfig(
             new UInt64(configDTO.height),
-            configDTO.blockChainConfig,
+            configDTO.networkConfig,
             configDTO.supportedEntityVersions
         );
     }

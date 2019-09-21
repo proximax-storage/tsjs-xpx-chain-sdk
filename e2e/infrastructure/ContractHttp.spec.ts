@@ -48,7 +48,7 @@ const validateTransactionAnnounceCorrectly = (address: Address, done, hash?:stri
     });
 };
 
-describe('ContractHttp', () => {
+xdescribe('ContractHttp', () => {
 
     describe('add, get Contract', () => {
         describe('should add contract to an account', () => {

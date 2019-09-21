@@ -17,7 +17,7 @@
 
 export class ConfigDTO {
     'height': Array<number>;
-    'blockChainConfig': string;
+    'networkConfig': string;
     'supportedEntityVersions': string;
 
     static discriminator: string | undefined = undefined;
@@ -29,8 +29,8 @@ export class ConfigDTO {
             "type": "Array<number>"
         },
         {
-            "name": "blockChainConfig",
-            "baseName": "blockChainConfig",
+            "name": "networkConfig",
+            "baseName": "networkConfig",
             "type": "string"
         },
         {

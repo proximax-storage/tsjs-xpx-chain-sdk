@@ -28,7 +28,7 @@ export class Builder {
     type: any;
     deadline: any;
     upgradePeriod: any;
-    newCatapultVersion: any;
+    newBlockchainVersion: any;
 
     constructor() {
         this.maxFee = [0, 0];
@@ -60,8 +60,8 @@ export class Builder {
         return this;
     }
 
-    addNewCatapultVersion(newCatapultVersion) {
-        this.newCatapultVersion = newCatapultVersion;
+    addNewBlockchainVersion(newBlockchainVersion) {
+        this.newBlockchainVersion = newBlockchainVersion;
         return this;
     }
 
@@ -78,8 +78,8 @@ export class Builder {
             .createMaxFeeVector(builder, this.maxFee);
         const upgradePeriodVector = CatapultUpgradeTransactionBuffer
             .createUpgradePeriodVector(builder, this.upgradePeriod);
-        const newCatapultVersionVector = CatapultUpgradeTransactionBuffer
-            .createNewCatapultVersionVector(builder, this.newCatapultVersion);
+        const newBlockchainVersionVector = CatapultUpgradeTransactionBuffer
+            .createNewCatapultVersionVector(builder, this.newBlockchainVersion);
 
 
         CatapultUpgradeTransactionBuffer.startCatapultUpgradeTransactionBuffer(builder);
@@ -91,7 +91,7 @@ export class Builder {
         CatapultUpgradeTransactionBuffer.addMaxFee(builder, feeVector);
         CatapultUpgradeTransactionBuffer.addDeadline(builder, deadlineVector);
         CatapultUpgradeTransactionBuffer.addUpgradePeriod(builder, upgradePeriodVector);
-        CatapultUpgradeTransactionBuffer.addNewCatapultVersion(builder, newCatapultVersionVector);
+        CatapultUpgradeTransactionBuffer.addNewCatapultVersion(builder, newBlockchainVersionVector);
 
         // Calculate size
         const codedChainUpgrade = CatapultUpgradeTransactionBuffer.endCatapultUpgradeTransactionBuffer(builder);

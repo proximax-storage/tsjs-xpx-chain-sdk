@@ -29,7 +29,7 @@ export class ChainUpgradeTransaction extends Transaction {
         deadline: Deadline,
         maxFee: UInt64,
         public readonly upgradePeriod: UInt64,
-        public readonly newCatapultVersion: UInt64,
+        public readonly newBlockchainVersion: UInt64,
         signature?: string,
         signer?: PublicAccount,
         transactionInfo?: TransactionInfo) {
@@ -38,7 +38,7 @@ export class ChainUpgradeTransaction extends Transaction {
 
     public static create(deadline: Deadline,
         upgradePeriod: UInt64,
-        newCatapultVersion: UInt64,
+        newBlockchainVersion: UInt64,
         networkType: NetworkType,
         maxFee?: UInt64): ChainUpgradeTransaction {
         return new ChainUpgradeTransactionBuilder()
@@ -46,7 +46,7 @@ export class ChainUpgradeTransaction extends Transaction {
             .deadline(deadline)
             .maxFee(maxFee)
             .upgradePeriod(upgradePeriod)
-            .newCatapultVersion(newCatapultVersion)
+            .newBlockchainVersion(newBlockchainVersion)
             .build();
     }
 
@@ -63,7 +63,7 @@ export class ChainUpgradeTransaction extends Transaction {
     public static calculateSize(): number {
         const byteSize = Transaction.getHeaderSize()
             + 8 // upgradePeriod
-            + 8; // newCatapultVersion
+            + 8; // newBlockchainVersion
         return byteSize;
     }
 
@@ -77,14 +77,14 @@ export class ChainUpgradeTransaction extends Transaction {
             .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addUpgradePeriod(this.upgradePeriod.toDTO())
-            .addNewCatapultVersion(this.newCatapultVersion.toDTO())
+            .addNewBlockchainVersion(this.newBlockchainVersion.toDTO())
             .build();
     }
 }
 
 export class ChainUpgradeTransactionBuilder extends TransactionBuilder {
     private _upgradePeriod: UInt64;
-    private _newCatapultVersion: UInt64;
+    private _newBlockchainVersion: UInt64;
 
     constructor() {
         super();
@@ -96,8 +96,8 @@ export class ChainUpgradeTransactionBuilder extends TransactionBuilder {
         return this;
     }
 
-    public newCatapultVersion(newCatapultVersion: UInt64) {
-        this._newCatapultVersion = newCatapultVersion;
+    public newBlockchainVersion(newBlockchainVersion: UInt64) {
+        this._newBlockchainVersion = newBlockchainVersion;
         return this;
     }
 
@@ -108,7 +108,7 @@ export class ChainUpgradeTransactionBuilder extends TransactionBuilder {
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(ChainUpgradeTransaction.calculateSize(), this._feeCalculationStrategy),
             this._upgradePeriod,
-            this._newCatapultVersion,
+            this._newBlockchainVersion,
             this._signature,
             this._signer,
             this._transactionInfo

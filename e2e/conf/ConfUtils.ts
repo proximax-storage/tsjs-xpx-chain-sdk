@@ -73,7 +73,7 @@ export class ConfUtils {
         const accountHttp = ConfAccountHttp;
         if (ta.isCosignatory() && accountInfo.publicKey.match('0'.repeat(64))) {
             console.log(ta.conf.alias + " need pubkey");
-            return ConfUtils.simpleCreateAndAnnounceWaitForConfirmation(ta.acc.address, 0, ta.acc, '')
+            return ConfUtils.simpleCreateAndAnnounceWaitForConfirmation(ta.acc.address, 1, ta.acc, '')
                 .then(() => {
                     return accountHttp.getAccountInfo(ta.acc.address).toPromise();
                 });
@@ -116,7 +116,7 @@ export class ConfUtils {
                             if (ta.conf.alias === 'testing') {
                                 //initiate 20 more txs.
                                 forkJoin(
-                                    new Array(20).fill(0).map(n => ConfUtils.simpleCreateAndAnnounceWaitForConfirmation(ta.acc.address, 0, ta.acc))
+                                    new Array(20).fill(0).map(n => ConfUtils.simpleCreateAndAnnounceWaitForConfirmation(ta.acc.address, 1, ta.acc))
                                 ).toPromise().then(() => {
                                     resolve(accInfo);
                                 }).catch(() => {

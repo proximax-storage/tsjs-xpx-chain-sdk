@@ -16,20 +16,20 @@
 
 import { ConfigDTO } from './configDTO';
 
-export class CatapultConfigDTO {
-    'catapultConfig': ConfigDTO;
+export class NetworkConfigDTO {
+    'networkConfig': ConfigDTO;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            "name": "catapultConfig",
-            "baseName": "catapultConfig",
+            "name": "networkConfig",
+            "baseName": "networkConfig",
             "type": "ConfigDTO"
         }    ];
 
     static getAttributeTypeMap() {
-        return CatapultConfigDTO.attributeTypeMap;
+        return NetworkConfigDTO.attributeTypeMap;
     }
 }
 
