@@ -1,3 +1,4 @@
+import { CosignatureSignedTransaction } from '../../model/transaction/CosignatureSignedTransaction';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
@@ -6,6 +7,7 @@ import { Deadline } from './Deadline';
 import { InnerTransaction } from './InnerTransaction';
 import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
+
 /**
  * Aggregate innerTransactions contain multiple innerTransactions that can be initiated by different accounts.
  */
