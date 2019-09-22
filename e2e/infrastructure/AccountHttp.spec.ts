@@ -104,9 +104,18 @@ describe('AccountHttp', () => {
         });
     });
 
-    describe('incomingTransactions', () => {
+    describe('incomingTransactions using public key', () => {
         it('should call incomingTransactions successfully', (done) => {
             accountHttp.incomingTransactions(TestingAccount.publicAccount).subscribe((transactions) => {
+                expect(transactions.length).to.be.greaterThan(0);
+                done();
+            });
+        });
+    });
+
+    describe('incomingTransactions using address', () => {
+        it('should call incomingTransactions successfully', (done) => {
+            accountHttp.incomingTransactions(TestingAccount.address).subscribe((transactions) => {
                 expect(transactions.length).to.be.greaterThan(0);
                 done();
             });

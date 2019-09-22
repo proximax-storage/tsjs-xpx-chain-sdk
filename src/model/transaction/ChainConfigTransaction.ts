@@ -2,16 +2,17 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file
 
-import { Transaction } from "./Transaction";
-import { TransactionType } from "./TransactionType";
-import { NetworkType } from "../blockchain/NetworkType";
-import { Deadline } from "./Deadline";
-import { UInt64 } from "../UInt64";
-import { PublicAccount } from "../account/PublicAccount";
-import { TransactionInfo } from "./TransactionInfo";
-import { Builder } from "../../infrastructure/builders/ChainConfigTransaction";
-import { VerifiableTransaction } from "../../infrastructure/builders/VerifiableTransaction";
-import { TransactionVersion } from "./TransactionVersion";
+import { Transaction, TransactionBuilder } from './Transaction';
+import { TransactionType } from './TransactionType';
+import { NetworkType } from '../blockchain/NetworkType';
+import { Deadline } from './Deadline';
+import { UInt64 } from '../UInt64';
+import { PublicAccount } from '../account/PublicAccount';
+import { TransactionInfo } from './TransactionInfo';
+import { Builder } from '../../infrastructure/builders/ChainConfigTransaction';
+import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
+import { TransactionVersion } from './TransactionVersion';
+import { calculateFee, FeeCalculationStrategy } from './FeeCalculationStrategy';
 
 export class ChainConfigTransaction extends Transaction {
     /**
@@ -44,29 +45,35 @@ export class ChainConfigTransaction extends Transaction {
         blockChainConfig: string,
         supportedEntityVersions: string,
         networkType: NetworkType,
-        maxFee: UInt64 = new UInt64([0, 0])): ChainConfigTransaction {
-        return new ChainConfigTransaction(networkType,
-            TransactionVersion.CHAIN_CONFIG,
-            deadline,
-            maxFee,
-            applyHeightDelta,
-            blockChainConfig,
-            supportedEntityVersions
-        );
+        maxFee?: UInt64): ChainConfigTransaction {
+        return new ChainConfigTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .applyHeightDelta(applyHeightDelta)
+            .blockChainConfig(blockChainConfig)
+            .supportedEntityVersions(supportedEntityVersions)
+            .build();
     }
 
     /**
+     * @override Transaction.size()
      * @description get the byte size of a transaction
      * @returns {number}
      * @memberof Transaction
      */
     public get size(): number {
-        const byteSize = 8 // applyHeightDelta
+        return ChainConfigTransaction.calculateSize(this.blockChainConfig.length, this.supportedEntityVersions.length);
+    }
+
+    public static calculateSize(blockChainConfigLength: number, supportedEntityVersionsLength: number): number {
+        const byteSize = Transaction.getHeaderSize()
+            + 8 // applyHeightDelta
             + 2 // blockChainConfigSize
             + 2 // supportedEntityVersionsSize
-            + this.blockChainConfig.length //blockChainConfig
-            + this.supportedEntityVersions.length // supportedEntityVersions
-        return super.size + byteSize;
+            + blockChainConfigLength //blockChainConfig
+            + supportedEntityVersionsLength // supportedEntityVersions
+        return byteSize;
     }
 
     /**
@@ -82,5 +89,46 @@ export class ChainConfigTransaction extends Transaction {
             .addBlockChainConfig(this.blockChainConfig)
             .addSupportedEntityVersions(this.supportedEntityVersions)
             .build();
+    }
+}
+
+export class ChainConfigTransactionBuilder extends TransactionBuilder {
+    private _applyHeightDelta: UInt64;
+    private _blockChainConfig: string;
+    private _supportedEntityVersions: string;
+
+    constructor() {
+        super();
+        this._feeCalculationStrategy = FeeCalculationStrategy.ZeroFeeCalculationStrategy;
+    }
+
+    public applyHeightDelta(applyHeightDelta: UInt64) {
+        this._applyHeightDelta = applyHeightDelta;
+        return this;
+    }
+
+    public blockChainConfig(blockChainConfig: string) {
+        this._blockChainConfig = blockChainConfig;
+        return this;
+    }
+
+    public supportedEntityVersions(supportedEntityVersions: string) {
+        this._supportedEntityVersions = supportedEntityVersions;
+        return this;
+    }
+
+    public build(): ChainConfigTransaction {
+        return new ChainConfigTransaction(
+            this._networkType,
+            TransactionVersion.CHAIN_CONFIG,
+            this._deadline ? this._deadline : this._createNewDeadlineFn(),
+            this._maxFee ? this._maxFee : calculateFee(ChainConfigTransaction.calculateSize(this._blockChainConfig.length, this._supportedEntityVersions.length), this._feeCalculationStrategy),
+            this._applyHeightDelta,
+            this._blockChainConfig,
+            this._supportedEntityVersions,
+            this._signature,
+            this._signer,
+            this._transactionInfo
+        );
     }
 }

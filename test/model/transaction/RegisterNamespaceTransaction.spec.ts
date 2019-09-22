@@ -22,6 +22,7 @@ import {Deadline} from '../../../src/model/transaction/Deadline';
 import {RegisterNamespaceTransaction} from '../../../src/model/transaction/RegisterNamespaceTransaction';
 import {UInt64} from '../../../src/model/UInt64';
 import {TestingAccount} from '../../conf/conf.spec';
+import { DefaultFeeCalculationStrategy } from '../../../src/model/transaction/FeeCalculationStrategy';
 
 describe('RegisterNamespaceTransaction', () => {
     let account: Account;
@@ -30,7 +31,7 @@ describe('RegisterNamespaceTransaction', () => {
         account = TestingAccount;
     });
 
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
         const registerNamespaceTransaction = RegisterNamespaceTransaction.createRootNamespace(
             Deadline.create(),
             'root-test-namespace',
@@ -38,8 +39,7 @@ describe('RegisterNamespaceTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        expect(registerNamespaceTransaction.maxFee.higher).to.be.equal(0);
-        expect(registerNamespaceTransaction.maxFee.lower).to.be.equal(0);
+        expect(registerNamespaceTransaction.maxFee.compact()).to.be.equal(registerNamespaceTransaction.size * DefaultFeeCalculationStrategy);
     });
 
     it('should filled maxFee override transaction maxFee', () => {

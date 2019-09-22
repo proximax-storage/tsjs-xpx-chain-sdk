@@ -27,6 +27,7 @@ import {Deadline} from '../../../src/model/transaction/Deadline';
 import { TransactionType } from '../../../src/model/transaction/TransactionType';
 import {UInt64} from '../../../src/model/UInt64';
 import {TestingAccount} from '../../conf/conf.spec';
+import { DefaultFeeCalculationStrategy } from '../../../src/model/transaction/FeeCalculationStrategy';
 
 describe('AccountRestrictionTransaction', () => {
     let account: Account;
@@ -113,7 +114,7 @@ describe('AccountRestrictionTransaction', () => {
         });
     });
 
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
         const address = Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
         const addressRestrictionFilter = AccountRestrictionModification.createForAddress(
             RestrictionModificationType.Add,
@@ -126,8 +127,7 @@ describe('AccountRestrictionTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        expect(addressRestrictionTransaction.maxFee.higher).to.be.equal(0);
-        expect(addressRestrictionTransaction.maxFee.lower).to.be.equal(0);
+        expect(addressRestrictionTransaction.maxFee.compact()).to.be.equal(addressRestrictionTransaction.size * DefaultFeeCalculationStrategy);
     });
 
     it('should filled maxFee override transaction maxFee', () => {

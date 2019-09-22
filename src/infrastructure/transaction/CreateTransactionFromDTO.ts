@@ -30,10 +30,11 @@ import {AddressAliasTransaction} from '../../model/transaction/AddressAliasTrans
 import {AggregateTransaction} from '../../model/transaction/AggregateTransaction';
 import {AggregateTransactionCosignature} from '../../model/transaction/AggregateTransactionCosignature';
 import {AggregateTransactionInfo} from '../../model/transaction/AggregateTransactionInfo';
+import {ChainConfigTransaction} from '../../model/transaction/ChainConfigTransaction';
+import {ChainUpgradeTransaction} from '../../model/transaction/ChainUpgradeTransaction';
 import {Deadline} from '../../model/transaction/Deadline';
 import { EncryptedMessage } from '../../model/transaction/EncryptedMessage';
 import {LockFundsTransaction} from '../../model/transaction/LockFundsTransaction';
-import { MessageType } from '../../model/transaction/MessageType';
 import {AccountAddressRestrictionModificationTransaction} from '../../model/transaction/AccountAddressRestrictionModificationTransaction';
 import {AccountOperationRestrictionModificationTransaction} from '../../model/transaction/AccountOperationRestrictionModificationTransaction';
 import {AccountMosaicRestrictionModificationTransaction} from '../../model/transaction/AccountMosaicRestrictionModificationTransaction';
@@ -55,7 +56,6 @@ import {UInt64} from '../../model/UInt64';
 import { ModifyMetadataTransaction, MetadataModification } from '../../model/transaction/ModifyMetadataTransaction';
 import { MetadataType } from '../../model/metadata/MetadataType';
 import { ModifyContractTransaction } from '../../model/transaction/ModifyContractTransaction';
-import { ChainConfigTransaction, ChainUpgradeTransaction } from '../../model/model';
 
 /**
  * @internal
@@ -366,11 +366,13 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             undefined
         switch(metadataType) {
             case MetadataType.ADDRESS: {
-                return ModifyMetadataTransaction.createWithAddress(
+                return new ModifyMetadataTransaction(
+                    TransactionType.MODIFY_ACCOUNT_METADATA,
                     networkType,
                     deadline,
                     maxFee,
-                    Address.createFromEncoded(metadataId),
+                    MetadataType.ADDRESS,
+                    Address.createFromEncoded(metadataId).plain(),
                     modifications,
                     transactionDTO.signature,
                     transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
@@ -380,11 +382,13 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
                 //break;
             }
             case MetadataType.MOSAIC: {
-                return ModifyMetadataTransaction.createWithMosaicId(
+                return new ModifyMetadataTransaction(
+                    TransactionType.MODIFY_MOSAIC_METADATA,
                     networkType,
                     deadline,
                     maxFee,
-                    new MosaicId(metadataId),
+                    MetadataType.MOSAIC,
+                    new MosaicId(metadataId).toHex(),
                     modifications,
                     transactionDTO.signature,
                     transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
@@ -394,11 +398,13 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
                 //break;
             }
             case MetadataType.NAMESPACE: {
-                return ModifyMetadataTransaction.createWithMosaicId(
+                return new ModifyMetadataTransaction(
+                    TransactionType.MODIFY_NAMESPACE_METADATA,
                     networkType,
                     deadline,
                     maxFee,
-                    new NamespaceId(metadataId),
+                    MetadataType.NAMESPACE,
+                    new NamespaceId(metadataId).toHex(),
                     modifications,
                     transactionDTO.signature,
                     transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
@@ -430,7 +436,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             transactionDTO.verifiers ?
             transactionDTO.verifiers.map(v => new MultisigCosignatoryModification(v.type, PublicAccount.createFromPublicKey(v.cosignatoryPublicKey, networkType))) :
             undefined;
-        return ModifyContractTransaction.create(
+        return new ModifyContractTransaction(
             networkType,
             deadline,
             durationDelta,
@@ -495,7 +501,7 @@ export const extractNetworkType = (version: number): NetworkType => {
 };
 
 export const extractTransactionVersion = (version: number): number => {
-    return parseInt((version >>> 0).toString(16).substr(2, 4), 16); // ">>> 0" hack makes it effectively an Uint32
+    return parseInt((version >>> 0).toString(16).substr(2), 16); // ">>> 0" hack makes it effectively an Uint32
 };
 
 /**

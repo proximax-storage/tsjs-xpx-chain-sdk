@@ -23,30 +23,30 @@ import { Deadline } from '../../src/model/transaction/Deadline';
 import { PlainMessage } from '../../src/model/transaction/PlainMessage';
 import { Transaction } from '../../src/model/transaction/Transaction';
 import { TransferTransaction } from '../../src/model/transaction/TransferTransaction';
-import { APIUrl, ConfNetworkType, TestingRecipient, NemesisBlockInfo, TestingAccount, ConfNetworkMosaic } from '../conf/conf.spec';
-import { Address, Mosaic, UInt64 } from '../../src/model/model';
+import { APIUrl, TestingRecipient, TestingAccount, ConfNetworkMosaic, Configuration } from '../conf/conf.spec';
+import { Address, Mosaic, UInt64, TransactionBuilderFactory } from '../../src/model/model';
 import { fail } from 'assert';
 
-describe('BlockHttp', () => {
-    const blockHttp = new BlockHttp(APIUrl);
-    const transactionHttp = new TransactionHttp(APIUrl);
-    let generationHash: string;
-    let listener: Listener;
-    let blockReceiptHash: string;
-    let blockTransactionHash: string;
-    const chainHeight = 2;
-    before (() => {
-        listener = new Listener(APIUrl);
-        return listener.open().then(() => {
-            NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
-                generationHash = nemesisBlockInfo.generationHash;
-            })
-        });
+const blockHttp = new BlockHttp(APIUrl);
+const transactionHttp = new TransactionHttp(APIUrl);
+let listener: Listener;
+let blockReceiptHash: string;
+let blockTransactionHash: string;
+const chainHeight = 2;
+let factory: TransactionBuilderFactory;
+before (() => {
+    listener = new Listener(APIUrl);
+    return listener.open().then(() => {
+        return Configuration.getTransactionBuilderFactory().then(f => {
+            factory = f;
+        })
     });
-    after(() => {
-        return listener.close();
-    });
+});
+after(() => {
+    return listener.close();
+});
 
+describe('BlockHttp', () => {
     const validateTransactionAnnounceCorrectly = (address: Address, done, hash?: string) => {
         const status = listener.status(address).subscribe(error => {
             console.error(error);
@@ -77,14 +77,13 @@ describe('BlockHttp', () => {
      */
     describe('Setup Test Data', () => {
         it('Announce TransferTransaction', (done) => {
-            const transferTransaction = TransferTransaction.create(
-                Deadline.create(),
-                TestingRecipient.address,
-                [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(1000000))],
-                PlainMessage.create('test-message'),
-                ConfNetworkType,
-            );
-            const signedTransaction = transferTransaction.signWith(TestingAccount, generationHash);
+            const transferTransaction = factory.transfer()
+                .recipient(TestingRecipient.address)
+                .mosaics([new Mosaic(ConfNetworkMosaic, UInt64.fromUint(1000000))])
+                .message(PlainMessage.create('test-message'))
+                .build();
+
+            const signedTransaction = transferTransaction.signWith(TestingAccount, factory.generationHash);
 
             validateTransactionAnnounceCorrectly(TestingRecipient.address, done, signedTransaction.hash);
 

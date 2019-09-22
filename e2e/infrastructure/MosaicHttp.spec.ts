@@ -16,22 +16,34 @@
 import {assert, expect} from 'chai';
 import { Listener, TransactionHttp } from '../../src/infrastructure/infrastructure';
 import {MosaicHttp} from '../../src/infrastructure/MosaicHttp';
-import { Account } from '../../src/model/account/Account';
-import { NetworkType } from '../../src/model/blockchain/NetworkType';
 import {MosaicId} from '../../src/model/mosaic/MosaicId';
-import {APIUrl, ConfNetworkMosaic, ConfNetworkType, NemesisBlockInfo, TestingAccount, ConfNetworkMosaicDivisibility} from '../conf/conf.spec';
-import { Deadline, UInt64, RegisterNamespaceTransaction, NamespaceId, AliasActionType, MosaicAliasTransaction, MosaicNonce, MosaicDefinitionTransaction, MosaicProperties, Address, Transaction } from '../../src/model/model';
+import {APIUrl, ConfNetworkMosaic, TestingAccount, Configuration } from '../conf/conf.spec';
+import { Deadline, UInt64, RegisterNamespaceTransaction, NamespaceId, AliasActionType, MosaicAliasTransaction, MosaicNonce, MosaicDefinitionTransaction, MosaicProperties, Address, Transaction, TransactionBuilderFactory } from '../../src/model/model';
 import { fail } from 'assert';
 
+
+const mosaicHttp = new MosaicHttp(APIUrl);
+const transactionHttp = new TransactionHttp(APIUrl);
+let listener: Listener;
+let namespaceId: NamespaceId;
+let mosaicId = ConfNetworkMosaic;
+let mosaicDivisibility = 6;
+let mosaicDuration = UInt64.fromUint(0);
+let factory: TransactionBuilderFactory;
+
+before (() => {
+    listener = new Listener(APIUrl);
+    return listener.open().then(() => {
+        return Configuration.getTransactionBuilderFactory().then(f => {
+            factory = f;
+        })
+    });
+});
+after(() => {
+    return listener.close();
+});
+
 describe('MosaicHttp', () => {
-    const mosaicHttp = new MosaicHttp(APIUrl);
-    const transactionHttp = new TransactionHttp(APIUrl);
-    let listener: Listener;
-    let generationHash: string;
-    let namespaceId: NamespaceId;
-    let mosaicId = ConfNetworkMosaic;
-    let mosaicDivisibility = 6;
-    let mosaicDuration = UInt64.fromUint(0);
 
     const validateTransactionAnnounceCorrectly = (address: Address, done, hash?: string) => {
         const status = listener.status(address).subscribe(error => {
@@ -56,29 +68,16 @@ describe('MosaicHttp', () => {
         });
     }
 
-    before (() => {
-        listener = new Listener(APIUrl);
-        return listener.open().then(() => {
-            return NemesisBlockInfo.getInstance().then(nemesicBlockinfo => {
-                generationHash = nemesicBlockinfo.generationHash;
-            })
-        });
-    });
-    after(() => {
-        return listener.close();
-    });
-
     describe('Setup test NamespaceId', () => {
         it('Announce RegisterNamespaceTransaction', (done) => {
             const namespaceName = 'root-test-namespace-' + Math.floor(Math.random() * 10000);
-            const registerNamespaceTransaction = RegisterNamespaceTransaction.createRootNamespace(
-                Deadline.create(),
-                namespaceName,
-                UInt64.fromUint(1000),
-                ConfNetworkType,
-            );
+            const registerNamespaceTransaction = factory.registerRootNamespace()
+                .namespaceName(namespaceName)
+                .duration(UInt64.fromUint(1000))
+                .build();
+
             namespaceId = new NamespaceId(namespaceName);
-            const signedTransaction = registerNamespaceTransaction.signWith(TestingAccount, generationHash);
+            const signedTransaction = registerNamespaceTransaction.signWith(TestingAccount, factory.generationHash);
 
             validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
 
@@ -93,19 +92,18 @@ describe('MosaicHttp', () => {
             mosaicId = MosaicId.createFromNonce(nonce, TestingAccount.publicAccount);
             mosaicDivisibility = 3;
             mosaicDuration = UInt64.fromUint(1000);
-            const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
-                Deadline.create(),
-                nonce,
-                mosaicId,
-                MosaicProperties.create({
+            const mosaicDefinitionTransaction = factory.mosaicDefinition()
+                .mosaicNonce(nonce)
+                .mosaicId(mosaicId)
+                .mosaicProperties(MosaicProperties.create({
                     supplyMutable: true,
                     transferable: true,
                     divisibility: mosaicDivisibility,
                     duration: mosaicDuration,
-                }),
-                ConfNetworkType
-            )
-            const signedTransaction = mosaicDefinitionTransaction.signWith(TestingAccount, generationHash);
+                }))
+                .build();
+
+            const signedTransaction = mosaicDefinitionTransaction.signWith(TestingAccount, factory.generationHash);
 
             validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
 
@@ -115,14 +113,13 @@ describe('MosaicHttp', () => {
 
     describe('Setup test MosaicAlias', () => {
         it('Announce MosaicAliasTransaction', (done) => {
-            const mosaicAliasTransaction = MosaicAliasTransaction.create(
-                Deadline.create(),
-                AliasActionType.Link,
-                namespaceId,
-                mosaicId,
-                ConfNetworkType,
-            );
-            const signedTransaction = mosaicAliasTransaction.signWith(TestingAccount, generationHash);
+            const mosaicAliasTransaction = factory.mosaicAlias()
+                .actionType(AliasActionType.Link)
+                .namespaceId(namespaceId)
+                .mosaicId(mosaicId)
+                .build();
+
+            const signedTransaction = mosaicAliasTransaction.signWith(TestingAccount, factory.generationHash);
 
             validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
 

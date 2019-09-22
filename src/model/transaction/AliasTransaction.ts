@@ -42,7 +42,7 @@ export abstract class AliasTransaction extends Transaction {
                                    namespaceId: NamespaceId,
                                    address: Address,
                                    networkType: NetworkType,
-                                   maxFee: UInt64 = new UInt64([0, 0])): AliasTransaction {
+                                   maxFee?: UInt64): AliasTransaction {
         return AddressAliasTransaction.create(
             deadline,
             aliasAction,
@@ -68,7 +68,7 @@ export abstract class AliasTransaction extends Transaction {
                                   namespaceId: NamespaceId,
                                   mosaicId: MosaicId,
                                   networkType: NetworkType,
-                                  maxFee: UInt64 = new UInt64([0, 0])): AliasTransaction {
+                                  maxFee?: UInt64): AliasTransaction {
         return MosaicAliasTransaction.create(
             deadline,
             aliasAction,

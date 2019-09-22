@@ -106,7 +106,6 @@ export * from './receipt/Statement';
 
 // Transaction
 export * from './transaction/AccountLinkTransaction';
-export * from './transaction/AccountRestrictionTransaction';
 export * from './transaction/AccountAddressRestrictionModificationTransaction';
 export * from './transaction/AccountOperationRestrictionModificationTransaction';
 export * from './transaction/AccountMosaicRestrictionModificationTransaction';
@@ -115,7 +114,6 @@ export * from './transaction/AddressAliasTransaction';
 export * from './transaction/AggregateTransaction';
 export * from './transaction/AggregateTransactionCosignature';
 export * from './transaction/AggregateTransactionInfo';
-export * from './transaction/AliasTransaction';
 export * from './transaction/ChainConfigTransaction';
 export * from './transaction/ChainUpgradeTransaction';
 export * from './transaction/CosignatureSignedTransaction';
@@ -143,6 +141,7 @@ export * from './transaction/SecretProofTransaction';
 export * from './transaction/SignedTransaction';
 export * from './transaction/SyncAnnounce';
 export * from './transaction/Transaction';
+export * from './transaction/TransactionBuilderFactory';
 export * from './transaction/TransactionAnnounceResponse';
 export * from './transaction/TransactionInfo';
 export * from './transaction/TransactionStatus';

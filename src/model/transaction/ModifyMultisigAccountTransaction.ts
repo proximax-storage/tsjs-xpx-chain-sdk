@@ -21,10 +21,11 @@ import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
 import { MultisigCosignatoryModification } from './MultisigCosignatoryModification';
-import { Transaction } from './Transaction';
+import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
 import { TransactionVersion } from './TransactionVersion';
+import { calculateFee } from './FeeCalculationStrategy';
 
 /**
  * Modify multisig account transactions are part of the NEM's multisig account system.
@@ -49,14 +50,15 @@ export class ModifyMultisigAccountTransaction extends Transaction {
                          minRemovalDelta: number,
                          modifications: MultisigCosignatoryModification[],
                          networkType: NetworkType,
-                         maxFee: UInt64 = new UInt64([0, 0])): ModifyMultisigAccountTransaction {
-        return new ModifyMultisigAccountTransaction(networkType,
-            TransactionVersion.MODIFY_MULTISIG_ACCOUNT,
-            deadline,
-            maxFee,
-            minApprovalDelta,
-            minRemovalDelta,
-            modifications);
+                         maxFee?: UInt64): ModifyMultisigAccountTransaction {
+        return new ModifyMultisigAccountTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .minApprovalDelta(minApprovalDelta)
+            .minRemovalDelta(minRemovalDelta)
+            .modifications(modifications)
+            .build();
     }
 
     /**
@@ -102,7 +104,11 @@ export class ModifyMultisigAccountTransaction extends Transaction {
      * @memberof ModifyMultisigAccountTransaction
      */
     public get size(): number {
-        const byteSize = super.size;
+        return ModifyMultisigAccountTransaction.calculateSize(this.modifications.length);
+    }
+
+    public static calculateSize(modificationsCount: number): number {
+        const byteSize = Transaction.getHeaderSize();
 
         // set static byte size fields
         const byteRemovalDelta = 1;
@@ -112,7 +118,7 @@ export class ModifyMultisigAccountTransaction extends Transaction {
         // each modification contains :
         // - 1 byte for modificationType
         // - 32 bytes for cosignatoryPublicKey
-        const byteModifications = 33 * this.modifications.length
+        const byteModifications = 33 * modificationsCount;
 
         return byteSize + byteRemovalDelta + byteApprovalDelta + byteNumModifications + byteModifications;
     }
@@ -131,5 +137,40 @@ export class ModifyMultisigAccountTransaction extends Transaction {
             .addModifications(this.modifications.map((modification) => modification.toDTO()))
             .build();
     }
+}
 
+export class ModifyMultisigAccountTransactionBuilder extends TransactionBuilder {
+    private _minApprovalDelta: number;
+    private _minRemovalDelta: number;
+    private _modifications: MultisigCosignatoryModification[];
+
+    public minApprovalDelta(minApprovalDelta: number) {
+        this._minApprovalDelta = minApprovalDelta;
+        return this;
+    }
+
+    public minRemovalDelta(minRemovalDelta: number) {
+        this._minRemovalDelta = minRemovalDelta;
+        return this;
+    }
+
+    public modifications(modifications: MultisigCosignatoryModification[]) {
+        this._modifications = modifications;
+        return this;
+    }
+
+    public build(): ModifyMultisigAccountTransaction {
+        return new ModifyMultisigAccountTransaction(
+            this._networkType,
+            TransactionVersion.MODIFY_MULTISIG_ACCOUNT,
+            this._deadline ? this._deadline : this._createNewDeadlineFn(),
+            this._maxFee ? this._maxFee : calculateFee(ModifyMultisigAccountTransaction.calculateSize(this._modifications.length), this._feeCalculationStrategy),
+            this._minApprovalDelta,
+            this._minRemovalDelta,
+            this._modifications,
+            this._signature,
+            this._signer,
+            this._transactionInfo
+        );
+    }
 }

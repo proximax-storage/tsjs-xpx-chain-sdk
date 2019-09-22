@@ -18,13 +18,13 @@ import {expect} from 'chai';
 import {Account} from '../../../src/model/account/Account';
 import {Address} from '../../../src/model/account/Address';
 import {NetworkType} from '../../../src/model/blockchain/NetworkType';
-import {MosaicId} from '../../../src/model/mosaic/MosaicId';
 import {AliasActionType} from '../../../src/model/namespace/AliasActionType';
 import {NamespaceId} from '../../../src/model/namespace/NamespaceId';
 import {AddressAliasTransaction} from '../../../src/model/transaction/AddressAliasTransaction';
 import {Deadline} from '../../../src/model/transaction/Deadline';
 import {UInt64} from '../../../src/model/UInt64';
 import {TestingAccount} from '../../conf/conf.spec';
+import { DefaultFeeCalculationStrategy } from '../../../src/model/transaction/FeeCalculationStrategy';
 
 describe('AddressAliasTransaction', () => {
     let account: Account;
@@ -33,7 +33,7 @@ describe('AddressAliasTransaction', () => {
         account = TestingAccount;
     });
 
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set to calculated fee according to default fee calculation strategy', () => {
         const namespaceId = new NamespaceId([33347626, 3779697293]);
         const address = Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
         const addressAliasTransaction = AddressAliasTransaction.create(
@@ -44,8 +44,9 @@ describe('AddressAliasTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        expect(addressAliasTransaction.maxFee.higher).to.be.equal(0);
-        expect(addressAliasTransaction.maxFee.lower).to.be.equal(0);
+        const expectedMaxFee = addressAliasTransaction.size * DefaultFeeCalculationStrategy;
+
+        expect(addressAliasTransaction.maxFee.compact()).to.be.equal(expectedMaxFee);
     });
 
     it('should filled maxFee override transaction maxFee', () => {

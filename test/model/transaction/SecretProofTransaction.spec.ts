@@ -24,6 +24,7 @@ import {HashType} from '../../../src/model/transaction/HashType';
 import {SecretProofTransaction} from '../../../src/model/transaction/SecretProofTransaction';
 import {UInt64} from '../../../src/model/UInt64';
 import { TestingAccount } from '../../conf/conf.spec';
+import { DefaultFeeCalculationStrategy } from '../../../src/model/transaction/FeeCalculationStrategy';
 
 describe('SecretProofTransaction', () => {
     let account: Account;
@@ -32,7 +33,7 @@ describe('SecretProofTransaction', () => {
         account = TestingAccount;
     });
 
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
         const proof = 'B778A39A3663719DFC5E48C9D78431B1E45C2AF9DF538782BF199C189DABEAC7';
         const secretProofTransaction = SecretProofTransaction.create(
             Deadline.create(),
@@ -43,8 +44,7 @@ describe('SecretProofTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        expect(secretProofTransaction.maxFee.higher).to.be.equal(0);
-        expect(secretProofTransaction.maxFee.lower).to.be.equal(0);
+        expect(secretProofTransaction.maxFee.compact()).to.be.equal(secretProofTransaction.size * DefaultFeeCalculationStrategy);
     });
 
     it('should filled maxFee override transaction maxFee', () => {

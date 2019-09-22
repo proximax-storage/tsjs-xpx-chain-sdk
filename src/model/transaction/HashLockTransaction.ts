@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-import { LockFundsTransaction } from './LockFundsTransaction';
+import { LockFundsTransaction, LockFundsTransactionBuilder } from './LockFundsTransaction';
 
 /*
  * An alias for LockFundsTransaction class
  */
 export class HashLockTransaction extends LockFundsTransaction {
+}
+
+export class HashLockTransactionBuilder extends LockFundsTransactionBuilder {
+    public build(): HashLockTransaction {
+        return super.build() as HashLockTransaction;
+    }
 }

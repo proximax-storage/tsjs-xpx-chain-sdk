@@ -26,10 +26,12 @@ import { CosignatureSignedTransaction } from './CosignatureSignedTransaction';
 import { Deadline } from './Deadline';
 import { InnerTransaction } from './InnerTransaction';
 import { SignedTransaction } from './SignedTransaction';
-import { Transaction } from './Transaction';
+import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
 import { TransactionVersion } from './TransactionVersion';
+import { ChronoUnit } from 'js-joda';
+import { calculateFee } from './FeeCalculationStrategy';
 
 /**
  * Aggregate innerTransactions contain multiple innerTransactions that can be initiated by different accounts.
@@ -80,15 +82,14 @@ export class AggregateTransaction extends Transaction {
                                  innerTransactions: InnerTransaction[],
                                  networkType: NetworkType,
                                  cosignatures: AggregateTransactionCosignature[],
-                                 maxFee: UInt64 = new UInt64([0, 0])): AggregateTransaction {
-        return new AggregateTransaction(networkType,
-            TransactionType.AGGREGATE_COMPLETE,
-            TransactionVersion.AGGREGATE_COMPLETE,
-            deadline,
-            maxFee,
-            innerTransactions,
-            cosignatures,
-        );
+                                 maxFee?: UInt64): AggregateTransaction {
+        return new AggregateCompleteTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .innerTransactions(innerTransactions)
+            .cosignatures(cosignatures)
+            .build();
     }
 
     /**
@@ -104,16 +105,15 @@ export class AggregateTransaction extends Transaction {
                                innerTransactions: InnerTransaction[],
                                networkType: NetworkType,
                                cosignatures: AggregateTransactionCosignature[] = [],
-                               maxFee: UInt64 = new UInt64([0, 0])): AggregateTransaction {
-        return new AggregateTransaction(networkType,
-            TransactionType.AGGREGATE_BONDED,
-            TransactionVersion.AGGREGATE_BONDED,
-            deadline,
-            maxFee,
-            innerTransactions,
-            cosignatures,
-        );
-    }
+                               maxFee?: UInt64): AggregateTransaction {
+        return new AggregateBondedTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .innerTransactions(innerTransactions)
+            .cosignatures(cosignatures)
+            .build();
+}
 
     /**
      * @internal
@@ -190,17 +190,75 @@ export class AggregateTransaction extends Transaction {
      * @memberof AggregateTransaction
      */
     public get size(): number {
-        const byteSize = super.size;
+        return AggregateTransaction.calculateSize(this.innerTransactions || []);
+    }
 
+    public static calculateSize(innerTransactions: InnerTransaction[]): number {
+        const innerTransactionsSumSize = innerTransactions.reduce((previous, current) => previous + current.size, 0);
+        const byteSize = Transaction.getHeaderSize();
         // set static byte size fields
         const byteTransactionsSize = 4;
 
-        // calculate each inner transaction's size
-        let byteTransactions = 0;
-        this.innerTransactions.map((transaction) => {
-            byteTransactions += transaction.size;
-        });
+        return byteSize + byteTransactionsSize + innerTransactionsSumSize;
+    }
 
-        return byteSize + byteTransactionsSize + byteTransactions;
+}
+
+export class AggregateCompleteTransactionBuilder extends TransactionBuilder {
+    private _cosignatures: AggregateTransactionCosignature[] = [];
+    private _innerTransactions: InnerTransaction[] = [];
+
+    public cosignatures(cosignatures: AggregateTransactionCosignature[]) {
+        this._cosignatures = cosignatures;
+        return this;
+    }
+
+    public innerTransactions(innerTransactions: InnerTransaction[]) {
+        this._innerTransactions = innerTransactions;
+        return this;
+    }
+
+    public build(): AggregateTransaction {
+        return new AggregateTransaction(
+            this._networkType,
+            TransactionType.AGGREGATE_COMPLETE,
+            TransactionVersion.AGGREGATE_COMPLETE,
+            this._deadline ? this._deadline : this._createNewDeadlineFn(),
+            this._maxFee ? this._maxFee : calculateFee(AggregateTransaction.calculateSize(this._innerTransactions), this._feeCalculationStrategy),
+            this._innerTransactions,
+            this._cosignatures,
+            this._signature,
+            this._signer,
+            this._transactionInfo
+        )
+    }
+}
+export class AggregateBondedTransactionBuilder extends TransactionBuilder {
+    private _cosignatures: AggregateTransactionCosignature[] = [];
+    private _innerTransactions: InnerTransaction[] = [];
+
+    public cosignatures(cosignatures: AggregateTransactionCosignature[]) {
+        this._cosignatures = cosignatures;
+        return this;
+    }
+
+    public innerTransactions(innerTransactions: InnerTransaction[]) {
+        this._innerTransactions = innerTransactions;
+        return this;
+    }
+
+    public build(): AggregateTransaction {
+        return new AggregateTransaction(
+            this._networkType,
+            TransactionType.AGGREGATE_BONDED,
+            TransactionVersion.AGGREGATE_BONDED,
+            this._deadline ? this._deadline : this._createNewDeadlineFn(),
+            this._maxFee ? this._maxFee : calculateFee(AggregateTransaction.calculateSize(this._innerTransactions), this._feeCalculationStrategy),
+            this._innerTransactions,
+            this._cosignatures,
+            this._signature,
+            this._signer,
+            this._transactionInfo
+        )
     }
 }

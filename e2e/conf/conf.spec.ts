@@ -1,14 +1,9 @@
 const conf = require("config");
 
-import { Account } from '../../src/model/account/Account';
-import { NetworkType } from '../../src/model/blockchain/NetworkType';
 import { MosaicId, NamespaceId, TransactionType, RegisterNamespaceTransaction, MosaicDefinitionTransaction,
-    TransferTransaction, TransactionInfo, MosaicNonce, MosaicProperties, UInt64, BlockInfo, ChainConfigTransaction } from '../../src/model/model';
+    TransferTransaction, TransactionInfo, MosaicNonce, MosaicProperties, UInt64, BlockInfo, ChainConfigTransaction, TransactionBuilderFactory, NetworkType, Account } from '../../src/model/model';
 import { ConfUtils } from './ConfUtils';
-import { BlockHttp } from '../../src/infrastructure/BlockHttp';
-import { ChainHttp } from '../../src/infrastructure/ChainHttp';
-import { QueryParams } from '../../src/infrastructure/QueryParams';
-import { AccountHttp, TransactionHttp, NamespaceHttp, MosaicHttp } from '../../src/infrastructure/infrastructure';
+import { AccountHttp, TransactionHttp, NamespaceHttp, MosaicHttp, BlockHttp, QueryParams } from '../../src/infrastructure/infrastructure';
 
 // config types
 interface ConfApi {
@@ -16,6 +11,7 @@ interface ConfApi {
     hostname: string;
     protocol: string;
     port: number;
+    generationHash: string;
 }
 
 interface ConfAccount {
@@ -70,6 +66,7 @@ const ConfNamespaceHttp = new NamespaceHttp(APIUrl);
 const ConfMosaicHttp = new MosaicHttp(APIUrl);
 
 const ConfNetworkType = NetworkType[api.networkType];
+const ConfGenerationHash = api.generationHash;
 
 const blockchain = conf.get('blockchain') as ConfBlockchain;
 const systemEnv = process.env as unknown as ConfEnv;
@@ -178,14 +175,14 @@ const ConfNetworkMosaicDivisibility = 6;
 const ConfNetworkMosaicName = "xpx";
 
 const ConfTestingMosaicNonce = new MosaicNonce(new Uint8Array([0x01, 0x02, 0x03, 0x04]));
-const ConfTestingMosaic = MosaicId.createFromNonce(ConfTestingMosaicNonce,TestingAccount.publicAccount);
+const ConfTestingMosaicId = MosaicId.createFromNonce(ConfTestingMosaicNonce,TestingAccount.publicAccount);
 const ConfTestingMosaicProperties = MosaicProperties.create({
     supplyMutable: true,
     transferable: true,
     divisibility: 3,
     duration: UInt64.fromUint(1000)},
 );
-const ConfTestingNamespace = new NamespaceId('testing');
+const ConfTestingNamespaceId = new NamespaceId('testing');
 
 class NemesisBlockInfo {
     private static instance: BlockInfo;
@@ -196,6 +193,20 @@ class NemesisBlockInfo {
             NemesisBlockInfo.instance = await blockHttp.getBlockByHeight(1).toPromise();
         }
         return NemesisBlockInfo.instance;
+    }
+}
+
+class Configuration {
+    private static factory: TransactionBuilderFactory;
+    private constructor () {}
+    static async getTransactionBuilderFactory(): Promise<TransactionBuilderFactory> {
+        if (!Configuration.factory) {
+            const newFactory = new TransactionBuilderFactory();
+            newFactory.networkType = ConfNetworkType || await NemesisBlockInfo.getInstance().then(blockInfo => blockInfo.networkType);
+            newFactory.generationHash = ConfGenerationHash || await NemesisBlockInfo.getInstance().then(blockInfo => blockInfo.generationHash);
+            Configuration.factory = newFactory;
+        }
+        return Configuration.factory;
     }
 }
 
@@ -241,6 +252,7 @@ export {
     TestAccount,
     GetNemesisBlockDataPromise,
     NemesisBlockInfo,
+    Configuration,
 
     APIUrl,
     ConfAccountHttp,
@@ -248,7 +260,6 @@ export {
     ConfNamespaceHttp,
     ConfTransactionHttp,
 
-    ConfNetworkType,
     NemesisAccount,
     SeedAccount,
     TestingAccount,
@@ -270,8 +281,8 @@ export {
 
     ConfTestingMosaicNonce,
     ConfTestingMosaicProperties,
-    ConfTestingMosaic,
-    ConfTestingNamespace,
+    ConfTestingMosaicId,
+    ConfTestingNamespaceId,
 
     ConfNamespace,
     ConfNamespace2,

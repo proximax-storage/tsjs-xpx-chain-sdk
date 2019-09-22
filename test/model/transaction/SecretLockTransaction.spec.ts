@@ -25,10 +25,11 @@ import {Deadline} from '../../../src/model/transaction/Deadline';
 import {HashType} from '../../../src/model/transaction/HashType';
 import {SecretLockTransaction} from '../../../src/model/transaction/SecretLockTransaction';
 import {UInt64} from '../../../src/model/UInt64';
+import { DefaultFeeCalculationStrategy } from '../../../src/model/transaction/FeeCalculationStrategy';
 
 describe('SecretLockTransaction', () => {
 
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
         const proof = 'B778A39A3663719DFC5E48C9D78431B1E45C2AF9DF538782BF199C189DABEAC7';
         const recipient = Address.createFromRawAddress('SDBDG4IT43MPCW2W4CBBCSJJT42AYALQN7A4VVWL');
         const secretLockTransaction = SecretLockTransaction.create(
@@ -41,8 +42,7 @@ describe('SecretLockTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        expect(secretLockTransaction.maxFee.higher).to.be.equal(0);
-        expect(secretLockTransaction.maxFee.lower).to.be.equal(0);
+        expect(secretLockTransaction.maxFee.compact()).to.be.equal(secretLockTransaction.size * DefaultFeeCalculationStrategy);
     });
 
     it('should filled maxFee override transaction maxFee', () => {

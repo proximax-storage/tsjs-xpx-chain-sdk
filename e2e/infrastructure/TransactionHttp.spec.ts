@@ -15,112 +15,73 @@
  */
 import { assert, expect } from 'chai';
 import * as CryptoJS from 'crypto-js';
-import { ChronoUnit } from 'js-joda';
 import { keccak_256, sha3_256 } from 'js-sha3';
 import { Crypto } from '../../src/core/crypto';
 import { Convert as convert } from '../../src/core/format';
-import { AccountHttp } from '../../src/infrastructure/AccountHttp';
-import { NamespaceHttp } from '../../src/infrastructure/infrastructure';
-import { Listener } from '../../src/infrastructure/Listener';
-import { TransactionHttp } from '../../src/infrastructure/TransactionHttp';
-import { Account } from '../../src/model/account/Account';
-import { RestrictionModificationType } from '../../src/model/account/RestrictionModificationType';
-import { RestrictionType } from '../../src/model/account/RestrictionType';
-import { NetworkType } from '../../src/model/blockchain/NetworkType';
-import { Mosaic } from '../../src/model/mosaic/Mosaic';
-import { MosaicId } from '../../src/model/mosaic/MosaicId';
-import { MosaicNonce } from '../../src/model/mosaic/MosaicNonce';
-import { MosaicProperties } from '../../src/model/mosaic/MosaicProperties';
-import { MosaicSupplyType } from '../../src/model/mosaic/MosaicSupplyType';
-import { NetworkCurrencyMosaic } from '../../src/model/mosaic/NetworkCurrencyMosaic';
-import { AliasActionType } from '../../src/model/namespace/AliasActionType';
-import { NamespaceId } from '../../src/model/namespace/NamespaceId';
-import { AccountAddressRestrictionModificationTransaction } from '../../src/model/transaction/AccountAddressRestrictionModificationTransaction';
-import { AccountLinkTransaction } from '../../src/model/transaction/AccountLinkTransaction';
-import { AccountMosaicRestrictionModificationTransaction } from '../../src/model/transaction/AccountMosaicRestrictionModificationTransaction';
-import { AccountOperationRestrictionModificationTransaction } from '../../src/model/transaction/AccountOperationRestrictionModificationTransaction';
-import { AccountRestrictionModification } from '../../src/model/transaction/AccountRestrictionModification';
-import { AccountRestrictionTransaction } from '../../src/model/transaction/AccountRestrictionTransaction';
-import { AddressAliasTransaction } from '../../src/model/transaction/AddressAliasTransaction';
-import { AggregateTransaction } from '../../src/model/transaction/AggregateTransaction';
-import { CosignatureSignedTransaction } from '../../src/model/transaction/CosignatureSignedTransaction';
-import { Deadline } from '../../src/model/transaction/Deadline';
-import { HashLockTransaction } from '../../src/model/transaction/HashLockTransaction';
-import { HashType } from '../../src/model/transaction/HashType';
-import { LinkAction } from '../../src/model/transaction/LinkAction';
-import { LockFundsTransaction } from '../../src/model/transaction/LockFundsTransaction';
-import { MosaicAliasTransaction } from '../../src/model/transaction/MosaicAliasTransaction';
-import { MosaicDefinitionTransaction } from '../../src/model/transaction/MosaicDefinitionTransaction';
-import { MosaicSupplyChangeTransaction } from '../../src/model/transaction/MosaicSupplyChangeTransaction';
-import { PlainMessage, EmptyMessage } from '../../src/model/transaction/PlainMessage';
-import { RegisterNamespaceTransaction } from '../../src/model/transaction/RegisterNamespaceTransaction';
-import { SecretLockTransaction } from '../../src/model/transaction/SecretLockTransaction';
-import { SecretProofTransaction } from '../../src/model/transaction/SecretProofTransaction';
-import { Transaction } from '../../src/model/transaction/Transaction';
-import { TransactionType } from '../../src/model/transaction/TransactionType';
-import { TransferTransaction } from '../../src/model/transaction/TransferTransaction';
-import { UInt64 } from '../../src/model/UInt64';
 import {
-    APIUrl, ConfNetworkType, ConfNetworkMosaic,
-    SeedAccount, TestingAccount, TestingRecipient, MultisigAccount, CosignatoryAccount, Cosignatory2Account, Cosignatory3Account, GetNemesisBlockDataPromise, ConfNamespace, ConfTestingMosaic, ConfTestingNamespace, ConfAccountHttp, ConfTransactionHttp, ConfMosaicHttp, NemesisBlockInfo, Customer1Account, ConfNetworkMosaicDivisibility, MultilevelMultisigAccount, Cosignatory4Account, NemesisAccount
+    APIUrl, ConfNetworkMosaic,
+    TestingAccount, TestingRecipient, MultisigAccount, CosignatoryAccount, Cosignatory2Account, Cosignatory3Account, GetNemesisBlockDataPromise, ConfTestingMosaicId, ConfAccountHttp, ConfTransactionHttp, ConfMosaicHttp, Customer1Account, ConfNetworkMosaicDivisibility, MultilevelMultisigAccount, Cosignatory4Account, NemesisAccount, ConfTestingNamespaceId, Configuration
 } from '../conf/conf.spec';
-import { AliasTransaction, Address, ChainConfigTransaction, SignedTransaction, AggregateTransactionCosignature, CosignatureTransaction, ChainUpgradeTransaction } from '../../src/model/model';
-import { ModifyMetadataTransaction, MetadataModification, MetadataModificationType } from '../../src/model/transaction/ModifyMetadataTransaction';
-import { MetadataHttp } from '../../src/infrastructure/MetadataHttp';
-import { ConfUtils } from '../conf/ConfUtils';
-import { MosaicHttp } from '../../src/infrastructure/MosaicHttp';
+import { SignedTransaction, CosignatureTransaction, TransactionBuilderFactory, AccountRestrictionModification, MosaicId, Mosaic, UInt64, PlainMessage, CosignatureSignedTransaction, AggregateTransaction, MosaicNonce, MosaicProperties, MetadataModification, MetadataModificationType, AliasActionType, MosaicSupplyType, RestrictionModificationType, RestrictionType, TransactionType, HashType } from '../../src/model/model';
 import { fail } from 'assert';
 import { randomBytes } from 'crypto';
-import { validateTransactionConfirmed, validateCosignaturePartialTransactionAnnouncedCorrectly, validatePartialTransactionNotPartialAnyMore, validatePartialTransactionAnnouncedCorrectly } from '../utils';
+import { validateTransactionConfirmed, validatePartialTransactionNotPartialAnyMore, validatePartialTransactionAnnouncedCorrectly } from '../utils';
+import { TransactionHttp, AccountHttp, MosaicHttp, Listener } from '../../src/infrastructure/infrastructure';
 import { TransactionMapping } from '../../src/core/utils/utility';
 
-describe('TransactionHttp', () => {
-    let transactionHttp: TransactionHttp;
-    let accountHttp: AccountHttp;
-    let mosaicHttp: MosaicHttp;
-    let namespaceName: string;
-    let mosaicId: MosaicId;
-    let listener: Listener;
-    let generationHash: string;
 
-    before(() => {
-        transactionHttp = ConfTransactionHttp;
-        accountHttp = ConfAccountHttp;
-        mosaicHttp = ConfMosaicHttp;
-        listener = new Listener(APIUrl);
+let transactionHttp: TransactionHttp;
+let accountHttp: AccountHttp;
+let mosaicHttp: MosaicHttp;
+let namespaceName: string;
+let mosaicId: MosaicId;
+let listener: Listener;
+let factory: TransactionBuilderFactory;
 
-        return listener.open().then(() => {
-            return NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
-                generationHash = nemesisBlockInfo.generationHash;
-            });
-        });
+before(() => {
+    transactionHttp = ConfTransactionHttp;
+    accountHttp = ConfAccountHttp;
+    mosaicHttp = ConfMosaicHttp;
+    listener = new Listener(APIUrl);
+
+    return listener.open().then(() => {
+        return Configuration.getTransactionBuilderFactory().then(f => {
+            factory = f;
+        })
     });
+});
 
-    after(() => {
-        listener.close();
-    })
+after(() => {
+    listener.close();
+})
 
+describe('TransactionHttp', () => {
     describe('announce', () => {
         describe('TransferTransaction', () => {
-            const transferTransaction = TransferTransaction.create(
-                Deadline.create(),
-                TestingRecipient.address,
-                [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10))],
-                PlainMessage.create('test-message'),
-                ConfNetworkType);
             it('standalone', (done) => {
-                const signedTransaction = transferTransaction.signWith(TestingAccount, generationHash);
+                const transferTransaction = factory.transfer()
+                    .recipient(TestingRecipient.address)
+                    .mosaics([new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10))])
+                    .message(PlainMessage.create('test-message'))
+                    .build();
+
+                const signedTransaction = transferTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
             });
             it('aggregate', (done) => {
-                const aggregateTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                    [transferTransaction.toAggregate(TestingAccount.publicAccount)],
-                    ConfNetworkType,
-                    [],
-                );
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, generationHash);
+                const transferTransaction = factory.transfer()
+                    .recipient(TestingRecipient.address)
+                    .mosaics([new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10))])
+                    .message(PlainMessage.create('test-message'))
+                    .build();
+
+                const aggregateTransaction = factory.aggregateComplete()
+                    .innerTransactions([transferTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .build();
+
+                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -129,27 +90,25 @@ describe('TransactionHttp', () => {
     });
 
     describe('Multisig', () => {
-        const transferTransaction = TransferTransaction.create(
-            Deadline.create(),
-            TestingRecipient.address,
-            [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10))],
-            PlainMessage.create('test-message from multisig account as aggregate bonded'),
-            ConfNetworkType);
         it('should send transfer tx as aggregate bonded', (done) => {
-            const aggregateBondedTransaction = AggregateTransaction.createBonded(
-                Deadline.create(),
-                [transferTransaction.toAggregate(MultisigAccount.publicAccount)],
-                ConfNetworkType
-            )
-            const signedAggregateBondedTransaction = aggregateBondedTransaction.signWith(CosignatoryAccount, generationHash);
-            const hashLockTransaction = HashLockTransaction.create(
-                Deadline.create(),
-                new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10000000)),
-                UInt64.fromUint(1000),
-                signedAggregateBondedTransaction,
-                ConfNetworkType,
-            );
-            const signedHashLockTransaction = hashLockTransaction.signWith(CosignatoryAccount, generationHash);
+            const transferTransaction = factory.transfer()
+                .recipient(TestingRecipient.address)
+                .mosaics([new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10))])
+                .message(PlainMessage.create('test-message from multisig account as aggregate bonded'))
+                .build();
+
+            const aggregateBondedTransaction = factory.aggregateBonded()
+                .innerTransactions([transferTransaction.toAggregate(MultisigAccount.publicAccount)])
+                .build();
+
+            const signedAggregateBondedTransaction = aggregateBondedTransaction.signWith(CosignatoryAccount, factory.generationHash);
+            const hashLockTransaction = factory.hashLock()
+                .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10000000)))
+                .duration(UInt64.fromUint(1000))
+                .signedTransaction(signedAggregateBondedTransaction)
+                .build();
+
+            const signedHashLockTransaction = hashLockTransaction.signWith(CosignatoryAccount, factory.generationHash);
             validateTransactionConfirmed(listener, CosignatoryAccount.address, signedHashLockTransaction.hash)
                 .then(() => {
                     validatePartialTransactionAnnouncedCorrectly(listener, MultisigAccount.address, signedAggregateBondedTransaction.hash, (addedAggregateBondedTransaction) => {
@@ -166,19 +125,17 @@ describe('TransactionHttp', () => {
         });
 
         it('should send transfer tx as aggregate complete', (done) => {
-            const transferTransaction = TransferTransaction.create(
-                Deadline.create(),
-                TestingRecipient.address,
-                [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10))],
-                PlainMessage.create('test-message from multisig account as aggregate complete'),
-                ConfNetworkType);
-            const aggregateCompleteTransaction = AggregateTransaction.createComplete(
-                Deadline.create(),
-                [transferTransaction.toAggregate(MultisigAccount.publicAccount)],
-                ConfNetworkType,
-                []
-            )
-            const signedAggregateCompleteTransaction = CosignatoryAccount.signTransactionWithCosignatories(aggregateCompleteTransaction, [Cosignatory2Account], generationHash);
+            const transferTransaction = factory.transfer()
+                .recipient(TestingRecipient.address)
+                .mosaics([new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10))])
+                .message(PlainMessage.create('test-message from multisig account as aggregate complete'))
+                .build();
+
+            const aggregateCompleteTransaction = factory.aggregateComplete()
+                .innerTransactions([transferTransaction.toAggregate(MultisigAccount.publicAccount)])
+                .build();
+
+            const signedAggregateCompleteTransaction = CosignatoryAccount.signTransactionWithCosignatories(aggregateCompleteTransaction, [Cosignatory2Account], factory.generationHash);
             validateTransactionConfirmed(listener, CosignatoryAccount.address, signedAggregateCompleteTransaction.hash)
                 .then(() => done()).catch((reason) => fail(reason));
             transactionHttp.announce(signedAggregateCompleteTransaction);
@@ -186,27 +143,25 @@ describe('TransactionHttp', () => {
     });
 
     describe('Multilevel Multisig', () => {
-        const transferTransaction = TransferTransaction.create(
-            Deadline.create(),
-            TestingRecipient.address,
-            [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10))],
-            PlainMessage.create('test-message from multilevel multisig account as aggregate bonded'),
-            ConfNetworkType);
         it('should send transfer tx as aggregate bonded', (done) => {
-            const aggregateBondedTransaction = AggregateTransaction.createBonded(
-                Deadline.create(),
-                [transferTransaction.toAggregate(MultilevelMultisigAccount.publicAccount)],
-                ConfNetworkType
-            )
-            const signedAggregateBondedTransaction = aggregateBondedTransaction.signWith(Cosignatory4Account, generationHash);
-            const hashLockTransaction = HashLockTransaction.create(
-                Deadline.create(),
-                new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10000000)),
-                UInt64.fromUint(1000),
-                signedAggregateBondedTransaction,
-                ConfNetworkType,
-            );
-            const signedHashLockTransaction = hashLockTransaction.signWith(Cosignatory4Account, generationHash);
+            const transferTransaction = factory.transfer()
+                .recipient(TestingRecipient.address)
+                .mosaics([new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10))])
+                .message(PlainMessage.create('test-message from multilevel multisig account as aggregate bonded'))
+                .build();
+
+            const aggregateBondedTransaction = factory.aggregateBonded()
+                .innerTransactions([transferTransaction.toAggregate(MultilevelMultisigAccount.publicAccount)])
+                .build();
+
+            const signedAggregateBondedTransaction = aggregateBondedTransaction.signWith(Cosignatory4Account, factory.generationHash);
+            const hashLockTransaction = factory.hashLock()
+                .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10000000)))
+                .duration(UInt64.fromUint(1000))
+                .signedTransaction(signedAggregateBondedTransaction)
+                .build();
+
+            const signedHashLockTransaction = hashLockTransaction.signWith(Cosignatory4Account, factory.generationHash);
             validateTransactionConfirmed(listener, Cosignatory4Account.address, signedHashLockTransaction.hash)
                 .then(() => {
                     validatePartialTransactionAnnouncedCorrectly(listener, MultilevelMultisigAccount.address, signedAggregateBondedTransaction.hash, (addedAggregateBondedTransaction) => {
@@ -225,45 +180,40 @@ describe('TransactionHttp', () => {
         });
 
         it('should send transfer tx as aggregate complete signed at once', (done) => {
-            const transferTransaction = TransferTransaction.create(
-                Deadline.create(),
-                TestingRecipient.address,
-                [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10))],
-                PlainMessage.create('test-message from multilevel multisig account as aggregate complete'),
-                ConfNetworkType);
-            const aggregateCompleteTransaction = AggregateTransaction.createComplete(
-                Deadline.create(),
-                [transferTransaction.toAggregate(MultilevelMultisigAccount.publicAccount)],
-                ConfNetworkType,
-                []
-            )
-            const signedAggregateCompleteTransaction = Cosignatory4Account.signTransactionWithCosignatories(aggregateCompleteTransaction, [Cosignatory2Account, Cosignatory3Account], generationHash);
+            const transferTransaction = factory.transfer()
+                .recipient(TestingRecipient.address)
+                .mosaics([new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10))])
+                .message(PlainMessage.create('test-message from multilevel multisig account as aggregate complete'))
+                .build();
+
+            const aggregateCompleteTransaction = factory.aggregateComplete()
+                .innerTransactions([transferTransaction.toAggregate(MultilevelMultisigAccount.publicAccount)])
+                .build();
+
+            const signedAggregateCompleteTransaction = Cosignatory4Account.signTransactionWithCosignatories(aggregateCompleteTransaction, [Cosignatory2Account, Cosignatory3Account], factory.generationHash);
             validateTransactionConfirmed(listener, Cosignatory4Account.address, signedAggregateCompleteTransaction.hash)
                 .then(() => done()).catch((reason) => fail(reason));
             transactionHttp.announce(signedAggregateCompleteTransaction);
         })
 
         it('should send transfer tx as aggregate complete not signed at once (offline)', (done) => {
-            const transferTransaction = TransferTransaction.create(
-                Deadline.create(),
-                TestingRecipient.address,
-                [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10))],
-                PlainMessage.create('test-message from multilevel multisig account as aggregate complete'),
-                ConfNetworkType);
+            const transferTransaction = factory.transfer()
+                .recipient(TestingRecipient.address)
+                .mosaics([new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10))])
+                .message(PlainMessage.create('test-message from multilevel multisig account as aggregate complete'))
+                .build();
             // initiator, delivers this to other cosigners
-            const aggregateCompleteTransaction = AggregateTransaction.createComplete(
-                Deadline.create(),
-                [transferTransaction.toAggregate(MultilevelMultisigAccount.publicAccount)],
-                ConfNetworkType,
-                []
-            )
-            const signedAggregateCompleteTransaction = aggregateCompleteTransaction.signWith(Cosignatory4Account, generationHash);
+            const aggregateCompleteTransaction = factory.aggregateComplete()
+                .innerTransactions([transferTransaction.toAggregate(MultilevelMultisigAccount.publicAccount)])
+                .build();
+
+            const signedAggregateCompleteTransaction = aggregateCompleteTransaction.signWith(Cosignatory4Account, factory.generationHash);
 
             // second cosigner, cosign and send back to the initiator
-            const cosignedTwo = CosignatureTransaction.signTransactionPayload(Cosignatory2Account, signedAggregateCompleteTransaction.payload, generationHash);
+            const cosignedTwo = CosignatureTransaction.signTransactionPayload(Cosignatory2Account, signedAggregateCompleteTransaction.payload, factory.generationHash);
 
             // third cosigner, cosign and send back to the initiator
-            const cosignedThree = CosignatureTransaction.signTransactionPayload(Cosignatory3Account, signedAggregateCompleteTransaction.payload, generationHash);
+            const cosignedThree = CosignatureTransaction.signTransactionPayload(Cosignatory3Account, signedAggregateCompleteTransaction.payload, factory.generationHash);
 
             // initiator combines all the signatures and the transaction into single signed transaction and announces
             const cosignatureSignedTransactions = [
@@ -271,10 +221,10 @@ describe('TransactionHttp', () => {
                 new CosignatureSignedTransaction(cosignedThree.parentHash, cosignedThree.signature, cosignedThree.signer)
             ];
             const deserializedAggregateCompleteTransaction = TransactionMapping.createFromPayload(signedAggregateCompleteTransaction.payload) as AggregateTransaction;
-            const signedDeserializedAggregateCompleteTransaction = deserializedAggregateCompleteTransaction.signTransactionGivenSignatures(Cosignatory4Account, cosignatureSignedTransactions, generationHash);
+            const signedDeserializedAggregateCompleteTransaction = deserializedAggregateCompleteTransaction.signTransactionGivenSignatures(Cosignatory4Account, cosignatureSignedTransactions, factory.generationHash);
 
             { // check that all the signatures are the same as if used the signTransactionWithCosignatories only
-                const differentlySignedAggregateCompleteTransaction = Cosignatory4Account.signTransactionWithCosignatories(aggregateCompleteTransaction, [Cosignatory2Account, Cosignatory3Account], generationHash);
+                const differentlySignedAggregateCompleteTransaction = Cosignatory4Account.signTransactionWithCosignatories(aggregateCompleteTransaction, [Cosignatory2Account, Cosignatory3Account], factory.generationHash);
                 expect(differentlySignedAggregateCompleteTransaction.payload).to.be.equal(signedDeserializedAggregateCompleteTransaction.payload);
                 expect(differentlySignedAggregateCompleteTransaction.hash).to.be.equal(signedDeserializedAggregateCompleteTransaction.hash);
             }
@@ -289,29 +239,27 @@ describe('TransactionHttp', () => {
         describe('RegisterNamespaceTransaction', () => {
             it('standalone', (done) => {
                 namespaceName = 'root-test-namespace-' + Math.floor(Math.random() * 10000);
-                const registerNamespaceTransaction = RegisterNamespaceTransaction.createRootNamespace(
-                    Deadline.create(),
-                    namespaceName,
-                    UInt64.fromUint(1000),
-                    ConfNetworkType,
-                );
-                const signedTransaction = registerNamespaceTransaction.signWith(TestingAccount, generationHash);
+                const registerNamespaceTransaction = factory.registerRootNamespace()
+                    .namespaceName(namespaceName)
+                    .duration(UInt64.fromUint(1000))
+                    .build();
+
+                const signedTransaction = registerNamespaceTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
             });
             it('aggregate', (done) => {
-                const registerNamespaceTransaction = RegisterNamespaceTransaction.createRootNamespace(
-                    Deadline.create(),
-                    'root-test-namespace-' + Math.floor(Math.random() * 10000),
-                    UInt64.fromUint(1000),
-                    ConfNetworkType,
-                );
-                const aggregateTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                    [registerNamespaceTransaction.toAggregate(TestingAccount.publicAccount)],
-                    ConfNetworkType,
-                    []);
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, generationHash);
+                const registerNamespaceTransaction = factory.registerRootNamespace()
+                    .namespaceName('root-test-namespace-' + Math.floor(Math.random() * 10000))
+                    .duration(UInt64.fromUint(1000))
+                    .build();
+
+                const aggregateTransaction = factory.aggregateComplete()
+                    .innerTransactions([registerNamespaceTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .build();
+
+                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -322,29 +270,26 @@ describe('TransactionHttp', () => {
             it('standalone', (done) => {
                 const nonce = MosaicNonce.createRandom();
                 const mosaicId = MosaicId.createFromNonce(nonce, TestingAccount.publicAccount);
-                const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
-                    Deadline.create(),
-                    nonce,
-                    mosaicId,
-                    MosaicProperties.create({
+                const mosaicDefinitionTransaction = factory.mosaicDefinition()
+                    .mosaicNonce(nonce)
+                    .mosaicId(mosaicId)
+                    .mosaicProperties(MosaicProperties.create({
                         supplyMutable: true,
                         transferable: true,
                         divisibility: 3,
                         duration: UInt64.fromUint(1000),
-                    }),
-                    ConfNetworkType,
-                );
-                const signedTransaction = mosaicDefinitionTransaction.signWith(TestingAccount, generationHash);
+                    }))
+                    .build();
+
+                const signedTransaction = mosaicDefinitionTransaction.signWith(TestingAccount, factory.generationHash);
                 console.log(mosaicId.toHex());
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash).then(() => {
-                    const modifyMetadataTransaction = ModifyMetadataTransaction.createWithMosaicId(
-                        ConfNetworkType,
-                        Deadline.create(),
-                        undefined,
-                        mosaicId,
-                        [new MetadataModification(MetadataModificationType.ADD, 'key2', 'some other value')]
-                    );
-                    const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount, generationHash);
+                    const modifyMetadataTransaction = factory.mosaicMetadata()
+                        .mosaicId(mosaicId)
+                        .modifications([new MetadataModification(MetadataModificationType.ADD, 'key2', 'some other value')])
+                        .build();
+
+                    const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount, factory.generationHash);
                     validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                         .then(() => done()).catch((reason) => fail(reason));
                     transactionHttp.announce(signedTransaction);
@@ -355,23 +300,22 @@ describe('TransactionHttp', () => {
             it('aggregate', (done) => {
                 const nonce = MosaicNonce.createRandom();
                 mosaicId = MosaicId.createFromNonce(nonce, TestingAccount.publicAccount);
-                const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
-                    Deadline.create(),
-                    nonce,
-                    mosaicId,
-                    MosaicProperties.create({
+                const mosaicDefinitionTransaction = factory.mosaicDefinition()
+                    .mosaicNonce(nonce)
+                    .mosaicId(mosaicId)
+                    .mosaicProperties(MosaicProperties.create({
                         supplyMutable: true,
                         transferable: true,
                         divisibility: 3,
                         duration: UInt64.fromUint(1000),
-                    }),
-                    ConfNetworkType,
-                );
-                const aggregateTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                    [mosaicDefinitionTransaction.toAggregate(TestingAccount.publicAccount)],
-                    ConfNetworkType,
-                    []);
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, generationHash);
+                    }))
+                    .build();
+
+                const aggregateTransaction = factory.aggregateComplete()
+                    .innerTransactions([mosaicDefinitionTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .build();
+
+                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -382,19 +326,18 @@ describe('TransactionHttp', () => {
             it('standalone', (done) => {
                 const nonce = MosaicNonce.createFromHex('00000000');
                 const mosaicId = MosaicId.createFromNonce(nonce, TestingAccount.publicAccount);
-                const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
-                    Deadline.create(),
-                    nonce,
-                    mosaicId,
-                    MosaicProperties.create({
+                const mosaicDefinitionTransaction = factory.mosaicDefinition()
+                    .mosaicNonce(nonce)
+                    .mosaicId(mosaicId)
+                    .mosaicProperties(MosaicProperties.create({
                         supplyMutable: true,
                         transferable: true,
                         divisibility: 3,
                         duration: UInt64.fromUint(60000),
-                    }),
-                    ConfNetworkType,
-                );
-                const signedTransaction = mosaicDefinitionTransaction.signWith(TestingAccount, generationHash);
+                    }))
+                    .build();
+
+                const signedTransaction = mosaicDefinitionTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -403,23 +346,22 @@ describe('TransactionHttp', () => {
             it('aggregate', (done) => {
                 const nonce = MosaicNonce.createFromHex('00000000');
                 const mosaicId = MosaicId.createFromNonce(nonce, TestingAccount.publicAccount);
-                const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
-                    Deadline.create(),
-                    nonce,
-                    mosaicId,
-                    MosaicProperties.create({
+                const mosaicDefinitionTransaction = factory.mosaicDefinition()
+                    .mosaicNonce(nonce)
+                    .mosaicId(mosaicId)
+                    .mosaicProperties(MosaicProperties.create({
                         supplyMutable: true,
                         transferable: true,
                         divisibility: 3,
                         duration: UInt64.fromUint(1000),
-                    }),
-                    ConfNetworkType,
-                );
-                const aggregateTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                    [mosaicDefinitionTransaction.toAggregate(TestingAccount.publicAccount)],
-                    ConfNetworkType,
-                    []);
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, generationHash);
+                    }))
+                    .build();
+
+                const aggregateTransaction = factory.aggregateComplete()
+                    .innerTransactions([mosaicDefinitionTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .build();
+
+                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -428,54 +370,50 @@ describe('TransactionHttp', () => {
 
         describe('AccountAndMosaicAliasTransactions', () => {
             it('should create an alias to an account', (done) => {
-                const addressAliasTransaction = AliasTransaction.createForAddress(
-                    Deadline.create(),
-                    AliasActionType.Link,
-                    ConfTestingNamespace,
-                    TestingAccount.address,
-                    ConfNetworkType
-                );
-                const signedTransaction = addressAliasTransaction.signWith(TestingAccount, generationHash);
+                const addressAliasTransaction = factory.addressAlias()
+                    .actionType(AliasActionType.Link)
+                    .namespaceId(ConfTestingNamespaceId)
+                    .address(TestingAccount.address)
+                    .build();
+
+                const signedTransaction = addressAliasTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
             });
             it('should remove the alias from an account', (done) => {
-                const addressAliasTransaction = AliasTransaction.createForAddress(
-                    Deadline.create(),
-                    AliasActionType.Unlink,
-                    ConfTestingNamespace,
-                    TestingAccount.address,
-                    ConfNetworkType
-                );
-                const signedTransaction = addressAliasTransaction.signWith(TestingAccount, generationHash);
+                const addressAliasTransaction = factory.addressAlias()
+                    .actionType(AliasActionType.Unlink)
+                    .namespaceId(ConfTestingNamespaceId)
+                    .address(TestingAccount.address)
+                    .build();
+
+                const signedTransaction = addressAliasTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
             });
             it('should create an alias to a mosaic', (done) => {
-                const mosaicAliasTransaction = AliasTransaction.createForMosaic(
-                    Deadline.create(),
-                    AliasActionType.Link,
-                    ConfTestingNamespace,
-                    ConfTestingMosaic,
-                    ConfNetworkType
-                );
+                const mosaicAliasTransaction = factory.mosaicAlias()
+                    .actionType(AliasActionType.Link)
+                    .namespaceId(ConfTestingNamespaceId)
+                    .mosaicId(ConfTestingMosaicId)
+                    .build();
+
                 console.log(mosaicAliasTransaction);
-                const signedTransaction = mosaicAliasTransaction.signWith(TestingAccount, generationHash);
+                const signedTransaction = mosaicAliasTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
             });
             it('should remove an alias from a mosaic', (done) => {
-                const mosaicAliasTransaction = AliasTransaction.createForMosaic(
-                    Deadline.create(),
-                    AliasActionType.Unlink,
-                    ConfTestingNamespace,
-                    ConfTestingMosaic,
-                    ConfNetworkType
-                );
-                const signedTransaction = mosaicAliasTransaction.signWith(TestingAccount, generationHash);
+                const mosaicAliasTransaction = factory.mosaicAlias()
+                    .actionType(AliasActionType.Unlink)
+                    .namespaceId(ConfTestingNamespaceId)
+                    .mosaicId(ConfTestingMosaicId)
+                    .build();
+
+                const signedTransaction = mosaicAliasTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -484,31 +422,29 @@ describe('TransactionHttp', () => {
 
         describe('MosaicSupplyChangeTransaction', () => {
             it('standalone', (done) => {
-                const mosaicSupplyChangeTransaction = MosaicSupplyChangeTransaction.create(
-                    Deadline.create(),
-                    mosaicId, // depends on mosaicId created randomly in the previous test
-                    MosaicSupplyType.Increase,
-                    UInt64.fromUint(10),
-                    ConfNetworkType,
-                );
-                const signedTransaction = mosaicSupplyChangeTransaction.signWith(TestingAccount, generationHash);
+                const mosaicSupplyChangeTransaction = factory.mosaicSupplyChange()
+                    .mosaicId(mosaicId) // depends on mosaicId created randomly in the previous test
+                    .direction(MosaicSupplyType.Increase)
+                    .delta(UInt64.fromUint(10))
+                    .build();
+
+                const signedTransaction = mosaicSupplyChangeTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
             });
             it('aggregate', (done) => {
-                const mosaicSupplyChangeTransaction = MosaicSupplyChangeTransaction.create(
-                    Deadline.create(),
-                    mosaicId, // depends on mosaicId created randomly in the previous test
-                    MosaicSupplyType.Increase,
-                    UInt64.fromUint(10),
-                    ConfNetworkType,
-                );
-                const aggregateTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                    [mosaicSupplyChangeTransaction.toAggregate(TestingAccount.publicAccount)],
-                    ConfNetworkType,
-                    []);
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, generationHash);
+                const mosaicSupplyChangeTransaction = factory.mosaicSupplyChange()
+                    .mosaicId(mosaicId) // depends on mosaicId created randomly in the previous test
+                    .direction(MosaicSupplyType.Increase)
+                    .delta(UInt64.fromUint(10))
+                    .build();
+
+                const aggregateTransaction = factory.aggregateComplete()
+                    .innerTransactions([mosaicSupplyChangeTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .build();
+
+                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -522,13 +458,12 @@ describe('TransactionHttp', () => {
                 RestrictionModificationType.Add,
                 Customer1Account.address,
             );
-            const addressModification = AccountRestrictionTransaction.createAddressRestrictionModificationTransaction(
-                Deadline.create(),
-                RestrictionType.BlockAddress,
-                [addressRestrictionFilter],
-                ConfNetworkType,
-            );
-            const signedTransaction = addressModification.signWith(TestingAccount, generationHash);
+            const addressModification = factory.accountRestrictionAddress()
+                .restrictionType(RestrictionType.BlockAddress)
+                .modifications([addressRestrictionFilter])
+                .build();
+
+            const signedTransaction = addressModification.signWith(TestingAccount, factory.generationHash);
             validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                 .then(() => done()).catch((reason) => fail(reason));
             transactionHttp.announce(signedTransaction);
@@ -539,18 +474,16 @@ describe('TransactionHttp', () => {
                 RestrictionModificationType.Remove,
                 Customer1Account.address,
             );
-            const addressModification = AccountRestrictionTransaction.createAddressRestrictionModificationTransaction(
-                Deadline.create(),
-                RestrictionType.BlockAddress,
-                [addressRestrictionFilter],
-                ConfNetworkType,
-            );
-            const aggregateTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                [addressModification.toAggregate(TestingAccount.publicAccount)],
-                ConfNetworkType,
-                [],
-            );
-            const signedTransaction = aggregateTransaction.signWith(TestingAccount, generationHash);
+            const addressModification = factory.accountRestrictionAddress()
+                .restrictionType(RestrictionType.BlockAddress)
+                .modifications([addressRestrictionFilter])
+                .build();
+
+            const aggregateTransaction = factory.aggregateComplete()
+                .innerTransactions([addressModification.toAggregate(TestingAccount.publicAccount)])
+                .build();
+
+            const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
             validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                 .then(() => done()).catch((reason) => fail(reason));
             transactionHttp.announce(signedTransaction);
@@ -563,13 +496,12 @@ describe('TransactionHttp', () => {
                 RestrictionModificationType.Add,
                 mosaicId,
             );
-            const addressModification = AccountRestrictionTransaction.createMosaicRestrictionModificationTransaction(
-                Deadline.create(),
-                RestrictionType.BlockMosaic,
-                [mosaicRestrictionFilter],
-                ConfNetworkType,
-            );
-            const signedTransaction = addressModification.signWith(TestingAccount, generationHash);
+            const addressModification = factory.accountRestrictionMosaic()
+                .restrictionType(RestrictionType.BlockMosaic)
+                .modifications([mosaicRestrictionFilter])
+                .build();
+
+            const signedTransaction = addressModification.signWith(TestingAccount, factory.generationHash);
             validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                 .then(() => done()).catch((reason) => fail(reason));
             transactionHttp.announce(signedTransaction);
@@ -580,18 +512,16 @@ describe('TransactionHttp', () => {
                 RestrictionModificationType.Remove,
                 mosaicId,
             );
-            const addressModification = AccountRestrictionTransaction.createMosaicRestrictionModificationTransaction(
-                Deadline.create(),
-                RestrictionType.BlockMosaic,
-                [mosaicRestrictionFilter],
-                ConfNetworkType,
-            );
-            const aggregateTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                [addressModification.toAggregate(TestingAccount.publicAccount)],
-                ConfNetworkType,
-                [],
-            );
-            const signedTransaction = aggregateTransaction.signWith(TestingAccount, generationHash);
+            const addressModification = factory.accountRestrictionMosaic()
+                .restrictionType(RestrictionType.BlockMosaic)
+                .modifications([mosaicRestrictionFilter])
+                .build();
+
+            const aggregateTransaction = factory.aggregateComplete()
+                .innerTransactions([addressModification.toAggregate(TestingAccount.publicAccount)])
+                .build();
+
+            const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
             validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                 .then(() => done()).catch((reason) => fail(reason));
             transactionHttp.announce(signedTransaction);
@@ -604,13 +534,12 @@ describe('TransactionHttp', () => {
                 RestrictionModificationType.Add,
                 TransactionType.LINK_ACCOUNT,
             );
-            const addressModification = AccountRestrictionTransaction.createOperationRestrictionModificationTransaction(
-                Deadline.create(),
-                RestrictionType.BlockTransaction,
-                [operationRestrictionFilter],
-                ConfNetworkType,
-            );
-            const signedTransaction = addressModification.signWith(Cosignatory2Account, generationHash);
+            const addressModification = factory.accountRestrictionOperation()
+                .restrictionType(RestrictionType.BlockTransaction)
+                .modifications([operationRestrictionFilter])
+                .build();
+
+            const signedTransaction = addressModification.signWith(Cosignatory2Account, factory.generationHash);
 
             validateTransactionConfirmed(listener, Cosignatory2Account.address, signedTransaction.hash)
                 .then(() => done()).catch((reason) => fail(reason));
@@ -622,18 +551,16 @@ describe('TransactionHttp', () => {
                 RestrictionModificationType.Remove,
                 TransactionType.LINK_ACCOUNT,
             );
-            const addressModification = AccountRestrictionTransaction.createOperationRestrictionModificationTransaction(
-                Deadline.create(),
-                RestrictionType.BlockTransaction,
-                [operationRestrictionFilter],
-                ConfNetworkType,
-            );
-            const aggregateTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                [addressModification.toAggregate(Cosignatory2Account.publicAccount)],
-                ConfNetworkType,
-                [],
-            );
-            const signedTransaction = aggregateTransaction.signWith(Cosignatory2Account, generationHash);
+            const addressModification = factory.accountRestrictionOperation()
+                .restrictionType(RestrictionType.BlockTransaction)
+                .modifications([operationRestrictionFilter])
+                .build();
+
+            const aggregateTransaction = factory.aggregateComplete()
+                .innerTransactions([addressModification.toAggregate(Cosignatory2Account.publicAccount)])
+                .build();
+
+            const signedTransaction = aggregateTransaction.signWith(Cosignatory2Account, factory.generationHash);
             validateTransactionConfirmed(listener, Cosignatory2Account.address, signedTransaction.hash)
                 .then(() => done()).catch((reason) => fail(reason));
             transactionHttp.announce(signedTransaction);
@@ -649,14 +576,14 @@ describe('TransactionHttp', () => {
                 ConfNetworkType,
                 [],
             );
-            const signedTransaction = TestingAccount.sign(aggregateTransaction, generationHash);
+            const signedTransaction = TestingAccount.sign(aggregateTransaction, factory.generationHash);
             const hashLockTransaction = HashLockTransaction.create(Deadline.create(),
                 new Mosaic(new NamespaceId('cat.currency'), UInt64.fromUint(10 * Math.pow(10, NetworkCurrencyMosaic.DIVISIBILITY))),
                 UInt64.fromUint(10000),
                 signedTransaction,
                 ConfNetworkType);
 
-            const signedHashLockTransaction = hashLockTransaction.signWith(TestingAccount, generationHash);
+            const signedHashLockTransaction = hashLockTransaction.signWith(TestingAccount, factory.generationHash);
             validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedHashLockTransaction.hash);
             transactionHttp.announce(signedHashLockTransaction);
         });
@@ -676,7 +603,7 @@ describe('TransactionHttp', () => {
                 ConfNetworkType,
                 [],
             );
-            const signedTransaction = aggregateTransaction.signWith(TestingAccount, generationHash);
+            const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
             validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
             transactionHttp.announce(signedTransaction);
         });
@@ -684,42 +611,37 @@ describe('TransactionHttp', () => {
 */
     describe('LockFundsTransaction', () => {
         it('standalone', (done) => {
-            const aggregateTransaction = AggregateTransaction.createBonded(
-                Deadline.create(),
-                [],
-                ConfNetworkType,
-                [],
-            );
-            const signedTransaction = TestingAccount.sign(aggregateTransaction, generationHash);
-            const lockFundsTransaction = LockFundsTransaction.create(Deadline.create(),
-                new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * Math.pow(10, ConfNetworkMosaicDivisibility))),
-                UInt64.fromUint(10000),
-                signedTransaction,
-                ConfNetworkType);
-            const signedLockFundsTransaction = lockFundsTransaction.signWith(TestingAccount, generationHash);
+            const aggregateTransaction = factory.aggregateBonded()
+                .build();
+
+            const signedTransaction = TestingAccount.sign(aggregateTransaction, factory.generationHash);
+            const lockFundsTransaction = factory.lockFunds()
+                .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * Math.pow(10, ConfNetworkMosaicDivisibility))))
+                .duration(UInt64.fromUint(10000))
+                .signedTransaction(signedTransaction)
+                .build();
+
+            const signedLockFundsTransaction = lockFundsTransaction.signWith(TestingAccount, factory.generationHash);
             validateTransactionConfirmed(listener, TestingAccount.address, signedLockFundsTransaction.hash)
                 .then(() => done()).catch((reason) => fail(reason));
             transactionHttp.announce(signedLockFundsTransaction);
         });
 
         it('aggregate', (done) => {
-            const aggregateTransaction = AggregateTransaction.createBonded(
-                Deadline.create(),
-                [],
-                ConfNetworkType,
-                [],
-            );
-            const signedTransaction = TestingAccount.sign(aggregateTransaction, generationHash);
-            const lockFundsTransaction = LockFundsTransaction.create(Deadline.create(),
-                new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * Math.pow(10, ConfNetworkMosaicDivisibility))),
-                UInt64.fromUint(10),
-                signedTransaction,
-                ConfNetworkType);
-            const aggregateLockFundsTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                [lockFundsTransaction.toAggregate(TestingAccount.publicAccount)],
-                ConfNetworkType,
-                []);
-            const signedAggregateLockFundsTransaction = aggregateLockFundsTransaction.signWith(TestingAccount, generationHash);
+            const aggregateTransaction = factory.aggregateBonded()
+                .build();
+            const signedTransaction = TestingAccount.sign(aggregateTransaction, factory.generationHash);
+            const lockFundsTransaction = factory.lockFunds()
+                .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * Math.pow(10, ConfNetworkMosaicDivisibility))))
+                .duration(UInt64.fromUint(10))
+                .signedTransaction(signedTransaction)
+                .build();
+
+            const aggregateLockFundsTransaction = factory.aggregateComplete()
+                .innerTransactions([lockFundsTransaction.toAggregate(TestingAccount.publicAccount)])
+                .build();
+
+            const signedAggregateLockFundsTransaction = aggregateLockFundsTransaction.signWith(TestingAccount, factory.generationHash);
             validateTransactionConfirmed(listener, TestingAccount.address, signedAggregateLockFundsTransaction.hash)
                 .then(() => done()).catch((reason) => fail(reason));
             transactionHttp.announce(signedAggregateLockFundsTransaction);
@@ -728,22 +650,17 @@ describe('TransactionHttp', () => {
 
     describe('Aggregate Complete Transaction', () => {
         it('should announce aggregated complete transaction', (done) => {
-            const transaction = TransferTransaction.create(
-                Deadline.create(),
-                TestingRecipient.address,
-                [],
-                PlainMessage.create('Hi'),
-                ConfNetworkType,
-            );
-            const aggregateTransaction = AggregateTransaction.createComplete(
-                Deadline.create(),
-                [
+            const transaction = factory.transfer()
+                .recipient(TestingRecipient.address)
+                .message(PlainMessage.create('Hi'))
+                .build();
+
+            const aggregateTransaction = factory.aggregateComplete()
+                .innerTransactions([
                     transaction.toAggregate(TestingAccount.publicAccount),
-                ],
-                ConfNetworkType,
-                [],
-            );
-            const signedTransaction = TestingAccount.sign(aggregateTransaction, generationHash);
+                ])
+                .build();
+            const signedTransaction = TestingAccount.sign(aggregateTransaction, factory.generationHash);
             validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                 .then(() => done()).catch((reason) => fail(reason));
             transactionHttp.announce(signedTransaction);
@@ -753,36 +670,33 @@ describe('TransactionHttp', () => {
     describe('SecretLockTransaction', () => {
         describe('HashType: Op_Sha3_256', () => {
             it('standalone', (done) => {
-                const secretLockTransaction = SecretLockTransaction.create(
-                    Deadline.create(),
-                    new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
-                    UInt64.fromUint(100),
-                    HashType.Op_Sha3_256,
-                    sha3_256.create().update(randomBytes(20)).hex(),
-                    TestingRecipient.address,
-                    ConfNetworkType,
-                );
-                const signedTransaction = secretLockTransaction.signWith(TestingAccount, generationHash);
+                const secretLockTransaction = factory.secretLock()
+                    .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
+                    .duration(UInt64.fromUint(100))
+                    .hashType(HashType.Op_Sha3_256)
+                    .secret(sha3_256.create().update(randomBytes(20)).hex())
+                    .recipient(TestingRecipient.address)
+                    .build();
+
+                const signedTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
             });
 
             it('aggregate', (done) => {
-                const secretLockTransaction = SecretLockTransaction.create(
-                    Deadline.create(),
-                    new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
-                    UInt64.fromUint(100),
-                    HashType.Op_Sha3_256,
-                    sha3_256.create().update(randomBytes(20)).hex(),
-                    TestingRecipient.address,
-                    ConfNetworkType,
-                );
-                const aggregateSecretLockTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                    [secretLockTransaction.toAggregate(TestingAccount.publicAccount)],
-                    ConfNetworkType,
-                    []);
-                const signedTransaction = aggregateSecretLockTransaction.signWith(TestingAccount, generationHash);
+                const secretLockTransaction = factory.secretLock()
+                    .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
+                    .duration(UInt64.fromUint(100))
+                    .hashType(HashType.Op_Sha3_256)
+                    .secret(sha3_256.create().update(randomBytes(20)).hex())
+                    .recipient(TestingRecipient.address)
+                    .build();
+
+                const aggregateSecretLockTransaction = factory.aggregateComplete()
+                    .innerTransactions([secretLockTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .build();
+                const signedTransaction = aggregateSecretLockTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -790,36 +704,34 @@ describe('TransactionHttp', () => {
         });
         describe('HashType: Keccak_256', () => {
             it('standalone', (done) => {
-                const secretLockTransaction = SecretLockTransaction.create(
-                    Deadline.create(),
-                    new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
-                    UInt64.fromUint(100),
-                    HashType.Op_Keccak_256,
-                    sha3_256.create().update(randomBytes(20)).hex(),
-                    TestingRecipient.address,
-                    ConfNetworkType,
-                );
-                const signedTransaction = secretLockTransaction.signWith(TestingAccount, generationHash);
+                const secretLockTransaction = factory.secretLock()
+                    .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
+                    .duration(UInt64.fromUint(100))
+                    .hashType(HashType.Op_Keccak_256)
+                    .secret(sha3_256.create().update(randomBytes(20)).hex())
+                    .recipient(TestingRecipient.address)
+                    .build();
+
+                const signedTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
             });
 
             it('aggregate', (done) => {
-                const secretLockTransaction = SecretLockTransaction.create(
-                    Deadline.create(),
-                    new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
-                    UInt64.fromUint(100),
-                    HashType.Op_Keccak_256,
-                    sha3_256.create().update(randomBytes(20)).hex(),
-                    TestingRecipient.address,
-                    ConfNetworkType,
-                );
-                const aggregateSecretLockTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                    [secretLockTransaction.toAggregate(TestingAccount.publicAccount)],
-                    ConfNetworkType,
-                    []);
-                const signedTransaction = aggregateSecretLockTransaction.signWith(TestingAccount, generationHash);
+                const secretLockTransaction = factory.secretLock()
+                    .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
+                    .duration(UInt64.fromUint(100))
+                    .hashType(HashType.Op_Keccak_256)
+                    .secret(sha3_256.create().update(randomBytes(20)).hex())
+                    .recipient(TestingRecipient.address)
+                    .build();
+
+                const aggregateSecretLockTransaction = factory.aggregateComplete()
+                    .innerTransactions([secretLockTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .build();
+
+                const signedTransaction = aggregateSecretLockTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -828,36 +740,34 @@ describe('TransactionHttp', () => {
 
         describe('HashType: Op_Hash_160', () => {
             it('standalone', (done) => {
-                const secretLockTransaction = SecretLockTransaction.create(
-                    Deadline.create(),
-                    new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
-                    UInt64.fromUint(100),
-                    HashType.Op_Hash_160,
-                    sha3_256.create().update(randomBytes(20)).hex().substr(0, 40),
-                    TestingRecipient.address,
-                    ConfNetworkType,
-                );
-                const signedTransaction = secretLockTransaction.signWith(TestingAccount, generationHash);
+                const secretLockTransaction = factory.secretLock()
+                    .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
+                    .duration(UInt64.fromUint(100))
+                    .hashType(HashType.Op_Hash_160)
+                    .secret(sha3_256.create().update(randomBytes(20)).hex().substr(0, 40))
+                    .recipient(TestingRecipient.address)
+                    .build();
+
+                const signedTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
             });
 
             it('aggregate', (done) => {
-                const secretLockTransaction = SecretLockTransaction.create(
-                    Deadline.create(),
-                    new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
-                    UInt64.fromUint(100),
-                    HashType.Op_Hash_160,
-                    sha3_256.create().update(randomBytes(20)).hex().substr(0, 40),
-                    TestingRecipient.address,
-                    ConfNetworkType,
-                );
-                const aggregateSecretLockTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                    [secretLockTransaction.toAggregate(TestingAccount.publicAccount)],
-                    ConfNetworkType,
-                    []);
-                const signedTransaction = aggregateSecretLockTransaction.signWith(TestingAccount, generationHash);
+                const secretLockTransaction = factory.secretLock()
+                    .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
+                    .duration(UInt64.fromUint(100))
+                    .hashType(HashType.Op_Hash_160)
+                    .secret(sha3_256.create().update(randomBytes(20)).hex().substr(0, 40))
+                    .recipient(TestingRecipient.address)
+                    .build();
+
+                const aggregateSecretLockTransaction = factory.aggregateComplete()
+                    .innerTransactions([secretLockTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .build();
+
+                const signedTransaction = aggregateSecretLockTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -866,36 +776,34 @@ describe('TransactionHttp', () => {
 
         describe('HashType: Op_Hash_256', () => {
             it('standalone', (done) => {
-                const secretLockTransaction = SecretLockTransaction.create(
-                    Deadline.create(),
-                    new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
-                    UInt64.fromUint(100),
-                    HashType.Op_Hash_256,
-                    sha3_256.create().update(randomBytes(20)).hex(),
-                    TestingRecipient.address,
-                    ConfNetworkType,
-                );
-                const signedTransaction = secretLockTransaction.signWith(TestingAccount, generationHash);
+                const secretLockTransaction = factory.secretLock()
+                    .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
+                    .duration(UInt64.fromUint(100))
+                    .hashType(HashType.Op_Hash_256)
+                    .secret(sha3_256.create().update(randomBytes(20)).hex())
+                    .recipient(TestingRecipient.address)
+                    .build();
+
+                const signedTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
             });
 
             it('aggregate', (done) => {
-                const secretLockTransaction = SecretLockTransaction.create(
-                    Deadline.create(),
-                    new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
-                    UInt64.fromUint(100),
-                    HashType.Op_Hash_256,
-                    sha3_256.create().update(randomBytes(20)).hex(),
-                    TestingRecipient.address,
-                    ConfNetworkType,
-                );
-                const aggregateSecretLockTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                    [secretLockTransaction.toAggregate(TestingAccount.publicAccount)],
-                    ConfNetworkType,
-                    []);
-                const signedTransaction = aggregateSecretLockTransaction.signWith(TestingAccount, generationHash);
+                const secretLockTransaction = factory.secretLock()
+                    .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
+                    .duration(UInt64.fromUint(100))
+                    .hashType(HashType.Op_Hash_256)
+                    .secret(sha3_256.create().update(randomBytes(20)).hex())
+                    .recipient(TestingRecipient.address)
+                    .build();
+
+                const aggregateSecretLockTransaction = factory.aggregateComplete()
+                    .innerTransactions([secretLockTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .build();
+
+                const signedTransaction = aggregateSecretLockTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -909,27 +817,25 @@ describe('TransactionHttp', () => {
                 const secretSeed = randomBytes(20);
                 const secret = sha3_256.create().update(secretSeed).hex();
                 const proof = convert.uint8ToHex(secretSeed);
-                const secretLockTransaction = SecretLockTransaction.create(
-                    Deadline.create(),
-                    new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
-                    UInt64.fromUint(100),
-                    HashType.Op_Sha3_256,
-                    secret,
-                    TestingRecipient.address,
-                    ConfNetworkType,
-                );
-                const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, generationHash);
+                const secretLockTransaction = factory.secretLock()
+                    .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
+                    .duration(UInt64.fromUint(100))
+                    .hashType(HashType.Op_Sha3_256)
+                    .secret(secret)
+                    .recipient(TestingRecipient.address)
+                    .build();
+
+                const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedSecretLockTransaction.hash)
                     .then(() => {
-                        const secretProofTransaction = SecretProofTransaction.create(
-                            Deadline.create(),
-                            HashType.Op_Sha3_256,
-                            secret,
-                            TestingRecipient.address,
-                            proof,
-                            ConfNetworkType,
-                        );
-                        const signedSecretProofTransaction = secretProofTransaction.signWith(TestingRecipient, generationHash);
+                        const secretProofTransaction = factory.secretProof()
+                            .hashType(HashType.Op_Sha3_256)
+                            .secret(secret)
+                            .recipient(TestingRecipient.address)
+                            .proof(proof)
+                            .build();
+
+                        const signedSecretProofTransaction = secretProofTransaction.signWith(TestingRecipient, factory.generationHash);
                         validateTransactionConfirmed(listener, TestingRecipient.address, signedSecretProofTransaction.hash)
                             .then(() => {
                                 done();
@@ -947,31 +853,29 @@ describe('TransactionHttp', () => {
                 const secretSeed = randomBytes(20);
                 const secret = sha3_256.create().update(secretSeed).hex();
                 const proof = convert.uint8ToHex(secretSeed);
-                const secretLockTransaction = SecretLockTransaction.create(
-                    Deadline.create(),
-                    new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
-                    UInt64.fromUint(100),
-                    HashType.Op_Sha3_256,
-                    secret,
-                    TestingRecipient.address,
-                    ConfNetworkType,
-                );
-                const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, generationHash);
+                const secretLockTransaction = factory.secretLock()
+                    .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
+                    .duration(UInt64.fromUint(100))
+                    .hashType(HashType.Op_Sha3_256)
+                    .secret(secret)
+                    .recipient(TestingRecipient.address)
+                    .build();
+
+                const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedSecretLockTransaction.hash)
                     .then(() => {
-                        const secretProofTransaction = SecretProofTransaction.create(
-                            Deadline.create(),
-                            HashType.Op_Sha3_256,
-                            secret,
-                            TestingRecipient.address,
-                            proof,
-                            ConfNetworkType,
-                        );
-                        const aggregateSecretProofTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                            [secretProofTransaction.toAggregate(TestingRecipient.publicAccount)],
-                            ConfNetworkType,
-                            []);
-                        const signedAggregateSecretProofTransaction = aggregateSecretProofTransaction.signWith(TestingRecipient, generationHash);
+                        const secretProofTransaction = factory.secretProof()
+                            .hashType(HashType.Op_Sha3_256)
+                            .secret(secret)
+                            .recipient(TestingRecipient.address)
+                            .proof(proof)
+                            .build();
+
+                        const aggregateSecretProofTransaction = factory.aggregateComplete()
+                            .innerTransactions([secretProofTransaction.toAggregate(TestingRecipient.publicAccount)])
+                            .build();
+
+                        const signedAggregateSecretProofTransaction = aggregateSecretProofTransaction.signWith(TestingRecipient, factory.generationHash);
                         validateTransactionConfirmed(listener, TestingRecipient.address, signedAggregateSecretProofTransaction.hash)
                             .then(() => {
                                 done();
@@ -990,27 +894,25 @@ describe('TransactionHttp', () => {
                 const secretSeed = randomBytes(20);
                 const secret = keccak_256.create().update(secretSeed).hex();
                 const proof = convert.uint8ToHex(secretSeed);
-                const secretLockTransaction = SecretLockTransaction.create(
-                    Deadline.create(),
-                    new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
-                    UInt64.fromUint(100),
-                    HashType.Op_Keccak_256,
-                    secret,
-                    TestingRecipient.address,
-                    ConfNetworkType,
-                );
-                const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, generationHash);
+                const secretLockTransaction = factory.secretLock()
+                    .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
+                    .duration(UInt64.fromUint(100))
+                    .hashType(HashType.Op_Keccak_256)
+                    .secret(secret)
+                    .recipient(TestingRecipient.address)
+                    .build();
+
+                const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedSecretLockTransaction.hash)
                     .then(() => {
-                        const secretProofTransaction = SecretProofTransaction.create(
-                            Deadline.create(),
-                            HashType.Op_Keccak_256,
-                            secret,
-                            TestingRecipient.address,
-                            proof,
-                            ConfNetworkType,
-                        );
-                        const signedSecretProofTransaction = secretProofTransaction.signWith(TestingRecipient, generationHash);
+                        const secretProofTransaction = factory.secretProof()
+                            .hashType(HashType.Op_Keccak_256)
+                            .secret(secret)
+                            .recipient(TestingRecipient.address)
+                            .proof(proof)
+                            .build();
+
+                        const signedSecretProofTransaction = secretProofTransaction.signWith(TestingRecipient, factory.generationHash);
                         validateTransactionConfirmed(listener, TestingRecipient.address, signedSecretProofTransaction.hash)
                             .then(() => {
                                 done();
@@ -1028,31 +930,28 @@ describe('TransactionHttp', () => {
                 const secretSeed = randomBytes(20);
                 const secret = keccak_256.create().update(secretSeed).hex();
                 const proof = convert.uint8ToHex(secretSeed);
-                const secretLockTransaction = SecretLockTransaction.create(
-                    Deadline.create(),
-                    new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
-                    UInt64.fromUint(100),
-                    HashType.Op_Keccak_256,
-                    secret,
-                    TestingRecipient.address,
-                    ConfNetworkType,
-                );
-                const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, generationHash);
+                const secretLockTransaction = factory.secretLock()
+                    .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
+                    .duration(UInt64.fromUint(100))
+                    .hashType(HashType.Op_Keccak_256)
+                    .secret(secret)
+                    .recipient(TestingRecipient.address)
+                    .build();
+
+                const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedSecretLockTransaction.hash)
                     .then(() => {
-                        const secretProofTransaction = SecretProofTransaction.create(
-                            Deadline.create(),
-                            HashType.Op_Keccak_256,
-                            secret,
-                            TestingRecipient.address,
-                            proof,
-                            ConfNetworkType,
-                        );
-                        const aggregateSecretProofTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                            [secretProofTransaction.toAggregate(TestingRecipient.publicAccount)],
-                            ConfNetworkType,
-                            []);
-                        const signedAggregateSecretProofTransaction = aggregateSecretProofTransaction.signWith(TestingRecipient, generationHash);
+                        const secretProofTransaction = factory.secretProof()
+                            .hashType(HashType.Op_Keccak_256)
+                            .secret(secret)
+                            .recipient(TestingRecipient.address)
+                            .proof(proof)
+                            .build();
+                        const aggregateSecretProofTransaction = factory.aggregateComplete()
+                            .innerTransactions([secretProofTransaction.toAggregate(TestingRecipient.publicAccount)])
+                            .build();
+
+                        const signedAggregateSecretProofTransaction = aggregateSecretProofTransaction.signWith(TestingRecipient, factory.generationHash);
                         validateTransactionConfirmed(listener, TestingRecipient.address, signedAggregateSecretProofTransaction.hash)
                             .then(() => {
                                 done();
@@ -1072,27 +971,25 @@ describe('TransactionHttp', () => {
                 const secretSeed = randomBytes(20);
                 const proof = convert.uint8ToHex(secretSeed);
                 const secret = CryptoJS.RIPEMD160(CryptoJS.enc.Hex.parse(CryptoJS.SHA256(CryptoJS.enc.Hex.parse(proof)).toString(CryptoJS.enc.Hex))).toString(CryptoJS.enc.Hex);
-                const secretLockTransaction = SecretLockTransaction.create(
-                    Deadline.create(),
-                    new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
-                    UInt64.fromUint(100),
-                    HashType.Op_Hash_160,
-                    secret,
-                    TestingRecipient.address,
-                    ConfNetworkType,
-                );
-                const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, generationHash);
+                const secretLockTransaction = factory.secretLock()
+                    .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
+                    .duration(UInt64.fromUint(100))
+                    .hashType(HashType.Op_Hash_160)
+                    .secret(secret)
+                    .recipient(TestingRecipient.address)
+                    .build();
+
+                const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedSecretLockTransaction.hash)
                     .then(() => {
-                        const secretProofTransaction = SecretProofTransaction.create(
-                            Deadline.create(),
-                            HashType.Op_Hash_160,
-                            secret,
-                            TestingRecipient.address,
-                            proof,
-                            ConfNetworkType,
-                        );
-                        const signedSecretProofTransaction = secretProofTransaction.signWith(TestingRecipient, generationHash);
+                        const secretProofTransaction = factory.secretProof()
+                            .hashType(HashType.Op_Hash_160)
+                            .secret(secret)
+                            .recipient(TestingRecipient.address)
+                            .proof(proof)
+                            .build();
+
+                        const signedSecretProofTransaction = secretProofTransaction.signWith(TestingRecipient, factory.generationHash);
                         validateTransactionConfirmed(listener, TestingRecipient.address, signedSecretProofTransaction.hash)
                             .then(() => {
                                 done();
@@ -1110,31 +1007,29 @@ describe('TransactionHttp', () => {
                 const secretSeed = randomBytes(20);
                 const proof = convert.uint8ToHex(secretSeed);
                 const secret = CryptoJS.RIPEMD160(CryptoJS.enc.Hex.parse(CryptoJS.SHA256(CryptoJS.enc.Hex.parse(proof)).toString(CryptoJS.enc.Hex))).toString(CryptoJS.enc.Hex);
-                const secretLockTransaction = SecretLockTransaction.create(
-                    Deadline.create(),
-                    new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
-                    UInt64.fromUint(100),
-                    HashType.Op_Hash_160,
-                    secret,
-                    TestingRecipient.address,
-                    ConfNetworkType,
-                );
-                const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, generationHash);
+                const secretLockTransaction = factory.secretLock()
+                    .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
+                    .duration(UInt64.fromUint(100))
+                    .hashType(HashType.Op_Hash_160)
+                    .secret(secret)
+                    .recipient(TestingRecipient.address)
+                    .build();
+
+                const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedSecretLockTransaction.hash)
                     .then(() => {
-                        const secretProofTransaction = SecretProofTransaction.create(
-                            Deadline.create(),
-                            HashType.Op_Hash_160,
-                            secret,
-                            TestingRecipient.address,
-                            proof,
-                            ConfNetworkType,
-                        );
-                        const aggregateSecretProofTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                            [secretProofTransaction.toAggregate(TestingRecipient.publicAccount)],
-                            ConfNetworkType,
-                            []);
-                        const signedAggregateSecretProofTransaction = aggregateSecretProofTransaction.signWith(TestingRecipient, generationHash);
+                        const secretProofTransaction = factory.secretProof()
+                            .hashType(HashType.Op_Hash_160)
+                            .secret(secret)
+                            .recipient(TestingRecipient.address)
+                            .proof(proof)
+                            .build();
+
+                        const aggregateSecretProofTransaction = factory.aggregateComplete()
+                            .innerTransactions([secretProofTransaction.toAggregate(TestingRecipient.publicAccount)])
+                            .build();
+
+                        const signedAggregateSecretProofTransaction = aggregateSecretProofTransaction.signWith(TestingRecipient, factory.generationHash);
                         validateTransactionConfirmed(listener, TestingRecipient.address, signedAggregateSecretProofTransaction.hash)
                             .then(() => {
                                 done();
@@ -1154,27 +1049,25 @@ describe('TransactionHttp', () => {
                 const secretSeed = randomBytes(20);
                 const proof = convert.uint8ToHex(secretSeed);
                 const secret = CryptoJS.SHA256(CryptoJS.enc.Hex.parse(CryptoJS.SHA256(CryptoJS.enc.Hex.parse(proof)).toString(CryptoJS.enc.Hex))).toString(CryptoJS.enc.Hex);
-                const secretLockTransaction = SecretLockTransaction.create(
-                    Deadline.create(),
-                    new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
-                    UInt64.fromUint(100),
-                    HashType.Op_Hash_256,
-                    secret,
-                    TestingRecipient.address,
-                    ConfNetworkType,
-                );
-                const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, generationHash);
+                const secretLockTransaction = factory.secretLock()
+                    .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
+                    .duration(UInt64.fromUint(100))
+                    .hashType(HashType.Op_Hash_256)
+                    .secret(secret)
+                    .recipient(TestingRecipient.address)
+                    .build();
+
+                const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedSecretLockTransaction.hash)
                     .then(() => {
-                        const secretProofTransaction = SecretProofTransaction.create(
-                            Deadline.create(),
-                            HashType.Op_Hash_256,
-                            secret,
-                            TestingRecipient.address,
-                            proof,
-                            ConfNetworkType,
-                        );
-                        const signedSecretProofTransaction = secretProofTransaction.signWith(TestingRecipient, generationHash);
+                        const secretProofTransaction = factory.secretProof()
+                            .hashType(HashType.Op_Hash_256)
+                            .secret(secret)
+                            .recipient(TestingRecipient.address)
+                            .proof(proof)
+                            .build();
+
+                        const signedSecretProofTransaction = secretProofTransaction.signWith(TestingRecipient, factory.generationHash);
                         validateTransactionConfirmed(listener, TestingRecipient.address, signedSecretProofTransaction.hash)
                             .then(() => {
                                 done();
@@ -1192,31 +1085,29 @@ describe('TransactionHttp', () => {
                 const secretSeed = randomBytes(20);
                 const proof = convert.uint8ToHex(secretSeed);
                 const secret = CryptoJS.SHA256(CryptoJS.enc.Hex.parse(CryptoJS.SHA256(CryptoJS.enc.Hex.parse(proof)).toString(CryptoJS.enc.Hex))).toString(CryptoJS.enc.Hex);
-                const secretLockTransaction = SecretLockTransaction.create(
-                    Deadline.create(),
-                    new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)),
-                    UInt64.fromUint(100),
-                    HashType.Op_Hash_256,
-                    secret,
-                    TestingRecipient.address,
-                    ConfNetworkType,
-                );
-                const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, generationHash);
+                const secretLockTransaction = factory.secretLock()
+                    .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
+                    .duration(UInt64.fromUint(100))
+                    .hashType(HashType.Op_Hash_256)
+                    .secret(secret)
+                    .recipient(TestingRecipient.address)
+                    .build();
+
+                const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedSecretLockTransaction.hash)
                     .then(() => {
-                        const secretProofTransaction = SecretProofTransaction.create(
-                            Deadline.create(),
-                            HashType.Op_Hash_256,
-                            secret,
-                            TestingRecipient.address,
-                            proof,
-                            ConfNetworkType,
-                        );
-                        const aggregateSecretProofTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                            [secretProofTransaction.toAggregate(TestingRecipient.publicAccount)],
-                            ConfNetworkType,
-                            []);
-                        const signedAggregateSecretProofTransaction = aggregateSecretProofTransaction.signWith(TestingRecipient, generationHash);
+                        const secretProofTransaction = factory.secretProof()
+                            .hashType(HashType.Op_Hash_256)
+                            .secret(secret)
+                            .recipient(TestingRecipient.address)
+                            .proof(proof)
+                            .build();
+
+                            const aggregateSecretProofTransaction = factory.aggregateComplete()
+                                .innerTransactions([secretProofTransaction.toAggregate(TestingRecipient.publicAccount)])
+                                .build();
+
+                        const signedAggregateSecretProofTransaction = aggregateSecretProofTransaction.signWith(TestingRecipient, factory.generationHash);
                         validateTransactionConfirmed(listener, TestingRecipient.address, signedAggregateSecretProofTransaction.hash)
                             .then(() => {
                                 done();
@@ -1236,14 +1127,13 @@ describe('TransactionHttp', () => {
         describe('ChainConfigTransaction', () => {
             ((NemesisAccount.privateKey !== "0".repeat(64)) ? it : it.skip)('standalone', (done) => {
                 GetNemesisBlockDataPromise().then(nemesisBlockInfo => {
-                    const chainConfigTransaction = ChainConfigTransaction.create(
-                        Deadline.create(),
-                        UInt64.fromUint(10),
-                        nemesisBlockInfo.config.blockChainConfig,
-                        nemesisBlockInfo.config.supportedEntityVersions,
-                        ConfNetworkType
-                    );
-                    const signedTransaction = chainConfigTransaction.signWith(NemesisAccount, generationHash);
+                    const chainConfigTransaction = factory.chainConfig()
+                        .applyHeightDelta(UInt64.fromUint(10))
+                        .blockChainConfig(nemesisBlockInfo.config.blockChainConfig)
+                        .supportedEntityVersions(nemesisBlockInfo.config.supportedEntityVersions)
+                        .build();
+
+                    const signedTransaction = chainConfigTransaction.signWith(NemesisAccount, factory.generationHash);
                     validateTransactionConfirmed(listener, NemesisAccount.address, signedTransaction.hash)
                         .then(() => done()).catch((reason) => fail(reason));
                     transactionHttp.announce(signedTransaction);
@@ -1252,18 +1142,15 @@ describe('TransactionHttp', () => {
         });
         describe('ChainUpgradeTransaction', () => {
             ((NemesisAccount.privateKey !== "0".repeat(64)) ? it : it.skip)('standalone', (done) => {
-                GetNemesisBlockDataPromise().then(nemesisBlockInfo => {
-                    const chainUpgradeTransaction = ChainUpgradeTransaction.create(
-                        Deadline.create(),
-                        UInt64.fromUint(100000),
-                        UInt64.fromHex('0001000200030004'),
-                        ConfNetworkType
-                    );
-                    const signedTransaction = chainUpgradeTransaction.signWith(NemesisAccount, generationHash);
-                    validateTransactionConfirmed(listener, NemesisAccount.address, signedTransaction.hash)
-                        .then(() => done()).catch((reason) => fail(reason));
-                    transactionHttp.announce(signedTransaction);
-                });
+                const chainUpgradeTransaction = factory.chainUpgrade()
+                    .upgradePeriod(UInt64.fromUint(100000))
+                    .newCatapultVersion(UInt64.fromHex('0001000200030004'))
+                    .build();
+
+                const signedTransaction = chainUpgradeTransaction.signWith(NemesisAccount, factory.generationHash);
+                validateTransactionConfirmed(listener, NemesisAccount.address, signedTransaction.hash)
+                    .then(() => done()).catch((reason) => fail(reason));
+                transactionHttp.announce(signedTransaction);
             });
         });
     });
@@ -1346,7 +1233,7 @@ describe('TransactionHttp', () => {
 
     describe('announce', () => {
         it('should return success when announce', (done) => {
-            const payload = new SignedTransaction('', '0'.repeat(64), '', TransactionType.TRANSFER, ConfNetworkType);
+            const payload = new SignedTransaction('', '0'.repeat(64), '', TransactionType.TRANSFER, factory.networkType);
             transactionHttp.announce(payload)
                 .subscribe((transactionAnnounceResponse) => {
                     expect(transactionAnnounceResponse.message)
@@ -1358,7 +1245,7 @@ describe('TransactionHttp', () => {
 
     describe('announceAggregateBonded', () => {
         it('should return success when announceAggregateBonded', (done) => {
-            const payload = new SignedTransaction('', '0'.repeat(64), '', TransactionType.AGGREGATE_BONDED, ConfNetworkType);
+            const payload = new SignedTransaction('', '0'.repeat(64), '', TransactionType.AGGREGATE_BONDED, factory.networkType);
             transactionHttp.announceAggregateBonded(payload)
                 .subscribe((transactionAnnounceResponse) => {
                     expect(transactionAnnounceResponse.message)
@@ -1368,23 +1255,18 @@ describe('TransactionHttp', () => {
         });
 
         it('should return an error when a non aggregate transaction bonded is announced via announceAggregateBonded method', () => {
-            const tx = TransferTransaction.create(
-                Deadline.create(),
-                TestingAccount.address,
-                [],
-                PlainMessage.create('Hi'),
-                ConfNetworkType,
-            );
-            const aggTx = AggregateTransaction.createComplete(
-                Deadline.create(),
-                [
-                    tx.toAggregate(TestingAccount.publicAccount),
-                ],
-                ConfNetworkType,
-                [],
-            );
+            const tx = factory.transfer()
+                .recipient(TestingAccount.address)
+                .message(PlainMessage.create('Hi'))
+                .build();
 
-            const signedTx = TestingAccount.sign(aggTx, generationHash);
+            const aggTx = factory.aggregateComplete()
+                .innerTransactions([
+                    tx.toAggregate(TestingAccount.publicAccount),
+                ])
+                .build();
+
+            const signedTx = TestingAccount.sign(aggTx, factory.generationHash);
             return transactionHttp.announceAggregateBonded(signedTx).subscribe(resp => {
                 throw new Error('Shouldn\'t be called');
             }, error => {
@@ -1409,14 +1291,12 @@ describe('TransactionHttp', () => {
         it('should return insufficient balance error', (done) => {
             const signerAccount = TestingAccount;
 
-            const tx = TransferTransaction.create(
-                Deadline.create(),
-                TestingRecipient.address,
-                [new Mosaic(ConfNetworkMosaic, UInt64.fromUint(1000000 * 1000000))],
-                EmptyMessage,
-                ConfNetworkType,
-            );
-            const signedTx = signerAccount.sign(tx, generationHash);
+            const tx = factory.transfer()
+                .recipient(TestingRecipient.address)
+                .mosaics([new Mosaic(ConfNetworkMosaic, UInt64.fromUint(1000000 * 1000000))])
+                .build();
+
+            const signedTx = signerAccount.sign(tx, factory.generationHash);
             const trnsHttp = new TransactionHttp(APIUrl);
             trnsHttp
                 .announceSync(signedTx)
@@ -1446,21 +1326,18 @@ describe('TransactionHttp', () => {
 
     describe('announceSync', () => {
          it('should return insufficient balance error', (done) => {
-             const aggregateTransaction = AggregateTransaction.createBonded(
-                            Deadline.create(),
-                             [],
-                             ConfNetworkType,
-                             [],
-                         );
-             const signedTransaction = TestingAccount.sign(aggregateTransaction, generationHash);
+             const aggregateTransaction = factory.aggregateBonded()
+                .build();
 
-             const lockFundsTransaction = LockFundsTransaction.create(Deadline.create(),
-                 new Mosaic(ConfNetworkMosaic, UInt64.fromUint(0)),
-                 UInt64.fromUint(10000),
-                 signedTransaction,
-                 ConfNetworkType);
+             const signedTransaction = TestingAccount.sign(aggregateTransaction, factory.generationHash);
 
-             const signedLockFundsTransactions = lockFundsTransaction.signWith(TestingAccount, generationHash);
+             const lockFundsTransaction = factory.lockFunds()
+                .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(0)))
+                .duration(UInt64.fromUint(10000))
+                .signedTransaction(signedTransaction)
+                .build();
+
+             const signedLockFundsTransactions = lockFundsTransaction.signWith(TestingAccount, factory.generationHash);
 
              validateTransactionConfirmed(listener, TestingAccount.address, signedLockFundsTransactions.hash)
                 .then(() => {
