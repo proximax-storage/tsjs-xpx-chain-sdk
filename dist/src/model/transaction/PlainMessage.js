@@ -17,6 +17,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Message_1 = require("./Message");
 const MessageType_1 = require("./MessageType");
+const format_1 = require("../../core/format");
 /**
  * The plain message model defines a plain string. When sending it to the network we transform the payload to hex-string.
  */
@@ -40,6 +41,9 @@ class PlainMessage extends Message_1.Message {
      */
     constructor(payload) {
         super(MessageType_1.MessageType.PlainMessage, payload);
+    }
+    size() {
+        return format_1.Convert.utf8ToHex(this.payload || '').length / 2;
     }
 }
 exports.PlainMessage = PlainMessage;

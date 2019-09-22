@@ -72,11 +72,11 @@ export declare class AccountHttp extends Http implements AccountRepository {
     /**
      * Gets an array of transactions for which an account is the recipient of a transaction.
      * A transaction is said to be incoming with respect to an account if the account is the recipient of a transaction.
-     * @param publicAccount - User public account
+     * @param accountId - User public account or address (you can use address if public account is not known to the network just yet)
      * @param queryParams - (Optional) Query params
      * @returns Observable<Transaction[]>
      */
-    incomingTransactions(publicAccount: PublicAccount, queryParams?: QueryParams): Observable<Transaction[]>;
+    incomingTransactions(accountId: PublicAccount | Address, queryParams?: QueryParams): Observable<Transaction[]>;
     /**
      * Gets an array of transactions for which an account is the sender a transaction.
      * A transaction is said to be outgoing with respect to an account if the account is the sender of a transaction.

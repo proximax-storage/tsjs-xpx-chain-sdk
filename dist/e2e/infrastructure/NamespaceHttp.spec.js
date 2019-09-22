@@ -80,7 +80,7 @@ describe('NamespaceHttp', () => {
     describe('getLinkedAddress', () => {
         it('should return address given namespaceId', (done) => {
             conf_spec_1.GetNemesisBlockDataPromise().then(data => {
-                namespaceHttp.getLinkedAddress(conf_spec_1.ConfTestingNamespace)
+                namespaceHttp.getLinkedAddress(conf_spec_1.ConfTestingNamespaceId)
                     .subscribe((address) => {
                     chai_1.expect(address.plain()).to.be.equal(conf_spec_1.TestingAccount.address.plain());
                     done();

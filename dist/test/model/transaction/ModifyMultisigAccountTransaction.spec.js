@@ -24,17 +24,17 @@ const MultisigCosignatoryModification_1 = require("../../../src/model/transactio
 const MultisigCosignatoryModificationType_1 = require("../../../src/model/transaction/MultisigCosignatoryModificationType");
 const UInt64_1 = require("../../../src/model/UInt64");
 const conf_spec_1 = require("../../conf/conf.spec");
+const FeeCalculationStrategy_1 = require("../../../src/model/transaction/FeeCalculationStrategy");
 describe('ModifyMultisigAccountTransaction', () => {
     let account;
     const generationHash = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
     before(() => {
         account = conf_spec_1.TestingAccount;
     });
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
         const modifyMultisigAccountTransaction = ModifyMultisigAccountTransaction_1.ModifyMultisigAccountTransaction.create(Deadline_1.Deadline.create(), 2, 1, [new MultisigCosignatoryModification_1.MultisigCosignatoryModification(MultisigCosignatoryModificationType_1.MultisigCosignatoryModificationType.Add, PublicAccount_1.PublicAccount.createFromPublicKey('B0F93CBEE49EEB9953C6F3985B15A4F238E205584D8F924C621CBE4D7AC6EC24', NetworkType_1.NetworkType.MIJIN_TEST)),
             new MultisigCosignatoryModification_1.MultisigCosignatoryModification(MultisigCosignatoryModificationType_1.MultisigCosignatoryModificationType.Add, PublicAccount_1.PublicAccount.createFromPublicKey('B1B5581FC81A6970DEE418D2C2978F2724228B7B36C5C6DF71B0162BB04778B4', NetworkType_1.NetworkType.MIJIN_TEST))], NetworkType_1.NetworkType.MIJIN_TEST);
-        chai_1.expect(modifyMultisigAccountTransaction.maxFee.higher).to.be.equal(0);
-        chai_1.expect(modifyMultisigAccountTransaction.maxFee.lower).to.be.equal(0);
+        chai_1.expect(modifyMultisigAccountTransaction.maxFee.compact()).to.be.equal(modifyMultisigAccountTransaction.size * FeeCalculationStrategy_1.DefaultFeeCalculationStrategy);
     });
     it('should filled maxFee override transaction maxFee', () => {
         const modifyMultisigAccountTransaction = ModifyMultisigAccountTransaction_1.ModifyMultisigAccountTransaction.create(Deadline_1.Deadline.create(), 2, 1, [new MultisigCosignatoryModification_1.MultisigCosignatoryModification(MultisigCosignatoryModificationType_1.MultisigCosignatoryModificationType.Add, PublicAccount_1.PublicAccount.createFromPublicKey('B0F93CBEE49EEB9953C6F3985B15A4F238E205584D8F924C621CBE4D7AC6EC24', NetworkType_1.NetworkType.MIJIN_TEST)),

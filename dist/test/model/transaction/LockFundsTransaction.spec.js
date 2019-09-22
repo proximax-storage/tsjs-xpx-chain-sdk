@@ -24,15 +24,15 @@ const Deadline_1 = require("../../../src/model/transaction/Deadline");
 const LockFundsTransaction_1 = require("../../../src/model/transaction/LockFundsTransaction");
 const UInt64_1 = require("../../../src/model/UInt64");
 const conf_spec_1 = require("../../conf/conf.spec");
+const FeeCalculationStrategy_1 = require("../../../src/model/transaction/FeeCalculationStrategy");
 describe('LockFundsTransaction', () => {
     const account = conf_spec_1.TestingAccount;
     const generationHash = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
         const aggregateTransaction = AggregateTransaction_1.AggregateTransaction.createBonded(Deadline_1.Deadline.create(), [], NetworkType_1.NetworkType.MIJIN_TEST, []);
         const signedTransaction = account.sign(aggregateTransaction, generationHash);
         const lockFundsTransaction = LockFundsTransaction_1.LockFundsTransaction.create(Deadline_1.Deadline.create(), NetworkCurrencyMosaic_1.NetworkCurrencyMosaic.createRelative(10), UInt64_1.UInt64.fromUint(10), signedTransaction, NetworkType_1.NetworkType.MIJIN_TEST);
-        chai_1.expect(lockFundsTransaction.maxFee.higher).to.be.equal(0);
-        chai_1.expect(lockFundsTransaction.maxFee.lower).to.be.equal(0);
+        chai_1.expect(lockFundsTransaction.maxFee.compact()).to.be.equal(lockFundsTransaction.size * FeeCalculationStrategy_1.DefaultFeeCalculationStrategy);
     });
     it('should filled maxFee override transaction maxFee', () => {
         const aggregateTransaction = AggregateTransaction_1.AggregateTransaction.createBonded(Deadline_1.Deadline.create(), [], NetworkType_1.NetworkType.MIJIN_TEST, []);

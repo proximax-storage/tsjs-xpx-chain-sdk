@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const UInt64_1 = require("../UInt64");
 const AddressAliasTransaction_1 = require("./AddressAliasTransaction");
 const MosaicAliasTransaction_1 = require("./MosaicAliasTransaction");
 const Transaction_1 = require("./Transaction");
@@ -30,7 +29,7 @@ class AliasTransaction extends Transaction_1.Transaction {
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {AddressAliasTransaction}
      */
-    static createForAddress(deadline, aliasAction, namespaceId, address, networkType, maxFee = new UInt64_1.UInt64([0, 0])) {
+    static createForAddress(deadline, aliasAction, namespaceId, address, networkType, maxFee) {
         return AddressAliasTransaction_1.AddressAliasTransaction.create(deadline, aliasAction, namespaceId, address, networkType, maxFee);
     }
     /**
@@ -43,7 +42,7 @@ class AliasTransaction extends Transaction_1.Transaction {
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {MosaicAliasTransaction}
      */
-    static createForMosaic(deadline, aliasAction, namespaceId, mosaicId, networkType, maxFee = new UInt64_1.UInt64([0, 0])) {
+    static createForMosaic(deadline, aliasAction, namespaceId, mosaicId, networkType, maxFee) {
         return MosaicAliasTransaction_1.MosaicAliasTransaction.create(deadline, aliasAction, namespaceId, mosaicId, networkType, maxFee);
     }
 }

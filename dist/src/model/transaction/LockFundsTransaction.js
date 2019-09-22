@@ -16,10 +16,10 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const HashLockTransaction_1 = require("../../infrastructure/builders/HashLockTransaction");
-const UInt64_1 = require("../UInt64");
 const Transaction_1 = require("./Transaction");
 const TransactionType_1 = require("./TransactionType");
 const TransactionVersion_1 = require("./TransactionVersion");
+const FeeCalculationStrategy_1 = require("./FeeCalculationStrategy");
 /**
  * Lock funds transaction is used before sending an Aggregate bonded transaction, as a deposit to announce the transaction.
  * When aggregate bonded transaction is confirmed funds are returned to LockFundsTransaction signer.
@@ -66,8 +66,15 @@ class LockFundsTransaction extends Transaction_1.Transaction {
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {LockFundsTransaction}
      */
-    static create(deadline, mosaic, duration, signedTransaction, networkType, maxFee = new UInt64_1.UInt64([0, 0])) {
-        return new LockFundsTransaction(networkType, TransactionVersion_1.TransactionVersion.LOCK, deadline, maxFee, mosaic, duration, signedTransaction);
+    static create(deadline, mosaic, duration, signedTransaction, networkType, maxFee) {
+        return new LockFundsTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .mosaic(mosaic)
+            .duration(duration)
+            .signedTransaction(signedTransaction)
+            .build();
     }
     /**
      * @override Transaction.size()
@@ -76,7 +83,10 @@ class LockFundsTransaction extends Transaction_1.Transaction {
      * @memberof LockFundsTransaction
      */
     get size() {
-        const byteSize = super.size;
+        return LockFundsTransaction.calculateSize();
+    }
+    static calculateSize() {
+        const byteSize = Transaction_1.Transaction.getHeaderSize();
         // set static byte size fields
         const byteMosaicId = 8;
         const byteAmount = 8;
@@ -102,4 +112,22 @@ class LockFundsTransaction extends Transaction_1.Transaction {
     }
 }
 exports.LockFundsTransaction = LockFundsTransaction;
+class LockFundsTransactionBuilder extends Transaction_1.TransactionBuilder {
+    mosaic(mosaic) {
+        this._mosaic = mosaic;
+        return this;
+    }
+    duration(duration) {
+        this._duration = duration;
+        return this;
+    }
+    signedTransaction(signedTransaction) {
+        this._signedTransaction = signedTransaction;
+        return this;
+    }
+    build() {
+        return new LockFundsTransaction(this._networkType, TransactionVersion_1.TransactionVersion.LOCK, this._deadline ? this._deadline : this._createNewDeadlineFn(), this._maxFee ? this._maxFee : FeeCalculationStrategy_1.calculateFee(LockFundsTransaction.calculateSize(), this._feeCalculationStrategy), this._mosaic, this._duration, this._signedTransaction, this._signature, this._signer, this._transactionInfo);
+    }
+}
+exports.LockFundsTransactionBuilder = LockFundsTransactionBuilder;
 //# sourceMappingURL=LockFundsTransaction.js.map

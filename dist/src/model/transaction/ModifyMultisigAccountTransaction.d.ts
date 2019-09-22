@@ -3,7 +3,7 @@ import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
 import { MultisigCosignatoryModification } from './MultisigCosignatoryModification';
-import { Transaction } from './Transaction';
+import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 /**
  * Modify multisig account transactions are part of the NEM's multisig account system.
@@ -71,4 +71,14 @@ export declare class ModifyMultisigAccountTransaction extends Transaction {
      * @memberof ModifyMultisigAccountTransaction
      */
     readonly size: number;
+    static calculateSize(modificationsCount: number): number;
+}
+export declare class ModifyMultisigAccountTransactionBuilder extends TransactionBuilder {
+    private _minApprovalDelta;
+    private _minRemovalDelta;
+    private _modifications;
+    minApprovalDelta(minApprovalDelta: number): this;
+    minRemovalDelta(minRemovalDelta: number): this;
+    modifications(modifications: MultisigCosignatoryModification[]): this;
+    build(): ModifyMultisigAccountTransaction;
 }

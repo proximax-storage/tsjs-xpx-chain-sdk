@@ -23,7 +23,7 @@ const MosaicCreationTransactionBuffer_1 = require("../buffers/MosaicCreationTran
 const MosaicCreationTransactionSchema_1 = require("../schemas/MosaicCreationTransactionSchema");
 const VerifiableTransaction_1 = require("./VerifiableTransaction");
 const flatbuffers_1 = require("flatbuffers");
-const model_1 = require("../../model/model");
+const MosaicPropertyType_1 = require("../../model/mosaic/MosaicPropertyType");
 const { MosaicDefinitionTransactionBuffer, } = MosaicCreationTransactionBuffer_1.default.Buffers;
 class MosaicCreationTransaction extends VerifiableTransaction_1.VerifiableTransaction {
     constructor(bytes, schema) {
@@ -115,7 +115,7 @@ class Builder {
         MosaicDefinitionTransactionBuffer.addFlags(builder, this.flags);
         MosaicDefinitionTransactionBuffer.addDivisibility(builder, this.divisibility);
         if (durationProvided) {
-            MosaicDefinitionTransactionBuffer.addIndicateDuration(builder, model_1.MosaicPropertyType.Duration);
+            MosaicDefinitionTransactionBuffer.addIndicateDuration(builder, MosaicPropertyType_1.MosaicPropertyType.Duration);
             MosaicDefinitionTransactionBuffer.addDuration(builder, durationVector);
         }
         // Calculate size

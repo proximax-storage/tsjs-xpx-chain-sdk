@@ -8,6 +8,7 @@ export declare class PlainMessage extends Message {
      * @returns PlainMessage
      */
     static create(message: string): PlainMessage;
+    size(): number;
 }
 /**
  * Plain message containing an empty string

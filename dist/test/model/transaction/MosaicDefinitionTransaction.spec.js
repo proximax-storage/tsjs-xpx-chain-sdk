@@ -24,13 +24,14 @@ const Deadline_1 = require("../../../src/model/transaction/Deadline");
 const MosaicDefinitionTransaction_1 = require("../../../src/model/transaction/MosaicDefinitionTransaction");
 const UInt64_1 = require("../../../src/model/UInt64");
 const conf_spec_1 = require("../../conf/conf.spec");
+const FeeCalculationStrategy_1 = require("../../../src/model/transaction/FeeCalculationStrategy");
 describe('MosaicDefinitionTransaction', () => {
     let account;
     const generationHash = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
     before(() => {
         account = conf_spec_1.TestingAccount;
     });
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
         const mosaicDefinitionTransaction = MosaicDefinitionTransaction_1.MosaicDefinitionTransaction.create(Deadline_1.Deadline.create(), new MosaicNonce_1.MosaicNonce(new Uint8Array([0xE6, 0xDE, 0x84, 0xB8])), // nonce
         new MosaicId_1.MosaicId(UInt64_1.UInt64.fromUint(1).toDTO()), // ID
         MosaicProperties_1.MosaicProperties.create({
@@ -39,8 +40,7 @@ describe('MosaicDefinitionTransaction', () => {
             divisibility: 3,
             duration: UInt64_1.UInt64.fromUint(1000),
         }), NetworkType_1.NetworkType.MIJIN_TEST);
-        chai_1.expect(mosaicDefinitionTransaction.maxFee.higher).to.be.equal(0);
-        chai_1.expect(mosaicDefinitionTransaction.maxFee.lower).to.be.equal(0);
+        chai_1.expect(mosaicDefinitionTransaction.maxFee.compact()).to.be.equal(mosaicDefinitionTransaction.size * FeeCalculationStrategy_1.DefaultFeeCalculationStrategy);
     });
     it('should filled maxFee override transaction maxFee', () => {
         const mosaicDefinitionTransaction = MosaicDefinitionTransaction_1.MosaicDefinitionTransaction.create(Deadline_1.Deadline.create(), new MosaicNonce_1.MosaicNonce(new Uint8Array([0xE6, 0xDE, 0x84, 0xB8])), // nonce

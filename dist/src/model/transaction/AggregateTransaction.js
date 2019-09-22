@@ -17,12 +17,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const crypto_1 = require("../../core/crypto");
 const AggregateTransaction_1 = require("../../infrastructure/builders/AggregateTransaction");
-const UInt64_1 = require("../UInt64");
 const SignedTransaction_1 = require("./SignedTransaction");
 const Transaction_1 = require("./Transaction");
 const TransactionType_1 = require("./TransactionType");
 const TransactionVersion_1 = require("./TransactionVersion");
-
+const FeeCalculationStrategy_1 = require("./FeeCalculationStrategy");
 /**
  * Aggregate innerTransactions contain multiple innerTransactions that can be initiated by different accounts.
  */
@@ -61,8 +60,14 @@ class AggregateTransaction extends Transaction_1.Transaction {
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {AggregateTransaction}
      */
-    static createComplete(deadline, innerTransactions, networkType, cosignatures, maxFee = new UInt64_1.UInt64([0, 0])) {
-        return new AggregateTransaction(networkType, TransactionType_1.TransactionType.AGGREGATE_COMPLETE, TransactionVersion_1.TransactionVersion.AGGREGATE_COMPLETE, deadline, maxFee, innerTransactions, cosignatures);
+    static createComplete(deadline, innerTransactions, networkType, cosignatures, maxFee) {
+        return new AggregateCompleteTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .innerTransactions(innerTransactions)
+            .cosignatures(cosignatures)
+            .build();
     }
     /**
      * Create an aggregate bonded transaction object
@@ -73,8 +78,14 @@ class AggregateTransaction extends Transaction_1.Transaction {
      * @param {UInt64} maxFee - (Optional) Max fee defined by the sender
      * @return {AggregateTransaction}
      */
-    static createBonded(deadline, innerTransactions, networkType, cosignatures = [], maxFee = new UInt64_1.UInt64([0, 0])) {
-        return new AggregateTransaction(networkType, TransactionType_1.TransactionType.AGGREGATE_BONDED, TransactionVersion_1.TransactionVersion.AGGREGATE_BONDED, deadline, maxFee, innerTransactions, cosignatures);
+    static createBonded(deadline, innerTransactions, networkType, cosignatures = [], maxFee) {
+        return new AggregateBondedTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .innerTransactions(innerTransactions)
+            .cosignatures(cosignatures)
+            .build();
     }
     /**
      * @internal
@@ -136,16 +147,53 @@ class AggregateTransaction extends Transaction_1.Transaction {
      * @memberof AggregateTransaction
      */
     get size() {
-        const byteSize = super.size;
+        return AggregateTransaction.calculateSize(this.innerTransactions || []);
+    }
+    static calculateSize(innerTransactions) {
+        const innerTransactionsSumSize = innerTransactions.reduce((previous, current) => previous + current.size, 0);
+        const byteSize = Transaction_1.Transaction.getHeaderSize();
         // set static byte size fields
         const byteTransactionsSize = 4;
-        // calculate each inner transaction's size
-        let byteTransactions = 0;
-        this.innerTransactions.map((transaction) => {
-            byteTransactions += transaction.size;
-        });
-        return byteSize + byteTransactionsSize + byteTransactions;
+        return byteSize + byteTransactionsSize + innerTransactionsSumSize;
     }
 }
 exports.AggregateTransaction = AggregateTransaction;
+class AggregateCompleteTransactionBuilder extends Transaction_1.TransactionBuilder {
+    constructor() {
+        super(...arguments);
+        this._cosignatures = [];
+        this._innerTransactions = [];
+    }
+    cosignatures(cosignatures) {
+        this._cosignatures = cosignatures;
+        return this;
+    }
+    innerTransactions(innerTransactions) {
+        this._innerTransactions = innerTransactions;
+        return this;
+    }
+    build() {
+        return new AggregateTransaction(this._networkType, TransactionType_1.TransactionType.AGGREGATE_COMPLETE, TransactionVersion_1.TransactionVersion.AGGREGATE_COMPLETE, this._deadline ? this._deadline : this._createNewDeadlineFn(), this._maxFee ? this._maxFee : FeeCalculationStrategy_1.calculateFee(AggregateTransaction.calculateSize(this._innerTransactions), this._feeCalculationStrategy), this._innerTransactions, this._cosignatures, this._signature, this._signer, this._transactionInfo);
+    }
+}
+exports.AggregateCompleteTransactionBuilder = AggregateCompleteTransactionBuilder;
+class AggregateBondedTransactionBuilder extends Transaction_1.TransactionBuilder {
+    constructor() {
+        super(...arguments);
+        this._cosignatures = [];
+        this._innerTransactions = [];
+    }
+    cosignatures(cosignatures) {
+        this._cosignatures = cosignatures;
+        return this;
+    }
+    innerTransactions(innerTransactions) {
+        this._innerTransactions = innerTransactions;
+        return this;
+    }
+    build() {
+        return new AggregateTransaction(this._networkType, TransactionType_1.TransactionType.AGGREGATE_BONDED, TransactionVersion_1.TransactionVersion.AGGREGATE_BONDED, this._deadline ? this._deadline : this._createNewDeadlineFn(), this._maxFee ? this._maxFee : FeeCalculationStrategy_1.calculateFee(AggregateTransaction.calculateSize(this._innerTransactions), this._feeCalculationStrategy), this._innerTransactions, this._cosignatures, this._signature, this._signer, this._transactionInfo);
+    }
+}
+exports.AggregateBondedTransactionBuilder = AggregateBondedTransactionBuilder;
 //# sourceMappingURL=AggregateTransaction.js.map

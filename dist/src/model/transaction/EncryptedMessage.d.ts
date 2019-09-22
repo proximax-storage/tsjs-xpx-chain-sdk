@@ -7,6 +7,7 @@ import { PlainMessage } from './PlainMessage';
  */
 export declare class EncryptedMessage extends Message {
     constructor(payload: string);
+    size(): number;
     /**
      *
      * @param message - Plain message to be encrypted

@@ -4,7 +4,7 @@ import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
 import { AccountRestrictionModification } from './AccountRestrictionModification';
 import { Deadline } from './Deadline';
-import { Transaction } from './Transaction';
+import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 export declare class AccountAddressRestrictionModificationTransaction extends Transaction {
     readonly restrictionType: RestrictionType;
@@ -38,4 +38,12 @@ export declare class AccountAddressRestrictionModificationTransaction extends Tr
      * @memberof AccountAddressRestrictionModificationTransaction
      */
     readonly size: number;
+    static calculateSize(modificationCount: number): number;
+}
+export declare class AccountAddressRestrictionModificationTransactionBuilder extends TransactionBuilder {
+    private _modifications;
+    private _restrictionType;
+    restrictionType(restrictionType: RestrictionType): this;
+    modifications(modifications: Array<AccountRestrictionModification<string>>): this;
+    build(): AccountAddressRestrictionModificationTransaction;
 }

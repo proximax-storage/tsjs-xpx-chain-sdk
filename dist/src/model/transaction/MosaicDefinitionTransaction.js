@@ -16,15 +16,16 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MosaicCreationTransaction_1 = require("../../infrastructure/builders/MosaicCreationTransaction");
-const UInt64_1 = require("../UInt64");
 const Transaction_1 = require("./Transaction");
+const Transaction_2 = require("./Transaction");
 const TransactionType_1 = require("./TransactionType");
 const TransactionVersion_1 = require("./TransactionVersion");
+const FeeCalculationStrategy_1 = require("./FeeCalculationStrategy");
 /**
  * Before a mosaic can be created or transferred, a corresponding definition of the mosaic has to be created and published to the network.
  * This is done via a mosaic definition transaction.
  */
-class MosaicDefinitionTransaction extends Transaction_1.Transaction {
+class MosaicDefinitionTransaction extends Transaction_2.Transaction {
     /**
      * @param networkType
      * @param version
@@ -65,8 +66,15 @@ class MosaicDefinitionTransaction extends Transaction_1.Transaction {
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {MosaicDefinitionTransaction}
      */
-    static create(deadline, nonce, mosaicId, mosaicProperties, networkType, maxFee = new UInt64_1.UInt64([0, 0])) {
-        return new MosaicDefinitionTransaction(networkType, TransactionVersion_1.TransactionVersion.MOSAIC_DEFINITION, deadline, maxFee, nonce, mosaicId, mosaicProperties);
+    static create(deadline, nonce, mosaicId, mosaicProperties, networkType, maxFee) {
+        return new MosaicDefinitionTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .mosaicNonce(nonce)
+            .mosaicId(mosaicId)
+            .mosaicProperties(mosaicProperties)
+            .build();
     }
     /**
      * @override Transaction.size()
@@ -75,7 +83,10 @@ class MosaicDefinitionTransaction extends Transaction_1.Transaction {
      * @memberof MosaicDefinitionTransaction
      */
     get size() {
-        const byteSize = super.size;
+        return MosaicDefinitionTransaction.calculateSize();
+    }
+    static calculateSize() {
+        const byteSize = Transaction_2.Transaction.getHeaderSize();
         // set static byte size fields
         const byteNonce = 4;
         const byteMosaicId = 8;
@@ -109,4 +120,22 @@ class MosaicDefinitionTransaction extends Transaction_1.Transaction {
     }
 }
 exports.MosaicDefinitionTransaction = MosaicDefinitionTransaction;
+class MosaicDefinitionTransactionBuilder extends Transaction_1.TransactionBuilder {
+    mosaicNonce(mosaicNonce) {
+        this._mosaicNonce = mosaicNonce;
+        return this;
+    }
+    mosaicId(mosaicId) {
+        this._mosaicId = mosaicId;
+        return this;
+    }
+    mosaicProperties(mosaicProperties) {
+        this._mosaicProperties = mosaicProperties;
+        return this;
+    }
+    build() {
+        return new MosaicDefinitionTransaction(this._networkType, TransactionVersion_1.TransactionVersion.MOSAIC_DEFINITION, this._deadline ? this._deadline : this._createNewDeadlineFn(), this._maxFee ? this._maxFee : FeeCalculationStrategy_1.calculateFee(MosaicDefinitionTransaction.calculateSize(), this._feeCalculationStrategy), this._mosaicNonce, this._mosaicId, this._mosaicProperties, this._signature, this._signer, this._transactionInfo);
+    }
+}
+exports.MosaicDefinitionTransactionBuilder = MosaicDefinitionTransactionBuilder;
 //# sourceMappingURL=MosaicDefinitionTransaction.js.map

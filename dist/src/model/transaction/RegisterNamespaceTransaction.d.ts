@@ -4,7 +4,7 @@ import { NamespaceId } from '../namespace/NamespaceId';
 import { NamespaceType } from '../namespace/NamespaceType';
 import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
-import { Transaction } from './Transaction';
+import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 /**
  * Accounts can rent a namespace for an amount of blocks and after a this renew the contract.
@@ -95,4 +95,19 @@ export declare class RegisterNamespaceTransaction extends Transaction {
      * @memberof RegisterNamespaceTransaction
      */
     readonly size: number;
+    static calculateSize(namespaceName: string): number;
+}
+export declare class RegisterRootNamespaceTransactionBuilder extends TransactionBuilder {
+    private _namespaceName;
+    private _duration;
+    namespaceName(namespaceName: string): this;
+    duration(duration: UInt64): this;
+    build(): RegisterNamespaceTransaction;
+}
+export declare class RegisterSubNamespaceTransactionBuilder extends TransactionBuilder {
+    private _namespaceName;
+    private _parentNamespace;
+    namespaceName(namespaceName: string): this;
+    parentNamespace(parentNamespace: string | NamespaceId): this;
+    build(): RegisterNamespaceTransaction;
 }

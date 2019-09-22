@@ -16,15 +16,16 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const AccountLinkTransaction_1 = require("../../infrastructure/builders/AccountLinkTransaction");
-const UInt64_1 = require("../UInt64");
 const Transaction_1 = require("./Transaction");
+const Transaction_2 = require("./Transaction");
 const TransactionType_1 = require("./TransactionType");
 const TransactionVersion_1 = require("./TransactionVersion");
+const FeeCalculationStrategy_1 = require("./FeeCalculationStrategy");
 /**
  * Announce an AccountLinkTransaction to delegate the account importance to a proxy account.
  * By doing so, you can enable delegated harvesting
  */
-class AccountLinkTransaction extends Transaction_1.Transaction {
+class AccountLinkTransaction extends Transaction_2.Transaction {
     /**
      * @param networkType
      * @param version
@@ -57,8 +58,14 @@ class AccountLinkTransaction extends Transaction_1.Transaction {
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {AccountLinkTransaction}
      */
-    static create(deadline, remoteAccountKey, linkAction, networkType, maxFee = new UInt64_1.UInt64([0, 0])) {
-        return new AccountLinkTransaction(networkType, TransactionVersion_1.TransactionVersion.LINK_ACCOUNT, deadline, maxFee, remoteAccountKey, linkAction);
+    static create(deadline, remoteAccountKey, linkAction, networkType, maxFee) {
+        return new AccountLinkTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .remoteAccountKey(remoteAccountKey)
+            .linkAction(linkAction)
+            .build();
     }
     /**
      * @override Transaction.size()
@@ -67,7 +74,10 @@ class AccountLinkTransaction extends Transaction_1.Transaction {
      * @memberof AccountLinkTransaction
      */
     get size() {
-        const byteSize = super.size;
+        return AccountLinkTransaction.calculateSize();
+    }
+    static calculateSize() {
+        const byteSize = Transaction_2.Transaction.getHeaderSize();
         // set static byte size fields
         const bytePublicKey = 32;
         const byteLinkAction = 1;
@@ -88,4 +98,18 @@ class AccountLinkTransaction extends Transaction_1.Transaction {
     }
 }
 exports.AccountLinkTransaction = AccountLinkTransaction;
+class AccountLinkTransactionBuilder extends Transaction_1.TransactionBuilder {
+    linkAction(linkAction) {
+        this._linkAction = linkAction;
+        return this;
+    }
+    remoteAccountKey(remoteAccountKey) {
+        this._remoteAccountKey = remoteAccountKey;
+        return this;
+    }
+    build() {
+        return new AccountLinkTransaction(this._networkType, TransactionVersion_1.TransactionVersion.LINK_ACCOUNT, this._deadline ? this._deadline : this._createNewDeadlineFn(), this._maxFee ? this._maxFee : FeeCalculationStrategy_1.calculateFee(AccountLinkTransaction.calculateSize(), this._feeCalculationStrategy), this._remoteAccountKey, this._linkAction, this._signature, this._signer, this._transactionInfo);
+    }
+}
+exports.AccountLinkTransactionBuilder = AccountLinkTransactionBuilder;
 //# sourceMappingURL=AccountLinkTransaction.js.map

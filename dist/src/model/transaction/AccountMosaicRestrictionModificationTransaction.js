@@ -16,10 +16,11 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const AccountRestrictionsMosaicTransaction_1 = require("../../infrastructure/builders/AccountRestrictionsMosaicTransaction");
-const UInt64_1 = require("../UInt64");
+const RestrictionType_1 = require("../account/RestrictionType");
 const Transaction_1 = require("./Transaction");
 const TransactionType_1 = require("./TransactionType");
 const TransactionVersion_1 = require("./TransactionVersion");
+const FeeCalculationStrategy_1 = require("./FeeCalculationStrategy");
 class AccountMosaicRestrictionModificationTransaction extends Transaction_1.Transaction {
     /**
      * @param networkType
@@ -46,8 +47,14 @@ class AccountMosaicRestrictionModificationTransaction extends Transaction_1.Tran
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {AccountAddressRestrictionModificationTransaction}
      */
-    static create(deadline, restrictionType, modifications, networkType, maxFee = new UInt64_1.UInt64([0, 0])) {
-        return new AccountMosaicRestrictionModificationTransaction(networkType, TransactionVersion_1.TransactionVersion.MODIFY_ACCOUNT_RESTRICTION_MOSAIC, deadline, maxFee, restrictionType, modifications);
+    static create(deadline, restrictionType, modifications, networkType, maxFee) {
+        return new AccountMosaicRestrictionModificationTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .restrictionType(restrictionType)
+            .modifications(modifications)
+            .build();
     }
     /**
      * @override Transaction.size()
@@ -56,14 +63,17 @@ class AccountMosaicRestrictionModificationTransaction extends Transaction_1.Tran
      * @memberof AccountMosaicRestrictionModificationTransaction
      */
     get size() {
-        const byteSize = super.size;
+        return AccountMosaicRestrictionModificationTransaction.calculateSize(this.modifications.length);
+    }
+    static calculateSize(modificationCount) {
+        const byteSize = Transaction_1.Transaction.getHeaderSize();
         // set static byte size fields
         const byteRestrictionType = 1;
         const byteModificationCount = 1;
         // each modification contains :
         // - 1 byte for modificationType
         // - 8 bytes for the modification value (mosaicId)
-        const byteModifications = 9 * this.modifications.length;
+        const byteModifications = 9 * modificationCount;
         return byteSize + byteRestrictionType + byteModificationCount + byteModifications;
     }
     /**
@@ -81,4 +91,22 @@ class AccountMosaicRestrictionModificationTransaction extends Transaction_1.Tran
     }
 }
 exports.AccountMosaicRestrictionModificationTransaction = AccountMosaicRestrictionModificationTransaction;
+class AccountMosaicRestrictionModificationTransactionBuilder extends Transaction_1.TransactionBuilder {
+    restrictionType(restrictionType) {
+        if (!(restrictionType === RestrictionType_1.RestrictionType.AllowMosaic || restrictionType === RestrictionType_1.RestrictionType.BlockMosaic)) {
+            throw new Error('Restriction type is not allowed.');
+        }
+        ;
+        this._restrictionType = restrictionType;
+        return this;
+    }
+    modifications(modifications) {
+        this._modifications = modifications;
+        return this;
+    }
+    build() {
+        return new AccountMosaicRestrictionModificationTransaction(this._networkType, TransactionVersion_1.TransactionVersion.MODIFY_ACCOUNT_RESTRICTION_ADDRESS, this._deadline ? this._deadline : this._createNewDeadlineFn(), this._maxFee ? this._maxFee : FeeCalculationStrategy_1.calculateFee(AccountMosaicRestrictionModificationTransaction.calculateSize(this._modifications.length), this._feeCalculationStrategy), this._restrictionType, this._modifications, this._signature, this._signer, this._transactionInfo);
+    }
+}
+exports.AccountMosaicRestrictionModificationTransactionBuilder = AccountMosaicRestrictionModificationTransactionBuilder;
 //# sourceMappingURL=AccountMosaicRestrictionModificationTransaction.js.map

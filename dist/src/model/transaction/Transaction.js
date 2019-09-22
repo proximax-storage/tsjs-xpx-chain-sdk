@@ -20,6 +20,7 @@ const SerializeTransactionToJSON_1 = require("../../infrastructure/transaction/S
 const Deadline_1 = require("./Deadline");
 const SignedTransaction_1 = require("./SignedTransaction");
 const TransactionType_1 = require("./TransactionType");
+const FeeCalculationStrategy_1 = require("./FeeCalculationStrategy");
 /**
  * An abstract transaction class that serves as the base class of all NEM transactions.
  */
@@ -75,6 +76,21 @@ class Transaction {
         this.signature = signature;
         this.signer = signer;
         this.transactionInfo = transactionInfo;
+    }
+    /**
+     * @description get the byte size of the common transaction header
+     * @returns {number}
+     * @memberof Transaction
+     */
+    static getHeaderSize() {
+        const byteSize = 4 // size
+            + 64 // signature
+            + 32 // signer
+            + 4 // version
+            + 2 // type
+            + 8 // maxFee
+            + 8; // deadline
+        return byteSize;
     }
     /**
      * @internal
@@ -162,21 +178,6 @@ class Transaction {
         throw new Error('an Announced transaction can\'t be modified');
     }
     /**
-     * @description get the byte size of a transaction
-     * @returns {number}
-     * @memberof Transaction
-     */
-    get size() {
-        const byteSize = 4 // size
-            + 64 // signature
-            + 32 // signer
-            + 4 // version
-            + 2 // type
-            + 8 // maxFee
-            + 8; // deadline
-        return byteSize;
-    }
-    /**
      * @description Serialize a transaction object
      * @returns {string}
      * @memberof Transaction
@@ -207,4 +208,47 @@ class Transaction {
     }
 }
 exports.Transaction = Transaction;
+class TransactionBuilder {
+    constructor() {
+        this._feeCalculationStrategy = FeeCalculationStrategy_1.DefaultFeeCalculationStrategy;
+        this._createNewDeadlineFn = Deadline_1.DefaultCreateNewDeadline;
+    }
+    networkType(networkType) {
+        this._networkType = networkType;
+        return this;
+    }
+    deadline(deadline) {
+        this._deadline = deadline;
+        return this;
+    }
+    generationHash(generationHash) {
+        this._generationHash = generationHash;
+        return this;
+    }
+    feeCalculationStrategy(feeCalculationStrategy) {
+        this._feeCalculationStrategy = feeCalculationStrategy;
+        return this;
+    }
+    createNewDeadlineFn(createNewDeadlineFn) {
+        this._createNewDeadlineFn = createNewDeadlineFn;
+        return this;
+    }
+    maxFee(maxFee) {
+        this._maxFee = maxFee;
+        return this;
+    }
+    signature(signature) {
+        this._signature = signature;
+        return this;
+    }
+    signer(signer) {
+        this._signer = signer;
+        return this;
+    }
+    transactionInfo(transactionInfo) {
+        this._transactionInfo = transactionInfo;
+        return this;
+    }
+}
+exports.TransactionBuilder = TransactionBuilder;
 //# sourceMappingURL=Transaction.js.map

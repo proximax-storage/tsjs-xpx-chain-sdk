@@ -1,3 +1,4 @@
+import { TransactionBuilder } from './Transaction';
 import { Address } from '../account/Address';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
@@ -67,4 +68,14 @@ export declare class TransferTransaction extends Transaction {
      * @memberof TransferTransaction
      */
     readonly size: number;
+    static calculateSize(messageSize: number, mosaicsCount: number): number;
+}
+export declare class TransferTransactionBuilder extends TransactionBuilder {
+    private _recipient;
+    private _mosaics;
+    private _message;
+    recipient(recipient: Address | NamespaceId): this;
+    mosaics(mosaics: Mosaic[]): this;
+    message(message: Message): this;
+    build(): TransferTransaction;
 }

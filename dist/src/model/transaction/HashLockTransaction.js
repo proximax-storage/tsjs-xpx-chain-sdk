@@ -22,4 +22,10 @@ const LockFundsTransaction_1 = require("./LockFundsTransaction");
 class HashLockTransaction extends LockFundsTransaction_1.LockFundsTransaction {
 }
 exports.HashLockTransaction = HashLockTransaction;
+class HashLockTransactionBuilder extends LockFundsTransaction_1.LockFundsTransactionBuilder {
+    build() {
+        return super.build();
+    }
+}
+exports.HashLockTransactionBuilder = HashLockTransactionBuilder;
 //# sourceMappingURL=HashLockTransaction.js.map

@@ -1,4 +1,3 @@
-import { Account } from '../account/Account';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
@@ -6,6 +5,7 @@ import { AggregateTransactionInfo } from './AggregateTransactionInfo';
 import { Deadline } from './Deadline';
 import { InnerTransaction } from './InnerTransaction';
 import { TransactionInfo } from './TransactionInfo';
+import { FeeCalculationStrategy } from './FeeCalculationStrategy';
 /**
  * An abstract transaction class that serves as the base class of all NEM transactions.
  */
@@ -40,6 +40,12 @@ export declare abstract class Transaction {
      * Transactions meta data object contains additional information about the transaction.
      */
     readonly transactionInfo?: TransactionInfo | AggregateTransactionInfo | undefined;
+    /**
+     * @description get the byte size of the common transaction header
+     * @returns {number}
+     * @memberof Transaction
+     */
+    static getHeaderSize(): number;
     /**
      * @constructor
      * @param type
@@ -83,7 +89,7 @@ export declare abstract class Transaction {
      * Transactions meta data object contains additional information about the transaction.
      */
     transactionInfo?: TransactionInfo | AggregateTransactionInfo | undefined);
-    /**
+     /**
      * @internal
      * Serialize and sign transaction creating a new SignedTransaction
      * @param account - The account to sign the transaction
@@ -130,7 +136,7 @@ export declare abstract class Transaction {
      * @returns {number}
      * @memberof Transaction
      */
-    readonly size: number;
+    abstract readonly size: number;
     /**
      * @description Serialize a transaction object
      * @returns {string}
@@ -145,4 +151,24 @@ export declare abstract class Transaction {
     toJSON(): {
         transaction: any;
     };
+}
+export declare abstract class TransactionBuilder {
+    protected _networkType: NetworkType;
+    protected _deadline: Deadline;
+    protected _generationHash: string;
+    protected _feeCalculationStrategy: FeeCalculationStrategy;
+    protected _maxFee: UInt64 | undefined;
+    protected _signature: string;
+    protected _signer: PublicAccount;
+    protected _transactionInfo: TransactionInfo;
+    protected _createNewDeadlineFn: () => Deadline;
+    networkType(networkType: NetworkType): this;
+    deadline(deadline: Deadline): this;
+    generationHash(generationHash: string): this;
+    feeCalculationStrategy(feeCalculationStrategy: FeeCalculationStrategy): this;
+    createNewDeadlineFn(createNewDeadlineFn: () => Deadline): this;
+    maxFee(maxFee: UInt64 | undefined): this;
+    signature(signature: string): this;
+    signer(signer: PublicAccount): this;
+    transactionInfo(transactionInfo: TransactionInfo): this;
 }

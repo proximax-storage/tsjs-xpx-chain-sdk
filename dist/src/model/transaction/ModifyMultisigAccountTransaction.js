@@ -16,10 +16,10 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MultisigModificationTransaction_1 = require("../../infrastructure/builders/MultisigModificationTransaction");
-const UInt64_1 = require("../UInt64");
 const Transaction_1 = require("./Transaction");
 const TransactionType_1 = require("./TransactionType");
 const TransactionVersion_1 = require("./TransactionVersion");
+const FeeCalculationStrategy_1 = require("./FeeCalculationStrategy");
 /**
  * Modify multisig account transactions are part of the NEM's multisig account system.
  * A modify multisig account transaction holds an array of multisig cosignatory modifications,
@@ -69,8 +69,15 @@ class ModifyMultisigAccountTransaction extends Transaction_1.Transaction {
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {ModifyMultisigAccountTransaction}
      */
-    static create(deadline, minApprovalDelta, minRemovalDelta, modifications, networkType, maxFee = new UInt64_1.UInt64([0, 0])) {
-        return new ModifyMultisigAccountTransaction(networkType, TransactionVersion_1.TransactionVersion.MODIFY_MULTISIG_ACCOUNT, deadline, maxFee, minApprovalDelta, minRemovalDelta, modifications);
+    static create(deadline, minApprovalDelta, minRemovalDelta, modifications, networkType, maxFee) {
+        return new ModifyMultisigAccountTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .minApprovalDelta(minApprovalDelta)
+            .minRemovalDelta(minRemovalDelta)
+            .modifications(modifications)
+            .build();
     }
     /**
      * @override Transaction.size()
@@ -79,7 +86,10 @@ class ModifyMultisigAccountTransaction extends Transaction_1.Transaction {
      * @memberof ModifyMultisigAccountTransaction
      */
     get size() {
-        const byteSize = super.size;
+        return ModifyMultisigAccountTransaction.calculateSize(this.modifications.length);
+    }
+    static calculateSize(modificationsCount) {
+        const byteSize = Transaction_1.Transaction.getHeaderSize();
         // set static byte size fields
         const byteRemovalDelta = 1;
         const byteApprovalDelta = 1;
@@ -87,7 +97,7 @@ class ModifyMultisigAccountTransaction extends Transaction_1.Transaction {
         // each modification contains :
         // - 1 byte for modificationType
         // - 32 bytes for cosignatoryPublicKey
-        const byteModifications = 33 * this.modifications.length;
+        const byteModifications = 33 * modificationsCount;
         return byteSize + byteRemovalDelta + byteApprovalDelta + byteNumModifications + byteModifications;
     }
     /**
@@ -106,4 +116,22 @@ class ModifyMultisigAccountTransaction extends Transaction_1.Transaction {
     }
 }
 exports.ModifyMultisigAccountTransaction = ModifyMultisigAccountTransaction;
+class ModifyMultisigAccountTransactionBuilder extends Transaction_1.TransactionBuilder {
+    minApprovalDelta(minApprovalDelta) {
+        this._minApprovalDelta = minApprovalDelta;
+        return this;
+    }
+    minRemovalDelta(minRemovalDelta) {
+        this._minRemovalDelta = minRemovalDelta;
+        return this;
+    }
+    modifications(modifications) {
+        this._modifications = modifications;
+        return this;
+    }
+    build() {
+        return new ModifyMultisigAccountTransaction(this._networkType, TransactionVersion_1.TransactionVersion.MODIFY_MULTISIG_ACCOUNT, this._deadline ? this._deadline : this._createNewDeadlineFn(), this._maxFee ? this._maxFee : FeeCalculationStrategy_1.calculateFee(ModifyMultisigAccountTransaction.calculateSize(this._modifications.length), this._feeCalculationStrategy), this._minApprovalDelta, this._minRemovalDelta, this._modifications, this._signature, this._signer, this._transactionInfo);
+    }
+}
+exports.ModifyMultisigAccountTransactionBuilder = ModifyMultisigAccountTransactionBuilder;
 //# sourceMappingURL=ModifyMultisigAccountTransaction.js.map

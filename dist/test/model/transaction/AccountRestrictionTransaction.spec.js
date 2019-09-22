@@ -27,6 +27,7 @@ const Deadline_1 = require("../../../src/model/transaction/Deadline");
 const TransactionType_1 = require("../../../src/model/transaction/TransactionType");
 const UInt64_1 = require("../../../src/model/UInt64");
 const conf_spec_1 = require("../../conf/conf.spec");
+const FeeCalculationStrategy_1 = require("../../../src/model/transaction/FeeCalculationStrategy");
 describe('AccountRestrictionTransaction', () => {
     let account;
     const generationHash = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
@@ -72,12 +73,11 @@ describe('AccountRestrictionTransaction', () => {
             chai_1.expect(operationRestrictionTransaction.size).to.be.equal(127);
         });
     });
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
         const address = Address_1.Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
         const addressRestrictionFilter = AccountRestrictionModification_1.AccountRestrictionModification.createForAddress(RestrictionModificationType_1.RestrictionModificationType.Add, address);
         const addressRestrictionTransaction = AccountRestrictionTransaction_1.AccountRestrictionTransaction.createAddressRestrictionModificationTransaction(Deadline_1.Deadline.create(), RestrictionType_1.RestrictionType.AllowAddress, [addressRestrictionFilter], NetworkType_1.NetworkType.MIJIN_TEST);
-        chai_1.expect(addressRestrictionTransaction.maxFee.higher).to.be.equal(0);
-        chai_1.expect(addressRestrictionTransaction.maxFee.lower).to.be.equal(0);
+        chai_1.expect(addressRestrictionTransaction.maxFee.compact()).to.be.equal(addressRestrictionTransaction.size * FeeCalculationStrategy_1.DefaultFeeCalculationStrategy);
     });
     it('should filled maxFee override transaction maxFee', () => {
         const address = Address_1.Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');

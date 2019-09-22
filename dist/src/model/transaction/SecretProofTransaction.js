@@ -15,13 +15,12 @@
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const format_1 = require("../../core/format");
 const SecretProofTransaction_1 = require("../../infrastructure/builders/SecretProofTransaction");
-const UInt64_1 = require("../UInt64");
 const HashType_1 = require("./HashType");
 const Transaction_1 = require("./Transaction");
 const TransactionType_1 = require("./TransactionType");
 const TransactionVersion_1 = require("./TransactionVersion");
+const FeeCalculationStrategy_1 = require("./FeeCalculationStrategy");
 class SecretProofTransaction extends Transaction_1.Transaction {
     /**
      * @param networkType
@@ -59,8 +58,16 @@ class SecretProofTransaction extends Transaction_1.Transaction {
      *
      * @return a SecretProofTransaction instance
      */
-    static create(deadline, hashType, secret, recipient, proof, networkType, maxFee = new UInt64_1.UInt64([0, 0])) {
-        return new SecretProofTransaction(networkType, TransactionVersion_1.TransactionVersion.SECRET_PROOF, deadline, maxFee, hashType, secret, recipient, proof);
+    static create(deadline, hashType, secret, recipient, proof, networkType, maxFee) {
+        return new SecretProofTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .hashType(hashType)
+            .secret(secret)
+            .recipient(recipient)
+            .proof(proof)
+            .build();
     }
     /**
      * @override Transaction.size()
@@ -69,15 +76,18 @@ class SecretProofTransaction extends Transaction_1.Transaction {
      * @memberof SecretProofTransaction
      */
     get size() {
-        const byteSize = super.size;
+        return SecretProofTransaction.calculateSize(this.secret, this.proof);
+    }
+    static calculateSize(secret, proof) {
+        const byteSize = Transaction_1.Transaction.getHeaderSize();
         // hash algorithm and proof size static byte size
         const byteAlgorithm = 1;
         const byteProofSize = 2;
         const byteRecipient = 25;
-        // convert secret and proof to uint8
-        const byteSecret = format_1.Convert.hexToUint8(this.secret).length;
-        const byteProof = format_1.Convert.hexToUint8(this.proof).length;
-        return byteSize + byteAlgorithm + byteSecret + byteRecipient + byteProofSize + byteProof;
+        // get secret and proof byte size
+        const secretLength = secret.length / 2;
+        const proofLength = proof.length / 2;
+        return byteSize + byteAlgorithm + secretLength + byteRecipient + byteProofSize + proofLength;
     }
     /**
      * @internal
@@ -97,4 +107,26 @@ class SecretProofTransaction extends Transaction_1.Transaction {
     }
 }
 exports.SecretProofTransaction = SecretProofTransaction;
+class SecretProofTransactionBuilder extends Transaction_1.TransactionBuilder {
+    hashType(hashType) {
+        this._hashType = hashType;
+        return this;
+    }
+    secret(secret) {
+        this._secret = secret;
+        return this;
+    }
+    recipient(recipient) {
+        this._recipient = recipient;
+        return this;
+    }
+    proof(proof) {
+        this._proof = proof;
+        return this;
+    }
+    build() {
+        return new SecretProofTransaction(this._networkType, TransactionVersion_1.TransactionVersion.SECRET_PROOF, this._deadline ? this._deadline : this._createNewDeadlineFn(), this._maxFee ? this._maxFee : FeeCalculationStrategy_1.calculateFee(SecretProofTransaction.calculateSize(this._secret, this._proof), this._feeCalculationStrategy), this._hashType, this._secret, this._recipient, this._proof, this._signature, this._signer, this._transactionInfo);
+    }
+}
+exports.SecretProofTransactionBuilder = SecretProofTransactionBuilder;
 //# sourceMappingURL=SecretProofTransaction.js.map

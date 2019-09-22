@@ -9,12 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const conf = require("config");
-const Account_1 = require("../../src/model/account/Account");
-const NetworkType_1 = require("../../src/model/blockchain/NetworkType");
 const model_1 = require("../../src/model/model");
 const ConfUtils_1 = require("./ConfUtils");
-const BlockHttp_1 = require("../../src/infrastructure/BlockHttp");
-const QueryParams_1 = require("../../src/infrastructure/QueryParams");
 const infrastructure_1 = require("../../src/infrastructure/infrastructure");
 const api = conf.get('api');
 const APIUrl = api.protocol + "://" + api.hostname + ":" + api.port;
@@ -27,8 +23,8 @@ const ConfNamespaceHttp = new infrastructure_1.NamespaceHttp(APIUrl);
 exports.ConfNamespaceHttp = ConfNamespaceHttp;
 const ConfMosaicHttp = new infrastructure_1.MosaicHttp(APIUrl);
 exports.ConfMosaicHttp = ConfMosaicHttp;
-const ConfNetworkType = NetworkType_1.NetworkType[api.networkType];
-exports.ConfNetworkType = ConfNetworkType;
+const ConfNetworkType = model_1.NetworkType[api.networkType];
+const ConfGenerationHash = api.generationHash;
 const blockchain = conf.get('blockchain');
 const systemEnv = process.env;
 //test types
@@ -37,7 +33,7 @@ class TestAccount {
         this.cosignatories = [];
         this.cosigns = [];
         this.conf = confAccount;
-        this.acc = Account_1.Account.createFromPrivateKey(customPK || confAccount.pk, ConfNetworkType);
+        this.acc = model_1.Account.createFromPrivateKey(customPK || confAccount.pk, ConfNetworkType);
     }
     hasCosignatories() {
         return this.cosignatories && this.cosignatories.length ? true : false;
@@ -143,8 +139,8 @@ const ConfNetworkMosaicName = "xpx";
 exports.ConfNetworkMosaicName = ConfNetworkMosaicName;
 const ConfTestingMosaicNonce = new model_1.MosaicNonce(new Uint8Array([0x01, 0x02, 0x03, 0x04]));
 exports.ConfTestingMosaicNonce = ConfTestingMosaicNonce;
-const ConfTestingMosaic = model_1.MosaicId.createFromNonce(ConfTestingMosaicNonce, TestingAccount.publicAccount);
-exports.ConfTestingMosaic = ConfTestingMosaic;
+const ConfTestingMosaicId = model_1.MosaicId.createFromNonce(ConfTestingMosaicNonce, TestingAccount.publicAccount);
+exports.ConfTestingMosaicId = ConfTestingMosaicId;
 const ConfTestingMosaicProperties = model_1.MosaicProperties.create({
     supplyMutable: true,
     transferable: true,
@@ -152,14 +148,14 @@ const ConfTestingMosaicProperties = model_1.MosaicProperties.create({
     duration: model_1.UInt64.fromUint(1000)
 });
 exports.ConfTestingMosaicProperties = ConfTestingMosaicProperties;
-const ConfTestingNamespace = new model_1.NamespaceId('testing');
-exports.ConfTestingNamespace = ConfTestingNamespace;
+const ConfTestingNamespaceId = new model_1.NamespaceId('testing');
+exports.ConfTestingNamespaceId = ConfTestingNamespaceId;
 class NemesisBlockInfo {
     constructor() { }
     static getInstance() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!NemesisBlockInfo.instance) {
-                const blockHttp = new BlockHttp_1.BlockHttp(APIUrl);
+                const blockHttp = new infrastructure_1.BlockHttp(APIUrl);
                 NemesisBlockInfo.instance = yield blockHttp.getBlockByHeight(1).toPromise();
             }
             return NemesisBlockInfo.instance;
@@ -167,10 +163,25 @@ class NemesisBlockInfo {
     }
 }
 exports.NemesisBlockInfo = NemesisBlockInfo;
+class Configuration {
+    constructor() { }
+    static getTransactionBuilderFactory() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!Configuration.factory) {
+                const newFactory = new model_1.TransactionBuilderFactory();
+                newFactory.networkType = ConfNetworkType || (yield NemesisBlockInfo.getInstance().then(blockInfo => blockInfo.networkType));
+                newFactory.generationHash = ConfGenerationHash || (yield NemesisBlockInfo.getInstance().then(blockInfo => blockInfo.generationHash));
+                Configuration.factory = newFactory;
+            }
+            return Configuration.factory;
+        });
+    }
+}
+exports.Configuration = Configuration;
 const GetNemesisBlockDataPromise = () => {
-    const blockHttp = new BlockHttp_1.BlockHttp(APIUrl);
+    const blockHttp = new infrastructure_1.BlockHttp(APIUrl);
     return NemesisBlockInfo.getInstance().then((nemesisBlockInfo) => {
-        return blockHttp.getBlockTransactions(1, new QueryParams_1.QueryParams(100)).toPromise()
+        return blockHttp.getBlockTransactions(1, new infrastructure_1.QueryParams(100)).toPromise()
             .then(txs => {
             const regNamespaceTxs = txs.filter(tx => tx.type === model_1.TransactionType.REGISTER_NAMESPACE);
             const currencyNamespace = regNamespaceTxs.find(tx => tx.namespaceName === "xpx");

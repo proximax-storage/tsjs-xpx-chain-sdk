@@ -1,3 +1,4 @@
+import { TransactionBuilder } from './Transaction';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { MosaicId } from '../mosaic/MosaicId';
@@ -67,4 +68,14 @@ export declare class MosaicDefinitionTransaction extends Transaction {
      * @memberof MosaicDefinitionTransaction
      */
     readonly size: number;
+    static calculateSize(): number;
+}
+export declare class MosaicDefinitionTransactionBuilder extends TransactionBuilder {
+    private _mosaicNonce;
+    private _mosaicId;
+    private _mosaicProperties;
+    mosaicNonce(mosaicNonce: MosaicNonce): this;
+    mosaicId(mosaicId: MosaicId): this;
+    mosaicProperties(mosaicProperties: MosaicProperties): this;
+    build(): MosaicDefinitionTransaction;
 }

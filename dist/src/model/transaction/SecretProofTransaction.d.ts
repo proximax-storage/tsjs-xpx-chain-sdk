@@ -4,7 +4,7 @@ import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
 import { HashType } from './HashType';
-import { Transaction } from './Transaction';
+import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 export declare class SecretProofTransaction extends Transaction {
     readonly hashType: HashType;
@@ -46,4 +46,16 @@ export declare class SecretProofTransaction extends Transaction {
      * @memberof SecretProofTransaction
      */
     readonly size: number;
+    static calculateSize(secret: string, proof: string): number;
+}
+export declare class SecretProofTransactionBuilder extends TransactionBuilder {
+    private _hashType;
+    private _secret;
+    private _recipient;
+    private _proof;
+    hashType(hashType: HashType): this;
+    secret(secret: string): this;
+    recipient(recipient: Address): this;
+    proof(proof: string): this;
+    build(): SecretProofTransaction;
 }

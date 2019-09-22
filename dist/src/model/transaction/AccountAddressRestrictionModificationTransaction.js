@@ -16,10 +16,11 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const AccountRestrictionsAddressTransaction_1 = require("../../infrastructure/builders/AccountRestrictionsAddressTransaction");
-const UInt64_1 = require("../UInt64");
+const RestrictionType_1 = require("../account/RestrictionType");
 const Transaction_1 = require("./Transaction");
 const TransactionType_1 = require("./TransactionType");
 const TransactionVersion_1 = require("./TransactionVersion");
+const FeeCalculationStrategy_1 = require("./FeeCalculationStrategy");
 class AccountAddressRestrictionModificationTransaction extends Transaction_1.Transaction {
     /**
      * @param networkType
@@ -46,8 +47,14 @@ class AccountAddressRestrictionModificationTransaction extends Transaction_1.Tra
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {AccountAddressRestrictionModificationTransaction}
      */
-    static create(deadline, restrictionType, modifications, networkType, maxFee = new UInt64_1.UInt64([0, 0])) {
-        return new AccountAddressRestrictionModificationTransaction(networkType, TransactionVersion_1.TransactionVersion.MODIFY_ACCOUNT_RESTRICTION_ADDRESS, deadline, maxFee, restrictionType, modifications);
+    static create(deadline, restrictionType, modifications, networkType, maxFee) {
+        return new AccountAddressRestrictionModificationTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .restrictionType(restrictionType)
+            .modifications(modifications)
+            .maxFee(maxFee)
+            .build();
     }
     /**
      * @override Transaction.size()
@@ -56,14 +63,17 @@ class AccountAddressRestrictionModificationTransaction extends Transaction_1.Tra
      * @memberof AccountAddressRestrictionModificationTransaction
      */
     get size() {
-        const byteSize = super.size;
+        return AccountAddressRestrictionModificationTransaction.calculateSize(this.modifications.length);
+    }
+    static calculateSize(modificationCount) {
+        const byteSize = Transaction_1.Transaction.getHeaderSize();
         // set static byte size fields
         const byteRestrictionType = 1;
         const byteModificationCount = 1;
         // each modification contains :
         // - 1 byte for modificationType
         // - 25 bytes for the modification value (address)
-        const byteModifications = 26 * this.modifications.length;
+        const byteModifications = 26 * modificationCount;
         return byteSize + byteRestrictionType + byteModificationCount + byteModifications;
     }
     /**
@@ -81,4 +91,22 @@ class AccountAddressRestrictionModificationTransaction extends Transaction_1.Tra
     }
 }
 exports.AccountAddressRestrictionModificationTransaction = AccountAddressRestrictionModificationTransaction;
+class AccountAddressRestrictionModificationTransactionBuilder extends Transaction_1.TransactionBuilder {
+    restrictionType(restrictionType) {
+        if (!(restrictionType === RestrictionType_1.RestrictionType.AllowAddress || restrictionType === RestrictionType_1.RestrictionType.BlockAddress)) {
+            throw new Error('Restriction type is not allowed.');
+        }
+        ;
+        this._restrictionType = restrictionType;
+        return this;
+    }
+    modifications(modifications) {
+        this._modifications = modifications;
+        return this;
+    }
+    build() {
+        return new AccountAddressRestrictionModificationTransaction(this._networkType, TransactionVersion_1.TransactionVersion.MODIFY_ACCOUNT_RESTRICTION_ADDRESS, this._deadline ? this._deadline : this._createNewDeadlineFn(), this._maxFee ? this._maxFee : FeeCalculationStrategy_1.calculateFee(AccountAddressRestrictionModificationTransaction.calculateSize(this._modifications.length), this._feeCalculationStrategy), this._restrictionType, this._modifications, this._signature, this._signer, this._transactionInfo);
+    }
+}
+exports.AccountAddressRestrictionModificationTransactionBuilder = AccountAddressRestrictionModificationTransactionBuilder;
 //# sourceMappingURL=AccountAddressRestrictionModificationTransaction.js.map

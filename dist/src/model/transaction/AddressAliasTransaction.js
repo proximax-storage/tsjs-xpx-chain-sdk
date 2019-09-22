@@ -16,10 +16,10 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const AddressAliasTransaction_1 = require("../../infrastructure/builders/AddressAliasTransaction");
-const UInt64_1 = require("../UInt64");
 const Transaction_1 = require("./Transaction");
 const TransactionType_1 = require("./TransactionType");
 const TransactionVersion_1 = require("./TransactionVersion");
+const FeeCalculationStrategy_1 = require("./FeeCalculationStrategy");
 /**
  * In case a mosaic has the flag 'supplyMutable' set to true, the creator of the mosaic can change the supply,
  * i.e. increase or decrease the supply.
@@ -65,8 +65,15 @@ class AddressAliasTransaction extends Transaction_1.Transaction {
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {AddressAliasTransaction}
      */
-    static create(deadline, actionType, namespaceId, address, networkType, maxFee = new UInt64_1.UInt64([0, 0])) {
-        return new AddressAliasTransaction(networkType, TransactionVersion_1.TransactionVersion.ADDRESS_ALIAS, deadline, maxFee, actionType, namespaceId, address);
+    static create(deadline, actionType, namespaceId, address, networkType, maxFee) {
+        return new AddressAliasTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .actionType(actionType)
+            .namespaceId(namespaceId)
+            .address(address)
+            .build();
     }
     /**
      * @override Transaction.size()
@@ -75,7 +82,10 @@ class AddressAliasTransaction extends Transaction_1.Transaction {
      * @memberof AddressAliasTransaction
      */
     get size() {
-        const byteSize = super.size;
+        return AddressAliasTransaction.calculateSize();
+    }
+    static calculateSize() {
+        const byteSize = Transaction_1.Transaction.getHeaderSize();
         // set static byte size fields
         const byteActionType = 1;
         const byteNamespaceId = 8;
@@ -98,4 +108,22 @@ class AddressAliasTransaction extends Transaction_1.Transaction {
     }
 }
 exports.AddressAliasTransaction = AddressAliasTransaction;
+class AddressAliasTransactionBuilder extends Transaction_1.TransactionBuilder {
+    actionType(actionType) {
+        this._actionType = actionType;
+        return this;
+    }
+    namespaceId(namespaceId) {
+        this._namespaceId = namespaceId;
+        return this;
+    }
+    address(address) {
+        this._address = address;
+        return this;
+    }
+    build() {
+        return new AddressAliasTransaction(this._networkType, TransactionVersion_1.TransactionVersion.ADDRESS_ALIAS, this._deadline ? this._deadline : this._createNewDeadlineFn(), this._maxFee ? this._maxFee : FeeCalculationStrategy_1.calculateFee(AddressAliasTransaction.calculateSize(), this._feeCalculationStrategy), this._actionType, this._namespaceId, this._address, this._signature, this._signer, this._transactionInfo);
+    }
+}
+exports.AddressAliasTransactionBuilder = AddressAliasTransactionBuilder;
 //# sourceMappingURL=AddressAliasTransaction.js.map

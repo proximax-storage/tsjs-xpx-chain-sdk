@@ -1,3 +1,4 @@
+import { TransactionBuilder } from './Transaction';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
@@ -54,4 +55,12 @@ export declare class AccountLinkTransaction extends Transaction {
      * @memberof AccountLinkTransaction
      */
     readonly size: number;
+    static calculateSize(): number;
+}
+export declare class AccountLinkTransactionBuilder extends TransactionBuilder {
+    private _remoteAccountKey;
+    private _linkAction;
+    linkAction(linkAction: LinkAction): this;
+    remoteAccountKey(remoteAccountKey: string): this;
+    build(): AccountLinkTransaction;
 }

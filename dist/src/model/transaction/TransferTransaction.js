@@ -15,17 +15,18 @@
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const format_1 = require("../../core/format");
 const TransferTransaction_1 = require("../../infrastructure/builders/TransferTransaction");
-const NamespaceId_1 = require("../namespace/NamespaceId");
-const UInt64_1 = require("../UInt64");
 const Transaction_1 = require("./Transaction");
+const NamespaceId_1 = require("../namespace/NamespaceId");
+const Transaction_2 = require("./Transaction");
 const TransactionType_1 = require("./TransactionType");
 const TransactionVersion_1 = require("./TransactionVersion");
+const PlainMessage_1 = require("./PlainMessage");
+const FeeCalculationStrategy_1 = require("./FeeCalculationStrategy");
 /**
  * Transfer transactions contain data about transfers of mosaics and message to another account.
  */
-class TransferTransaction extends Transaction_1.Transaction {
+class TransferTransaction extends Transaction_2.Transaction {
     /**
      * @param networkType
      * @param version
@@ -66,8 +67,15 @@ class TransferTransaction extends Transaction_1.Transaction {
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {TransferTransaction}
      */
-    static create(deadline, recipient, mosaics, message, networkType, maxFee = new UInt64_1.UInt64([0, 0])) {
-        return new TransferTransaction(networkType, TransactionVersion_1.TransactionVersion.TRANSFER, deadline, maxFee, recipient, mosaics, message);
+    static create(deadline, recipient, mosaics, message, networkType, maxFee) {
+        return new TransferTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .recipient(recipient)
+            .mosaics(mosaics)
+            .message(message)
+            .build();
     }
     /**
      * Return the string notation for the set recipient
@@ -89,15 +97,14 @@ class TransferTransaction extends Transaction_1.Transaction {
      * @memberof TransferTransaction
      */
     get size() {
-        const byteSize = super.size;
+        return TransferTransaction.calculateSize(this.message.size(), this.mosaics.length);
+    }
+    static calculateSize(messageSize, mosaicsCount) {
+        const byteSize = Transaction_2.Transaction.getHeaderSize();
         // recipient and number of mosaics are static byte size
         const byteRecipient = 25;
         const byteNumMosaics = 2;
-        // read message payload size
-        const bytePayload = format_1.Convert.hexToUint8(format_1.Convert.utf8ToHex(this.message.payload || '')).length;
-        // mosaicId / namespaceId are written on 8 bytes
-        const byteMosaics = 8 * this.mosaics.length;
-        return byteSize + byteRecipient + byteNumMosaics + bytePayload + byteMosaics;
+        return byteSize + byteRecipient + byteNumMosaics + messageSize + 8 * mosaicsCount;
     }
     /**
      * @internal
@@ -115,4 +122,27 @@ class TransferTransaction extends Transaction_1.Transaction {
     }
 }
 exports.TransferTransaction = TransferTransaction;
+class TransferTransactionBuilder extends Transaction_1.TransactionBuilder {
+    constructor() {
+        super(...arguments);
+        this._mosaics = [];
+        this._message = PlainMessage_1.EmptyMessage;
+    }
+    recipient(recipient) {
+        this._recipient = recipient;
+        return this;
+    }
+    mosaics(mosaics) {
+        this._mosaics = mosaics;
+        return this;
+    }
+    message(message) {
+        this._message = message;
+        return this;
+    }
+    build() {
+        return new TransferTransaction(this._networkType, TransactionVersion_1.TransactionVersion.TRANSFER, this._deadline ? this._deadline : this._createNewDeadlineFn(), this._maxFee ? this._maxFee : FeeCalculationStrategy_1.calculateFee(TransferTransaction.calculateSize(this._message.size(), this._mosaics.length), this._feeCalculationStrategy), this._recipient, this._mosaics, this._message, this._signature, this._signer, this._transactionInfo);
+    }
+}
+exports.TransferTransactionBuilder = TransferTransactionBuilder;
 //# sourceMappingURL=TransferTransaction.js.map

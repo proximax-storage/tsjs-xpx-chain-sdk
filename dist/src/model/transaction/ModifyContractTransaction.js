@@ -3,21 +3,30 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file
 Object.defineProperty(exports, "__esModule", { value: true });
-const UInt64_1 = require("../UInt64");
 const Transaction_1 = require("./Transaction");
-const TransactionType_1 = require("./TransactionType");
 const TransactionVersion_1 = require("./TransactionVersion");
 const ModifyContractTransaction_1 = require("../../infrastructure/builders/ModifyContractTransaction");
+const TransactionType_1 = require("./TransactionType");
+const FeeCalculationStrategy_1 = require("./FeeCalculationStrategy");
 class ModifyContractTransaction extends Transaction_1.Transaction {
     /**
-     * Create a modify contract transaction object
+     * Create ModifyContractTransaction object
      * @returns {ModifyContractTransaction}
      */
-    static create(networkType, deadline, durationDelta, hash, customers, executors, verifiers, maxFee = new UInt64_1.UInt64([0, 0]), signature, signer, transactionInfo) {
-        return new ModifyContractTransaction(TransactionType_1.TransactionType.MODIFY_CONTRACT, networkType, deadline, durationDelta, hash, customers, executors, verifiers, maxFee, signature, signer, transactionInfo);
+    static create(networkType, deadline, durationDelta, hash, customers, executors, verifiers, maxFee) {
+        return new ModifyContractTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .durationDelta(durationDelta)
+            .hash(hash)
+            .customers(customers)
+            .executors(executors)
+            .verifiers(verifiers)
+            .build();
     }
-    constructor(transactionType, networkType, deadline, durationDelta, hash, customers, executors, verifiers, maxFee, signature, signer, transactionInfo) {
-        super(transactionType, networkType, TransactionVersion_1.TransactionVersion.MODIFY_CONTRACT, deadline, maxFee, signature, signer, transactionInfo);
+    constructor(networkType, deadline, durationDelta, hash, customers, executors, verifiers, maxFee, signature, signer, transactionInfo) {
+        super(TransactionType_1.TransactionType.MODIFY_CONTRACT, networkType, TransactionVersion_1.TransactionVersion.MODIFY_CONTRACT, deadline, maxFee, signature, signer, transactionInfo);
         this.durationDelta = durationDelta;
         this.hash = hash;
         this.customers = customers;
@@ -25,18 +34,23 @@ class ModifyContractTransaction extends Transaction_1.Transaction {
         this.verifiers = verifiers;
     }
     /**
+     * @override Transaction.size()
      * @description get the byte size of a transaction
      * @returns {number}
      * @memberof Transaction
      */
     get size() {
-        const byteSize = 8 // duration delta
-            + this.hash.length / 2 // hash (hex)
+        return ModifyContractTransaction.calculateSize(this.hash.length, this.customers.length, this.executors.length, this.verifiers.length);
+    }
+    static calculateSize(hashLength, customersCount, executorsCount, verifiersCount) {
+        const byteSize = Transaction_1.Transaction.getHeaderSize()
+            + 8 // duration delta
+            + hashLength / 2 // hash (hex)
             + 1 // num customers
             + 1 // num executors
             + 1 // num verifiers
-            + 33 * (this.customers.length + this.executors.length + this.verifiers.length);
-        return super.size + byteSize;
+            + 33 * (customersCount + executorsCount + verifiersCount);
+        return byteSize;
     }
     /**
      * @internal
@@ -57,4 +71,30 @@ class ModifyContractTransaction extends Transaction_1.Transaction {
     }
 }
 exports.ModifyContractTransaction = ModifyContractTransaction;
+class ModifyContractTransactionBuilder extends Transaction_1.TransactionBuilder {
+    durationDelta(durationDelta) {
+        this._durationDelta = durationDelta;
+        return this;
+    }
+    hash(hash) {
+        this._hash = hash;
+        return this;
+    }
+    customers(customers) {
+        this._customers = customers;
+        return this;
+    }
+    executors(executors) {
+        this._executors = executors;
+        return this;
+    }
+    verifiers(verifiers) {
+        this._verifiers = verifiers;
+        return this;
+    }
+    build() {
+        return new ModifyContractTransaction(this._networkType, this._deadline ? this._deadline : this._createNewDeadlineFn(), this._durationDelta, this._hash, this._customers, this._executors, this._verifiers, this._maxFee ? this._maxFee : FeeCalculationStrategy_1.calculateFee(ModifyContractTransaction.calculateSize(this._hash.length, this._customers.length, this._executors.length, this._verifiers.length), this._feeCalculationStrategy), this._signature, this._signer, this._transactionInfo);
+    }
+}
+exports.ModifyContractTransactionBuilder = ModifyContractTransactionBuilder;
 //# sourceMappingURL=ModifyContractTransaction.js.map

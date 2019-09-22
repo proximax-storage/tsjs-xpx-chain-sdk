@@ -16,10 +16,10 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MosaicAliasTransaction_1 = require("../../infrastructure/builders/MosaicAliasTransaction");
-const UInt64_1 = require("../UInt64");
 const Transaction_1 = require("./Transaction");
 const TransactionType_1 = require("./TransactionType");
 const TransactionVersion_1 = require("./TransactionVersion");
+const FeeCalculationStrategy_1 = require("./FeeCalculationStrategy");
 class MosaicAliasTransaction extends Transaction_1.Transaction {
     /**
      * @param networkType
@@ -61,8 +61,15 @@ class MosaicAliasTransaction extends Transaction_1.Transaction {
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {MosaicAliasTransaction}
      */
-    static create(deadline, actionType, namespaceId, mosaicId, networkType, maxFee = new UInt64_1.UInt64([0, 0])) {
-        return new MosaicAliasTransaction(networkType, TransactionVersion_1.TransactionVersion.MOSAIC_ALIAS, deadline, maxFee, actionType, namespaceId, mosaicId);
+    static create(deadline, actionType, namespaceId, mosaicId, networkType, maxFee) {
+        return new MosaicAliasTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .actionType(actionType)
+            .namespaceId(namespaceId)
+            .mosaicId(mosaicId)
+            .build();
     }
     /**
      * @override Transaction.size()
@@ -71,7 +78,10 @@ class MosaicAliasTransaction extends Transaction_1.Transaction {
      * @memberof MosaicAliasTransaction
      */
     get size() {
-        const byteSize = super.size;
+        return MosaicAliasTransaction.calculateSize();
+    }
+    static calculateSize() {
+        const byteSize = Transaction_1.Transaction.getHeaderSize();
         // set static byte size fields
         const byteType = 1;
         const byteNamespaceId = 8;
@@ -94,4 +104,22 @@ class MosaicAliasTransaction extends Transaction_1.Transaction {
     }
 }
 exports.MosaicAliasTransaction = MosaicAliasTransaction;
+class MosaicAliasTransactionBuilder extends Transaction_1.TransactionBuilder {
+    actionType(actionType) {
+        this._actionType = actionType;
+        return this;
+    }
+    namespaceId(namespaceId) {
+        this._namespaceId = namespaceId;
+        return this;
+    }
+    mosaicId(mosaicId) {
+        this._mosaicId = mosaicId;
+        return this;
+    }
+    build() {
+        return new MosaicAliasTransaction(this._networkType, TransactionVersion_1.TransactionVersion.MOSAIC_ALIAS, this._deadline ? this._deadline : this._createNewDeadlineFn(), this._maxFee ? this._maxFee : FeeCalculationStrategy_1.calculateFee(MosaicAliasTransaction.calculateSize(), this._feeCalculationStrategy), this._actionType, this._namespaceId, this._mosaicId, this._signature, this._signer, this._transactionInfo);
+    }
+}
+exports.MosaicAliasTransactionBuilder = MosaicAliasTransactionBuilder;
 //# sourceMappingURL=MosaicAliasTransaction.js.map

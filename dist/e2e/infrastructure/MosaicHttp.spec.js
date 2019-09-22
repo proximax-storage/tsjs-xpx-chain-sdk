@@ -22,15 +22,26 @@ const MosaicId_1 = require("../../src/model/mosaic/MosaicId");
 const conf_spec_1 = require("../conf/conf.spec");
 const model_1 = require("../../src/model/model");
 const assert_1 = require("assert");
+const mosaicHttp = new MosaicHttp_1.MosaicHttp(conf_spec_1.APIUrl);
+const transactionHttp = new infrastructure_1.TransactionHttp(conf_spec_1.APIUrl);
+let listener;
+let namespaceId;
+let mosaicId = conf_spec_1.ConfNetworkMosaic;
+let mosaicDivisibility = 6;
+let mosaicDuration = model_1.UInt64.fromUint(0);
+let factory;
+before(() => {
+    listener = new infrastructure_1.Listener(conf_spec_1.APIUrl);
+    return listener.open().then(() => {
+        return conf_spec_1.Configuration.getTransactionBuilderFactory().then(f => {
+            factory = f;
+        });
+    });
+});
+after(() => {
+    return listener.close();
+});
 describe('MosaicHttp', () => {
-    const mosaicHttp = new MosaicHttp_1.MosaicHttp(conf_spec_1.APIUrl);
-    const transactionHttp = new infrastructure_1.TransactionHttp(conf_spec_1.APIUrl);
-    let listener;
-    let generationHash;
-    let namespaceId;
-    let mosaicId = conf_spec_1.ConfNetworkMosaic;
-    let mosaicDivisibility = 6;
-    let mosaicDuration = model_1.UInt64.fromUint(0);
     const validateTransactionAnnounceCorrectly = (address, done, hash) => {
         const status = listener.status(address).subscribe(error => {
             console.error(error);
@@ -54,23 +65,15 @@ describe('MosaicHttp', () => {
             }
         });
     };
-    before(() => {
-        listener = new infrastructure_1.Listener(conf_spec_1.APIUrl);
-        return listener.open().then(() => {
-            return conf_spec_1.NemesisBlockInfo.getInstance().then(nemesicBlockinfo => {
-                generationHash = nemesicBlockinfo.generationHash;
-            });
-        });
-    });
-    after(() => {
-        return listener.close();
-    });
     describe('Setup test NamespaceId', () => {
         it('Announce RegisterNamespaceTransaction', (done) => {
             const namespaceName = 'root-test-namespace-' + Math.floor(Math.random() * 10000);
-            const registerNamespaceTransaction = model_1.RegisterNamespaceTransaction.createRootNamespace(model_1.Deadline.create(), namespaceName, model_1.UInt64.fromUint(1000), conf_spec_1.ConfNetworkType);
+            const registerNamespaceTransaction = factory.registerRootNamespace()
+                .namespaceName(namespaceName)
+                .duration(model_1.UInt64.fromUint(1000))
+                .build();
             namespaceId = new model_1.NamespaceId(namespaceName);
-            const signedTransaction = registerNamespaceTransaction.signWith(conf_spec_1.TestingAccount, generationHash);
+            const signedTransaction = registerNamespaceTransaction.signWith(conf_spec_1.TestingAccount, factory.generationHash);
             validateTransactionAnnounceCorrectly(conf_spec_1.TestingAccount.address, done, signedTransaction.hash);
             transactionHttp.announce(signedTransaction);
         });
@@ -82,21 +85,29 @@ describe('MosaicHttp', () => {
             mosaicId = MosaicId_1.MosaicId.createFromNonce(nonce, conf_spec_1.TestingAccount.publicAccount);
             mosaicDivisibility = 3;
             mosaicDuration = model_1.UInt64.fromUint(1000);
-            const mosaicDefinitionTransaction = model_1.MosaicDefinitionTransaction.create(model_1.Deadline.create(), nonce, mosaicId, model_1.MosaicProperties.create({
+            const mosaicDefinitionTransaction = factory.mosaicDefinition()
+                .mosaicNonce(nonce)
+                .mosaicId(mosaicId)
+                .mosaicProperties(model_1.MosaicProperties.create({
                 supplyMutable: true,
                 transferable: true,
                 divisibility: mosaicDivisibility,
                 duration: mosaicDuration,
-            }), conf_spec_1.ConfNetworkType);
-            const signedTransaction = mosaicDefinitionTransaction.signWith(conf_spec_1.TestingAccount, generationHash);
+            }))
+                .build();
+            const signedTransaction = mosaicDefinitionTransaction.signWith(conf_spec_1.TestingAccount, factory.generationHash);
             validateTransactionAnnounceCorrectly(conf_spec_1.TestingAccount.address, done, signedTransaction.hash);
             transactionHttp.announce(signedTransaction);
         });
     });
     describe('Setup test MosaicAlias', () => {
         it('Announce MosaicAliasTransaction', (done) => {
-            const mosaicAliasTransaction = model_1.MosaicAliasTransaction.create(model_1.Deadline.create(), model_1.AliasActionType.Link, namespaceId, mosaicId, conf_spec_1.ConfNetworkType);
-            const signedTransaction = mosaicAliasTransaction.signWith(conf_spec_1.TestingAccount, generationHash);
+            const mosaicAliasTransaction = factory.mosaicAlias()
+                .actionType(model_1.AliasActionType.Link)
+                .namespaceId(namespaceId)
+                .mosaicId(mosaicId)
+                .build();
+            const signedTransaction = mosaicAliasTransaction.signWith(conf_spec_1.TestingAccount, factory.generationHash);
             validateTransactionAnnounceCorrectly(conf_spec_1.TestingAccount.address, done, signedTransaction.hash);
             transactionHttp.announce(signedTransaction);
         });

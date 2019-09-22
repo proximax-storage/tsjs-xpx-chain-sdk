@@ -8,6 +8,10 @@ export declare abstract class Message {
      */
     readonly payload: string;
     /**
+     * Returns the byte size of the message
+     */
+    abstract size(): number;
+    /**
      * Create DTO object
      */
     toDTO(): {

@@ -19,31 +19,29 @@ const chai_1 = require("chai");
 const BlockHttp_1 = require("../../src/infrastructure/BlockHttp");
 const infrastructure_1 = require("../../src/infrastructure/infrastructure");
 const QueryParams_1 = require("../../src/infrastructure/QueryParams");
-const Deadline_1 = require("../../src/model/transaction/Deadline");
 const PlainMessage_1 = require("../../src/model/transaction/PlainMessage");
-const TransferTransaction_1 = require("../../src/model/transaction/TransferTransaction");
 const conf_spec_1 = require("../conf/conf.spec");
 const model_1 = require("../../src/model/model");
 const assert_1 = require("assert");
-describe('BlockHttp', () => {
-    const blockHttp = new BlockHttp_1.BlockHttp(conf_spec_1.APIUrl);
-    const transactionHttp = new infrastructure_1.TransactionHttp(conf_spec_1.APIUrl);
-    let generationHash;
-    let listener;
-    let blockReceiptHash;
-    let blockTransactionHash;
-    const chainHeight = 2;
-    before(() => {
-        listener = new infrastructure_1.Listener(conf_spec_1.APIUrl);
-        return listener.open().then(() => {
-            conf_spec_1.NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
-                generationHash = nemesisBlockInfo.generationHash;
-            });
+const blockHttp = new BlockHttp_1.BlockHttp(conf_spec_1.APIUrl);
+const transactionHttp = new infrastructure_1.TransactionHttp(conf_spec_1.APIUrl);
+let listener;
+let blockReceiptHash;
+let blockTransactionHash;
+const chainHeight = 2;
+let factory;
+before(() => {
+    listener = new infrastructure_1.Listener(conf_spec_1.APIUrl);
+    return listener.open().then(() => {
+        return conf_spec_1.Configuration.getTransactionBuilderFactory().then(f => {
+            factory = f;
         });
     });
-    after(() => {
-        return listener.close();
-    });
+});
+after(() => {
+    return listener.close();
+});
+describe('BlockHttp', () => {
     const validateTransactionAnnounceCorrectly = (address, done, hash) => {
         const status = listener.status(address).subscribe(error => {
             console.error(error);
@@ -74,8 +72,12 @@ describe('BlockHttp', () => {
      */
     describe('Setup Test Data', () => {
         it('Announce TransferTransaction', (done) => {
-            const transferTransaction = TransferTransaction_1.TransferTransaction.create(Deadline_1.Deadline.create(), conf_spec_1.TestingRecipient.address, [new model_1.Mosaic(conf_spec_1.ConfNetworkMosaic, model_1.UInt64.fromUint(1000000))], PlainMessage_1.PlainMessage.create('test-message'), conf_spec_1.ConfNetworkType);
-            const signedTransaction = transferTransaction.signWith(conf_spec_1.TestingAccount, generationHash);
+            const transferTransaction = factory.transfer()
+                .recipient(conf_spec_1.TestingRecipient.address)
+                .mosaics([new model_1.Mosaic(conf_spec_1.ConfNetworkMosaic, model_1.UInt64.fromUint(1000000))])
+                .message(PlainMessage_1.PlainMessage.create('test-message'))
+                .build();
+            const signedTransaction = transferTransaction.signWith(conf_spec_1.TestingAccount, factory.generationHash);
             validateTransactionAnnounceCorrectly(conf_spec_1.TestingRecipient.address, done, signedTransaction.hash);
             transactionHttp.announce(signedTransaction);
         });

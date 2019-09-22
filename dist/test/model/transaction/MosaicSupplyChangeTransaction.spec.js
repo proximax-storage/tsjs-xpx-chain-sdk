@@ -23,17 +23,17 @@ const Deadline_1 = require("../../../src/model/transaction/Deadline");
 const MosaicSupplyChangeTransaction_1 = require("../../../src/model/transaction/MosaicSupplyChangeTransaction");
 const UInt64_1 = require("../../../src/model/UInt64");
 const conf_spec_1 = require("../../conf/conf.spec");
+const FeeCalculationStrategy_1 = require("../../../src/model/transaction/FeeCalculationStrategy");
 describe('MosaicSupplyChangeTransaction', () => {
     let account;
     const generationHash = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
     before(() => {
         account = conf_spec_1.TestingAccount;
     });
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
         const mosaicId = new MosaicId_1.MosaicId([2262289484, 3405110546]);
         const mosaicSupplyChangeTransaction = MosaicSupplyChangeTransaction_1.MosaicSupplyChangeTransaction.create(Deadline_1.Deadline.create(), mosaicId, MosaicSupplyType_1.MosaicSupplyType.Increase, UInt64_1.UInt64.fromUint(10), NetworkType_1.NetworkType.MIJIN_TEST);
-        chai_1.expect(mosaicSupplyChangeTransaction.maxFee.higher).to.be.equal(0);
-        chai_1.expect(mosaicSupplyChangeTransaction.maxFee.lower).to.be.equal(0);
+        chai_1.expect(mosaicSupplyChangeTransaction.maxFee.compact()).to.be.equal(mosaicSupplyChangeTransaction.size * FeeCalculationStrategy_1.DefaultFeeCalculationStrategy);
     });
     it('should filled maxFee override transaction maxFee', () => {
         const mosaicId = new MosaicId_1.MosaicId([2262289484, 3405110546]);

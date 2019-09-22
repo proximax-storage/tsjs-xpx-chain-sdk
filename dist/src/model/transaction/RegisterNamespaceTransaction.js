@@ -17,13 +17,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const format_1 = require("../../core/format");
 const NamespaceCreationTransaction_1 = require("../../infrastructure/builders/NamespaceCreationTransaction");
-const NamespaceMosaicIdGenerator_1 = require("../../infrastructure/transaction/NamespaceMosaicIdGenerator");
 const NamespaceId_1 = require("../namespace/NamespaceId");
 const NamespaceType_1 = require("../namespace/NamespaceType");
-const UInt64_1 = require("../UInt64");
 const Transaction_1 = require("./Transaction");
 const TransactionType_1 = require("./TransactionType");
 const TransactionVersion_1 = require("./TransactionVersion");
+const FeeCalculationStrategy_1 = require("./FeeCalculationStrategy");
+const infrastructure_1 = require("../../infrastructure/infrastructure");
 /**
  * Accounts can rent a namespace for an amount of blocks and after a this renew the contract.
  * This is done via a RegisterNamespaceTransaction.
@@ -81,8 +81,14 @@ class RegisterNamespaceTransaction extends Transaction_1.Transaction {
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {RegisterNamespaceTransaction}
      */
-    static createRootNamespace(deadline, namespaceName, duration, networkType, maxFee = new UInt64_1.UInt64([0, 0])) {
-        return new RegisterNamespaceTransaction(networkType, TransactionVersion_1.TransactionVersion.REGISTER_NAMESPACE, deadline, maxFee, NamespaceType_1.NamespaceType.RootNamespace, namespaceName, new NamespaceId_1.NamespaceId(namespaceName), duration);
+    static createRootNamespace(deadline, namespaceName, duration, networkType, maxFee) {
+        return new RegisterRootNamespaceTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .namespaceName(namespaceName)
+            .duration(duration)
+            .build();
     }
     /**
      * Create a sub namespace object
@@ -93,17 +99,14 @@ class RegisterNamespaceTransaction extends Transaction_1.Transaction {
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {RegisterNamespaceTransaction}
      */
-    static createSubNamespace(deadline, namespaceName, parentNamespace, networkType, maxFee = new UInt64_1.UInt64([0, 0])) {
-        let parentId;
-        if (typeof parentNamespace === 'string') {
-            parentId = new NamespaceId_1.NamespaceId(NamespaceMosaicIdGenerator_1.NamespaceMosaicIdGenerator.subnamespaceParentId(parentNamespace, namespaceName));
-        }
-        else {
-            parentId = parentNamespace;
-        }
-        return new RegisterNamespaceTransaction(networkType, TransactionVersion_1.TransactionVersion.REGISTER_NAMESPACE, deadline, maxFee, NamespaceType_1.NamespaceType.SubNamespace, namespaceName, typeof parentNamespace === 'string' ?
-            new NamespaceId_1.NamespaceId(NamespaceMosaicIdGenerator_1.NamespaceMosaicIdGenerator.subnamespaceNamespaceId(parentNamespace, namespaceName)) :
-            new NamespaceId_1.NamespaceId(NamespaceMosaicIdGenerator_1.NamespaceMosaicIdGenerator.namespaceId(namespaceName)), undefined, parentId);
+    static createSubNamespace(deadline, namespaceName, parentNamespace, networkType, maxFee) {
+        return new RegisterSubNamespaceTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .namespaceName(namespaceName)
+            .parentNamespace(parentNamespace)
+            .build();
     }
     /**
      * @override Transaction.size()
@@ -112,15 +115,18 @@ class RegisterNamespaceTransaction extends Transaction_1.Transaction {
      * @memberof RegisterNamespaceTransaction
      */
     get size() {
-        const byteSize = super.size;
+        return RegisterNamespaceTransaction.calculateSize(this.namespaceName);
+    }
+    static calculateSize(namespaceName) {
+        const byteSize = Transaction_1.Transaction.getHeaderSize();
         // set static byte size fields
         const byteType = 1;
         const byteDurationParentId = 8;
         const byteNamespaceId = 8;
         const byteNameSize = 1;
-        // convert name to uint8
-        const byteName = format_1.Convert.utf8ToHex(this.namespaceName).length / 2;
-        return byteSize + byteType + byteDurationParentId + byteNamespaceId + byteNameSize + byteName;
+        // convert name from utf8
+        const namespaceNameSize = format_1.Convert.utf8ToHex(namespaceName).length / 2;
+        return byteSize + byteType + byteDurationParentId + byteNamespaceId + byteNameSize + namespaceNameSize;
     }
     /**
      * @internal
@@ -144,4 +150,38 @@ class RegisterNamespaceTransaction extends Transaction_1.Transaction {
     }
 }
 exports.RegisterNamespaceTransaction = RegisterNamespaceTransaction;
+class RegisterRootNamespaceTransactionBuilder extends Transaction_1.TransactionBuilder {
+    namespaceName(namespaceName) {
+        this._namespaceName = namespaceName;
+        return this;
+    }
+    duration(duration) {
+        this._duration = duration;
+        return this;
+    }
+    build() {
+        return new RegisterNamespaceTransaction(this._networkType, TransactionVersion_1.TransactionVersion.REGISTER_NAMESPACE, this._deadline ? this._deadline : this._createNewDeadlineFn(), this._maxFee ? this._maxFee : FeeCalculationStrategy_1.calculateFee(RegisterNamespaceTransaction.calculateSize(this._namespaceName), this._feeCalculationStrategy), NamespaceType_1.NamespaceType.RootNamespace, this._namespaceName, new NamespaceId_1.NamespaceId(this._namespaceName), this._duration, undefined, this._signature, this._signer, this._transactionInfo);
+    }
+}
+exports.RegisterRootNamespaceTransactionBuilder = RegisterRootNamespaceTransactionBuilder;
+class RegisterSubNamespaceTransactionBuilder extends Transaction_1.TransactionBuilder {
+    namespaceName(namespaceName) {
+        this._namespaceName = namespaceName;
+        return this;
+    }
+    parentNamespace(parentNamespace) {
+        this._parentNamespace = parentNamespace;
+        return this;
+    }
+    build() {
+        const parentId = typeof this._parentNamespace === 'string' ?
+            new NamespaceId_1.NamespaceId(infrastructure_1.NamespaceMosaicIdGenerator.subnamespaceParentId(this._parentNamespace, this._namespaceName)) :
+            this._parentNamespace;
+        let namespaceId = typeof this._parentNamespace === 'string' ?
+            new NamespaceId_1.NamespaceId(infrastructure_1.NamespaceMosaicIdGenerator.subnamespaceNamespaceId(this._parentNamespace, this._namespaceName)) :
+            new NamespaceId_1.NamespaceId(infrastructure_1.NamespaceMosaicIdGenerator.namespaceId(this._namespaceName));
+        return new RegisterNamespaceTransaction(this._networkType, TransactionVersion_1.TransactionVersion.REGISTER_NAMESPACE, this._deadline ? this._deadline : this._createNewDeadlineFn(), this._maxFee ? this._maxFee : FeeCalculationStrategy_1.calculateFee(RegisterNamespaceTransaction.calculateSize(this._namespaceName), this._feeCalculationStrategy), NamespaceType_1.NamespaceType.SubNamespace, this._namespaceName, namespaceId, undefined, parentId, this._signature, this._signer, this._transactionInfo);
+    }
+}
+exports.RegisterSubNamespaceTransactionBuilder = RegisterSubNamespaceTransactionBuilder;
 //# sourceMappingURL=RegisterNamespaceTransaction.js.map

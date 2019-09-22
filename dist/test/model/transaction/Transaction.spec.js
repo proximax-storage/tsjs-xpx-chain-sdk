@@ -119,5 +119,8 @@ class FakeTransaction extends Transaction_1.Transaction {
     buildTransaction() {
         throw new Error('Method not implemented.');
     }
+    get size() {
+        return Transaction_1.Transaction.getHeaderSize();
+    }
 }
 //# sourceMappingURL=Transaction.spec.js.map

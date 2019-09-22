@@ -1,5 +1,4 @@
-import { Account } from '../../src/model/account/Account';
-import { MosaicId, NamespaceId, MosaicNonce, MosaicProperties, BlockInfo, ChainConfigTransaction } from '../../src/model/model';
+import { MosaicId, NamespaceId, MosaicNonce, MosaicProperties, BlockInfo, ChainConfigTransaction, TransactionBuilderFactory, Account } from '../../src/model/model';
 import { AccountHttp, TransactionHttp, NamespaceHttp, MosaicHttp } from '../../src/infrastructure/infrastructure';
 interface ConfAccount {
     alias: string;
@@ -18,7 +17,6 @@ declare const ConfAccountHttp: AccountHttp;
 declare const ConfTransactionHttp: TransactionHttp;
 declare const ConfNamespaceHttp: NamespaceHttp;
 declare const ConfMosaicHttp: MosaicHttp;
-declare const ConfNetworkType: any;
 declare class TestAccount {
     readonly conf: ConfAccount;
     readonly acc: Account;
@@ -51,13 +49,18 @@ declare const ConfNetworkMosaic: MosaicId;
 declare const ConfNetworkMosaicDivisibility = 6;
 declare const ConfNetworkMosaicName = "xpx";
 declare const ConfTestingMosaicNonce: MosaicNonce;
-declare const ConfTestingMosaic: MosaicId;
+declare const ConfTestingMosaicId: MosaicId;
 declare const ConfTestingMosaicProperties: MosaicProperties;
-declare const ConfTestingNamespace: NamespaceId;
+declare const ConfTestingNamespaceId: NamespaceId;
 declare class NemesisBlockInfo {
     private static instance;
     private constructor();
     static getInstance(): Promise<BlockInfo>;
+}
+declare class Configuration {
+    private static factory;
+    private constructor();
+    static getTransactionBuilderFactory(): Promise<TransactionBuilderFactory>;
 }
 declare const GetNemesisBlockDataPromise: () => Promise<{
     nemesisBlockInfo: BlockInfo;
@@ -73,4 +76,4 @@ declare const GetNemesisBlockDataPromise: () => Promise<{
     testTxId: string;
     config: ChainConfigTransaction;
 }>;
-export { TestAccount, GetNemesisBlockDataPromise, NemesisBlockInfo, APIUrl, ConfAccountHttp, ConfMosaicHttp, ConfNamespaceHttp, ConfTransactionHttp, ConfNetworkType, NemesisAccount, SeedAccount, TestingAccount, TestingRecipient, MultisigAccount, CosignatoryAccount, Cosignatory2Account, Cosignatory3Account, Cosignatory4Account, Cosignatory5Account, Customer1Account, Executor1Account, Executor2Account, Verifier1Account, Verifier2Account, MultilevelMultisigAccount, AllTestingAccounts, ConfTestingMosaicNonce, ConfTestingMosaicProperties, ConfTestingMosaic, ConfTestingNamespace, ConfNamespace, ConfNamespace2, ConfNetworkMosaic, ConfNetworkMosaicName, ConfNetworkMosaicDivisibility };
+export { TestAccount, GetNemesisBlockDataPromise, NemesisBlockInfo, Configuration, APIUrl, ConfAccountHttp, ConfMosaicHttp, ConfNamespaceHttp, ConfTransactionHttp, NemesisAccount, SeedAccount, TestingAccount, TestingRecipient, MultisigAccount, CosignatoryAccount, Cosignatory2Account, Cosignatory3Account, Cosignatory4Account, Cosignatory5Account, Customer1Account, Executor1Account, Executor2Account, Verifier1Account, Verifier2Account, MultilevelMultisigAccount, AllTestingAccounts, ConfTestingMosaicNonce, ConfTestingMosaicProperties, ConfTestingMosaicId, ConfTestingNamespaceId, ConfNamespace, ConfNamespace2, ConfNetworkMosaic, ConfNetworkMosaicName, ConfNetworkMosaicDivisibility };

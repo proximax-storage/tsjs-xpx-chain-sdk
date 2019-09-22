@@ -4,7 +4,7 @@ import { Mosaic } from '../mosaic/Mosaic';
 import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
 import { SignedTransaction } from './SignedTransaction';
-import { Transaction } from './Transaction';
+import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 /**
  * Lock funds transaction is used before sending an Aggregate bonded transaction, as a deposit to announce the transaction.
@@ -64,4 +64,14 @@ export declare class LockFundsTransaction extends Transaction {
      * @memberof LockFundsTransaction
      */
     readonly size: number;
+    static calculateSize(): number;
+}
+export declare class LockFundsTransactionBuilder extends TransactionBuilder {
+    private _mosaic;
+    private _duration;
+    private _signedTransaction;
+    mosaic(mosaic: Mosaic): this;
+    duration(duration: UInt64): this;
+    signedTransaction(signedTransaction: SignedTransaction): this;
+    build(): LockFundsTransaction;
 }

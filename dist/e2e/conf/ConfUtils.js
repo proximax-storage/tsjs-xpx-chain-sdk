@@ -2,9 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const conf_spec_1 = require("./conf.spec");
 const model_1 = require("../../src/model/model");
-const infrastructure_1 = require("../../src/infrastructure/infrastructure");
 const rxjs_1 = require("rxjs");
-const js_joda_1 = require("js-joda");
+const infrastructure_1 = require("../../src/infrastructure/infrastructure");
 class ConfUtils {
     static waitForConfirmation(listener, onAddress, callback, hash) {
         const status = listener.status(onAddress).subscribe(error => {
@@ -45,9 +44,9 @@ class ConfUtils {
                 });
             }, Promise.resolve());
         }).then(() => {
-            return ConfUtils.checkOrCreateRootNamespace(conf_spec_1.ConfTestingNamespace);
+            return ConfUtils.checkOrCreateRootNamespace(conf_spec_1.ConfTestingNamespaceId);
         }).then(() => {
-            return ConfUtils.checkOrCreateMosaic(conf_spec_1.ConfTestingMosaic);
+            return ConfUtils.checkOrCreateMosaic(conf_spec_1.ConfTestingMosaicId);
         }).then(() => {
             return ConfUtils.simpleAccountRestrictionBLockAddress(conf_spec_1.TestingAccount, conf_spec_1.TestingRecipient.address);
         });
@@ -132,12 +131,16 @@ class ConfUtils {
     }
     static simpleCreateAndAnnounceWaitForConfirmation(address, absoluteAmount, from = conf_spec_1.SeedAccount, message = '') {
         const transactionHttp = conf_spec_1.ConfTransactionHttp;
-        return conf_spec_1.NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
+        return conf_spec_1.Configuration.getTransactionBuilderFactory().then(factory => {
             return new Promise((resolve, reject) => {
                 const listener = new infrastructure_1.Listener(conf_spec_1.APIUrl);
                 listener.open().then(() => {
-                    const transferTransaction = model_1.TransferTransaction.create(model_1.Deadline.create(), address, [new model_1.Mosaic(conf_spec_1.ConfNetworkMosaic, model_1.UInt64.fromUint(absoluteAmount))], model_1.PlainMessage.create(message), address.networkType);
-                    const signedTransaction = from.sign(transferTransaction, nemesisBlockInfo.generationHash);
+                    const transferTransaction = factory.transfer()
+                        .recipient(address)
+                        .mosaics([new model_1.Mosaic(conf_spec_1.ConfNetworkMosaic, model_1.UInt64.fromUint(absoluteAmount))])
+                        .message(model_1.PlainMessage.create(message))
+                        .build();
+                    const signedTransaction = from.sign(transferTransaction, factory.generationHash);
                     this.waitForConfirmation(listener, address, () => {
                         listener.close();
                         resolve();
@@ -153,15 +156,25 @@ class ConfUtils {
     }
     static convertToMultisig(ta) {
         const transactionHttp = conf_spec_1.ConfTransactionHttp;
-        return conf_spec_1.NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
+        return conf_spec_1.Configuration.getTransactionBuilderFactory().then(factory => {
             return new Promise((resolve, reject) => {
                 const listener = new infrastructure_1.Listener(conf_spec_1.APIUrl);
                 listener.open().then(() => {
-                    const convertIntoMultisigTransaction = model_1.ModifyMultisigAccountTransaction.create(model_1.Deadline.create(), ta.cosignatories.length <= 1 ? 1 : ta.cosignatories.length - 1, ta.cosignatories.length, ta.cosignatories.map(cos => new model_1.MultisigCosignatoryModification(model_1.MultisigCosignatoryModificationType.Add, cos.acc.publicAccount)), ta.acc.address.networkType);
-                    const aggregateBonded = model_1.AggregateTransaction.createBonded(model_1.Deadline.create(), [convertIntoMultisigTransaction.toAggregate(ta.acc.publicAccount)], conf_spec_1.ConfNetworkType, []);
-                    const signedAggregateBonded = aggregateBonded.signWith(ta.acc, nemesisBlockInfo.generationHash);
-                    const lockFunds = model_1.HashLockTransaction.create(model_1.Deadline.create(), new model_1.Mosaic(conf_spec_1.ConfNetworkMosaic, model_1.UInt64.fromUint(10 * 1000000)), model_1.UInt64.fromUint(50), signedAggregateBonded, conf_spec_1.ConfNetworkType);
-                    const signedLockFunds = lockFunds.signWith(ta.acc, nemesisBlockInfo.generationHash);
+                    const convertIntoMultisigTransaction = factory.modifyMultisig()
+                        .minApprovalDelta(ta.cosignatories.length <= 1 ? 1 : ta.cosignatories.length - 1)
+                        .minRemovalDelta(ta.cosignatories.length)
+                        .modifications(ta.cosignatories.map(cos => new model_1.MultisigCosignatoryModification(model_1.MultisigCosignatoryModificationType.Add, cos.acc.publicAccount)))
+                        .build();
+                    const aggregateBonded = factory.aggregateBonded()
+                        .innerTransactions([convertIntoMultisigTransaction.toAggregate(ta.acc.publicAccount)])
+                        .build();
+                    const signedAggregateBonded = aggregateBonded.signWith(ta.acc, factory.generationHash);
+                    const lockFunds = factory.lockFunds()
+                        .mosaic(new model_1.Mosaic(conf_spec_1.ConfNetworkMosaic, model_1.UInt64.fromUint(10 * 1000000)))
+                        .duration(model_1.UInt64.fromUint(50))
+                        .signedTransaction(signedAggregateBonded)
+                        .build();
+                    const signedLockFunds = lockFunds.signWith(ta.acc, factory.generationHash);
                     listener.cosignatureAdded(ta.acc.address).subscribe(tx => {
                         console.log(tx);
                     });
@@ -200,12 +213,15 @@ class ConfUtils {
         });
     }
     static simpleAccountRestrictionBLockAddress(account, blockAddress, transactionHttp = new infrastructure_1.TransactionHttp(conf_spec_1.APIUrl)) {
-        return conf_spec_1.NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
+        return conf_spec_1.Configuration.getTransactionBuilderFactory().then(factory => {
             return new Promise((resolve, reject) => {
                 const listener = new infrastructure_1.Listener(conf_spec_1.APIUrl);
                 listener.open().then(() => {
-                    const modifyAccountRestrictionAddressTransaction = model_1.AccountRestrictionTransaction.createAddressRestrictionModificationTransaction(model_1.Deadline.create(23, js_joda_1.ChronoUnit.HOURS), model_1.RestrictionType.BlockAddress, [new model_1.AccountRestrictionModification(model_1.RestrictionModificationType.Add, blockAddress.plain())], account.address.networkType);
-                    const signedTransaction = account.sign(modifyAccountRestrictionAddressTransaction, nemesisBlockInfo.generationHash);
+                    const modifyAccountRestrictionAddressTransaction = factory.accountRestrictionAddress()
+                        .restrictionType(model_1.RestrictionType.BlockAddress)
+                        .modifications([new model_1.AccountRestrictionModification(model_1.RestrictionModificationType.Add, blockAddress.plain())])
+                        .build();
+                    const signedTransaction = account.sign(modifyAccountRestrictionAddressTransaction, factory.generationHash);
                     this.waitForConfirmation(listener, account.address, () => {
                         listener.close();
                         resolve();
@@ -218,7 +234,7 @@ class ConfUtils {
     static checkOrCreateRootNamespace(namespaceId) {
         const namespaceHttp = conf_spec_1.ConfNamespaceHttp;
         const transactionHttp = conf_spec_1.ConfTransactionHttp;
-        return conf_spec_1.NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
+        return conf_spec_1.Configuration.getTransactionBuilderFactory().then(factory => {
             return new Promise((resolve, reject) => {
                 namespaceHttp.getNamespace(namespaceId).subscribe(namespaceInfo => {
                     resolve();
@@ -226,8 +242,11 @@ class ConfUtils {
                     const listener = new infrastructure_1.Listener(conf_spec_1.APIUrl);
                     listener.open().then(() => {
                         model_1.RegisterNamespaceTransaction;
-                        const registerNamespaceTransaction = model_1.RegisterNamespaceTransaction.createRootNamespace(model_1.Deadline.create(), 'testing', model_1.UInt64.fromUint(1000), conf_spec_1.ConfNetworkType);
-                        const signedRegisterNamespaceTransaction = registerNamespaceTransaction.signWith(conf_spec_1.TestingAccount, nemesisBlockInfo.generationHash);
+                        const registerNamespaceTransaction = factory.registerRootNamespace()
+                            .namespaceName('testing')
+                            .duration(model_1.UInt64.fromUint(1000))
+                            .build();
+                        const signedRegisterNamespaceTransaction = registerNamespaceTransaction.signWith(conf_spec_1.TestingAccount, factory.generationHash);
                         this.waitForConfirmation(listener, conf_spec_1.TestingAccount.address, () => {
                             listener.close();
                             resolve();
@@ -241,15 +260,19 @@ class ConfUtils {
     static checkOrCreateMosaic(mosaicId) {
         const mosaicHttp = conf_spec_1.ConfMosaicHttp;
         const transactionHttp = conf_spec_1.ConfTransactionHttp;
-        return conf_spec_1.NemesisBlockInfo.getInstance().then(nemesisBlockInfo => {
+        return conf_spec_1.Configuration.getTransactionBuilderFactory().then(factory => {
             return new Promise((resolve, reject) => {
                 mosaicHttp.getMosaic(mosaicId).subscribe(mosaicInfo => {
                     resolve();
                 }, error => {
                     const listener = new infrastructure_1.Listener(conf_spec_1.APIUrl);
                     listener.open().then(() => {
-                        const mosaicDefinitionTransaction = model_1.MosaicDefinitionTransaction.create(model_1.Deadline.create(), conf_spec_1.ConfTestingMosaicNonce, conf_spec_1.ConfTestingMosaic, conf_spec_1.ConfTestingMosaicProperties, conf_spec_1.ConfNetworkType);
-                        const signedRegisterNamespaceTransaction = mosaicDefinitionTransaction.signWith(conf_spec_1.TestingAccount, nemesisBlockInfo.generationHash);
+                        const mosaicDefinitionTransaction = factory.mosaicDefinition()
+                            .mosaicNonce(conf_spec_1.ConfTestingMosaicNonce)
+                            .mosaicId(conf_spec_1.ConfTestingMosaicId)
+                            .mosaicProperties(conf_spec_1.ConfTestingMosaicProperties)
+                            .build();
+                        const signedRegisterNamespaceTransaction = mosaicDefinitionTransaction.signWith(conf_spec_1.TestingAccount, factory.generationHash);
                         this.waitForConfirmation(listener, conf_spec_1.TestingAccount.address, () => {
                             listener.close();
                             resolve();

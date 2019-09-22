@@ -16,7 +16,6 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const RestrictionType_1 = require("../account/RestrictionType");
-const UInt64_1 = require("../UInt64");
 const AccountAddressRestrictionModificationTransaction_1 = require("./AccountAddressRestrictionModificationTransaction");
 const AccountMosaicRestrictionModificationTransaction_1 = require("./AccountMosaicRestrictionModificationTransaction");
 const AccountOperationRestrictionModificationTransaction_1 = require("./AccountOperationRestrictionModificationTransaction");
@@ -30,7 +29,7 @@ class AccountRestrictionTransaction {
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {AccountAddressRestrictionModificationTransaction}
      */
-    static createAddressRestrictionModificationTransaction(deadline, restrictionType, modifications, networkType, maxFee = new UInt64_1.UInt64([0, 0])) {
+    static createAddressRestrictionModificationTransaction(deadline, restrictionType, modifications, networkType, maxFee) {
         if (![RestrictionType_1.RestrictionType.AllowAddress, RestrictionType_1.RestrictionType.BlockAddress].includes(restrictionType)) {
             throw new Error('Restriction type is not allowed.');
         }
@@ -45,7 +44,7 @@ class AccountRestrictionTransaction {
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {AccountMosaicRestrictionModificationTransaction}
      */
-    static createMosaicRestrictionModificationTransaction(deadline, restrictionType, modifications, networkType, maxFee = new UInt64_1.UInt64([0, 0])) {
+    static createMosaicRestrictionModificationTransaction(deadline, restrictionType, modifications, networkType, maxFee) {
         if (![RestrictionType_1.RestrictionType.AllowMosaic, RestrictionType_1.RestrictionType.BlockMosaic].includes(restrictionType)) {
             throw new Error('Restriction type is not allowed.');
         }
@@ -60,7 +59,7 @@ class AccountRestrictionTransaction {
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {createOperationRestrictionModificationTransaction}
      */
-    static createOperationRestrictionModificationTransaction(deadline, restrictionType, modifications, networkType, maxFee = new UInt64_1.UInt64([0, 0])) {
+    static createOperationRestrictionModificationTransaction(deadline, restrictionType, modifications, networkType, maxFee) {
         if (![RestrictionType_1.RestrictionType.AllowTransaction, RestrictionType_1.RestrictionType.BlockTransaction].includes(restrictionType)) {
             throw new Error('Restriction type is not allowed.');
         }

@@ -5,7 +5,7 @@ import { AliasActionType } from '../namespace/AliasActionType';
 import { NamespaceId } from '../namespace/NamespaceId';
 import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
-import { Transaction } from './Transaction';
+import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 /**
  * In case a mosaic has the flag 'supplyMutable' set to true, the creator of the mosaic can change the supply,
@@ -67,4 +67,14 @@ export declare class AddressAliasTransaction extends Transaction {
      * @memberof AddressAliasTransaction
      */
     readonly size: number;
+    static calculateSize(): number;
+}
+export declare class AddressAliasTransactionBuilder extends TransactionBuilder {
+    private _actionType;
+    private _namespaceId;
+    private _address;
+    actionType(actionType: AliasActionType): this;
+    namespaceId(namespaceId: NamespaceId): this;
+    address(address: Address): this;
+    build(): AddressAliasTransaction;
 }

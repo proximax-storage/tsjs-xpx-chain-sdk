@@ -27,13 +27,13 @@ const Deadline_1 = require("../../../src/model/transaction/Deadline");
 const HashType_1 = require("../../../src/model/transaction/HashType");
 const SecretLockTransaction_1 = require("../../../src/model/transaction/SecretLockTransaction");
 const UInt64_1 = require("../../../src/model/UInt64");
+const FeeCalculationStrategy_1 = require("../../../src/model/transaction/FeeCalculationStrategy");
 describe('SecretLockTransaction', () => {
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
         const proof = 'B778A39A3663719DFC5E48C9D78431B1E45C2AF9DF538782BF199C189DABEAC7';
         const recipient = Address_1.Address.createFromRawAddress('SDBDG4IT43MPCW2W4CBBCSJJT42AYALQN7A4VVWL');
         const secretLockTransaction = SecretLockTransaction_1.SecretLockTransaction.create(Deadline_1.Deadline.create(), NetworkCurrencyMosaic_1.NetworkCurrencyMosaic.createAbsolute(10), UInt64_1.UInt64.fromUint(100), HashType_1.HashType.Op_Sha3_256, js_sha3_1.sha3_256.create().update(format_1.Convert.hexToUint8(proof)).hex(), recipient, NetworkType_1.NetworkType.MIJIN_TEST);
-        chai_1.expect(secretLockTransaction.maxFee.higher).to.be.equal(0);
-        chai_1.expect(secretLockTransaction.maxFee.lower).to.be.equal(0);
+        chai_1.expect(secretLockTransaction.maxFee.compact()).to.be.equal(secretLockTransaction.size * FeeCalculationStrategy_1.DefaultFeeCalculationStrategy);
     });
     it('should filled maxFee override transaction maxFee', () => {
         const proof = 'B778A39A3663719DFC5E48C9D78431B1E45C2AF9DF538782BF199C189DABEAC7';

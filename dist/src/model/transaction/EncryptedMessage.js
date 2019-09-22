@@ -26,6 +26,9 @@ class EncryptedMessage extends Message_1.Message {
     constructor(payload) {
         super(MessageType_1.MessageType.EncryptedMessage, payload);
     }
+    size() {
+        return (this.payload || '').length / 2;
+    }
     /**
      *
      * @param message - Plain message to be encrypted

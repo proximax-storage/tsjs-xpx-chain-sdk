@@ -94,9 +94,17 @@ describe('AccountHttp', () => {
             });
         });
     });
-    describe('incomingTransactions', () => {
+    describe('incomingTransactions using public key', () => {
         it('should call incomingTransactions successfully', (done) => {
             accountHttp.incomingTransactions(conf_spec_1.TestingAccount.publicAccount).subscribe((transactions) => {
+                chai_1.expect(transactions.length).to.be.greaterThan(0);
+                done();
+            });
+        });
+    });
+    describe('incomingTransactions using address', () => {
+        it('should call incomingTransactions successfully', (done) => {
+            accountHttp.incomingTransactions(conf_spec_1.TestingAccount.address).subscribe((transactions) => {
                 chai_1.expect(transactions.length).to.be.greaterThan(0);
                 done();
             });

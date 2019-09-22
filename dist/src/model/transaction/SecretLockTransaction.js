@@ -15,13 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const format_1 = require("../../core/format");
 const SecretLockTransaction_1 = require("../../infrastructure/builders/SecretLockTransaction");
-const UInt64_1 = require("../UInt64");
 const HashType_1 = require("./HashType");
 const Transaction_1 = require("./Transaction");
 const TransactionType_1 = require("./TransactionType");
 const TransactionVersion_1 = require("./TransactionVersion");
+const FeeCalculationStrategy_1 = require("./FeeCalculationStrategy");
 class SecretLockTransaction extends Transaction_1.Transaction {
     /**
      * @param networkType
@@ -82,8 +81,17 @@ class SecretLockTransaction extends Transaction_1.Transaction {
      *
      * @return a SecretLockTransaction instance
      */
-    static create(deadline, mosaic, duration, hashType, secret, recipient, networkType, maxFee = new UInt64_1.UInt64([0, 0])) {
-        return new SecretLockTransaction(networkType, TransactionVersion_1.TransactionVersion.SECRET_LOCK, deadline, maxFee, mosaic, duration, hashType, secret, recipient);
+    static create(deadline, mosaic, duration, hashType, secret, recipient, networkType, maxFee) {
+        return new SecretLockTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .mosaic(mosaic)
+            .duration(duration)
+            .hashType(hashType)
+            .secret(secret)
+            .recipient(recipient)
+            .build();
     }
     /**
      * @override Transaction.size()
@@ -92,16 +100,19 @@ class SecretLockTransaction extends Transaction_1.Transaction {
      * @memberof SecretLockTransaction
      */
     get size() {
-        const byteSize = super.size;
+        return SecretLockTransaction.calculateSize(this.secret);
+    }
+    static calculateSize(secret) {
+        const byteSize = Transaction_1.Transaction.getHeaderSize();
         // set static byte size fields
         const byteMosaicId = 8;
         const byteAmount = 8;
         const byteDuration = 8;
         const byteAlgorithm = 1;
         const byteRecipient = 25;
-        // convert secret to uint8
-        const byteSecret = format_1.Convert.hexToUint8(this.secret).length;
-        return byteSize + byteMosaicId + byteAmount + byteDuration + byteAlgorithm + byteRecipient + byteSecret;
+        // get secret byte size
+        const secretSize = secret.length / 2;
+        return byteSize + byteMosaicId + byteAmount + byteDuration + byteAlgorithm + byteRecipient + secretSize;
     }
     /**
      * @internal
@@ -123,4 +134,30 @@ class SecretLockTransaction extends Transaction_1.Transaction {
     }
 }
 exports.SecretLockTransaction = SecretLockTransaction;
+class SecretLockTransactionBuilder extends Transaction_1.TransactionBuilder {
+    mosaic(mosaic) {
+        this._mosaic = mosaic;
+        return this;
+    }
+    duration(duration) {
+        this._duration = duration;
+        return this;
+    }
+    hashType(hashType) {
+        this._hashType = hashType;
+        return this;
+    }
+    secret(secret) {
+        this._secret = secret;
+        return this;
+    }
+    recipient(recipient) {
+        this._recipient = recipient;
+        return this;
+    }
+    build() {
+        return new SecretLockTransaction(this._networkType, TransactionVersion_1.TransactionVersion.SECRET_LOCK, this._deadline ? this._deadline : this._createNewDeadlineFn(), this._maxFee ? this._maxFee : FeeCalculationStrategy_1.calculateFee(SecretLockTransaction.calculateSize(this._secret), this._feeCalculationStrategy), this._mosaic, this._duration, this._hashType, this._secret, this._recipient, this._signature, this._signer, this._transactionInfo);
+    }
+}
+exports.SecretLockTransactionBuilder = SecretLockTransactionBuilder;
 //# sourceMappingURL=SecretLockTransaction.js.map

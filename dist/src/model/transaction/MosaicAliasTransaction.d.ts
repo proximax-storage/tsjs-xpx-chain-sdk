@@ -5,7 +5,7 @@ import { AliasActionType } from '../namespace/AliasActionType';
 import { NamespaceId } from '../namespace/NamespaceId';
 import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
-import { Transaction } from './Transaction';
+import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 export declare class MosaicAliasTransaction extends Transaction {
     /**
@@ -63,4 +63,14 @@ export declare class MosaicAliasTransaction extends Transaction {
      * @memberof MosaicAliasTransaction
      */
     readonly size: number;
+    static calculateSize(): number;
+}
+export declare class MosaicAliasTransactionBuilder extends TransactionBuilder {
+    private _actionType;
+    private _namespaceId;
+    private _mosaicId;
+    actionType(actionType: AliasActionType): this;
+    namespaceId(namespaceId: NamespaceId): this;
+    mosaicId(mosaicId: MosaicId): this;
+    build(): MosaicAliasTransaction;
 }

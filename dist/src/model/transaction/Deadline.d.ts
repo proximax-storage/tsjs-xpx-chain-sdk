@@ -24,3 +24,4 @@ export declare class Deadline {
      */
     private constructor();
 }
+export declare const DefaultCreateNewDeadline: () => Deadline;

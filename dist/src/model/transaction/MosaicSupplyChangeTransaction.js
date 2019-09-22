@@ -16,10 +16,10 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MosaicSupplyChangeTransaction_1 = require("../../infrastructure/builders/MosaicSupplyChangeTransaction");
-const UInt64_1 = require("../UInt64");
 const Transaction_1 = require("./Transaction");
 const TransactionType_1 = require("./TransactionType");
 const TransactionVersion_1 = require("./TransactionVersion");
+const FeeCalculationStrategy_1 = require("./FeeCalculationStrategy");
 /**
  * In case a mosaic has the flag 'supplyMutable' set to true, the creator of the mosaic can change the supply,
  * i.e. increase or decrease the supply.
@@ -65,8 +65,15 @@ class MosaicSupplyChangeTransaction extends Transaction_1.Transaction {
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {MosaicSupplyChangeTransaction}
      */
-    static create(deadline, mosaicId, direction, delta, networkType, maxFee = new UInt64_1.UInt64([0, 0])) {
-        return new MosaicSupplyChangeTransaction(networkType, TransactionVersion_1.TransactionVersion.MOSAIC_SUPPLY_CHANGE, deadline, maxFee, mosaicId, direction, delta);
+    static create(deadline, mosaicId, direction, delta, networkType, maxFee) {
+        return new MosaicSupplyChangeTransactionBuilder()
+            .networkType(networkType)
+            .deadline(deadline)
+            .maxFee(maxFee)
+            .mosaicId(mosaicId)
+            .direction(direction)
+            .delta(delta)
+            .build();
     }
     /**
      * @override Transaction.size()
@@ -75,7 +82,10 @@ class MosaicSupplyChangeTransaction extends Transaction_1.Transaction {
      * @memberof MosaicSupplyChangeTransaction
      */
     get size() {
-        const byteSize = super.size;
+        return MosaicSupplyChangeTransaction.calculateSize();
+    }
+    static calculateSize() {
+        const byteSize = Transaction_1.Transaction.getHeaderSize();
         // set static byte size fields
         const byteMosaicId = 8;
         const byteDirection = 1;
@@ -98,4 +108,22 @@ class MosaicSupplyChangeTransaction extends Transaction_1.Transaction {
     }
 }
 exports.MosaicSupplyChangeTransaction = MosaicSupplyChangeTransaction;
+class MosaicSupplyChangeTransactionBuilder extends Transaction_1.TransactionBuilder {
+    mosaicId(mosaicId) {
+        this._mosaicId = mosaicId;
+        return this;
+    }
+    direction(direction) {
+        this._direction = direction;
+        return this;
+    }
+    delta(delta) {
+        this._delta = delta;
+        return this;
+    }
+    build() {
+        return new MosaicSupplyChangeTransaction(this._networkType, TransactionVersion_1.TransactionVersion.MOSAIC_SUPPLY_CHANGE, this._deadline ? this._deadline : this._createNewDeadlineFn(), this._maxFee ? this._maxFee : FeeCalculationStrategy_1.calculateFee(MosaicSupplyChangeTransaction.calculateSize(), this._feeCalculationStrategy), this._mosaicId, this._direction, this._delta, this._signature, this._signer, this._transactionInfo);
+    }
+}
+exports.MosaicSupplyChangeTransactionBuilder = MosaicSupplyChangeTransactionBuilder;
 //# sourceMappingURL=MosaicSupplyChangeTransaction.js.map

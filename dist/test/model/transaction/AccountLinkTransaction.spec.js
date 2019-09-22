@@ -22,16 +22,16 @@ const Deadline_1 = require("../../../src/model/transaction/Deadline");
 const LinkAction_1 = require("../../../src/model/transaction/LinkAction");
 const UInt64_1 = require("../../../src/model/UInt64");
 const conf_spec_1 = require("../../conf/conf.spec");
+const FeeCalculationStrategy_1 = require("../../../src/model/transaction/FeeCalculationStrategy");
 describe('AccountLinkTransaction', () => {
     let account;
     const generationHash = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
     before(() => {
         account = conf_spec_1.TestingAccount;
     });
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
         const accountLinkTransaction = AccountLinkTransaction_1.AccountLinkTransaction.create(Deadline_1.Deadline.create(), account.publicKey, LinkAction_1.LinkAction.Link, NetworkType_1.NetworkType.MIJIN_TEST);
-        chai_1.expect(accountLinkTransaction.maxFee.higher).to.be.equal(0);
-        chai_1.expect(accountLinkTransaction.maxFee.lower).to.be.equal(0);
+        chai_1.expect(accountLinkTransaction.maxFee.compact()).to.be.equal(accountLinkTransaction.size * FeeCalculationStrategy_1.DefaultFeeCalculationStrategy);
     });
     it('should filled maxFee override transaction maxFee', () => {
         const accountLinkTransaction = AccountLinkTransaction_1.AccountLinkTransaction.create(Deadline_1.Deadline.create(), account.publicKey, LinkAction_1.LinkAction.Link, NetworkType_1.NetworkType.MIJIN_TEST, new UInt64_1.UInt64([1, 0]));

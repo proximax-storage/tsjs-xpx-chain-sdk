@@ -24,18 +24,19 @@ const AddressAliasTransaction_1 = require("../../../src/model/transaction/Addres
 const Deadline_1 = require("../../../src/model/transaction/Deadline");
 const UInt64_1 = require("../../../src/model/UInt64");
 const conf_spec_1 = require("../../conf/conf.spec");
+const FeeCalculationStrategy_1 = require("../../../src/model/transaction/FeeCalculationStrategy");
 describe('AddressAliasTransaction', () => {
     let account;
     const generationHash = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
     before(() => {
         account = conf_spec_1.TestingAccount;
     });
-    it('should default maxFee field be set to 0', () => {
+    it('should default maxFee field be set to calculated fee according to default fee calculation strategy', () => {
         const namespaceId = new NamespaceId_1.NamespaceId([33347626, 3779697293]);
         const address = Address_1.Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
         const addressAliasTransaction = AddressAliasTransaction_1.AddressAliasTransaction.create(Deadline_1.Deadline.create(), AliasActionType_1.AliasActionType.Link, namespaceId, address, NetworkType_1.NetworkType.MIJIN_TEST);
-        chai_1.expect(addressAliasTransaction.maxFee.higher).to.be.equal(0);
-        chai_1.expect(addressAliasTransaction.maxFee.lower).to.be.equal(0);
+        const expectedMaxFee = addressAliasTransaction.size * FeeCalculationStrategy_1.DefaultFeeCalculationStrategy;
+        chai_1.expect(addressAliasTransaction.maxFee.compact()).to.be.equal(expectedMaxFee);
     });
     it('should filled maxFee override transaction maxFee', () => {
         const namespaceId = new NamespaceId_1.NamespaceId([33347626, 3779697293]);

@@ -167,12 +167,13 @@ class AccountHttp extends Http_1.Http {
     /**
      * Gets an array of transactions for which an account is the recipient of a transaction.
      * A transaction is said to be incoming with respect to an account if the account is the recipient of a transaction.
-     * @param publicAccount - User public account
+     * @param accountId - User public account or address (you can use address if public account is not known to the network just yet)
      * @param queryParams - (Optional) Query params
      * @returns Observable<Transaction[]>
      */
-    incomingTransactions(publicAccount, queryParams) {
-        return rxjs_1.from(this.accountRoutesApi.incomingTransactions(publicAccount.publicKey, this.queryParams(queryParams).pageSize, this.queryParams(queryParams).id, this.queryParams(queryParams).order)).pipe(operators_1.map((transactionsDTO) => {
+    incomingTransactions(accountId, queryParams) {
+        const id = accountId instanceof PublicAccount_1.PublicAccount ? accountId.publicKey : accountId.plain();
+        return rxjs_1.from(this.accountRoutesApi.incomingTransactions(id, this.queryParams(queryParams).pageSize, this.queryParams(queryParams).id, this.queryParams(queryParams).order)).pipe(operators_1.map((transactionsDTO) => {
             return transactionsDTO.map((transactionDTO) => {
                 return CreateTransactionFromDTO_1.CreateTransactionFromDTO(transactionDTO);
             });

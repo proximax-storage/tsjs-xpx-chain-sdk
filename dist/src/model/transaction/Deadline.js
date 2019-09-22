@@ -68,4 +68,5 @@ class Deadline {
  */
 Deadline.timestampNemesisBlock = 1459468800;
 exports.Deadline = Deadline;
+exports.DefaultCreateNewDeadline = () => Deadline.create();
 //# sourceMappingURL=Deadline.js.map

@@ -4,7 +4,7 @@ import { MosaicId } from '../mosaic/MosaicId';
 import { MosaicSupplyType } from '../mosaic/MosaicSupplyType';
 import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
-import { Transaction } from './Transaction';
+import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 /**
  * In case a mosaic has the flag 'supplyMutable' set to true, the creator of the mosaic can change the supply,
@@ -66,4 +66,14 @@ export declare class MosaicSupplyChangeTransaction extends Transaction {
      * @memberof MosaicSupplyChangeTransaction
      */
     readonly size: number;
+    static calculateSize(): number;
+}
+export declare class MosaicSupplyChangeTransactionBuilder extends TransactionBuilder {
+    private _mosaicId;
+    private _direction;
+    private _delta;
+    mosaicId(mosaicId: MosaicId): this;
+    direction(direction: MosaicSupplyType): this;
+    delta(delta: UInt64): this;
+    build(): MosaicSupplyChangeTransaction;
 }
