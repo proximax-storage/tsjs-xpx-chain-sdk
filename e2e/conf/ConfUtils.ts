@@ -110,7 +110,8 @@ export class ConfUtils {
             }, error => {
                 // assume it doesn't exist - seed it
                 console.log(ta.conf.alias + " initial seed.");
-                ConfUtils.simpleCreateAndAnnounceWaitForConfirmation(ta.acc.address, ta.conf.seed * 1000000, SeedAccount, 'Good luck!')
+                const seed = ta.conf.seed ? ta.conf.seed * 1000000 : 1;
+                ConfUtils.simpleCreateAndAnnounceWaitForConfirmation(ta.acc.address, seed, SeedAccount, 'Good luck!')
                     .then(() => {
                         accountHttp.getAccountInfo(ta.acc.address).subscribe(accInfo => {
                             if (ta.conf.alias === 'testing') {
