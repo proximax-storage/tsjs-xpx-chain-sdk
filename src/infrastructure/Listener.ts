@@ -151,13 +151,13 @@ export class Listener {
                                 message.status,
                                 Deadline.createFromDTO(message.deadline)),
                         });
-                    } else if (message.meta) {
-                        this.messageSubject.next({channelName: message.meta.channelName, message: message.meta.hash});
                     } else if (message.parentHash) {
                         this.messageSubject.next({
                             channelName: ListenerChannelName.cosignature,
                             message: new CosignatureSignedTransaction(message.parentHash, message.signature, message.signer),
                         });
+                    } else if (message.meta) {
+                        this.messageSubject.next({channelName: message.meta.channelName, message: message.meta.hash});
                     }
                 };
             } else {
