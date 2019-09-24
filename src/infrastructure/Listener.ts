@@ -371,7 +371,7 @@ export class Listener {
                 }
             });
             transaction.innerTransactions.map((innerTransaction: InnerTransaction) => {
-                if (this.transactionHasSignerOrReceptor(innerTransaction, address)) {
+                if (this.transactionHasSignerOrReceptor(innerTransaction, address) || this.accountAddedToMultiSig(innerTransaction, address)) {
                     transactionFromAddress = true;
                 }
             });
@@ -407,13 +407,14 @@ export class Listener {
      */
     // tslint:disable-next-line:adjacent-overload-signatures
     private accountAddedToMultiSig(transaction: Transaction, address: Address): boolean {
+        let accountAddedToMultiSig = false;
         if (transaction instanceof ModifyMultisigAccountTransaction) {
             transaction.modifications.map((_: MultisigCosignatoryModification) => {
                 if (_.type === MultisigCosignatoryModificationType.Add && _.cosignatoryPublicAccount.address.equals(address)) {
-                    return true;
+                    accountAddedToMultiSig = true;
                 }
             });
         }
-        return false;
+        return accountAddedToMultiSig;
     }
 }
