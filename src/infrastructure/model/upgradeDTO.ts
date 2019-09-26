@@ -17,7 +17,7 @@
 
 export class UpgradeDTO {
     'height': Array<number>;
-    'catapultVersion': Array<number>;
+    'blockChainVersion': Array<number>;
 
     static discriminator: string | undefined = undefined;
 
@@ -28,8 +28,8 @@ export class UpgradeDTO {
             "type": "Array<number>"
         },
         {
-            "name": "catapultVersion",
-            "baseName": "catapultVersion",
+            "name": "blockChainVersion",
+            "baseName": "blockChainVersion",
             "type": "Array<number>"
         }    ];
 

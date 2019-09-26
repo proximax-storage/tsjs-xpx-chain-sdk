@@ -21,7 +21,7 @@ export class ChainConfigTransaction extends Transaction {
      * @param deadline
      * @param maxFee
      * @param applyHeightDelta
-     * @param blockChainConfig,
+     * @param networkConfig,
      * @param supportedEntityVersions,
      * @param signature
      * @param signer
@@ -32,7 +32,7 @@ export class ChainConfigTransaction extends Transaction {
         deadline: Deadline,
         maxFee: UInt64,
         public readonly applyHeightDelta: UInt64,
-        public readonly blockChainConfig: string,
+        public readonly networkConfig: string,
         public readonly supportedEntityVersions: string,
         signature?: string,
         signer?: PublicAccount,
@@ -42,7 +42,7 @@ export class ChainConfigTransaction extends Transaction {
 
     public static create(deadline: Deadline,
         applyHeightDelta: UInt64,
-        blockChainConfig: string,
+        networkConfig: string,
         supportedEntityVersions: string,
         networkType: NetworkType,
         maxFee?: UInt64): ChainConfigTransaction {
@@ -51,7 +51,7 @@ export class ChainConfigTransaction extends Transaction {
             .deadline(deadline)
             .maxFee(maxFee)
             .applyHeightDelta(applyHeightDelta)
-            .blockChainConfig(blockChainConfig)
+            .networkConfig(networkConfig)
             .supportedEntityVersions(supportedEntityVersions)
             .build();
     }
@@ -63,15 +63,15 @@ export class ChainConfigTransaction extends Transaction {
      * @memberof Transaction
      */
     public get size(): number {
-        return ChainConfigTransaction.calculateSize(this.blockChainConfig.length, this.supportedEntityVersions.length);
+        return ChainConfigTransaction.calculateSize(this.networkConfig.length, this.supportedEntityVersions.length);
     }
 
-    public static calculateSize(blockChainConfigLength: number, supportedEntityVersionsLength: number): number {
+    public static calculateSize(networkConfigLength: number, supportedEntityVersionsLength: number): number {
         const byteSize = Transaction.getHeaderSize()
             + 8 // applyHeightDelta
-            + 2 // blockChainConfigSize
+            + 2 // networkConfigSize
             + 2 // supportedEntityVersionsSize
-            + blockChainConfigLength //blockChainConfig
+            + networkConfigLength //networkConfig
             + supportedEntityVersionsLength // supportedEntityVersions
         return byteSize;
     }
@@ -86,7 +86,7 @@ export class ChainConfigTransaction extends Transaction {
             .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addApplyHeightDelta(this.applyHeightDelta.toDTO())
-            .addBlockChainConfig(this.blockChainConfig)
+            .addNetworkConfig(this.networkConfig)
             .addSupportedEntityVersions(this.supportedEntityVersions)
             .build();
     }
@@ -94,7 +94,7 @@ export class ChainConfigTransaction extends Transaction {
 
 export class ChainConfigTransactionBuilder extends TransactionBuilder {
     private _applyHeightDelta: UInt64;
-    private _blockChainConfig: string;
+    private _networkConfig: string;
     private _supportedEntityVersions: string;
 
     constructor() {
@@ -107,8 +107,8 @@ export class ChainConfigTransactionBuilder extends TransactionBuilder {
         return this;
     }
 
-    public blockChainConfig(blockChainConfig: string) {
-        this._blockChainConfig = blockChainConfig;
+    public networkConfig(networkConfig: string) {
+        this._networkConfig = networkConfig;
         return this;
     }
 
@@ -122,9 +122,9 @@ export class ChainConfigTransactionBuilder extends TransactionBuilder {
             this._networkType,
             TransactionVersion.CHAIN_CONFIG,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._maxFee ? this._maxFee : calculateFee(ChainConfigTransaction.calculateSize(this._blockChainConfig.length, this._supportedEntityVersions.length), this._feeCalculationStrategy),
+            this._maxFee ? this._maxFee : calculateFee(ChainConfigTransaction.calculateSize(this._networkConfig.length, this._supportedEntityVersions.length), this._feeCalculationStrategy),
             this._applyHeightDelta,
-            this._blockChainConfig,
+            this._networkConfig,
             this._supportedEntityVersions,
             this._signature,
             this._signer,

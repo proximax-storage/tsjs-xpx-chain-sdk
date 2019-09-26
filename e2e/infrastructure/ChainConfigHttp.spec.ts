@@ -13,7 +13,7 @@ describe('ChainConfigHttp', () => {
             chainConfigHttp.getChainConfig(1)
                 .subscribe((chainConfig) => {
                     expect(chainConfig.height.compact()).to.be.equal(1);
-                    expect(chainConfig.blockChainConfig).not.to.be.undefined;
+                    expect(chainConfig.networkConfig).not.to.be.undefined;
                     expect(chainConfig.supportedEntityVersions).not.to.be.undefined;
                     done();
                 });

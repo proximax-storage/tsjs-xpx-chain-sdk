@@ -30,7 +30,7 @@ const schema = new Schema([
     array('fee', TypeSize.INT),
     array('deadline', TypeSize.INT),
     array('upgradePeriod', TypeSize.INT),
-    array('newCatapultVersion', TypeSize.INT),
+    array('newBlockchainVersion', TypeSize.INT),
 ]);
 
 export default schema;

@@ -16,20 +16,20 @@
 
 import { UpgradeDTO } from './upgradeDTO';
 
-export class CatapultUpgradeDTO {
-    'catapultUpgrade'?: UpgradeDTO;
+export class BlockchainUpgradeDTO {
+    'blockchainUpgrade': UpgradeDTO;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            "name": "catapultUpgrade",
-            "baseName": "catapultUpgrade",
+            "name": "blockchainUpgrade",
+            "baseName": "blockchainUpgrade",
             "type": "UpgradeDTO"
         }    ];
 
     static getAttributeTypeMap() {
-        return CatapultUpgradeDTO.attributeTypeMap;
+        return BlockchainUpgradeDTO.attributeTypeMap;
     }
 }
 

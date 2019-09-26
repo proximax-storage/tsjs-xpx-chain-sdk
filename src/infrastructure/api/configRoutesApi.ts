@@ -18,7 +18,7 @@ import localVarRequest = require('request');
 import http = require('http');
 
 /* tslint:disable:no-unused-locals */
-import { CatapultConfigDTO } from '../model/catapultConfigDTO';
+import { NetworkConfigDTO } from '../model/networkConfigDTO';
 
 import { ObjectSerializer, Authentication, VoidAuth } from '../model/models';
 
@@ -78,7 +78,7 @@ export class ConfigRoutesApi {
      * @summary Get config of network
      * @param height The height of the blockchain to get config.
      */
-    public async getConfig (height: number, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<CatapultConfigDTO> {
+    public async getConfig (height: number, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<NetworkConfigDTO> {
         const localVarPath = this.basePath + '/config/{height}'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)));
         let localVarQueryParameters: any = {};
@@ -112,12 +112,12 @@ export class ConfigRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<CatapultConfigDTO>((resolve, reject) => {
+        return new Promise<NetworkConfigDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    body = ObjectSerializer.deserialize(body, "CatapultConfigDTO");
+                    body = ObjectSerializer.deserialize(body, "NetworkConfigDTO");
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve(body);
                     } else {

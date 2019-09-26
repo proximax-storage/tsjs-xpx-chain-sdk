@@ -18,7 +18,7 @@ import localVarRequest = require('request');
 import http = require('http');
 
 /* tslint:disable:no-unused-locals */
-import { CatapultUpgradeDTO } from '../model/catapultUpgradeDTO';
+import { BlockchainUpgradeDTO } from '../model/blockchainUpgradeDTO';
 
 import { ObjectSerializer, Authentication, VoidAuth } from '../model/models';
 
@@ -78,7 +78,7 @@ export class UpgradeRoutesApi {
      * @summary Get software info of network
      * @param height The height of the blockchain to get software info.
      */
-    public async getUpgrade (height: number, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<CatapultUpgradeDTO> {
+    public async getUpgrade (height: number, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<BlockchainUpgradeDTO> {
         const localVarPath = this.basePath + '/upgrade/{height}'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)));
         let localVarQueryParameters: any = {};
@@ -112,12 +112,12 @@ export class UpgradeRoutesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<CatapultUpgradeDTO>((resolve, reject) => {
+        return new Promise<BlockchainUpgradeDTO>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    body = ObjectSerializer.deserialize(body, "CatapultUpgradeDTO");
+                    body = ObjectSerializer.deserialize(body, "BlockchainUpgradeDTO");
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve(body);
                     } else {

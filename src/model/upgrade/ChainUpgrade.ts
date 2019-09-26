@@ -20,7 +20,7 @@ export class ChainUpgrade {
         if (upgradeDTO) {
             return new ChainUpgrade(
                 new UInt64(upgradeDTO.height),
-                new UInt64(upgradeDTO.catapultVersion)
+                new UInt64(upgradeDTO.blockChainVersion)
             );
         }
         throw new Error("upgradeDTO not specified");

@@ -73,7 +73,7 @@ export class ConfUtils {
         const accountHttp = ConfAccountHttp;
         if (ta.isCosignatory() && accountInfo.publicKey.match('0'.repeat(64))) {
             console.log(ta.conf.alias + " need pubkey");
-            return ConfUtils.simpleCreateAndAnnounceWaitForConfirmation(ta.acc.address, 0, ta.acc, '')
+            return ConfUtils.simpleCreateAndAnnounceWaitForConfirmation(ta.acc.address, 1, ta.acc, '')
                 .then(() => {
                     return accountHttp.getAccountInfo(ta.acc.address).toPromise();
                 });
@@ -110,13 +110,14 @@ export class ConfUtils {
             }, error => {
                 // assume it doesn't exist - seed it
                 console.log(ta.conf.alias + " initial seed.");
-                ConfUtils.simpleCreateAndAnnounceWaitForConfirmation(ta.acc.address, ta.conf.seed * 1000000, SeedAccount, 'Good luck!')
+                const seed = ta.conf.seed ? ta.conf.seed * 1000000 : 1;
+                ConfUtils.simpleCreateAndAnnounceWaitForConfirmation(ta.acc.address, seed, SeedAccount, 'Good luck!')
                     .then(() => {
                         accountHttp.getAccountInfo(ta.acc.address).subscribe(accInfo => {
                             if (ta.conf.alias === 'testing') {
                                 //initiate 20 more txs.
                                 forkJoin(
-                                    new Array(20).fill(0).map(n => ConfUtils.simpleCreateAndAnnounceWaitForConfirmation(ta.acc.address, 0, ta.acc))
+                                    new Array(20).fill(0).map(n => ConfUtils.simpleCreateAndAnnounceWaitForConfirmation(ta.acc.address, 1, ta.acc))
                                 ).toPromise().then(() => {
                                     resolve(accInfo);
                                 }).catch(() => {

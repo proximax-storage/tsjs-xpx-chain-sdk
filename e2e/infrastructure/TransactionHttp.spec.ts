@@ -1129,7 +1129,7 @@ describe('TransactionHttp', () => {
                 GetNemesisBlockDataPromise().then(nemesisBlockInfo => {
                     const chainConfigTransaction = factory.chainConfig()
                         .applyHeightDelta(UInt64.fromUint(10))
-                        .blockChainConfig(nemesisBlockInfo.config.blockChainConfig)
+                        .networkConfig(nemesisBlockInfo.config.networkConfig)
                         .supportedEntityVersions(nemesisBlockInfo.config.supportedEntityVersions)
                         .build();
 
@@ -1144,7 +1144,7 @@ describe('TransactionHttp', () => {
             ((NemesisAccount.privateKey !== "0".repeat(64)) ? it : it.skip)('standalone', (done) => {
                 const chainUpgradeTransaction = factory.chainUpgrade()
                     .upgradePeriod(UInt64.fromUint(100000))
-                    .newCatapultVersion(UInt64.fromHex('0001000200030004'))
+                    .newBlockchainVersion(UInt64.fromHex('0001000200030004'))
                     .build();
 
                 const signedTransaction = chainUpgradeTransaction.signWith(NemesisAccount, factory.generationHash);
