@@ -22,9 +22,9 @@ import {MosaicNonce} from '../../../src/model/mosaic/MosaicNonce';
 describe('MosaicNonce', () => {
 
     it('should be created from Uint8Array', () => {
-        const nonce = new MosaicNonce(new Uint8Array([0x0, 0x0, 0x0, 0x0]));
-        deepEqual(nonce.nonce, new Uint8Array([0x0, 0x0, 0x0, 0x0]));
-        deepEqual(nonce.toDTO(), [0, 0, 0, 0]);
+        const nonce = new MosaicNonce(new Uint8Array([0x12, 0x34, 0x56, 0x78]));
+        deepEqual(nonce.nonce, new Uint8Array([0x12, 0x34, 0x56, 0x78]));
+        deepEqual(nonce.toDTO(), new Uint8Array([0x12, 0x34, 0x56, 0x78]));
     });
 
     it('should create random nonce', () => {
@@ -41,8 +41,8 @@ describe('MosaicNonce', () => {
     });
 
     it('should create nonce from hexadecimal notation', () => {
-        const nonce = MosaicNonce.createFromHex('00000000');
+        const nonce = MosaicNonce.createFromHex('12345678');
         expect(nonce.nonce).to.not.be.null;
-        deepEqual(nonce.nonce, new Uint8Array([0x0, 0x0, 0x0, 0x0]));
+        deepEqual(nonce.nonce, new Uint8Array([0x12, 0x34, 0x56, 0x78]));
     });
 });

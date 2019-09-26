@@ -42,7 +42,7 @@ describe('Listener', () => {
                 })
                 .catch((error) => {
                     listener.close();
-                    expect(error.message.toString()).to.be.equal("getaddrinfo ENOTFOUND notcorrecturl notcorrecturl:0");
+                    expect(error.message.toString()).to.to.contain('getaddrinfo ENOTFOUND notcorrecturl');
                 });
         });
     });
