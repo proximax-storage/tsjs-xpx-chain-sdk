@@ -1,11 +1,9 @@
 import {expect} from 'chai';
 import { map, mergeMap, toArray } from 'rxjs/operators';
-import { AccountHttp } from '../../src/infrastructure/AccountHttp';
-import { MosaicHttp } from '../../src/infrastructure/MosaicHttp';
-import { Address } from '../../src/model/account/Address';
+import { AccountHttp, MosaicHttp } from '../../src/infrastructure/infrastructure';
 import { MosaicService } from '../../src/service/MosaicService';
 import { APIUrl, GetNemesisBlockDataPromise, SeedAccount } from '../conf/conf.spec';
-import { MosaicId, MosaicView, MosaicAmountView, MosaicInfo, UInt64, Mosaic } from '../../src/model/model';
+import { MosaicId, MosaicView, MosaicAmountView, MosaicInfo, UInt64, Mosaic, Address } from '../../src/model/model';
 
 describe('MosaicService', () => {
     let accountAddress: Address;
@@ -61,7 +59,7 @@ describe('MosaicService', () => {
         });
     });
 
-    it('should return the mosaic list skipping the expired mosaics', () => {
+    it.only('should return the mosaic list skipping the expired mosaics', () => {
         const mosaicService = new MosaicService(
             new AccountHttp(APIUrl), new MosaicHttp(APIUrl));
 
