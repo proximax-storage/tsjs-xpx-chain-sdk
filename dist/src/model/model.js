@@ -101,6 +101,7 @@ __export(require("./transaction/AccountOperationRestrictionModificationTransacti
 __export(require("./transaction/AccountMosaicRestrictionModificationTransaction"));
 __export(require("./transaction/AccountRestrictionModification"));
 __export(require("./transaction/AddressAliasTransaction"));
+__export(require("./transaction/AliasTransaction"));
 __export(require("./transaction/AggregateTransaction"));
 __export(require("./transaction/AggregateTransactionCosignature"));
 __export(require("./transaction/AggregateTransactionInfo"));

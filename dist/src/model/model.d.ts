@@ -73,6 +73,7 @@ export * from './transaction/AccountOperationRestrictionModificationTransaction'
 export * from './transaction/AccountMosaicRestrictionModificationTransaction';
 export * from './transaction/AccountRestrictionModification';
 export * from './transaction/AddressAliasTransaction';
+export * from './transaction/AliasTransaction';
 export * from './transaction/AggregateTransaction';
 export * from './transaction/AggregateTransactionCosignature';
 export * from './transaction/AggregateTransactionInfo';
