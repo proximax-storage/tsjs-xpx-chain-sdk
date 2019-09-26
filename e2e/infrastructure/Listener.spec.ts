@@ -108,22 +108,16 @@ describe('Listener', () => {
         }, 1000);
     });
 
-    // this listener doesn't work
-    xit('cosignatureAdded', (done) => {
-        let ok = false;
+    it('cosignatureAdded', (done) => {
         const subCosign = listener.aggregateBondedAdded(MultisigAccount.address).subscribe(transactionToCosign => {
             subCosign.unsubscribe();
-            setTimeout(() => {
-                if (! ok) {
-                    fail("cosignatureAdded not invoked in time, probably not working");
-                }
-            }, 60 * 1000);
+
             TransactionUtils.cosignTransaction(transactionToCosign, Cosignatory3Account);
         });
 
         const sub1 = listener.cosignatureAdded(CosignatoryAccount.address).subscribe(res => {
             sub1.unsubscribe();
-            ok = true;
+
             done();
         });
 
