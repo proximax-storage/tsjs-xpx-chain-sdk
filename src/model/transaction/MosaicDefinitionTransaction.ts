@@ -103,10 +103,10 @@ export class MosaicDefinitionTransaction extends Transaction {
      * @memberof MosaicDefinitionTransaction
      */
     public get size(): number {
-        return MosaicDefinitionTransaction.calculateSize();
+        return MosaicDefinitionTransaction.calculateSize(this.mosaicProperties.duration !== undefined);
     }
 
-    public static calculateSize(): number {
+    public static calculateSize(durationProvided: boolean): number {
         const byteSize = Transaction.getHeaderSize();
 
         // set static byte size fields
@@ -118,7 +118,8 @@ export class MosaicDefinitionTransaction extends Transaction {
         const byteDurationSize = 1;
         const byteDuration = 8;
 
-        return byteSize + byteNonce + byteMosaicId + byteNumProps + byteFlags + byteDivisibility + byteDurationSize + byteDuration;
+        return byteSize + byteNonce + byteMosaicId + byteNumProps + byteFlags + byteDivisibility + 
+            (durationProvided ? byteDurationSize + byteDuration : 0);
     }
 
     /**
@@ -127,6 +128,7 @@ export class MosaicDefinitionTransaction extends Transaction {
      */
     protected buildTransaction(): VerifiableTransaction {
         let mosaicDefinitionTransaction = new Builder()
+            .addSize(this.size)
             .addDeadline(this.deadline.toDTO())
             .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
@@ -173,7 +175,8 @@ export class MosaicDefinitionTransactionBuilder extends TransactionBuilder {
             this._networkType,
             TransactionVersion.MOSAIC_DEFINITION,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._maxFee ? this._maxFee : calculateFee(MosaicDefinitionTransaction.calculateSize(), this._feeCalculationStrategy),
+            this._maxFee ? this._maxFee : calculateFee(MosaicDefinitionTransaction.calculateSize(
+                this._mosaicProperties.duration !== undefined), this._feeCalculationStrategy),
             this._mosaicNonce,
             this._mosaicId,
             this._mosaicProperties,

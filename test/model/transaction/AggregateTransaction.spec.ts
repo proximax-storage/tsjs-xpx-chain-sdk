@@ -447,7 +447,7 @@ describe('AggregateTransaction', () => {
     });
 
     describe('size', () => {
-        it('should return 286 for AggregateTransaction byte size with TransferTransaction with 1 mosaic and message NEM', () => {
+        it('should return 216 for AggregateTransaction byte size with TransferTransaction with 1 mosaic and message NEM', () => {
             const transaction = TransferTransaction.create(
                 Deadline.create(),
                 Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC'),
@@ -463,7 +463,7 @@ describe('AggregateTransaction', () => {
                 NetworkType.MIJIN_TEST,
                 [],
             );
-            expect(aggregateTransaction.size).to.be.equal(122 + 4 + 160);
+            expect(aggregateTransaction.size).to.be.equal(122 + 4 + 170 - 80);
         });
     });
 });

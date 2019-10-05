@@ -128,8 +128,8 @@ export class TransferTransaction extends Transaction {
         // recipient and number of mosaics are static byte size
         const byteRecipient = 25;
         const byteNumMosaics = 2;
-
-        return byteSize + byteRecipient + byteNumMosaics + messageSize + 8*mosaicsCount;
+        const byteMessageSize = 2;
+        return byteSize + byteRecipient + byteNumMosaics + byteMessageSize + messageSize + 16*mosaicsCount;
     }
 
     /**
@@ -138,6 +138,7 @@ export class TransferTransaction extends Transaction {
      */
     protected buildTransaction(): VerifiableTransaction {
         return new Builder()
+            .addSize(this.size)
             .addDeadline(this.deadline.toDTO())
             .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())

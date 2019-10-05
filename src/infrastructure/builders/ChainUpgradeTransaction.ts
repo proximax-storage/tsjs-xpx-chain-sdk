@@ -23,6 +23,7 @@ export default class ChainUpgradeTransaction extends VerifiableTransaction {
 }
 
 export class Builder {
+    size: any;
     maxFee: any;
     version: any;
     type: any;
@@ -33,6 +34,11 @@ export class Builder {
     constructor() {
         this.maxFee = [0, 0];
         this.type = TransactionType.CHAIN_UPGRADE;
+    }
+
+    addSize(size) {
+        this.size = size;
+        return this;
     }
 
     addMaxFee(maxFee) {
@@ -83,7 +89,7 @@ export class Builder {
 
 
         CatapultUpgradeTransactionBuffer.startCatapultUpgradeTransactionBuffer(builder);
-        CatapultUpgradeTransactionBuffer.addSize(builder, 122 + 8 + 8);
+        CatapultUpgradeTransactionBuffer.addSize(builder, this.size);
         CatapultUpgradeTransactionBuffer.addSignature(builder, signatureVector);
         CatapultUpgradeTransactionBuffer.addSigner(builder, signerVector);
         CatapultUpgradeTransactionBuffer.addVersion(builder, this.version);

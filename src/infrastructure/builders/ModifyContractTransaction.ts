@@ -21,6 +21,7 @@ export default class ModifyContractTransaction extends VerifiableTransaction {
 }
 
 export class Builder {
+    size: any;
     fee: any;
     version: any;
     type: any;
@@ -37,6 +38,11 @@ export class Builder {
         this.customers = [];
         this.executors = [];
         this.verifiers = [];
+    }
+
+    addSize(size) {
+        this.size = size;
+        return this;
     }
 
     addMaxFee(fee) {
@@ -131,10 +137,9 @@ export class Builder {
         const executorsVector = ModifyContractTransactionBuffer.createExecutorsVector(builder, executorsArray);
         const verifiersVector = ModifyContractTransactionBuffer.createVerifiersVector(builder, verifiersArray);
 
-        const size = 122 + 8 + this.hash.length/2 + 3 + 33*(this.customers.length + this.executors.length + this.verifiers.length);
 
         ModifyContractTransactionBuffer.startModifyContractTransactionBuffer(builder);
-        ModifyContractTransactionBuffer.addSize(builder, size);
+        ModifyContractTransactionBuffer.addSize(builder, this.size);
         ModifyContractTransactionBuffer.addSignature(builder, signatureVector);
         ModifyContractTransactionBuffer.addSigner(builder, signerVector);
         ModifyContractTransactionBuffer.addVersion(builder, this.version);
@@ -156,9 +161,7 @@ export class Builder {
         builder.finish(codedTransfer);
 
         const bytes = builder.asUint8Array();
-        if (bytes.length !== size) {
-            // throw new Error("Declared size differs from actual bytes.length during ModifyContractTransaction serialization")
-        }
+
         return new ModifyContractTransaction(bytes);
     }
 }

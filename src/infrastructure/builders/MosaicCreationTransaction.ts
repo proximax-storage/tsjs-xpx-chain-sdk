@@ -39,6 +39,7 @@ export default class MosaicCreationTransaction extends VerifiableTransaction {
 }
 // tslint:disable-next-line: max-classes-per-file
 export class Builder {
+    size: any;
     maxFee: any;
     version: any;
     type: any;
@@ -53,6 +54,11 @@ export class Builder {
         this.maxFee = [0, 0];
         this.type = TransactionType.MOSAIC_DEFINITION;
         this.nonce = 0;
+    }
+
+    addSize(size) {
+        this.size = size;
+        return this;
     }
 
     addMaxFee(maxFee) {
@@ -133,7 +139,7 @@ export class Builder {
         const durationProvided = 0 < this.duration.length;
 
         MosaicDefinitionTransactionBuffer.startMosaicDefinitionTransactionBuffer(builder);
-        MosaicDefinitionTransactionBuffer.addSize(builder, 122 + 4 + 8 + 1 + 1 + 1 + (durationProvided ? 9 : 0));
+        MosaicDefinitionTransactionBuffer.addSize(builder, this.size);
         MosaicDefinitionTransactionBuffer.addSignature(builder, signatureVector);
         MosaicDefinitionTransactionBuffer.addSigner(builder, signerVector);
         MosaicDefinitionTransactionBuffer.addVersion(builder, this.version);

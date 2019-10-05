@@ -121,6 +121,7 @@ export class AggregateTransaction extends Transaction {
      */
     public buildTransaction(): AggregatedTransactionCore {
         return new Builder()
+            .addSize(this.size)
             .addDeadline(this.deadline.toDTO())
             .addType(this.type)
             .addMaxFee(this.maxFee.toDTO())
@@ -194,7 +195,8 @@ export class AggregateTransaction extends Transaction {
     }
 
     public static calculateSize(innerTransactions: InnerTransaction[]): number {
-        const innerTransactionsSumSize = innerTransactions.reduce((previous, current) => previous + current.size, 0);
+        // .aggregateTransaction() => .toAggregateTransaction() removes 80 bytes from each inner tx
+        const innerTransactionsSumSize = innerTransactions.reduce((previous, current) => previous + current.size - 80, 0);
         const byteSize = Transaction.getHeaderSize();
         // set static byte size fields
         const byteTransactionsSize = 4;

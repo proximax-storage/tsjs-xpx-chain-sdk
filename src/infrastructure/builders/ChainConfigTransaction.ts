@@ -24,6 +24,7 @@ export default class ChainConfigTransaction extends VerifiableTransaction {
 }
 
 export class Builder {
+    size: any;
     maxFee: any;
     version: any;
     type: any;
@@ -35,6 +36,11 @@ export class Builder {
     constructor() {
         this.maxFee = [0, 0];
         this.type = TransactionType.CHAIN_CONFIGURE;
+    }
+
+    addSize(size) {
+        this.size = size;
+        return this;
     }
 
     addMaxFee(maxFee) {
@@ -91,7 +97,7 @@ export class Builder {
             .createSupportedEntityVersionsVector(builder, this.supportedEntityVersions);
 
         CatapultConfigTransactionBuffer.startCatapultConfigTransactionBuffer(builder);
-        CatapultConfigTransactionBuffer.addSize(builder, 122 + 8 + 2 + 2 + this.networkConfig.length + this.supportedEntityVersions.length);
+        CatapultConfigTransactionBuffer.addSize(builder, this.size);
         CatapultConfigTransactionBuffer.addSignature(builder, signatureVector);
         CatapultConfigTransactionBuffer.addSigner(builder, signerVector);
         CatapultConfigTransactionBuffer.addVersion(builder, this.version);

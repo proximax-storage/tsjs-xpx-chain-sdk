@@ -97,6 +97,7 @@ export class ModifyContractTransaction extends Transaction {
      */
     protected buildTransaction(): VerifiableTransaction {
         return new Builder()
+            .addSize(this.size)
             .addType(this.type)
             .addVersion(this.versionToDTO())
             .addDeadline(this.deadline.toDTO())

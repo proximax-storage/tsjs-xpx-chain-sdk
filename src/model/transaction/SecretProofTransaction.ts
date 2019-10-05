@@ -99,19 +99,18 @@ export class SecretProofTransaction extends Transaction {
      * @memberof SecretProofTransaction
      */
     public get size(): number {
-        return SecretProofTransaction.calculateSize(this.secret, this.proof);
+        return SecretProofTransaction.calculateSize(this.proof);
     }
 
-    public static calculateSize(secret: string, proof: string): number {
+    public static calculateSize(proof: string): number {
         const byteSize = Transaction.getHeaderSize();
 
         // hash algorithm and proof size static byte size
         const byteAlgorithm = 1;
         const byteProofSize = 2;
         const byteRecipient = 25;
-
-        // get secret and proof byte size
-        const secretLength = secret.length/2;
+        const secretLength = 32;
+        // get proof byte size
         const proofLength = proof.length/2 ;
 
         return byteSize + byteAlgorithm + secretLength + byteRecipient + byteProofSize + proofLength;
@@ -123,6 +122,7 @@ export class SecretProofTransaction extends Transaction {
      */
     protected buildTransaction(): VerifiableTransaction {
         return new Builder()
+            .addSize(this.size)
             .addDeadline(this.deadline.toDTO())
             .addType(this.type)
             .addMaxFee(this.maxFee.toDTO())
@@ -166,7 +166,7 @@ export class SecretProofTransactionBuilder extends TransactionBuilder {
             this._networkType,
             TransactionVersion.SECRET_PROOF,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._maxFee ? this._maxFee : calculateFee(SecretProofTransaction.calculateSize(this._secret, this._proof), this._feeCalculationStrategy),
+            this._maxFee ? this._maxFee : calculateFee(SecretProofTransaction.calculateSize(this._proof), this._feeCalculationStrategy),
             this._hashType,
             this._secret,
             this._recipient,

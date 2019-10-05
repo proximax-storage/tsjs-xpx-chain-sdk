@@ -122,6 +122,7 @@ export class AddressAliasTransaction extends Transaction {
      */
     protected buildTransaction(): VerifiableTransaction {
         return new Builder()
+            .addSize(this.size)
             .addDeadline(this.deadline.toDTO())
             .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())

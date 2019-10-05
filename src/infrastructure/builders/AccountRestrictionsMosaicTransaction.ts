@@ -37,6 +37,7 @@ export default class AccountRestrictionsMosaicTransaction extends VerifiableTran
 
 // tslint:disable-next-line:max-classes-per-file
 export class Builder {
+    size: any;
     maxFee: any;
     version: any;
     type: any;
@@ -46,6 +47,11 @@ export class Builder {
     constructor() {
         this.maxFee = [0, 0];
         this.type = TransactionType.MODIFY_ACCOUNT_RESTRICTION_MOSAIC;
+    }
+
+    addSize(size) {
+        this.size = size;
+        return this;
     }
 
     addMaxFee(maxFee) {
@@ -114,7 +120,7 @@ export class Builder {
             .createModificationsVector(builder, modificationsArray);
 
         AccountPropertiesTransactionBuffer.startAccountPropertiesTransactionBuffer(builder);
-        AccountPropertiesTransactionBuffer.addSize(builder, 122 + 2 + (9 * this.modifications.length));
+        AccountPropertiesTransactionBuffer.addSize(builder, this.size);
         AccountPropertiesTransactionBuffer.addSignature(builder, signatureVector);
         AccountPropertiesTransactionBuffer.addSigner(builder, signerVector);
         AccountPropertiesTransactionBuffer.addVersion(builder, this.version);

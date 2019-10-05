@@ -37,6 +37,7 @@ export default class MultisigModificationTransaction extends VerifiableTransacti
 
 // tslint:disable-next-line:max-classes-per-file
 export class Builder {
+    size: any;
     maxFee: any;
     version: any;
     type: any;
@@ -47,6 +48,11 @@ export class Builder {
     constructor() {
         this.maxFee = [0, 0];
         this.type = TransactionType.MODIFY_MULTISIG_ACCOUNT;
+    }
+
+    addSize(size) {
+        this.size = size;
+        return this;
     }
 
     addMaxFee(maxFee) {
@@ -111,7 +117,7 @@ export class Builder {
             .createModificationsVector(builder, modificationsArray);
 
         ModifyMultisigAccountTransactionBuffer.startModifyMultisigAccountTransactionBuffer(builder);
-        ModifyMultisigAccountTransactionBuffer.addSize(builder, 122 + 3 + (33 * this.modifications.length));
+        ModifyMultisigAccountTransactionBuffer.addSize(builder, this.size);
         ModifyMultisigAccountTransactionBuffer.addSignature(builder, signatureVector);
         ModifyMultisigAccountTransactionBuffer.addSigner(builder, signerVector);
         ModifyMultisigAccountTransactionBuffer.addVersion(builder, this.version);
