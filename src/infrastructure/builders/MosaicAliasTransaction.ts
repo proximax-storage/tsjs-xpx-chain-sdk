@@ -35,6 +35,7 @@ export default class MosaicAliasTransaction extends VerifiableTransaction {
 
 // tslint:disable-next-line:max-classes-per-file
 export class Builder {
+    size: any;
     maxFee: any;
     version: any;
     type: any;
@@ -45,6 +46,11 @@ export class Builder {
     constructor() {
         this.maxFee = [0, 0];
         this.type = TransactionType.MOSAIC_ALIAS;
+    }
+
+    addSize(size) {
+        this.size = size;
+        return this;
     }
 
     addMaxFee(maxFee) {
@@ -109,7 +115,7 @@ export class Builder {
             ]));
 
         AliasTransactionBuffer.startAliasTransactionBuffer(builder);
-        AliasTransactionBuffer.addSize(builder, 122 + 17);
+        AliasTransactionBuffer.addSize(builder, this.size);
         AliasTransactionBuffer.addSignature(builder, signatureVector);
         AliasTransactionBuffer.addSigner(builder, signerVector);
         AliasTransactionBuffer.addVersion(builder, this.version);

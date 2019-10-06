@@ -180,7 +180,7 @@ describe('TransferTransaction', () => {
     });
 
     describe('size', () => {
-        it('should return 160 for TransferTransaction with 1 mosaic and message NEM', () => {
+        it('should return 170 for TransferTransaction with 1 mosaic and message NEM', () => {
             const transaction = TransferTransaction.create(
                 Deadline.create(),
                 Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC'),
@@ -190,7 +190,7 @@ describe('TransferTransaction', () => {
                 PlainMessage.create('NEM'),
                 NetworkType.MIJIN_TEST,
             );
-            expect(transaction.size).to.be.equal(160);
+            expect(transaction.size).to.be.equal(170);
         });
     });
 });

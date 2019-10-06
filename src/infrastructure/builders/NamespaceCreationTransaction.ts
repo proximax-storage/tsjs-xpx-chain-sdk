@@ -37,6 +37,7 @@ export default class NamespaceCreationTransaction extends VerifiableTransaction 
 
 // tslint:disable-next-line:max-classes-per-file
 export class Builder {
+    size: any;
     maxFee: any;
     version: any;
     type: any;
@@ -49,6 +50,11 @@ export class Builder {
     constructor() {
         this.maxFee = [0, 0];
         this.type = TransactionType.REGISTER_NAMESPACE;
+    }
+
+    addSize(size) {
+        this.size = size;
+        return this;
     }
 
     addMaxFee(maxFee) {
@@ -119,7 +125,7 @@ export class Builder {
         const name = builder.createString(this.namespaceName);
 
         RegisterNamespaceTransactionBuffer.startRegisterNamespaceTransactionBuffer(builder);
-        RegisterNamespaceTransactionBuffer.addSize(builder, 122 + 18 + namespaceNameLength);
+        RegisterNamespaceTransactionBuffer.addSize(builder, this.size);
         RegisterNamespaceTransactionBuffer.addSignature(builder, signatureVector);
         RegisterNamespaceTransactionBuffer.addSigner(builder, signerVector);
         RegisterNamespaceTransactionBuffer.addVersion(builder, this.version);

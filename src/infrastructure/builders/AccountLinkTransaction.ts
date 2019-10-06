@@ -37,6 +37,7 @@ export class AccountLinkTransaction extends VerifiableTransaction {
 
 // tslint:disable-next-line:max-classes-per-file
 export class Builder {
+    size: any;
     maxFee: any;
     version: any;
     type: any;
@@ -46,6 +47,11 @@ export class Builder {
     constructor() {
         this.maxFee = [0, 0];
         this.type = TransactionType.LINK_ACCOUNT;
+    }
+
+    addSize(size) {
+        this.size = size;
+        return this;
     }
 
     addMaxFee(maxFee) {
@@ -89,7 +95,7 @@ export class Builder {
         const remoteAccountKeyVector = AccountLinkTransactionBuffer.createRemoteAccountKeyVector(builder, this.remoteAccountKey);
 
         AccountLinkTransactionBuffer.startAccountLinkTransactionBuffer(builder);
-        AccountLinkTransactionBuffer.addSize(builder, 122 + 33);
+        AccountLinkTransactionBuffer.addSize(builder, this.size);
         AccountLinkTransactionBuffer.addSignature(builder, signatureVector);
         AccountLinkTransactionBuffer.addSigner(builder, signerVector);
         AccountLinkTransactionBuffer.addVersion(builder, this.version);

@@ -37,6 +37,7 @@ export default class SecretProofTransaction extends VerifiableTransaction {
 
 // tslint:disable-next-line:max-classes-per-file
 export class Builder {
+    size: any;
     maxFee: any;
     version: any;
     type: any;
@@ -48,6 +49,11 @@ export class Builder {
     constructor() {
         this.maxFee = [0, 0];
         this.type = TransactionType.SECRET_PROOF;
+    }
+
+    addSize(size) {
+        this.size = size;
+        return this;
     }
 
     addMaxFee(maxFee) {
@@ -105,7 +111,7 @@ export class Builder {
         const proofVector = SecretProofTransactionBuffer.createProofVector(builder, byteProof);
 
         SecretProofTransactionBuffer.startSecretProofTransactionBuffer(builder);
-        SecretProofTransactionBuffer.addSize(builder, 122 + 60 + byteProof.length);
+        SecretProofTransactionBuffer.addSize(builder, this.size);
         SecretProofTransactionBuffer.addSignature(builder, signatureVector);
         SecretProofTransactionBuffer.addSigner(builder, signerVector);
         SecretProofTransactionBuffer.addVersion(builder, this.version);

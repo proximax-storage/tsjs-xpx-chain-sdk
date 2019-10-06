@@ -76,6 +76,7 @@ export class AggregateTransaction extends VerifiableTransaction {
 }
 // tslint:disable-next-line:max-classes-per-file
 export class Builder {
+    size: any;
     maxFee: any;
     version: any;
     type: any;
@@ -84,6 +85,11 @@ export class Builder {
     constructor() {
         this.maxFee = [0, 0];
         this.type = TransactionType.AGGREGATE_COMPLETE;
+    }
+
+    addSize(size) {
+        this.size = size;
+        return this;
     }
 
     addMaxFee(maxFee) {
@@ -131,7 +137,7 @@ export class Builder {
         const modificationsVector = AggregateTransactionBuffer.createTransactionsVector(builder, this.transactions);
 
         AggregateTransactionBuffer.startAggregateTransactionBuffer(builder);
-        AggregateTransactionBuffer.addSize(builder, 122 + 4 + this.transactions.length);
+        AggregateTransactionBuffer.addSize(builder, this.size);
         AggregateTransactionBuffer.addSignature(builder, signatureVector);
         AggregateTransactionBuffer.addSigner(builder, signerVector);
         AggregateTransactionBuffer.addVersion(builder, this.version);

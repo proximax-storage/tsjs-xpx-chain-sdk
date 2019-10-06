@@ -17,3 +17,4 @@ deploy:
   api_key: "$AUTH_TOKEN"
   on:
     branch: master
+    node: 10

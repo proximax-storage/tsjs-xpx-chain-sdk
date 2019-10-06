@@ -118,10 +118,10 @@ export class SecretLockTransaction extends Transaction {
      * @memberof SecretLockTransaction
      */
     public get size(): number {
-        return SecretLockTransaction.calculateSize(this.secret);
+        return SecretLockTransaction.calculateSize();
     }
 
-    public static calculateSize(secret: string): number {
+    public static calculateSize(): number {
         const byteSize = Transaction.getHeaderSize();
 
         // set static byte size fields
@@ -129,10 +129,8 @@ export class SecretLockTransaction extends Transaction {
         const byteAmount = 8;
         const byteDuration = 8;
         const byteAlgorithm = 1;
+        const secretSize = 32;
         const byteRecipient = 25;
-
-        // get secret byte size
-        const secretSize = secret.length / 2;
 
         return byteSize + byteMosaicId + byteAmount + byteDuration + byteAlgorithm + byteRecipient + secretSize;
     }
@@ -143,6 +141,7 @@ export class SecretLockTransaction extends Transaction {
      */
     protected buildTransaction(): VerifiableTransaction {
         return new Builder()
+            .addSize(this.size)
             .addDeadline(this.deadline.toDTO())
             .addType(this.type)
             .addMaxFee(this.maxFee.toDTO())
@@ -194,7 +193,7 @@ export class SecretLockTransactionBuilder extends TransactionBuilder {
             this._networkType,
             TransactionVersion.SECRET_LOCK,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._maxFee ? this._maxFee : calculateFee(SecretLockTransaction.calculateSize(this._secret), this._feeCalculationStrategy),
+            this._maxFee ? this._maxFee : calculateFee(SecretLockTransaction.calculateSize(), this._feeCalculationStrategy),
             this._mosaic,
             this._duration,
             this._hashType,

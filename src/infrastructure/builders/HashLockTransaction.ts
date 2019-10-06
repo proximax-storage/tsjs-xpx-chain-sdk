@@ -37,6 +37,7 @@ export default class HashLockTransaction extends VerifiableTransaction {
 
 // tslint:disable-next-line:max-classes-per-file
 export class Builder {
+    size: any;
     maxFee: any;
     version: any;
     type: any;
@@ -48,6 +49,11 @@ export class Builder {
     constructor() {
         this.maxFee = [0, 0];
         this.type = TransactionType.LOCK;
+    }
+
+    addSize(size) {
+        this.size = size;
+        return this;
     }
 
     addMaxFee(maxFee) {
@@ -106,7 +112,7 @@ export class Builder {
         const hashVector = LockFundsTransactionBuffer.createHashVector(builder, byteHash);
 
         LockFundsTransactionBuffer.startLockFundsTransactionBuffer(builder);
-        LockFundsTransactionBuffer.addSize(builder, 122 + 56);
+        LockFundsTransactionBuffer.addSize(builder, this.size);
         LockFundsTransactionBuffer.addSignature(builder, signatureVector);
         LockFundsTransactionBuffer.addSigner(builder, signerVector);
         LockFundsTransactionBuffer.addVersion(builder, this.version);

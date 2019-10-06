@@ -40,6 +40,7 @@ export default class TransferTransaction extends VerifiableTransaction {
 
 // tslint:disable-next-line:max-classes-per-file
 export class Builder {
+    size: any;
     maxFee: any;
     version: any;
     type: any;
@@ -50,6 +51,11 @@ export class Builder {
     constructor() {
         this.maxFee = [0, 0];
         this.type = TransactionType.TRANSFER;
+    }
+
+    addSize(size) {
+        this.size = size;
+        return this;
     }
 
     addMaxFee(maxFee) {
@@ -134,7 +140,7 @@ export class Builder {
         const mosaicsVector = TransferTransactionBuffer.createMosaicsVector(builder, mosaics);
 
         TransferTransactionBuffer.startTransferTransactionBuffer(builder);
-        TransferTransactionBuffer.addSize(builder, 122 + 29 + (16 * this.mosaics.length) + bytePayload.length);
+        TransferTransactionBuffer.addSize(builder, this.size);
         TransferTransactionBuffer.addSignature(builder, signatureVector);
         TransferTransactionBuffer.addSigner(builder, signerVector);
         TransferTransactionBuffer.addVersion(builder, this.version);

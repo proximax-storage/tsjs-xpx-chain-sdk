@@ -56,7 +56,7 @@ describe('FeeCalculationStrategy', () => {
 
     describe('TransactionBuilderFactory', () => {
         describe('should return correct maxFee for created tx with FeeCalculationStrategy configured', () => {
-            const emptyTransferTxSize = 149;
+            const emptyTransferTxSize = 151;
             it('should return DefaultFeeCalculationStrategy as default', () => {
                 const factory = new TransactionBuilderFactory();
                 const transfer = factory.transfer().build();

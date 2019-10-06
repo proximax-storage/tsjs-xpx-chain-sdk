@@ -21,6 +21,7 @@ export default class ModifyMetadataTransaction extends VerifiableTransaction {
 }
 
 export class Builder {
+    size: any;
     fee: any;
     version: any;
     type: any;
@@ -32,6 +33,11 @@ export class Builder {
     constructor() {
         this.fee = [0, 0];
         this.version = 1;
+    }
+
+    addSize(size) {
+        this.size = size;
+        return this;
     }
 
     addMaxFee(fee) {
@@ -75,7 +81,6 @@ export class Builder {
 
         // Create modifications
         const modifications:any[] = [];
-        let modificationsSumSize = 0;
         this.modifications.forEach(modification => {
             const modificationKey = modification.key ? convert.hexToUint8(convert.utf8ToHex(modification.key)) : [];
             const modificationValue = modification.value ? convert.hexToUint8(convert.utf8ToHex(modification.value)) : [];
@@ -84,7 +89,6 @@ export class Builder {
             const keyOffset = MetadataModificationBuffer.createKeyVector(builder, modificationKey);
             const valueOffset = MetadataModificationBuffer.createValueVector(builder, modificationValue);
             const size = 4 + 1 + 1 + 2 + modificationKey.length + modificationValue.length
-            modificationsSumSize = modificationsSumSize + size;
             MetadataModificationBuffer.startMetadataModificationBuffer(builder);
             MetadataModificationBuffer.addSize(builder, size);
             MetadataModificationBuffer.addModificationType(builder, modification.type);
@@ -114,10 +118,9 @@ export class Builder {
 
         // TODO: different types/lengths
         const metadataIdVector = ModifyMetadataTransactionBuffer.createMetadataIdVector(builder, metadataIdDecoded);
-        const size = 122 + 1 + metadataIdDecoded.length + modificationsSumSize;
 
         ModifyMetadataTransactionBuffer.startModifyMetadataTransactionBuffer(builder);
-        ModifyMetadataTransactionBuffer.addSize(builder, size);
+        ModifyMetadataTransactionBuffer.addSize(builder, this.size);
         ModifyMetadataTransactionBuffer.addSignature(builder, signatureVector);
         ModifyMetadataTransactionBuffer.addSigner(builder, signerVector);
         ModifyMetadataTransactionBuffer.addVersion(builder, this.version);
@@ -134,9 +137,7 @@ export class Builder {
         builder.finish(codedTransfer);
 
         const bytes = builder.asUint8Array();
-        if (bytes.length !== size) {
-            // throw new Error("Declared size differs from actual bytes.length during ModifyMetadataTransaction serialization")
-        }
+
         return new ModifyMetadataTransaction(bytes);
     }
 }
