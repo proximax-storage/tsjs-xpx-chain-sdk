@@ -30,7 +30,7 @@ export declare class Address {
      * @param {string} encoded
      * @return {Address}
      */
-    static createFromEncoded(encoded)
+    static createFromEncoded(encoded): Address;
     /**
      * Get address in plain format ex: SB3KUBHATFCPV7UZQLWAQ2EUR6SIHBSBEOEDDDF3.
      * @returns {string}
