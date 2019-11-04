@@ -105,7 +105,7 @@ describe('TransferTransaction', () => {
             signedTransaction.payload.length,
         )).to.be.equal(
             '9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1420D000100746573742D6D657373616765' +
-            '44B262C46CEABB8500E1F50500000000');
+            'F6BD1691A142FBBF00E1F50500000000');
     });
 
     it('should createComplete an TransferTransaction object with NamespaceId recipient', () => {
@@ -132,7 +132,7 @@ describe('TransferTransaction', () => {
             244,
             signedTransaction.payload.length,
         )).to.be.equal('9151776168D24257D8000000000000000000000000000000000D000100746573742D6D657373616765' +
-            '44B262C46CEABB8500E1F50500000000');
+            'F6BD1691A142FBBF00E1F50500000000');
     });
 
     it('should format TransferTransaction payload with 25 bytes binary address', () => {

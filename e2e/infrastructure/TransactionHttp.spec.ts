@@ -578,7 +578,7 @@ describe('TransactionHttp', () => {
             );
             const signedTransaction = TestingAccount.sign(aggregateTransaction, factory.generationHash);
             const hashLockTransaction = HashLockTransaction.create(Deadline.create(),
-                new Mosaic(new NamespaceId('cat.currency'), UInt64.fromUint(10 * Math.pow(10, NetworkCurrencyMosaic.DIVISIBILITY))),
+                new Mosaic(new NamespaceId('prx.xpx'), UInt64.fromUint(10 * Math.pow(10, NetworkCurrencyMosaic.DIVISIBILITY))),
                 UInt64.fromUint(10000),
                 signedTransaction,
                 ConfNetworkType);
