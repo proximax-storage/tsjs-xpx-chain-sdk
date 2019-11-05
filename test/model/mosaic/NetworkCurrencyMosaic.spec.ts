@@ -35,10 +35,11 @@ describe('NetworkCurrencyMosaic', () => {
         expect(currency.toDTO().amount[0]).to.be.equal(1000 * 1000000);
     });
 
-    it('should have valid statics', () => {
-        deepEqual(NetworkCurrencyMosaic.NAMESPACE_ID.id, new NamespaceId([2434186742, 3220914849]).id);
-        expect(NetworkCurrencyMosaic.DIVISIBILITY).to.be.equal(6);
-        expect(NetworkCurrencyMosaic.TRANSFERABLE).to.be.equal(true);
-        expect(NetworkCurrencyMosaic.SUPPLY_MUTABLE).to.be.equal(false);
+    it('should have valid hardcoded default properties', () => {
+        const m = NetworkCurrencyMosaic.createAbsolute(0);
+        deepEqual(m.ID.id, new NamespaceId([2434186742, 3220914849]).id);
+        expect(m.DIVISIBILITY).to.be.equal(6);
+        expect(m.TRANSFERABLE).to.be.equal(true);
+        expect(m.SUPPLY_MUTABLE).to.be.equal(false);
     });
 });

@@ -23,6 +23,7 @@ import {LockFundsTransaction} from '../../../src/model/transaction/LockFundsTran
 import {UInt64} from '../../../src/model/UInt64';
 import {TestingAccount} from '../../conf/conf.spec';
 import { DefaultFeeCalculationStrategy } from '../../../src/model/transaction/FeeCalculationStrategy';
+import { XpxMosaicProperties } from '../../../src/model/mosaic/NetworkMosaic';
 
 describe('LockFundsTransaction', () => {
     const account = TestingAccount;
@@ -78,7 +79,7 @@ describe('LockFundsTransaction', () => {
             UInt64.fromUint(10),
             signedTransaction,
             NetworkType.MIJIN_TEST);
-        deepEqual(transaction.mosaic.id.id, NetworkCurrencyMosaic.NAMESPACE_ID.id);
+        deepEqual(transaction.mosaic.id.id, XpxMosaicProperties.ID.id);
         expect(transaction.mosaic.amount.compact()).to.be.equal(10000000);
         expect(transaction.hash).to.be.equal(signedTransaction.hash);
     });

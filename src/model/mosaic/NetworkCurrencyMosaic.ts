@@ -13,59 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import {NamespaceId} from '../namespace/NamespaceId';
 import {UInt64} from '../UInt64';
-import {Mosaic} from './Mosaic';
+import { NetworkMosaic, XpxMosaicProperties, KnownMosaicProperties } from './NetworkMosaic';
 
 /**
  * NetworkCurrencyMosaic mosaic
  *
  * This represents the per-network currency mosaic. This mosaicId is aliased
- * with namespace name `prx.xpx`.
+ * with namespace name `prx.xpx` from XpxMosaicProperties definition by default.
  *
  * @since 0.10.2
  */
-export class NetworkCurrencyMosaic extends Mosaic {
-
-    /**
-     * namespaceId of `currency` namespace.
-     *
-     * @type {Id}
-     */
-    public static NAMESPACE_ID = new NamespaceId('prx.xpx');
-
-    /**
-     * Divisiblity
-     * @type {number}
-     */
-    public static DIVISIBILITY = 6;
-
-    /**
-     * Initial supply
-     * @type {number}
-     */
-    public static INITIAL_SUPPLY = 9000000000;
-
-    /**
-     * Is tranferable
-     * @type {boolean}
-     */
-    public static TRANSFERABLE = true;
-
-    /**
-     * Is Supply mutable
-     * @type {boolean}
-     */
-    public static SUPPLY_MUTABLE = false;
-
+export class NetworkCurrencyMosaic extends NetworkMosaic {
     /**
      * constructor
      * @param owner
      * @param amount
      */
-    private constructor(amount: UInt64) {
-        super(NetworkCurrencyMosaic.NAMESPACE_ID, amount);
+    private constructor(amount: UInt64, networkMosaicProperties: KnownMosaicProperties) {
+        super(amount, networkMosaicProperties);
     }
 
     /**
@@ -74,11 +40,8 @@ export class NetworkCurrencyMosaic extends Mosaic {
      * @param amount
      * @returns {NetworkCurrencyMosaic}
      */
-    public static createRelative(amount: UInt64 | number) {
-        if (typeof amount === 'number') {
-            return new NetworkCurrencyMosaic(UInt64.fromUint(amount * Math.pow(10, NetworkCurrencyMosaic.DIVISIBILITY)));
-        }
-        return new NetworkCurrencyMosaic(UInt64.fromUint((amount as UInt64).compact() * Math.pow(10, NetworkCurrencyMosaic.DIVISIBILITY)));
+    public static createRelative(amount: UInt64 | number, networkMosaicProperties = XpxMosaicProperties) {
+        return new NetworkCurrencyMosaic(NetworkMosaic.createRelativeAmount(amount, networkMosaicProperties.MOSAIC_PROPERTIES.divisibility), networkMosaicProperties);
     }
 
     /**
@@ -88,10 +51,7 @@ export class NetworkCurrencyMosaic extends Mosaic {
      * @param amount
      * @returns {NetworkCurrencyMosaic}
      */
-    public static createAbsolute(amount: UInt64 | number) {
-        if (typeof amount === 'number') {
-            return new NetworkCurrencyMosaic(UInt64.fromUint(amount));
-        }
-        return new NetworkCurrencyMosaic(amount as UInt64);
+    public static createAbsolute(amount: UInt64 | number, networkMosaicProperties = XpxMosaicProperties) {
+        return new NetworkCurrencyMosaic(NetworkMosaic.createAbsoluteAmount(amount), networkMosaicProperties);
     }
 }

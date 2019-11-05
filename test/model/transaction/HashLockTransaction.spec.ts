@@ -21,6 +21,7 @@ import {Deadline} from '../../../src/model/transaction/Deadline';
 import {HashLockTransaction} from '../../../src/model/transaction/HashLockTransaction';
 import {UInt64} from '../../../src/model/UInt64';
 import {TestingAccount} from '../../conf/conf.spec';
+import { XpxMosaicProperties } from '../../../src/model/mosaic/NetworkMosaic';
 
 describe('HashLockTransaction', () => {
     const account = TestingAccount;
@@ -38,7 +39,7 @@ describe('HashLockTransaction', () => {
             UInt64.fromUint(10),
             signedTransaction,
             NetworkType.MIJIN_TEST);
-        expect(transaction.mosaic.id).to.be.equal(NetworkCurrencyMosaic.NAMESPACE_ID);
+        expect(transaction.mosaic.id).to.be.equal(XpxMosaicProperties.ID);
         expect(transaction.mosaic.amount.compact()).to.be.equal(10000000);
         expect(transaction.hash).to.be.equal(signedTransaction.hash);
     });
