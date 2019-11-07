@@ -16,7 +16,6 @@
 
 import { SignSchema } from '../../core/crypto';
 import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
-import { SerializeTransactionToJSON } from '../../infrastructure/transaction/SerializeTransactionToJSON';
 import { Account } from '../account/Account';
 import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
@@ -237,9 +236,7 @@ export abstract class Transaction {
         if (this.signer) {
             Object.assign(commonTransactionObject, {signer: this.signer.publicKey});
         }
-
-        const childClassObject = SerializeTransactionToJSON(this);
-        return {transaction: Object.assign(commonTransactionObject, childClassObject)};
+        return { transaction: commonTransactionObject };
     }
 }
 

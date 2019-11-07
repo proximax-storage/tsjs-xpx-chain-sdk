@@ -117,6 +117,25 @@ export class AddressAliasTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.toJSON()
+     * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
+     * @return {Object}
+     * @memberof AddressAliasTransaction
+     */
+    public toJSON() {
+        const parent = super.toJSON();
+        return {
+            ...parent,
+            transaction: {
+                ...parent.transaction,
+                aliasAction: this.actionType,
+                namespaceId: this.namespaceId.toDTO(),
+                address: this.address.toDTO(),
+            }
+        }
+    }
+
+    /**
      * @internal
      * @returns {VerifiableTransaction}
      */
