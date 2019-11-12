@@ -60,6 +60,7 @@ import { TransactionType } from '../../../src/model/transaction/TransactionType'
 import { TransferTransaction } from '../../../src/model/transaction/TransferTransaction';
 import { UInt64 } from '../../../src/model/UInt64';
 import { TestingAccount } from '../../conf/conf.spec';
+import { XpxMosaicProperties } from '../../../src/model/mosaic/NetworkMosaic';
 
 describe('TransactionMapping - createFromPayload', () => {
     let account: Account;
@@ -472,7 +473,7 @@ describe('TransactionMapping - createFromPayload', () => {
 
         const transaction = TransactionMapping.createFromPayload(signedLockFundTransaction.payload) as LockFundsTransaction;
 
-        deepEqual(transaction.mosaic.id.id, NetworkCurrencyMosaic.NAMESPACE_ID.id);
+        deepEqual(transaction.mosaic.id.id, XpxMosaicProperties.ID.id);
         expect(transaction.mosaic.amount.compact()).to.be.equal(10000000);
         expect(transaction.hash).to.be.equal(signedTransaction.hash);
     });

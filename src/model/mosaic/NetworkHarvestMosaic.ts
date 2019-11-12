@@ -13,59 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {NamespaceId} from '../namespace/NamespaceId';
 import {UInt64} from '../UInt64';
-import {Mosaic} from './Mosaic';
-import {MosaicId} from './MosaicId';
+import { NetworkMosaic, KnownMosaicProperties, XpxMosaicProperties } from './NetworkMosaic';
 
 /**
  * NetworkHarvestMosaic mosaic
  *
  * This represents the per-network harvest mosaic. This mosaicId is aliased
- * with namespace name `cat.harvest`.
+ * with namespace name `prx.xpx` from XpxMosaicProperties definition by default.
  *
  * @since 0.10.2
  */
-export class NetworkHarvestMosaic extends Mosaic {
-
-    /**
-     * namespaceId of `currency` namespace.
-     *
-     * @type {Id}
-     */
-    public static NAMESPACE_ID = new NamespaceId('cat.harvest');
-
-    /**
-     * Divisiblity
-     * @type {number}
-     */
-    public static DIVISIBILITY = 3;
-
-    /**
-     * Initial supply
-     * @type {number}
-     */
-    public static INITIAL_SUPPLY = 15000000;
-
-    /**
-     * Is tranferable
-     * @type {boolean}
-     */
-    public static TRANSFERABLE = true;
-
-    /**
-     * Is Supply mutable
-     * @type {boolean}
-     */
-    public static SUPPLY_MUTABLE = true;
-
+export class NetworkHarvestMosaic extends NetworkMosaic {
     /**
      * constructor
      * @param owner
      * @param amount
      */
-    private constructor(amount: UInt64) {
-        super(NetworkHarvestMosaic.NAMESPACE_ID, amount);
+    private constructor(amount: UInt64, networkMosaicProperties: KnownMosaicProperties) {
+        super(amount, networkMosaicProperties);
     }
 
     /**
@@ -74,11 +40,8 @@ export class NetworkHarvestMosaic extends Mosaic {
      * @param amount
      * @returns {NetworkHarvestMosaic}
      */
-    public static createRelative(amount: UInt64 | number) {
-        if (typeof amount === 'number') {
-            return new NetworkHarvestMosaic(UInt64.fromUint(amount * Math.pow(10, NetworkHarvestMosaic.DIVISIBILITY)));
-        }
-        return new NetworkHarvestMosaic(UInt64.fromUint((amount as UInt64).compact() * Math.pow(10, NetworkHarvestMosaic.DIVISIBILITY)));
+    public static createRelative(amount: UInt64 | number, networkMosaicProperties = XpxMosaicProperties) {
+        return new NetworkHarvestMosaic(NetworkMosaic.createRelativeAmount(amount, networkMosaicProperties.MOSAIC_PROPERTIES.divisibility), networkMosaicProperties);
     }
 
     /**
@@ -88,10 +51,7 @@ export class NetworkHarvestMosaic extends Mosaic {
      * @param amount
      * @returns {NetworkHarvestMosaic}
      */
-    public static createAbsolute(amount: UInt64 | number) {
-        if (typeof amount === 'number') {
-            return new NetworkHarvestMosaic(UInt64.fromUint(amount));
-        }
-        return new NetworkHarvestMosaic(amount as UInt64);
+    public static createAbsolute(amount: UInt64 | number, networkMosaicProperties = XpxMosaicProperties) {
+        return new NetworkHarvestMosaic(NetworkMosaic.createAbsoluteAmount(amount), networkMosaicProperties);
     }
 }
