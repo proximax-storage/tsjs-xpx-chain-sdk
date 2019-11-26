@@ -4,6 +4,36 @@ import { NetworkType } from '../blockchain/NetworkType';
  * in order to initiate and broadcast a transaction.
  */
 export declare class SignedTransaction {
+    /**
+     * @internal
+     * @param payload
+     * @param hash
+     * @param signer
+     * @param type
+     * @param networkType
+     */
+    constructor(
+    /**
+     * Transaction serialized data
+     */
+    payload,
+    /**
+     * Transaction hash
+     */
+    hash,
+    /**
+     * Transaction signer
+     */
+    signer,
+    /**
+     * Transaction type
+     */
+    type,
+    /**
+     * Signer network type
+     */
+    networkType)
+
     readonly payload: string;
     /**
      * Transaction hash
