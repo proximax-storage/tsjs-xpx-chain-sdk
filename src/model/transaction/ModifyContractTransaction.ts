@@ -90,6 +90,32 @@ export class ModifyContractTransaction extends Transaction {
         return byteSize;
     }
 
+    /**
+     * @override Transaction.toJSON()
+     * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
+     * @return {Object}
+     * @memberof ModifyContractTransaction
+     */
+    public toJSON() {
+        const parent = super.toJSON();
+        return {
+            ...parent,
+            transaction: {
+                ...parent.transaction,
+                durationDelta: this.durationDelta,
+                hash: this.hash,
+                customers: this.customers.map(customer => {
+                    return customer.toDTO();
+                }),
+                executors: this.executors.map(executor => {
+                    return executor.toDTO();
+                }),
+                verifiers: this.verifiers.map(verifier => {
+                    return verifier.toDTO();
+                }),
+            }
+        }
+    }
 
     /**
      * @internal

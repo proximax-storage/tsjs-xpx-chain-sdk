@@ -116,6 +116,25 @@ export class MosaicSupplyChangeTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.toJSON()
+     * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
+     * @return {Object}
+     * @memberof MosaicSupplyChangeTransaction
+     */
+    public toJSON() {
+        const parent = super.toJSON();
+        return {
+            ...parent,
+            transaction: {
+                ...parent.transaction,
+                mosaicId: this.mosaicId.toDTO(),
+                direction: this.direction,
+                delta: this.delta.toDTO(),
+            }
+        }
+    }
+
+    /**
      * @internal
      * @returns {VerifiableTransaction}
      */

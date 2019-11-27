@@ -27,7 +27,6 @@ import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
 import { TransactionVersion } from './TransactionVersion';
-import { ChronoUnit } from 'js-joda';
 import { calculateFee } from './FeeCalculationStrategy';
 import { NamespaceMosaicIdGenerator } from '../../infrastructure/infrastructure';
 
@@ -151,6 +150,37 @@ export class RegisterNamespaceTransaction extends Transaction {
         const namespaceNameSize = convert.utf8ToHex(namespaceName).length / 2;
 
         return byteSize + byteType + byteDurationParentId + byteNamespaceId + byteNameSize + namespaceNameSize;
+    }
+
+    /**
+     * @override Transaction.toJSON()
+     * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
+     * @return {Object}
+     * @memberof AddressAliasTransaction
+     */
+    public toJSON() {
+        const parent = super.toJSON();
+
+        const jsonObject = {
+            namespaceType: this.namespaceType,
+            namespaceName: this.namespaceName,
+            namespaceId: this.namespaceId.toDTO(),
+        };
+
+        if (this.duration) {
+            Object.assign(jsonObject, {duration: this.duration.toDTO()});
+        }
+        if (this.parentId) {
+            Object.assign(jsonObject, {parentId: this.parentId.toDTO()});
+        }
+
+        return {
+            ...parent,
+            transaction: {
+                ...parent.transaction,
+                ...jsonObject
+            }
+        }
     }
 
     /**

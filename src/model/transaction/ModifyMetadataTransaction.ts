@@ -40,6 +40,14 @@ export class MetadataModification {
         this.key = key;
         this.value = value ? value : undefined;
     }
+
+    public toDTO() {
+        return {
+            type: this.type,
+            key: this.key,
+            value: this.value
+        }
+    }
 }
 
 /**
@@ -151,6 +159,27 @@ export class ModifyMetadataTransaction extends Transaction {
                         + (type === TransactionType.MODIFY_ACCOUNT_METADATA ? 25 : 8) // id
                         + modificationsSize
         return byteSize;
+    }
+
+    /**
+     * @override Transaction.toJSON()
+     * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
+     * @return {Object}
+     * @memberof ModifyMetadataTransaction
+     */
+    public toJSON() {
+        const parent = super.toJSON();
+        return {
+            ...parent,
+            transaction: {
+                ...parent.transaction,
+                metadataType: this.metadataType,
+                metadataId: this.metadataId,
+                modifications: this.modifications.map(modification => {
+                    return modification.toDTO();
+                })
+            }
+        }
     }
 
     /**
