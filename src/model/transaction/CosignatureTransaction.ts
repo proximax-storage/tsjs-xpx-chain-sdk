@@ -69,7 +69,6 @@ export class CosignatureTransaction {
     }
 
     /**
-     * @internal
      * Serialize and sign transaction creating a new SignedTransaction
      * @param account
      * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
