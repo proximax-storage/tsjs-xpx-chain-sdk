@@ -133,6 +133,27 @@ export class TransferTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.toJSON()
+     * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
+     * @return {Object}
+     * @memberof TransferTransaction
+     */
+    public toJSON() {
+        const parent = super.toJSON();
+        return {
+            ...parent,
+            transaction: {
+                ...parent.transaction,
+                recipient: this.recipient.toDTO(),
+                mosaics: this.mosaics.map((mosaic) => {
+                    return mosaic.toDTO();
+                }),
+                message: this.message.toDTO(),
+            }
+        }
+    }
+
+    /**
      * @internal
      * @returns {VerifiableTransaction}
      */

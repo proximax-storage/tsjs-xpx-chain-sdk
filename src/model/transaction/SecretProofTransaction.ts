@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { Convert as convert } from '../../core/format';
 import { Builder } from '../../infrastructure/builders/SecretProofTransaction';
 import {VerifiableTransaction} from '../../infrastructure/builders/VerifiableTransaction';
 import { Address } from '../account/Address';
@@ -114,6 +113,26 @@ export class SecretProofTransaction extends Transaction {
         const proofLength = proof.length/2 ;
 
         return byteSize + byteAlgorithm + secretLength + byteRecipient + byteProofSize + proofLength;
+    }
+
+    /**
+     * @override Transaction.toJSON()
+     * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
+     * @return {Object}
+     * @memberof SecretProofTransaction
+     */
+    public toJSON() {
+        const parent = super.toJSON();
+        return {
+            ...parent,
+            transaction: {
+                ...parent.transaction,
+                hashAlgorithm: this.hashType,
+                secret: this.secret,
+                recipient: this.recipient.toDTO(),
+                proof: this.proof,
+            }
+        }
     }
 
     /**

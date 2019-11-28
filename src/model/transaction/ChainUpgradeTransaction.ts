@@ -68,6 +68,24 @@ export class ChainUpgradeTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.toJSON()
+     * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
+     * @return {Object}
+     * @memberof ChainUpgradeTransaction
+     */
+    public toJSON() {
+        const parent = super.toJSON();
+        return {
+            ...parent,
+            transaction: {
+                ...parent.transaction,
+                upgradePeriod: this.upgradePeriod.toDTO(),
+                newBlockchainVersion: this.newBlockchainVersion.toDTO()
+            }
+        }
+    }
+
+    /**
     * @internal
     * @returns {VerifiableTransaction}
     */

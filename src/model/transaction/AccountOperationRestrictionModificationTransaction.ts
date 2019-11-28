@@ -103,6 +103,26 @@ export class AccountOperationRestrictionModificationTransaction extends Transact
     }
 
     /**
+     * @override Transaction.toJSON()
+     * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
+     * @return {Object}
+     * @memberof AccountOperationRestrictionModificationTransaction
+     */
+    public toJSON() {
+        const parent = super.toJSON();
+        return {
+            ...parent,
+            transaction: {
+                ...parent.transaction,
+                restrictionType: this.restrictionType,
+                modifications: this.modifications.map((modification) => {
+                    return modification.toDTO();
+                }),
+            }
+        }
+    }
+
+    /**
      * @internal
      * @returns {VerifiableTransaction}
      */

@@ -115,7 +115,6 @@ export class AggregateTransaction extends Transaction {
             .build();
     }
 
-
     /**
      * Appends cosignatures to a signed aggregate transaction, if they are not yet added
      *
@@ -142,6 +141,28 @@ export class AggregateTransaction extends Transaction {
             signedTransaction.type,
             signedTransaction.networkType
         );
+    }
+
+    /**
+     * @override Transaction.toJSON()
+     * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
+     * @return {Object}
+     * @memberof AggregateTransaction
+     */
+    public toJSON() {
+        const parent = super.toJSON();
+        return {
+            ...parent,
+            transaction: {
+                ...parent.transaction,
+                transactions: this.innerTransactions.map((innerTransaction) => {
+                    return innerTransaction.toJSON();
+                }),
+                cosignatures: this.cosignatures.map((cosignature) => {
+                    return cosignature.toDTO();
+                }),
+            }
+        }
     }
 
     /**

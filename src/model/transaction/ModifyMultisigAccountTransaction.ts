@@ -124,6 +124,27 @@ export class ModifyMultisigAccountTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.toJSON()
+     * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
+     * @return {Object}
+     * @memberof ModifyMultisigAccountTransaction
+     */
+    public toJSON() {
+        const parent = super.toJSON();
+        return {
+            ...parent,
+            transaction: {
+                ...parent.transaction,
+                minApprovalDelta: this.minApprovalDelta,
+                minRemovalDelta: this.minRemovalDelta,
+                modifications: this.modifications.map((modification) => {
+                    return modification.toDTO();
+                }),
+            }
+        }
+    }
+
+    /**
      * @internal
      * @returns {VerifiableTransaction}
      */

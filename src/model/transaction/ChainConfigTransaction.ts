@@ -77,6 +77,25 @@ export class ChainConfigTransaction extends Transaction {
     }
 
     /**
+     * @override Transaction.toJSON()
+     * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
+     * @return {Object}
+     * @memberof ChainConfigTransaction
+     */
+    public toJSON() {
+        const parent = super.toJSON();
+        return {
+            ...parent,
+            transaction: {
+                ...parent.transaction,
+                applyHeightDelta: this.applyHeightDelta.toDTO(),
+                networkConfig: this.networkConfig,
+                supportedEntityVersions: this.supportedEntityVersions
+            }
+        }
+    }
+
+    /**
     * @internal
     * @returns {VerifiableTransaction}
     */

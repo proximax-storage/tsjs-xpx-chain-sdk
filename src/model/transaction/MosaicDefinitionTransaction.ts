@@ -118,8 +118,27 @@ export class MosaicDefinitionTransaction extends Transaction {
         const byteDurationSize = 1;
         const byteDuration = 8;
 
-        return byteSize + byteNonce + byteMosaicId + byteNumProps + byteFlags + byteDivisibility + 
+        return byteSize + byteNonce + byteMosaicId + byteNumProps + byteFlags + byteDivisibility +
             (durationProvided ? byteDurationSize + byteDuration : 0);
+    }
+
+    /**
+     * @override Transaction.toJSON()
+     * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
+     * @return {Object}
+     * @memberof mosaicDefinitionTransaction
+     */
+    public toJSON() {
+        const parent = super.toJSON();
+        return {
+            ...parent,
+            transaction: {
+                ...parent.transaction,
+                nonce: this.nonce,
+                mosaicId: this.mosaicId.toDTO(),
+                properties: this.mosaicProperties.toDTO(),
+            }
+        }
     }
 
     /**

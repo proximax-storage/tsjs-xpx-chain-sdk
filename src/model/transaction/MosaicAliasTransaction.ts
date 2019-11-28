@@ -27,7 +27,6 @@ import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
 import { TransactionVersion } from './TransactionVersion';
-import { ChronoUnit } from 'js-joda';
 import { calculateFee } from './FeeCalculationStrategy';
 
 export class MosaicAliasTransaction extends Transaction {
@@ -111,6 +110,25 @@ export class MosaicAliasTransaction extends Transaction {
         const byteMosaicId = 8;
 
         return byteSize + byteType + byteNamespaceId + byteMosaicId;
+    }
+
+    /**
+     * @override Transaction.toJSON()
+     * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
+     * @return {Object}
+     * @memberof MosaicAliasTransaction
+     */
+    public toJSON() {
+        const parent = super.toJSON();
+        return {
+            ...parent,
+            transaction: {
+                ...parent.transaction,
+                aliasAction: this.actionType,
+                namespaceId: this.namespaceId.toDTO(),
+                mosaicId: this.mosaicId.toDTO(),
+            }
+        }
     }
 
     /**
