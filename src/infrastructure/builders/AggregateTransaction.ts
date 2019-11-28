@@ -35,6 +35,17 @@ export class AggregateTransaction extends VerifiableTransaction {
         super(bytes, AggregateTransactionSchema);
     }
 
+    private static recalculateSize(payload) {
+        // Calculate new size
+        const size = `00000000${(payload.length / 2).toString(16)}`;
+        const formatedSize = size.substr(size.length - 8, size.length);
+        const littleEndianSize = formatedSize.substr(6, 2) + formatedSize.substr(4, 2) +
+            formatedSize.substr(2, 2) + formatedSize.substr(0, 2);
+
+        return littleEndianSize +
+            payload.substr(8, payload.length - 8);
+    }
+
     signTransactionWithCosigners(initializer, cosigners, generationHash, signSchema: SignSchema = SignSchema.SHA3) {
         const signedTransaction = this.signTransaction(initializer, generationHash, signSchema);
         cosigners.forEach((cosigner) => {
@@ -45,13 +56,7 @@ export class AggregateTransaction extends VerifiableTransaction {
         });
 
         // Calculate new size
-        const size = `00000000${(signedTransaction.payload.length / 2).toString(16)}`;
-        const formatedSize = size.substr(size.length - 8, size.length);
-        const littleEndianSize = formatedSize.substr(6, 2) + formatedSize.substr(4, 2) +
-            formatedSize.substr(2, 2) + formatedSize.substr(0, 2);
-
-        signedTransaction.payload = littleEndianSize +
-            signedTransaction.payload.substr(8, signedTransaction.payload.length - 8);
+        signedTransaction.payload = AggregateTransaction.recalculateSize(signedTransaction.payload);
 
         return signedTransaction;
     }
@@ -63,15 +68,23 @@ export class AggregateTransaction extends VerifiableTransaction {
         });
 
         // Calculate new size
-        const size = `00000000${(signedTransaction.payload.length / 2).toString(16)}`;
-        const formatedSize = size.substr(size.length - 8, size.length);
-        const littleEndianSize = formatedSize.substr(6, 2) + formatedSize.substr(4, 2) +
-            formatedSize.substr(2, 2) + formatedSize.substr(0, 2);
-
-        signedTransaction.payload = littleEndianSize +
-            signedTransaction.payload.substr(8, signedTransaction.payload.length - 8);
+        signedTransaction.payload = AggregateTransaction.recalculateSize(signedTransaction.payload);
 
         return signedTransaction;
+    }
+
+    static appendSignatures(signedTransaction, cosignedSignedTransactions) {
+        let newPayload = signedTransaction.payload;
+        cosignedSignedTransactions.forEach(cosignature => {
+            newPayload = newPayload + cosignature.signer + cosignature.signature;
+        });
+
+        newPayload = this.recalculateSize(newPayload);
+
+        return {
+            payload: newPayload,
+            hash: signedTransaction.hash
+        };
     }
 }
 // tslint:disable-next-line:max-classes-per-file

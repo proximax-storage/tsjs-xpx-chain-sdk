@@ -146,6 +146,24 @@ describe('MosaicDefinitionTransaction', () => {
         });
     });
 
+    describe('size', () => {
+        it('should return 137 for MosaicDefinition transaction without duration byte size', () => {
+            const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
+                Deadline.create(),
+                new MosaicNonce(new Uint8Array([0xE6, 0xDE, 0x84, 0xB8])), // nonce
+                new MosaicId(UInt64.fromUint(1).toDTO()), // ID
+                MosaicProperties.create({
+                    supplyMutable: true,
+                    transferable: true,
+                    divisibility: 3,
+                    duration: undefined,
+                }),
+                NetworkType.MIJIN_TEST,
+            );
+            expect(mosaicDefinitionTransaction.size).to.be.equal(137);
+        });
+    });
+
     it('should createComplete an MosaicDefinitionTransaction object and sign it without duration', () => {
 
         const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
