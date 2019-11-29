@@ -37,7 +37,7 @@ import { SignedTransaction } from '../../model/transaction/SignedTransaction';
 import { Transaction } from '../../model/transaction/Transaction';
 import { TransactionType } from '../../model/transaction/TransactionType';
 import { UInt64 } from '../../model/UInt64';
-import { TransactionBuilderFactory, MetadataType, MetadataModification, Metadata } from '../../model/model';
+import { TransactionBuilderFactory, MetadataType, MetadataModification, Metadata, MultisigCosignatoryModificationType } from '../../model/model';
 
 /**
  * @internal
@@ -423,7 +423,25 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                 .build();
 
         case TransactionType.MODIFY_CONTRACT:
-            default:
+            const durationDelta = transactionData.substring(0, 16);
+            const hash = transactionData.substring(16, 80);
+            const numCustomers = extractNumberFromHex(transactionData.substring(80, 82));
+            const numExecutors = extractNumberFromHex(transactionData.substring(82, 84));
+            const numVerifiers = extractNumberFromHex(transactionData.substring(84, 86));
+            const allArray = transactionData.substring(86).match(/.{66}/g);
+            const modArray = allArray ? allArray.map(one => new MultisigCosignatoryModification(
+                extractNumberFromHex(one.substring(0, 2)) === 0 ? MultisigCosignatoryModificationType.Add : MultisigCosignatoryModificationType.Remove,
+                PublicAccount.createFromPublicKey(one.substring(2), networkType)
+            )):[];
+            return factory.modifyContract()
+                .durationDelta(UInt64.fromHex(reverse(durationDelta)))
+                .hash(hash)
+                .customers(modArray.slice(0, numCustomers))
+                .executors(modArray.slice(numCustomers, numCustomers + numExecutors))
+                .verifiers(modArray.slice(numCustomers + numExecutors))
+                .build();
+
+        default:
             throw new Error ('Transaction type not implemented yet.');
         }
 };
