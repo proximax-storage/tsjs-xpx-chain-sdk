@@ -69,6 +69,7 @@ export * from './mosaic/MosaicPropertyType';
 export * from './mosaic/MosaicSupplyType';
 export * from './mosaic/NetworkCurrencyMosaic';
 export * from './mosaic/NetworkHarvestMosaic';
+export * from './mosaic/NetworkMosaic';
 export * from '../service/MosaicView';
 export * from '../service/MosaicAmountView';
 

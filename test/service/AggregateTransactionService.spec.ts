@@ -32,6 +32,9 @@ import { MultisigCosignatoryModificationType } from '../../src/model/transaction
 import { PlainMessage } from '../../src/model/transaction/PlainMessage';
 import { TransferTransaction } from '../../src/model/transaction/TransferTransaction';
 import { AggregateTransactionService } from '../../src/service/AggregateTransactionService';
+import { TransactionType, CosignatureSignedTransaction, CosignatureTransaction } from '../../src/model/model';
+import { TransactionMapping } from '../../src/core/utils/utility';
+import { TestingAccount, CosignatoryAccount, Cosignatory2Account } from '../conf/conf.spec';
 
 /**
  * For multi level multisig scenario visit: https://github.com/nemtech/nem2-docs/issues/10
@@ -482,6 +485,94 @@ describe('AggregateTransactionService', () => {
         aggregateTransactionService.isComplete(signedTransaction).toPromise().then((isComplete) => {
             expect(isComplete).to.be.false;
         });
+    });
+
+    it('Should add cosignatories to signed Aggregate complete transaction', () => {
+        const accountAlice = TestingAccount;
+        const accountBob = CosignatoryAccount;
+        const accountCarol = Cosignatory2Account;
+
+        const AtoBTx = TransferTransaction.create(Deadline.create(),
+                                                  accountBob.address,
+                                                  [],
+                                                  PlainMessage.create('a to b'),
+                                                  NetworkType.MIJIN_TEST);
+        const BtoATx = TransferTransaction.create(Deadline.create(),
+                                                  accountAlice.address,
+                                                  [],
+                                                  PlainMessage.create('b to a'),
+                                                  NetworkType.MIJIN_TEST);
+        const CtoATx = TransferTransaction.create(Deadline.create(),
+                                                  accountAlice.address,
+                                                  [],
+                                                  PlainMessage.create('c to a'),
+                                                  NetworkType.MIJIN_TEST);
+
+        // only aggregate complete allowed
+        expect(() => {
+            AggregateTransactionService.addCosignatures(
+                AggregateTransaction.createBonded(
+                    Deadline.create(),
+                    [
+                        AtoBTx.toAggregate(accountAlice.publicAccount),
+                        BtoATx.toAggregate(accountBob.publicAccount),
+                        CtoATx.toAggregate(accountCarol.publicAccount)],
+                    NetworkType.MIJIN_TEST,
+                    []
+                ).signWith(accountAlice, generationHash),
+                []
+            )
+        }).to.throw(Error, 'Only serialized signed aggregate complete transaction allowed.');
+
+        // 01. Alice creates the aggregated tx and serialize it, Then payload send to Bob & Carol
+        const aggregateTransactionPayload = AggregateTransaction.createComplete(
+            Deadline.create(),
+            [
+                AtoBTx.toAggregate(accountAlice.publicAccount),
+                BtoATx.toAggregate(accountBob.publicAccount),
+                CtoATx.toAggregate(accountCarol.publicAccount)],
+            NetworkType.MIJIN_TEST,
+            [],
+        ).serialize();
+
+        // 02.1 Bob cosigns the tx and sends it back to Alice
+        const signedTxBob = CosignatureTransaction.signTransactionPayload(accountBob, aggregateTransactionPayload, generationHash);
+
+        // 02.2 Carol cosigns the tx and sends it back to Alice
+        const signedTxCarol = CosignatureTransaction.signTransactionPayload(accountCarol, aggregateTransactionPayload, generationHash);
+
+        // 03. Alice collects the cosignatures, recreate, sign, and announces the transaction
+
+        // First Alice need to append cosignatories to current transaction.
+        const cosignatureSignedTransactions = [
+            new CosignatureSignedTransaction(signedTxBob.parentHash, signedTxBob.signature, signedTxBob.signer),
+            new CosignatureSignedTransaction(signedTxCarol.parentHash, signedTxCarol.signature, signedTxCarol.signer),
+        ];
+
+        const recreatedTx = TransactionMapping.createFromPayload(aggregateTransactionPayload) as AggregateTransaction;
+
+        const signedTransaction = recreatedTx.signTransactionGivenSignatures(accountAlice, cosignatureSignedTransactions, generationHash);
+
+        expect(signedTransaction.type).to.be.equal(TransactionType.AGGREGATE_COMPLETE);
+        expect(signedTransaction.signer).to.be.equal(accountAlice.publicKey);
+        expect(signedTransaction.payload.indexOf(accountBob.publicKey) > -1).to.be.true;
+        expect(signedTransaction.payload.indexOf(accountCarol.publicKey) > -1).to.be.true;
+
+        const signedOnlyByAlice = recreatedTx.signWith(accountAlice, generationHash);
+        const signedByAll = AggregateTransactionService.addCosignatures(signedOnlyByAlice, cosignatureSignedTransactions);
+
+        expect(signedByAll.hash).to.be.equal(signedTransaction.hash);
+        expect(signedByAll.networkType).to.be.equal(signedTransaction.networkType);
+        expect(signedByAll.payload).to.be.equal(signedTransaction.payload);
+        expect(signedByAll.signer).to.be.equal(signedTransaction.signer);
+        expect(signedByAll.type).to.be.equal(signedTransaction.type);
+
+        const signedByAllAgain = AggregateTransactionService.addCosignatures(signedByAll, cosignatureSignedTransactions);
+        expect(signedByAllAgain.hash).to.be.equal(signedTransaction.hash);
+        expect(signedByAllAgain.networkType).to.be.equal(signedTransaction.networkType);
+        expect(signedByAllAgain.payload).to.be.equal(signedTransaction.payload);
+        expect(signedByAllAgain.signer).to.be.equal(signedTransaction.signer);
+        expect(signedByAllAgain.type).to.be.equal(signedTransaction.type);
     });
 
     function givenMultisig2AccountInfo(): MultisigAccountInfo {
