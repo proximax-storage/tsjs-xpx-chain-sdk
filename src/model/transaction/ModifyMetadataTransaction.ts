@@ -153,7 +153,7 @@ export class ModifyMetadataTransaction extends Transaction {
     }
 
     public static calculateSize(type: TransactionType, modifications: MetadataModification[]): number {
-        const modificationsSize = modifications.map(m => 4 + 1 + 1 + 2 + m.key.length + (m.value ? m.value.length : 0)).reduce((p,n) => p+n);
+        const modificationsSize = modifications.map(m => 4 + 1 + 1 + 2 + m.key.length + (m.value ? m.value.length : 0)).reduce((p,n) => p+n, 0);
         const byteSize = Transaction.getHeaderSize()
                         + 1 // type
                         + (type === TransactionType.MODIFY_ACCOUNT_METADATA ? 25 : 8) // id

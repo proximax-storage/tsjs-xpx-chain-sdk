@@ -25,7 +25,7 @@ import { PublicAccount } from '../../../src/model/account/PublicAccount';
 import { RestrictionModificationType } from '../../../src/model/account/RestrictionModificationType';
 import { RestrictionType } from '../../../src/model/account/RestrictionType';
 import { NetworkType } from '../../../src/model/blockchain/NetworkType';
-import { EncryptedMessage } from '../../../src/model/model';
+import { EncryptedMessage, ModifyMetadataTransaction, MetadataType, MetadataModification, Metadata, MetadataModificationType, ChainConfigTransaction, ChainUpgradeTransaction, ModifyContractTransaction } from '../../../src/model/model';
 import { MosaicId } from '../../../src/model/mosaic/MosaicId';
 import { MosaicNonce } from '../../../src/model/mosaic/MosaicNonce';
 import { MosaicProperties } from '../../../src/model/mosaic/MosaicProperties';
@@ -525,6 +525,143 @@ describe('TransactionMapping - createFromPayload', () => {
         expect(transaction.namespaceType).to.be.equal(NamespaceType.SubNamespace);
         expect(transaction.namespaceName).to.be.equal('root-test-namespace');
     });
+
+    it('should create ModifyMetadataTransaction - Address', () => {
+        const modifications = [];
+        const modifyAddressMetadataTransaction = ModifyMetadataTransaction.createWithAddress(
+            NetworkType.MIJIN_TEST,
+            Deadline.create(),
+            account.address,
+            modifications
+        );
+
+        const signedTransaction = modifyAddressMetadataTransaction.signWith(account, generationHash);
+
+        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as ModifyMetadataTransaction;
+
+        expect(transaction.metadataType).to.be.equal(MetadataType.ADDRESS);
+        expect(transaction.metadataId).to.be.equal(account.address.plain());
+        expect(transaction.modifications.length).to.be.equal(0);
+    })
+    it('should create ModifyMetadataTransaction - Mosaic', () => {
+        const modifications = [
+            new MetadataModification(MetadataModificationType.ADD, "someKey")
+        ];
+        const mosaicId = new MosaicId([0x1234, 0x5678]);
+        const modifyAddressMetadataTransaction = ModifyMetadataTransaction.createWithMosaicId(
+            NetworkType.MIJIN_TEST,
+            Deadline.create(),
+            mosaicId,
+            modifications
+        );
+
+        const signedTransaction = modifyAddressMetadataTransaction.signWith(account, generationHash);
+
+        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as ModifyMetadataTransaction;
+
+        expect(transaction.metadataType).to.be.equal(MetadataType.MOSAIC);
+        expect(transaction.metadataId).to.be.equal(mosaicId.toHex());
+        expect(transaction.modifications.length).to.be.equal(1);
+        expect(transaction.modifications[0].key).to.be.equal("someKey");
+        expect(transaction.modifications[0].value).to.be.undefined;
+    })
+    it('should create ModifyMetadataTransaction - Namespace', () => {
+        const modifications = [
+            new MetadataModification(MetadataModificationType.REMOVE, "someKey"),
+            new MetadataModification(MetadataModificationType.ADD, "someOtherKey", "someValue")
+        ];
+        const namespaceId = new NamespaceId([0x1234, 0x5678]);
+        const modifyAddressMetadataTransaction = ModifyMetadataTransaction.createWithNamespaceId(
+            NetworkType.MIJIN_TEST,
+            Deadline.create(),
+            namespaceId,
+            modifications
+        );
+
+        const signedTransaction = modifyAddressMetadataTransaction.signWith(account, generationHash);
+
+        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as ModifyMetadataTransaction;
+
+        expect(transaction.metadataType).to.be.equal(MetadataType.NAMESPACE);
+        expect(transaction.metadataId).to.be.equal(namespaceId.toHex());
+        expect(transaction.modifications.length).to.be.equal(2);
+        expect(transaction.modifications[0].key).to.be.equal("someKey");
+        expect(transaction.modifications[0].value).to.be.undefined;
+        expect(transaction.modifications[1].key).to.be.equal("someOtherKey");
+        expect(transaction.modifications[1].value).to.be.equal("someValue");
+    })
+    it('should create ChainConfigTransaction transaction', () => {
+        const chainConfigureTransaction = ChainConfigTransaction.create(
+            Deadline.create(),
+            UInt64.fromHex('0123456789ABCDEF'),
+            "some network config",
+            "some supported entity versions",
+            NetworkType.MIJIN_TEST
+        );
+
+        const signedTransaction = chainConfigureTransaction.signWith(account, generationHash);
+
+        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as ChainConfigTransaction;
+
+        expect(transaction.applyHeightDelta.toHex()).to.be.equal('0123456789ABCDEF');
+        expect(transaction.networkConfig).to.be.equal("some network config");
+        expect(transaction.supportedEntityVersions).to.be.equal("some supported entity versions");
+    })
+    it('should create ChainUpgradeTransaction', () => {
+        const chainUpgradeTransaction = ChainUpgradeTransaction.create(
+            Deadline.create(),
+            UInt64.fromHex('0123456789ABCDEF'),
+            UInt64.fromHex('FEDCBA9876543210'),
+            NetworkType.MIJIN_TEST
+        );
+
+        const signedTransaction = chainUpgradeTransaction.signWith(account, generationHash);
+
+        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as ChainUpgradeTransaction;
+
+        expect(transaction.upgradePeriod.toHex()).to.be.equal('0123456789ABCDEF');
+        expect(transaction.newBlockchainVersion.toHex()).to.be.equal('FEDCBA9876543210');
+    })
+
+    it('should create ModifyContractTransaction', () => {
+        const hash = sha3_256.create().update('something').hex().toUpperCase();
+        const executorPublicKey = '1'.repeat(63) + 'A';
+        const verifierPublicKey1 = '2'.repeat(63) + 'B';
+        const verifierPublicKey2 = '3'.repeat(63) + 'C';
+        const customers = [];
+        const executors = [
+            new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, PublicAccount.createFromPublicKey(executorPublicKey, NetworkType.MIJIN_TEST))
+        ];
+        const verifiers = [
+            new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Remove, PublicAccount.createFromPublicKey(verifierPublicKey1, NetworkType.MIJIN_TEST)),
+            new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, PublicAccount.createFromPublicKey(verifierPublicKey2, NetworkType.MIJIN_TEST))
+        ];
+        const modifyContractTransaction = ModifyContractTransaction.create(
+            NetworkType.MIJIN_TEST,
+            Deadline.create(),
+            UInt64.fromHex('0123456789ABCDEF'),
+            hash,
+            customers,
+            executors,
+            verifiers
+        );
+
+        const signedTransaction = modifyContractTransaction.signWith(account, generationHash);
+
+        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as ModifyContractTransaction;
+
+        expect(transaction.durationDelta.toHex()).to.be.equal('0123456789ABCDEF');
+        expect(transaction.hash).to.be.equal(hash);
+        expect(transaction.customers.length).to.be.equal(0);
+        expect(transaction.executors.length).to.be.equal(1);
+        expect(transaction.executors[0].type).to.be.equal(MultisigCosignatoryModificationType.Add);
+        expect(transaction.executors[0].cosignatoryPublicAccount.publicKey).to.be.equal(executorPublicKey);
+        expect(transaction.verifiers.length).to.be.equal(2);
+        expect(transaction.verifiers[0].type).to.be.equal(MultisigCosignatoryModificationType.Remove);
+        expect(transaction.verifiers[0].cosignatoryPublicAccount.publicKey).to.be.equal(verifierPublicKey1);
+        expect(transaction.verifiers[1].type).to.be.equal(MultisigCosignatoryModificationType.Add);
+        expect(transaction.verifiers[1].cosignatoryPublicAccount.publicKey).to.be.equal(verifierPublicKey2);
+    })
 });
 
 describe('TransactionMapping - createFromDTO (Transaction.toJSON() feed)', () => {

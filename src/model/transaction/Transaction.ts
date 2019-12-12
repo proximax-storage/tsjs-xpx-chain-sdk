@@ -97,7 +97,6 @@ export abstract class Transaction {
     }
 
     /**
-     * @internal
      * Serialize and sign transaction creating a new SignedTransaction
      * @param account - The account to sign the transaction
      * @param generationHash - Network generation hash hex
