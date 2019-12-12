@@ -31,7 +31,6 @@ import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
 import { TransactionVersion } from './TransactionVersion';
 import { calculateFee } from './FeeCalculationStrategy';
-import { TransactionMapping } from '../../core/utils/utility';
 
 /**
  * Aggregate innerTransactions contain multiple innerTransactions that can be initiated by different accounts.
@@ -113,34 +112,6 @@ export class AggregateTransaction extends Transaction {
             .innerTransactions(innerTransactions)
             .cosignatures(cosignatures)
             .build();
-    }
-
-    /**
-     * Appends cosignatures to a signed aggregate transaction, if they are not yet added
-     *
-     * @param signedTransaction
-     * @param cosignatures
-     */
-    public static addCosignatures(signedTransaction: SignedTransaction, cosignatures: CosignatureSignedTransaction[]): SignedTransaction {
-        // re-create the transaction from payload to determine the type - only allow aggregate complete transaction as an input
-        const recreatedSignedTx = TransactionMapping.createFromPayload(signedTransaction.payload);
-        if (recreatedSignedTx.type !== TransactionType.AGGREGATE_COMPLETE) {
-            throw new Error('Only serialized signed aggregate complete transaction allowed.');
-        }
-        const recreatedSignedAggregateComplete = recreatedSignedTx as AggregateTransaction;
-
-        const signedTransactionRaw = AggregatedTransactionCore.appendSignatures(
-            signedTransaction,
-            cosignatures.filter(cosignature => ! recreatedSignedAggregateComplete.signedByAccount(
-                    PublicAccount.createFromPublicKey(cosignature.signer, recreatedSignedAggregateComplete.networkType))));
-
-        return new SignedTransaction(
-            signedTransactionRaw.payload,
-            signedTransaction.hash,
-            signedTransaction.signer,
-            signedTransaction.type,
-            signedTransaction.networkType
-        );
     }
 
     /**

@@ -18,6 +18,7 @@ import {from as observableFrom , Observable, of as observableOf} from 'rxjs';
 import { flatMap, map, mergeMap, toArray} from 'rxjs/operators';
 import { TransactionMapping } from '../core/utils/TransactionMapping';
 import { AccountHttp } from '../infrastructure/AccountHttp';
+import { AggregateTransaction as AggregatedTransactionCore} from '../infrastructure/builders/AggregateTransaction';
 import { MultisigAccountGraphInfo } from '../model/account/MultisigAccountGraphInfo';
 import { AggregateTransaction } from '../model/transaction/AggregateTransaction';
 import { InnerTransaction } from '../model/transaction/InnerTransaction';
@@ -25,6 +26,7 @@ import { ModifyMultisigAccountTransaction } from '../model/transaction/ModifyMul
 import { MultisigCosignatoryModificationType } from '../model/transaction/MultisigCosignatoryModificationType';
 import { SignedTransaction } from '../model/transaction/SignedTransaction';
 import { TransactionType } from '../model/transaction/TransactionType';
+import { CosignatureSignedTransaction, PublicAccount } from '../model/model';
 
 /**
  * Aggregated Transaction service
@@ -149,5 +151,33 @@ export class AggregateTransactionService {
         }));
 
         return results;
+    }
+
+    /**
+     * Appends cosignatures to a signed aggregate transaction, if they are not yet added
+     *
+     * @param signedTransaction
+     * @param cosignatures
+     */
+    public static addCosignatures(signedTransaction: SignedTransaction, cosignatures: CosignatureSignedTransaction[]): SignedTransaction {
+        // re-create the transaction from payload to determine the type - only allow aggregate complete transaction as an input
+        const recreatedSignedTx = TransactionMapping.createFromPayload(signedTransaction.payload);
+        if (recreatedSignedTx.type !== TransactionType.AGGREGATE_COMPLETE) {
+            throw new Error('Only serialized signed aggregate complete transaction allowed.');
+        }
+        const recreatedSignedAggregateComplete = recreatedSignedTx as AggregateTransaction;
+
+        const signedTransactionRaw = AggregatedTransactionCore.appendSignatures(
+            signedTransaction,
+            cosignatures.filter(cosignature => ! recreatedSignedAggregateComplete.signedByAccount(
+                    PublicAccount.createFromPublicKey(cosignature.signer, recreatedSignedAggregateComplete.networkType))));
+
+        return new SignedTransaction(
+            signedTransactionRaw.payload,
+            signedTransaction.hash,
+            signedTransaction.signer,
+            signedTransaction.type,
+            signedTransaction.networkType
+        );
     }
 }
