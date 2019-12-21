@@ -224,7 +224,7 @@ export class RegisterRootNamespaceTransactionBuilder extends TransactionBuilder 
     public build(): RegisterNamespaceTransaction {
         return new RegisterNamespaceTransaction(
             this._networkType,
-            TransactionVersion.REGISTER_NAMESPACE,
+            this._version || TransactionVersion.REGISTER_NAMESPACE,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(RegisterNamespaceTransaction.calculateSize(this._namespaceName), this._feeCalculationStrategy),
             NamespaceType.RootNamespace,
@@ -263,7 +263,7 @@ export class RegisterSubNamespaceTransactionBuilder extends TransactionBuilder {
 
         return new RegisterNamespaceTransaction(
             this._networkType,
-            TransactionVersion.REGISTER_NAMESPACE,
+            this._version || TransactionVersion.REGISTER_NAMESPACE,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(RegisterNamespaceTransaction.calculateSize(this._namespaceName), this._feeCalculationStrategy),
             NamespaceType.SubNamespace,

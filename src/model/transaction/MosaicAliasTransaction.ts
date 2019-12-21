@@ -171,7 +171,7 @@ export class MosaicAliasTransactionBuilder extends TransactionBuilder {
     public build() {
         return new MosaicAliasTransaction(
             this._networkType,
-            TransactionVersion.MOSAIC_ALIAS,
+            this._version || TransactionVersion.MOSAIC_ALIAS,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(MosaicAliasTransaction.calculateSize(), this._feeCalculationStrategy),
             this._actionType,

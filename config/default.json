@@ -18,7 +18,7 @@
             {
                 "alias": "testing",
                 "pk": "c6f77df1c55b84a7673561eb221c282edb8d9a3f4d66f9320b85736d2e3cdeda",
-                "seed": 10000
+                "seed": 1000000
             },
             {
                 "alias": "recipient",

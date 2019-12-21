@@ -56,6 +56,12 @@ import {UInt64} from '../../model/UInt64';
 import { ModifyMetadataTransaction, MetadataModification } from '../../model/transaction/ModifyMetadataTransaction';
 import { MetadataType } from '../../model/metadata/MetadataType';
 import { ModifyContractTransaction } from '../../model/transaction/ModifyContractTransaction';
+import { AddExchangeOfferTransaction } from '../../model/transaction/AddExchangeOfferTransaction';
+import { AddExchangeOffer } from '../../model/transaction/AddExchangeOffer';
+import { ExchangeOfferTransaction } from '../../model/transaction/ExchangeOfferTransaction';
+import { ExchangeOffer } from '../../model/transaction/ExchangeOffer';
+import { RemoveExchangeOfferTransaction } from '../../model/transaction/RemoveExchangeOfferTransaction';
+import { RemoveExchangeOffer } from '../../model/transaction/RemoveExchangeOffer';
 
 /**
  * @internal
@@ -369,6 +375,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
                 return new ModifyMetadataTransaction(
                     TransactionType.MODIFY_ACCOUNT_METADATA,
                     networkType,
+                    transactionVersion,
                     deadline,
                     maxFee,
                     MetadataType.ADDRESS,
@@ -385,6 +392,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
                 return new ModifyMetadataTransaction(
                     TransactionType.MODIFY_MOSAIC_METADATA,
                     networkType,
+                    transactionVersion,
                     deadline,
                     maxFee,
                     MetadataType.MOSAIC,
@@ -401,6 +409,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
                 return new ModifyMetadataTransaction(
                     TransactionType.MODIFY_NAMESPACE_METADATA,
                     networkType,
+                    transactionVersion,
                     deadline,
                     maxFee,
                     MetadataType.NAMESPACE,
@@ -438,6 +447,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             undefined;
         return new ModifyContractTransaction(
             networkType,
+            transactionVersion,
             deadline,
             durationDelta,
             hash,
@@ -472,6 +482,57 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             new UInt64(transactionDTO.applyHeightDelta || [0, 0]),
             transactionDTO.networkConfig,
             transactionDTO.supportedEntityVersions,
+            transactionDTO.signature,
+            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                            extractNetworkType(transactionDTO.version)) : undefined,
+            transactionInfo,
+        );
+    } else if (transactionDTO.type === TransactionType.ADD_EXCHANGE_OFFER) {
+        return new AddExchangeOfferTransaction(
+            extractNetworkType(transactionDTO.version),
+            extractTransactionVersion(transactionDTO.version),
+            Deadline.createFromDTO(transactionDTO.deadline),
+            transactionDTO.offers.map(o => new AddExchangeOffer(
+                new MosaicId(o.mosaicId),
+                new UInt64(o.mosaicAmount),
+                new UInt64(o.cost),
+                o.type,
+                new UInt64(o.duration)
+            )),
+            new UInt64(transactionDTO.maxFee || [0, 0]),
+            transactionDTO.signature,
+            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                            extractNetworkType(transactionDTO.version)) : undefined,
+            transactionInfo,
+        );
+    } else if (transactionDTO.type === TransactionType.EXCHANGE_OFFER) {
+        return new ExchangeOfferTransaction(
+            extractNetworkType(transactionDTO.version),
+            extractTransactionVersion(transactionDTO.version),
+            Deadline.createFromDTO(transactionDTO.deadline),
+            transactionDTO.offers.map(o => new ExchangeOffer(
+                new MosaicId(o.mosaicId),
+                new UInt64(o.mosaicAmount),
+                new UInt64(o.cost),
+                o.type,
+                PublicAccount.createFromPublicKey(o.owner, extractNetworkType(transactionDTO.version))
+            )),
+            new UInt64(transactionDTO.maxFee || [0, 0]),
+            transactionDTO.signature,
+            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                            extractNetworkType(transactionDTO.version)) : undefined,
+            transactionInfo,
+        );
+    } else if (transactionDTO.type === TransactionType.REMOVE_EXCHANGE_OFFER) {
+        return new RemoveExchangeOfferTransaction(
+            extractNetworkType(transactionDTO.version),
+            extractTransactionVersion(transactionDTO.version),
+            Deadline.createFromDTO(transactionDTO.deadline),
+            transactionDTO.offers.map(o => new RemoveExchangeOffer(
+                new MosaicId(o.mosaicId),
+                o.offerType // or type?
+            )),
+            new UInt64(transactionDTO.maxFee || [0, 0]),
             transactionDTO.signature,
             transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
                             extractNetworkType(transactionDTO.version)) : undefined,

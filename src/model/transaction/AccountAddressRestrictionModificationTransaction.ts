@@ -158,7 +158,7 @@ export class AccountAddressRestrictionModificationTransactionBuilder extends Tra
     public build(): AccountAddressRestrictionModificationTransaction {
         return new AccountAddressRestrictionModificationTransaction(
             this._networkType,
-            TransactionVersion.MODIFY_ACCOUNT_RESTRICTION_ADDRESS,
+            this._version || TransactionVersion.MODIFY_ACCOUNT_RESTRICTION_ADDRESS,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(AccountAddressRestrictionModificationTransaction.calculateSize(this._modifications.length), this._feeCalculationStrategy),
             this._restrictionType,

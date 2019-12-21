@@ -123,7 +123,7 @@ export class ChainUpgradeTransactionBuilder extends TransactionBuilder {
     public build(): ChainUpgradeTransaction {
         return new ChainUpgradeTransaction(
             this._networkType,
-            TransactionVersion.CHAIN_UPGRADE,
+            this._version || TransactionVersion.CHAIN_UPGRADE,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(ChainUpgradeTransaction.calculateSize(), this._feeCalculationStrategy),
             this._upgradePeriod,

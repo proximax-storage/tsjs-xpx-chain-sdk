@@ -26,6 +26,9 @@ import { SecretLockTransactionBuilder } from "./SecretLockTransaction";
 import { SecretProofTransactionBuilder } from "./SecretProofTransaction";
 import { Deadline, DefaultCreateNewDeadline } from "./Deadline";
 import { FeeCalculationStrategy, DefaultFeeCalculationStrategy } from "./FeeCalculationStrategy";
+import { ExchangeOfferTransactionBuilder } from "./ExchangeOfferTransaction";
+import { AddExchangeOfferTransactionBuilder } from "./AddExchangeOfferTransaction";
+import { RemoveExchangeOfferTransactionBuilder } from "./RemoveExchangeOfferTransaction";
 
 
 export class TransactionBuilderFactory {
@@ -224,6 +227,24 @@ export class TransactionBuilderFactory {
 
     public secretProof(): SecretProofTransactionBuilder {
         const builder = new SecretProofTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public addExchangeOffer(): AddExchangeOfferTransactionBuilder {
+        const builder = new AddExchangeOfferTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public exchangeOffer(): ExchangeOfferTransactionBuilder {
+        const builder = new ExchangeOfferTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public removeExchangeOffer(): RemoveExchangeOfferTransactionBuilder {
+        const builder = new RemoveExchangeOfferTransactionBuilder();
         this.configureBuilder(builder);
         return builder;
     }

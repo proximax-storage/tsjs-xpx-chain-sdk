@@ -146,4 +146,19 @@ export class TransactionType {
      * Configure chain transaction type
      */
     public static readonly CHAIN_CONFIGURE = 0x4159;
+
+    /**
+     * Add exchange transaction type
+     */
+    public static readonly ADD_EXCHANGE_OFFER = 0x415D;
+
+    /**
+     * Exchange transaction type
+     */
+    public static readonly EXCHANGE_OFFER = 0x425D;
+
+    /**
+     * Remove exchange transaction type
+     */
+    public static readonly REMOVE_EXCHANGE_OFFER = 0x435D;
 }

@@ -61,6 +61,13 @@ import { TransferTransaction } from '../../../src/model/transaction/TransferTran
 import { UInt64 } from '../../../src/model/UInt64';
 import { TestingAccount } from '../../conf/conf.spec';
 import { XpxMosaicProperties } from '../../../src/model/mosaic/NetworkMosaic';
+import { AddExchangeOfferTransaction } from '../../../src/model/transaction/AddExchangeOfferTransaction';
+import { AddExchangeOffer } from '../../../src/model/transaction/AddExchangeOffer';
+import { ExchangeOffer } from '../../../src/model/transaction/ExchangeOffer';
+import { ExchangeOfferType } from '../../../src/model/transaction/ExchangeOfferType';
+import { ExchangeOfferTransaction } from '../../../src/model/transaction/ExchangeOfferTransaction';
+import { RemoveExchangeOfferTransaction } from '../../../src/model/transaction/RemoveExchangeOfferTransaction';
+import { RemoveExchangeOffer } from '../../../src/model/transaction/RemoveExchangeOffer';
 
 describe('TransactionMapping - createFromPayload', () => {
     let account: Account;
@@ -662,6 +669,113 @@ describe('TransactionMapping - createFromPayload', () => {
         expect(transaction.verifiers[1].type).to.be.equal(MultisigCosignatoryModificationType.Add);
         expect(transaction.verifiers[1].cosignatoryPublicAccount.publicKey).to.be.equal(verifierPublicKey2);
     })
+    it('should create AddExchangeOfferTransaction', () => {
+        const addExchangeOfferTransaction = AddExchangeOfferTransaction.create(
+            Deadline.create(),
+            [
+                new AddExchangeOffer(
+                    new MosaicId('1234567890ABCDEF'),
+                    UInt64.fromUint(12345678),
+                    UInt64.fromUint(23456789),
+                    ExchangeOfferType.SELL_OFFER,
+                    UInt64.fromUint(34567890)
+                ),
+                new AddExchangeOffer(
+                    new MosaicId('1234567890ABCDFF'),
+                    UInt64.fromUint(12345678),
+                    UInt64.fromUint(23456789),
+                    ExchangeOfferType.SELL_OFFER,
+                    UInt64.fromUint(34567890)
+                )
+            ],
+            NetworkType.MIJIN_TEST,
+        );
+
+        const signedTransaction = addExchangeOfferTransaction.signWith(account, generationHash);
+
+        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as AddExchangeOfferTransaction;
+
+        expect(transaction.type).to.be.equal(TransactionType.ADD_EXCHANGE_OFFER);
+        expect(transaction.offers.length).to.be.equal(2);
+        expect(transaction.offers[0].mosaicId.toHex().toUpperCase()).to.be.equal('1234567890ABCDEF');
+        expect(transaction.offers[0].mosaicAmount.compact()).to.be.equal(12345678);
+        expect(transaction.offers[0].cost.compact()).to.be.equal(23456789);
+        expect(transaction.offers[0].type).to.be.equal(ExchangeOfferType.SELL_OFFER);
+        expect(transaction.offers[0].duration.compact()).to.be.equal(34567890);
+        expect(transaction.offers[1].mosaicId.toHex().toUpperCase()).to.be.equal('1234567890ABCDFF');
+        expect(transaction.offers[1].mosaicAmount.compact()).to.be.equal(12345678);
+        expect(transaction.offers[1].cost.compact()).to.be.equal(23456789);
+        expect(transaction.offers[1].type).to.be.equal(ExchangeOfferType.SELL_OFFER);
+        expect(transaction.offers[1].duration.compact()).to.be.equal(34567890);
+    })
+
+    it('should create ExchangeOfferTransaction', () => {
+        const exchangeOfferTransaction = ExchangeOfferTransaction.create(
+            Deadline.create(),
+            [
+                new ExchangeOffer(
+                    new MosaicId('1234567890ABCDEF'),
+                    UInt64.fromUint(12345678),
+                    UInt64.fromUint(23456789),
+                    ExchangeOfferType.SELL_OFFER,
+                    PublicAccount.createFromPublicKey('6'.repeat(64), NetworkType.MIJIN_TEST)
+                ),
+                new ExchangeOffer(
+                    new MosaicId('1234567890ABCDFF'),
+                    UInt64.fromUint(12345678),
+                    UInt64.fromUint(23456789),
+                    ExchangeOfferType.SELL_OFFER,
+                    PublicAccount.createFromPublicKey('9'.repeat(64), NetworkType.MIJIN_TEST)
+                )
+            ],
+            NetworkType.MIJIN_TEST,
+        );
+
+        const signedTransaction = exchangeOfferTransaction.signWith(account, generationHash);
+
+        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as ExchangeOfferTransaction;
+
+        expect(transaction.type).to.be.equal(TransactionType.EXCHANGE_OFFER);
+        expect(transaction.offers.length).to.be.equal(2);
+        expect(transaction.offers[0].mosaicId.toHex().toUpperCase()).to.be.equal('1234567890ABCDEF');
+        expect(transaction.offers[0].mosaicAmount.compact()).to.be.equal(12345678);
+        expect(transaction.offers[0].cost.compact()).to.be.equal(23456789);
+        expect(transaction.offers[0].type).to.be.equal(ExchangeOfferType.SELL_OFFER);
+        expect(transaction.offers[0].owner.publicKey).to.be.equal('6'.repeat(64));
+        expect(transaction.offers[1].mosaicId.toHex().toUpperCase()).to.be.equal('1234567890ABCDFF');
+        expect(transaction.offers[1].mosaicAmount.compact()).to.be.equal(12345678);
+        expect(transaction.offers[1].cost.compact()).to.be.equal(23456789);
+        expect(transaction.offers[1].type).to.be.equal(ExchangeOfferType.SELL_OFFER);
+        expect(transaction.offers[1].owner.publicKey).to.be.equal('9'.repeat(64));
+    });
+
+    it('should create RemoveExchangeOfferTransaction', () => {
+        const removeExchangeOfferTransaction = RemoveExchangeOfferTransaction.create(
+            Deadline.create(),
+            [
+                new RemoveExchangeOffer(
+                    new MosaicId('1234567890ABCDEF'),
+                    ExchangeOfferType.SELL_OFFER,
+                ),
+                new RemoveExchangeOffer(
+                    new MosaicId('1234567890ABCDFF'),
+                    ExchangeOfferType.SELL_OFFER,
+                )
+            ],
+            NetworkType.MIJIN_TEST,
+        );
+
+        const signedTransaction = removeExchangeOfferTransaction.signWith(account, generationHash);
+
+        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as RemoveExchangeOfferTransaction;
+
+        expect(transaction.type).to.be.equal(TransactionType.REMOVE_EXCHANGE_OFFER);
+        expect(transaction.offers.length).to.be.equal(2);
+        expect(transaction.offers[0].mosaicId.toHex().toUpperCase()).to.be.equal('1234567890ABCDEF');
+        expect(transaction.offers[0].offerType).to.be.equal(ExchangeOfferType.SELL_OFFER);
+        expect(transaction.offers[1].mosaicId.toHex().toUpperCase()).to.be.equal('1234567890ABCDFF');
+        expect(transaction.offers[1].offerType).to.be.equal(ExchangeOfferType.SELL_OFFER);
+    })
 });
 
 describe('TransactionMapping - createFromDTO (Transaction.toJSON() feed)', () => {
@@ -1033,4 +1147,110 @@ describe('TransactionMapping - createFromDTO (Transaction.toJSON() feed)', () =>
 
         expect(transaction.type).to.be.equal(TransactionType.REGISTER_NAMESPACE);
     });
+
+    it('should create AddExchangeOfferTransaction', () => {
+        const addExchangeOfferTransaction = AddExchangeOfferTransaction.create(
+            Deadline.create(),
+            [
+                new AddExchangeOffer(
+                    new MosaicId('1234567890ABCDEF'),
+                    UInt64.fromUint(12345678),
+                    UInt64.fromUint(23456789),
+                    ExchangeOfferType.SELL_OFFER,
+                    UInt64.fromUint(34567890)
+                ),
+                new AddExchangeOffer(
+                    new MosaicId('1234567890ABCDFF'),
+                    UInt64.fromUint(12345678),
+                    UInt64.fromUint(23456789),
+                    ExchangeOfferType.SELL_OFFER,
+                    UInt64.fromUint(34567890)
+                )
+            ],
+            NetworkType.MIJIN_TEST,
+        );
+
+        const transaction =
+            TransactionMapping.createFromDTO(addExchangeOfferTransaction.toJSON()) as AddExchangeOfferTransaction;
+
+        expect(transaction.type).to.be.equal(TransactionType.ADD_EXCHANGE_OFFER);
+        expect(transaction.offers.length).to.be.equal(2);
+        expect(transaction.offers[0].mosaicId.toHex().toUpperCase()).to.be.equal('1234567890ABCDEF');
+        expect(transaction.offers[0].mosaicAmount.compact()).to.be.equal(12345678);
+        expect(transaction.offers[0].cost.compact()).to.be.equal(23456789);
+        expect(transaction.offers[0].type).to.be.equal(ExchangeOfferType.SELL_OFFER);
+        expect(transaction.offers[0].duration.compact()).to.be.equal(34567890);
+        expect(transaction.offers[1].mosaicId.toHex().toUpperCase()).to.be.equal('1234567890ABCDFF');
+        expect(transaction.offers[1].mosaicAmount.compact()).to.be.equal(12345678);
+        expect(transaction.offers[1].cost.compact()).to.be.equal(23456789);
+        expect(transaction.offers[1].type).to.be.equal(ExchangeOfferType.SELL_OFFER);
+        expect(transaction.offers[1].duration.compact()).to.be.equal(34567890);
+    });
+
+    it('should create ExchangeOfferTransaction', () => {
+        const exchangeOfferTransaction = ExchangeOfferTransaction.create(
+            Deadline.create(),
+            [
+                new ExchangeOffer(
+                    new MosaicId('1234567890ABCDEF'),
+                    UInt64.fromUint(12345678),
+                    UInt64.fromUint(23456789),
+                    ExchangeOfferType.SELL_OFFER,
+                    PublicAccount.createFromPublicKey('6'.repeat(64), NetworkType.MIJIN_TEST)
+                ),
+                new ExchangeOffer(
+                    new MosaicId('1234567890ABCDFF'),
+                    UInt64.fromUint(12345678),
+                    UInt64.fromUint(23456789),
+                    ExchangeOfferType.SELL_OFFER,
+                    PublicAccount.createFromPublicKey('9'.repeat(64), NetworkType.MIJIN_TEST)
+                )
+            ],
+            NetworkType.MIJIN_TEST,
+        );
+
+        const transaction =
+            TransactionMapping.createFromDTO(exchangeOfferTransaction.toJSON()) as ExchangeOfferTransaction;
+
+        expect(transaction.type).to.be.equal(TransactionType.EXCHANGE_OFFER);
+        expect(transaction.offers.length).to.be.equal(2);
+        expect(transaction.offers[0].mosaicId.toHex().toUpperCase()).to.be.equal('1234567890ABCDEF');
+        expect(transaction.offers[0].mosaicAmount.compact()).to.be.equal(12345678);
+        expect(transaction.offers[0].cost.compact()).to.be.equal(23456789);
+        expect(transaction.offers[0].type).to.be.equal(ExchangeOfferType.SELL_OFFER);
+        expect(transaction.offers[0].owner.publicKey).to.be.equal('6'.repeat(64));
+        expect(transaction.offers[1].mosaicId.toHex().toUpperCase()).to.be.equal('1234567890ABCDFF');
+        expect(transaction.offers[1].mosaicAmount.compact()).to.be.equal(12345678);
+        expect(transaction.offers[1].cost.compact()).to.be.equal(23456789);
+        expect(transaction.offers[1].type).to.be.equal(ExchangeOfferType.SELL_OFFER);
+        expect(transaction.offers[1].owner.publicKey).to.be.equal('9'.repeat(64));
+    });
+
+    it('should create RemoveExchangeOfferTransaction', () => {
+        const removeExchangeOfferTransaction = RemoveExchangeOfferTransaction.create(
+            Deadline.create(),
+            [
+                new RemoveExchangeOffer(
+                    new MosaicId('1234567890ABCDEF'),
+                    ExchangeOfferType.SELL_OFFER,
+                ),
+                new RemoveExchangeOffer(
+                    new MosaicId('1234567890ABCDFF'),
+                    ExchangeOfferType.SELL_OFFER,
+                )
+            ],
+            NetworkType.MIJIN_TEST,
+        );
+
+        const transaction =
+            TransactionMapping.createFromDTO(removeExchangeOfferTransaction.toJSON()) as RemoveExchangeOfferTransaction;
+
+        expect(transaction.type).to.be.equal(TransactionType.REMOVE_EXCHANGE_OFFER);
+        expect(transaction.offers.length).to.be.equal(2);
+        expect(transaction.offers[0].mosaicId.toHex().toUpperCase()).to.be.equal('1234567890ABCDEF');
+        expect(transaction.offers[0].offerType).to.be.equal(ExchangeOfferType.SELL_OFFER);
+        expect(transaction.offers[1].mosaicId.toHex().toUpperCase()).to.be.equal('1234567890ABCDFF');
+        expect(transaction.offers[1].offerType).to.be.equal(ExchangeOfferType.SELL_OFFER);
+    });
+
 });

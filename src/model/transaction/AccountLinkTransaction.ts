@@ -156,7 +156,7 @@ export class AccountLinkTransactionBuilder extends TransactionBuilder {
     public build(): AccountLinkTransaction {
         return new AccountLinkTransaction(
             this._networkType,
-            TransactionVersion.LINK_ACCOUNT,
+            this._version || TransactionVersion.LINK_ACCOUNT,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(AccountLinkTransaction.calculateSize(), this._feeCalculationStrategy),
             this._remoteAccountKey,

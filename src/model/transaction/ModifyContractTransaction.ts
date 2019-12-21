@@ -50,6 +50,7 @@ export class ModifyContractTransaction extends Transaction {
 
     constructor(
         networkType: NetworkType,
+        version: number,
         deadline: Deadline,
         durationDelta: UInt64,
         hash: string,
@@ -60,7 +61,7 @@ export class ModifyContractTransaction extends Transaction {
         signature?: string,
         signer?: PublicAccount,
         transactionInfo?: TransactionInfo | AggregateTransactionInfo) {
-        super(TransactionType.MODIFY_CONTRACT, networkType, TransactionVersion.MODIFY_CONTRACT, deadline, maxFee, signature, signer, transactionInfo);
+        super(TransactionType.MODIFY_CONTRACT, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
         this.durationDelta = durationDelta;
         this.hash = hash;
         this.customers = customers;
@@ -172,6 +173,7 @@ export class ModifyContractTransactionBuilder extends TransactionBuilder {
     public build(): ModifyContractTransaction {
         return new ModifyContractTransaction(
             this._networkType,
+            this._version || TransactionVersion.MODIFY_CONTRACT,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._durationDelta,
             this._hash,

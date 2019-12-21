@@ -116,7 +116,6 @@ export class Builder {
             throw new Error("Unhandled metadataType during ModifyMetadataTransaction serialization");
         }
 
-        // TODO: different types/lengths
         const metadataIdVector = ModifyMetadataTransactionBuffer.createMetadataIdVector(builder, metadataIdDecoded);
 
         ModifyMetadataTransactionBuffer.startModifyMetadataTransactionBuffer(builder);
