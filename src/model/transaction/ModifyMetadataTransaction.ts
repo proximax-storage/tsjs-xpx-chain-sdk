@@ -129,6 +129,7 @@ export class ModifyMetadataTransaction extends Transaction {
     constructor(
         transactionType: number,
         networkType: NetworkType,
+        version: number,
         deadline: Deadline,
         maxFee: UInt64,
         metadataType: number,
@@ -137,7 +138,7 @@ export class ModifyMetadataTransaction extends Transaction {
         signature?: string,
         signer?: PublicAccount,
         transactionInfo?: TransactionInfo | AggregateTransactionInfo) {
-        super(transactionType, networkType, TransactionVersion.MODIFY_METADATA, deadline, maxFee, signature, signer, transactionInfo);
+        super(transactionType, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
         this.metadataType = metadataType;
         this.metadataId = metadataId;
         this.modifications = modifications;
@@ -220,6 +221,7 @@ class ModifyMetadataTransactionBuilder extends TransactionBuilder {
         return new ModifyMetadataTransaction(
             this._transactionType,
             this._networkType,
+            this._version || TransactionVersion.MODIFY_METADATA,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(ModifyMetadataTransaction.calculateSize(this._transactionType, this._modifications), this._feeCalculationStrategy),
             this._metadataType,

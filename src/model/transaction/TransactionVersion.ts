@@ -145,4 +145,23 @@ export class TransactionVersion {
      * @type {number}
      */
     public static readonly CHAIN_UPGRADE = 1;
+
+    /**
+     * Add exchange transaction version
+     * @type {number}
+     */
+    public static readonly ADD_EXCHANGE_OFFER = 1;
+
+    /**
+     * Exchange transaction version
+     * @type {number}
+     */
+    public static readonly EXCHANGE_OFFER = 1;
+
+    /**
+     * Remove exchange transaction version
+     * @type {number}
+     */
+    public static readonly REMOVE_EXCHANGE_OFFER = 1;
+
 }

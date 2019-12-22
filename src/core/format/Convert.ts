@@ -172,4 +172,18 @@ export class Convert {
         }
         return result;
     }
+
+    /**
+     * Convert a UInt64 array to a uint8 array.
+     */
+    public static UInt64ToUint8Array = (input): number[] => [
+            (input[0] & 0xff)        >> 0,
+            (input[0] & 0xff00)      >> 8,
+            (input[0] & 0xff0000)    >> 16,
+            (input[0] & 0xff000000)  >> 24,
+            (input[1] & 0xff)        >> 0,
+            (input[1] & 0xff00)      >> 8,
+            (input[1] & 0xff0000)    >> 16,
+            (input[1] & 0xff000000)  >> 24,
+        ];
 }

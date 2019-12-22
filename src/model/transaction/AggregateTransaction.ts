@@ -243,7 +243,7 @@ export class AggregateCompleteTransactionBuilder extends TransactionBuilder {
         return new AggregateTransaction(
             this._networkType,
             TransactionType.AGGREGATE_COMPLETE,
-            TransactionVersion.AGGREGATE_COMPLETE,
+            this._version || TransactionVersion.AGGREGATE_COMPLETE,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(AggregateTransaction.calculateSize(this._innerTransactions), this._feeCalculationStrategy),
             this._innerTransactions,
@@ -272,7 +272,7 @@ export class AggregateBondedTransactionBuilder extends TransactionBuilder {
         return new AggregateTransaction(
             this._networkType,
             TransactionType.AGGREGATE_BONDED,
-            TransactionVersion.AGGREGATE_BONDED,
+            this._version || TransactionVersion.AGGREGATE_BONDED,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(AggregateTransaction.calculateSize(this._innerTransactions), this._feeCalculationStrategy),
             this._innerTransactions,

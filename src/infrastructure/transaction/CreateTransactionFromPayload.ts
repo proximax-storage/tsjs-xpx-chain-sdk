@@ -38,6 +38,9 @@ import { Transaction } from '../../model/transaction/Transaction';
 import { TransactionType } from '../../model/transaction/TransactionType';
 import { UInt64 } from '../../model/UInt64';
 import { TransactionBuilderFactory, MetadataType, MetadataModification, Metadata, MultisigCosignatoryModificationType } from '../../model/model';
+import { AddExchangeOffer } from '../../model/transaction/AddExchangeOffer';
+import { ExchangeOffer } from '../../model/transaction/ExchangeOffer';
+import { RemoveExchangeOffer } from '../../model/transaction/RemoveExchangeOffer';
 
 /**
  * @internal
@@ -439,6 +442,60 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                 .customers(modArray.slice(0, numCustomers))
                 .executors(modArray.slice(numCustomers, numCustomers + numExecutors))
                 .verifiers(modArray.slice(numCustomers + numExecutors))
+                .build();
+        case TransactionType.ADD_EXCHANGE_OFFER:
+            // const numOffers = extractNumberFromHex(transactionData.substring(0, 2));
+            const addOffersArray =  transactionData.substr(2).match(/.{66}/g) || [];
+            return factory.addExchangeOffer()
+                .offers(addOffersArray.map(o => {
+                    const id = o.substring(0, 16);
+                    const amount = o.substring(16, 32);
+                    const cost = o.substring(32, 48);
+                    const type = extractNumberFromHex(o.substring(48, 50));
+                    const duration = o.substring(50, 66);
+
+                    return new AddExchangeOffer(
+                        new MosaicId(UInt64.fromHex(reverse(id)).toDTO()),
+                        UInt64.fromHex(reverse(amount)),
+                        UInt64.fromHex(reverse(cost)),
+                        type,
+                        UInt64.fromHex(reverse(duration))
+                    )})
+                )
+                .build();
+        case TransactionType.EXCHANGE_OFFER:
+            // const numOffers = extractNumberFromHex(transactionData.substring(0, 2));
+            const offersArray =  transactionData.substr(2).match(/.{114}/g) || [];
+            return factory.exchangeOffer()
+                .offers(offersArray.map(o => {
+                    const id = o.substring(0, 16);
+                    const amount = o.substring(16, 32);
+                    const cost = o.substring(32, 48);
+                    const type = extractNumberFromHex(o.substring(48, 50));
+                    const owner = o.substring(50, 114);
+
+                    return new ExchangeOffer(
+                        new MosaicId(UInt64.fromHex(reverse(id)).toDTO()),
+                        UInt64.fromHex(reverse(amount)),
+                        UInt64.fromHex(reverse(cost)),
+                        type,
+                        PublicAccount.createFromPublicKey(owner, networkType)
+                    )})
+                )
+                .build();
+        case TransactionType.REMOVE_EXCHANGE_OFFER:
+            // const numOffers = extractNumberFromHex(transactionData.substring(0, 2));
+            const removeOffersArray =  transactionData.substr(2).match(/.{18}/g) || [];
+            return factory.removeExchangeOffer()
+                .offers(removeOffersArray.map(o => {
+                    const id = o.substring(0, 16);
+                    const offerType = extractNumberFromHex(o.substring(16, 18));
+
+                    return new RemoveExchangeOffer(
+                        new MosaicId(UInt64.fromHex(reverse(id)).toDTO()),
+                        offerType
+                    )})
+                )
                 .build();
 
         default:

@@ -174,7 +174,7 @@ export class MosaicSupplyChangeTransactionBuilder extends TransactionBuilder {
     public build() {
         return new MosaicSupplyChangeTransaction(
             this._networkType,
-            TransactionVersion.MOSAIC_SUPPLY_CHANGE,
+            this._version || TransactionVersion.MOSAIC_SUPPLY_CHANGE,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(MosaicSupplyChangeTransaction.calculateSize(), this._feeCalculationStrategy),
             this._mosaicId,

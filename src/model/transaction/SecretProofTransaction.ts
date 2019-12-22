@@ -183,7 +183,7 @@ export class SecretProofTransactionBuilder extends TransactionBuilder {
     public build(): SecretProofTransaction {
         return new SecretProofTransaction(
             this._networkType,
-            TransactionVersion.SECRET_PROOF,
+            this._version || TransactionVersion.SECRET_PROOF,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(SecretProofTransaction.calculateSize(this._proof), this._feeCalculationStrategy),
             this._hashType,

@@ -213,7 +213,7 @@ export class SecretLockTransactionBuilder extends TransactionBuilder {
     public build(): SecretLockTransaction {
         return new SecretLockTransaction(
             this._networkType,
-            TransactionVersion.SECRET_LOCK,
+            this._version || TransactionVersion.SECRET_LOCK,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(SecretLockTransaction.calculateSize(), this._feeCalculationStrategy),
             this._mosaic,

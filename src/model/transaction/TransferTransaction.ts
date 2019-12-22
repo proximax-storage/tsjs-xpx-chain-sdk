@@ -193,7 +193,7 @@ export class TransferTransactionBuilder extends TransactionBuilder {
     public build(): TransferTransaction {
         return new TransferTransaction(
             this._networkType,
-            TransactionVersion.TRANSFER,
+            this._version || TransactionVersion.TRANSFER,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(TransferTransaction.calculateSize(this._message.size(), this._mosaics.length), this._feeCalculationStrategy),
             this._recipient,

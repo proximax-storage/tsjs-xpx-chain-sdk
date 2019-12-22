@@ -175,7 +175,7 @@ export class AddressAliasTransactionBuilder extends TransactionBuilder {
     public build(): AddressAliasTransaction {
         return new AddressAliasTransaction(
             this._networkType,
-            TransactionVersion.ADDRESS_ALIAS,
+            this._version || TransactionVersion.ADDRESS_ALIAS,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(AddressAliasTransaction.calculateSize(), this._feeCalculationStrategy),
             this._actionType,

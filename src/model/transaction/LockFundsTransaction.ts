@@ -185,7 +185,7 @@ export class LockFundsTransactionBuilder extends TransactionBuilder {
     public build(): LockFundsTransaction {
         return new LockFundsTransaction(
             this._networkType,
-            TransactionVersion.LOCK,
+            this._version || TransactionVersion.LOCK,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(LockFundsTransaction.calculateSize(), this._feeCalculationStrategy),
             this._mosaic,

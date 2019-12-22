@@ -1,7 +1,8 @@
 import { SeedAccount, APIUrl, ConfNetworkMosaic, AllTestingAccounts, TestAccount, TestingAccount, ConfTestingNamespaceId, ConfTestingMosaicNonce, ConfTestingMosaicProperties, TestingRecipient, ConfAccountHttp, ConfTransactionHttp, ConfNamespaceHttp, ConfMosaicHttp, Configuration, ConfTestingMosaicId } from "./conf.spec";
-import { Account, PlainMessage, UInt64, MultisigCosignatoryModification, MultisigCosignatoryModificationType, Address, Mosaic, MosaicId, AccountInfo, NamespaceId, RegisterNamespaceTransaction, CosignatureTransaction, AccountRestrictionModification, RestrictionModificationType, RestrictionType } from "../../src/model/model";
+import { Account, PlainMessage, UInt64, MultisigCosignatoryModification, MultisigCosignatoryModificationType, Address, Mosaic, MosaicId, AccountInfo, NamespaceId, RegisterNamespaceTransaction, CosignatureTransaction, AccountRestrictionModification, RestrictionModificationType, RestrictionType, MosaicSupplyType } from "../../src/model/model";
 import { forkJoin } from "rxjs";
 import { TransactionHttp, Listener, AccountHttp } from "../../src/infrastructure/infrastructure";
+import { Test } from "mocha";
 
 export class ConfUtils {
 
@@ -30,7 +31,7 @@ export class ConfUtils {
     }
 
     public static prepareE2eTestData() {
-        return Promise.all(Array.from(AllTestingAccounts.values()).map(ta =>
+        return Promise.all(Array.from(AllTestingAccounts.values()).filter(ta => ta.conf.seed).map(ta =>
             ConfUtils.seed(ta).then(accInfo =>
                 ConfUtils.checkIfNeedPubKey(ta, accInfo)
         ))).then(accInfos => {
@@ -299,12 +300,21 @@ export class ConfUtils {
                             .mosaicProperties(ConfTestingMosaicProperties)
                             .build();
 
-                        const signedRegisterNamespaceTransaction = mosaicDefinitionTransaction.signWith(TestingAccount, factory.generationHash);
+                        const signedMosaicDefinitionTransaction = mosaicDefinitionTransaction.signWith(TestingAccount, factory.generationHash);
                         this.waitForConfirmation(listener, TestingAccount.address, () => {
-                            listener.close();
-                            resolve();
-                        }, signedRegisterNamespaceTransaction.hash);
-                        transactionHttp.announce(signedRegisterNamespaceTransaction);
+                            const mosaicSupplyChangeTransaction = factory.mosaicSupplyChange()
+                                .mosaicId(ConfTestingMosaicId)
+                                .direction(MosaicSupplyType.Increase)
+                                .delta(UInt64.fromUint(1000000000 * 10^ConfTestingMosaicProperties.divisibility))
+                                .build();
+                                const signedMosaicSupplyChangeTransaction = mosaicSupplyChangeTransaction.signWith(TestingAccount, factory.generationHash);
+                                this.waitForConfirmation(listener, TestingAccount.address, () => {
+                                    listener.close();
+                                    resolve();
+                                }, signedMosaicSupplyChangeTransaction.hash);
+                                transactionHttp.announce(signedMosaicSupplyChangeTransaction);
+                        }, signedMosaicDefinitionTransaction.hash);
+                        transactionHttp.announce(signedMosaicDefinitionTransaction);
                     });
                 });
             });

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { Convert as convert } from '../../core/format/Convert';
 import { TransactionType } from '../../model/transaction/TransactionType';
 import MosaicAliasTransactionBufferPackage from '../buffers/AliasTransactionBuffer';
 import MosaicAliasTransactionSchema from '../schemas/MosaicAliasTransactionSchema';
@@ -103,16 +104,7 @@ export class Builder {
         const namespaceIdVector = AliasTransactionBuffer
             .createNamespaceIdVector(builder, this.namespaceId);
         const mosaicIdVector = AliasTransactionBuffer
-            .createAliasIdVector(builder, new Uint8Array([
-                (this.mosaicId[0] & 0xff)        >> 0,
-                (this.mosaicId[0] & 0xff00)      >> 8,
-                (this.mosaicId[0] & 0xff0000)    >> 16,
-                (this.mosaicId[0] & 0xff000000)  >> 24,
-                (this.mosaicId[1] & 0xff)        >> 0,
-                (this.mosaicId[1] & 0xff00)      >> 8,
-                (this.mosaicId[1] & 0xff0000)    >> 16,
-                (this.mosaicId[1] & 0xff000000)  >> 24,
-            ]));
+            .createAliasIdVector(builder, new Uint8Array(convert.UInt64ToUint8Array(this.mosaicId)));
 
         AliasTransactionBuffer.startAliasTransactionBuffer(builder);
         AliasTransactionBuffer.addSize(builder, this.size);

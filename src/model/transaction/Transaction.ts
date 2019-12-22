@@ -241,6 +241,7 @@ export abstract class Transaction {
 
 export abstract class TransactionBuilder {
     protected _networkType: NetworkType;
+    protected _version: number;
     protected _deadline: Deadline;
     protected _generationHash: string;
     protected _feeCalculationStrategy: FeeCalculationStrategy = DefaultFeeCalculationStrategy;
@@ -252,6 +253,11 @@ export abstract class TransactionBuilder {
 
     public networkType(networkType: NetworkType) {
         this._networkType = networkType;
+        return this;
+    }
+
+    public version(version: number) {
+        this._version = version;
         return this;
     }
 

@@ -140,7 +140,7 @@ export class ChainConfigTransactionBuilder extends TransactionBuilder {
     public build(): ChainConfigTransaction {
         return new ChainConfigTransaction(
             this._networkType,
-            TransactionVersion.CHAIN_CONFIG,
+            this._version || TransactionVersion.CHAIN_CONFIG,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(ChainConfigTransaction.calculateSize(this._networkConfig.length, this._supportedEntityVersions.length), this._feeCalculationStrategy),
             this._applyHeightDelta,
