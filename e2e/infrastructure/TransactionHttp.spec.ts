@@ -1168,6 +1168,7 @@ describe('TransactionHttp', () => {
                 });
             });
         });
+
         describe('ChainUpgradeTransaction', () => {
             ((NemesisAccount.privateKey !== "0".repeat(64)) ? it : it.skip)('standalone', (done) => {
                 const chainUpgradeTransaction = factory.chainUpgrade()
@@ -1201,6 +1202,28 @@ describe('TransactionHttp', () => {
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
             });
+
+            it('aggregate', (done) => {
+                const offers = [
+                    new AddExchangeOffer(
+                        ConfTestingMosaicId,
+                        UInt64.fromUint(10000000),
+                        UInt64.fromUint(10000000),
+                        ExchangeOfferType.BUY_OFFER,
+                        UInt64.fromUint(1000)
+                    )
+                ];
+                const addExchangeOfferTransaction = factory.addExchangeOffer()
+                    .offers(offers)
+                    .build();
+                const aggregateComplete = factory.aggregateComplete()
+                    .innerTransactions([addExchangeOfferTransaction.toAggregate(CosignatoryAccount.publicAccount)])
+                    .build();
+                const signedTransaction = aggregateComplete.signWith(CosignatoryAccount, factory.generationHash);
+                validateTransactionConfirmed(listener, CosignatoryAccount.address, signedTransaction.hash)
+                    .then(() => done()).catch((reason) => fail(reason));
+                transactionHttp.announce(signedTransaction);
+            });
         });
 
         describe('ExchangeOfferTransaction', () => {
@@ -1222,6 +1245,28 @@ describe('TransactionHttp', () => {
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
             });
+
+            it('aggregate', (done) => {
+                const offers = [
+                    new ExchangeOffer(
+                        ConfTestingMosaicId,
+                        UInt64.fromUint(100),
+                        UInt64.fromUint(100),
+                        ExchangeOfferType.BUY_OFFER,
+                        CosignatoryAccount.publicAccount
+                    )
+                ];
+                const exchangeOfferTransaction = factory.exchangeOffer()
+                    .offers(offers)
+                    .build();
+                const aggregateComplete = factory.aggregateComplete()
+                    .innerTransactions([exchangeOfferTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .build();
+                const signedTransaction = aggregateComplete.signWith(TestingAccount, factory.generationHash);
+                validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
+                    .then(() => done()).catch((reason) => fail(reason));
+                transactionHttp.announce(signedTransaction);
+            });
         });
 
         describe('RemoveExchangeOfferTransaction', () => {
@@ -1237,6 +1282,25 @@ describe('TransactionHttp', () => {
                     .build();
                 const signedTransaction = exchangeOfferTransaction.signWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
+                    .then(() => done()).catch((reason) => fail(reason));
+                transactionHttp.announce(signedTransaction);
+            });
+
+            it('aggregate', (done) => {
+                const offers = [
+                    new RemoveExchangeOffer(
+                        ConfTestingMosaicId,
+                        ExchangeOfferType.BUY_OFFER,
+                    )
+                ];
+                const exchangeOfferTransaction = factory.removeExchangeOffer()
+                    .offers(offers)
+                    .build();
+                const aggregateComplete = factory.aggregateComplete()
+                    .innerTransactions([exchangeOfferTransaction.toAggregate(CosignatoryAccount.publicAccount)])
+                    .build();
+                const signedTransaction = aggregateComplete.signWith(CosignatoryAccount, factory.generationHash);
+                validateTransactionConfirmed(listener, CosignatoryAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
             });
