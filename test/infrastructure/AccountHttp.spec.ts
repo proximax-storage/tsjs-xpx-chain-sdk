@@ -18,7 +18,7 @@ const networkType = NetworkType.MIJIN_TEST;
 const publicAccount = PublicAccount.createFromPublicKey('6'.repeat(64), networkType);
 const address = publicAccount.address;
 
-describe('AccountHttps', () => {
+describe('AccountHttp', () => {
 
     describe('getAccountInfo', () => {
         const dto = {
