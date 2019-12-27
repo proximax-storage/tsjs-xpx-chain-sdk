@@ -39,6 +39,7 @@
     "@types/ws": "^6.0.1",
     "assert": "^2.0.0",
     "chai": "^4.2.0",
+    "chai-spies": "^1.0.0",
     "config": "^3.2.2",
     "coveralls": "^3.0.5",
     "mocha": "^6.2.0",
