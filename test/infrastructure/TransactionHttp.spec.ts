@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import { TransactionHttp } from '../../src/infrastructure/infrastructure';
-import { SignedTransaction, TransactionType, CosignatureSignedTransaction } from '../../src/model/model';
+import { SignedTransaction, TransactionType, CosignatureSignedTransaction, UInt64 } from '../../src/model/model';
 import { deepEqual } from 'assert';
 import * as createFromDto from '../../src/infrastructure/transaction/CreateTransactionFromDTO';
 chai.use(spies);
@@ -142,6 +142,35 @@ describe('TransactionHttp', () => {
         it('should call api client', (done) => {
             client.announceAggregateBondedCosignature({} as CosignatureSignedTransaction).subscribe(response => {
                 expect(response.message).to.be.equal('some message');
+                done();
+            })
+        });
+    });
+
+    describe('getTransactionEffectiveFee', () => {
+        const tx = {
+            transactionInfo: {
+                height: UInt64.fromUint(666666)
+            },
+            size: 999
+        };
+        const blockDto = {
+            block: {
+                feeMultiplier: 2
+            }
+        };
+        beforeEach(() => {
+            sandbox.on((client as any).transactionRoutesApi, 'getTransaction', (tx) => Promise.resolve('api called'));
+            sandbox.on(createFromDto, 'CreateTransactionFromDTO', (dto) => dto === 'api called' ? tx: {not: 'ok'});
+            sandbox.on((client as any).blockRoutesApi, 'getBlockByHeight', (number) => Promise.resolve(blockDto));
+        });
+        afterEach(() => {
+            sandbox.restore();
+        });
+        it('should call api client', (done) => {
+            const txId = 'some-txid';
+            client.getTransactionEffectiveFee(txId).subscribe(response => {
+                expect(response).to.be.equal(1998);
                 done();
             })
         });
