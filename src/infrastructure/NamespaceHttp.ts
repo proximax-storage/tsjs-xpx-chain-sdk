@@ -177,23 +177,22 @@ export class NamespaceHttp extends Http implements NamespaceRepository {
      * @returns Observable<MosaicId | null>
      */
     public getLinkedMosaicId(namespaceId: NamespaceId): Observable<MosaicId> {
-        return this.getNetworkTypeObservable().pipe(
-            mergeMap((networkType) => observableFrom(
-                this.namespaceRoutesApi.getNamespace(namespaceId.toHex())).pipe(
-                map((namespaceInfoDTO: NamespaceInfoDTO) => {
+        return observableFrom(
+            this.namespaceRoutesApi.getNamespace(namespaceId.toHex())).pipe(
+            map((namespaceInfoDTO: NamespaceInfoDTO) => {
 
-                    if (namespaceInfoDTO.namespace === undefined) {
-                        // forward js-xpx-chain-rest error
-                        throw namespaceInfoDTO;
-                    }
+                if (namespaceInfoDTO.namespace === undefined) {
+                    // forward js-xpx-chain-rest error
+                    throw namespaceInfoDTO;
+                }
 
-                    if (namespaceInfoDTO.namespace.alias.type === AliasType.None
-                        || namespaceInfoDTO.namespace.alias.type !== AliasType.Mosaic
-                        || !namespaceInfoDTO.namespace.alias.mosaicId) {
-                        throw new Error('No mosaicId is linked to namespace \'' + namespaceInfoDTO.namespace.level0 + '\'');
-                    }
-                    return new MosaicId(namespaceInfoDTO.namespace.alias.mosaicId);
-                }))));
+                if (namespaceInfoDTO.namespace.alias.type === AliasType.None
+                    || namespaceInfoDTO.namespace.alias.type !== AliasType.Mosaic
+                    || !namespaceInfoDTO.namespace.alias.mosaicId) {
+                    throw new Error('No mosaicId is linked to namespace \'' + namespaceInfoDTO.namespace.level0 + '\'');
+                }
+                return new MosaicId(namespaceInfoDTO.namespace.alias.mosaicId);
+            }));
     }
 
     /**
@@ -202,26 +201,25 @@ export class NamespaceHttp extends Http implements NamespaceRepository {
      * @returns Observable<Address>
      */
     public getLinkedAddress(namespaceId: NamespaceId): Observable<Address> {
-        return this.getNetworkTypeObservable().pipe(
-            mergeMap((networkType) => observableFrom(
-                this.namespaceRoutesApi.getNamespace(namespaceId.toHex())).pipe(
-                map((namespaceInfoDTO: NamespaceInfoDTO) => {
+        return observableFrom(
+            this.namespaceRoutesApi.getNamespace(namespaceId.toHex())).pipe(
+            map((namespaceInfoDTO: NamespaceInfoDTO) => {
 
-                    if (namespaceInfoDTO.namespace === undefined) {
-                        // forward js-xpx-chain-rest error
-                        throw namespaceInfoDTO;
-                    }
+                if (namespaceInfoDTO.namespace === undefined) {
+                    // forward js-xpx-chain-rest error
+                    throw namespaceInfoDTO;
+                }
 
-                    if (namespaceInfoDTO.namespace.alias.type === AliasType.None
-                        || namespaceInfoDTO.namespace.alias.type !== AliasType.Address
-                        || !namespaceInfoDTO.namespace.alias.address) {
-                        throw new Error('No address is linked to namespace \'' + namespaceInfoDTO.namespace.level0 + '\'');
-                    }
+                if (namespaceInfoDTO.namespace.alias.type === AliasType.None
+                    || namespaceInfoDTO.namespace.alias.type !== AliasType.Address
+                    || !namespaceInfoDTO.namespace.alias.address) {
+                    throw new Error('No address is linked to namespace \'' + namespaceInfoDTO.namespace.level0 + '\'');
+                }
 
-                    const addressDecoded = namespaceInfoDTO.namespace.alias.address;
-                    const address = AddressLibrary.addressToString(convert.hexToUint8(addressDecoded));
-                    return Address.createFromRawAddress(address);
-                }))));
+                const addressDecoded = namespaceInfoDTO.namespace.alias.address;
+                const address = AddressLibrary.addressToString(convert.hexToUint8(addressDecoded));
+                return Address.createFromRawAddress(address);
+            }));
     }
 
     private extractLevels(namespace: any): NamespaceId[] {
@@ -247,9 +245,11 @@ export class NamespaceHttp extends Http implements NamespaceRepository {
      */
     private extractAlias(namespace: any): Alias {
         if (namespace.alias && namespace.alias.type === AliasType.Mosaic) {
-            return new MosaicAlias(namespace.alias.type, namespace.alias.mosaicId);
+            return new MosaicAlias(namespace.alias.type, new MosaicId(namespace.alias.mosaicId));
         } else if (namespace.alias && namespace.alias.type === AliasType.Address) {
-            return new AddressAlias(namespace.alias.type, namespace.alias.address);
+            const addressDecoded = namespace.alias.address;
+            const address = AddressLibrary.addressToString(convert.hexToUint8(addressDecoded));
+            return new AddressAlias(namespace.alias.type, Address.createFromRawAddress(address));
         }
 
         return new EmptyAlias();

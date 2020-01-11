@@ -8,8 +8,8 @@ cache:
     - "node_modules"
 before_script:
   - npm run build
-script: 
-  - npm run test:coveralls
+script:
+  - node_version=$(node -v); if [ ${node_version:1:2} = 12 ]; then npm run test:coveralls; else npm run test; fi
 deploy:
   provider: npm
   skip-cleanup: true
@@ -17,4 +17,4 @@ deploy:
   api_key: "$AUTH_TOKEN"
   on:
     branch: master
-    node: 10
+    node: 12
