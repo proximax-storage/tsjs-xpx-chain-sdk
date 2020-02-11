@@ -18,7 +18,7 @@ import {from as observableFrom, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {BlockchainStorageInfo} from '../model/blockchain/BlockchainStorageInfo';
 import { ServerInfo } from '../model/diagnostic/ServerInfo';
-import { DiagnosticRoutesApi, ServerDTO, StorageInfoDTO } from './api';
+import { DiagnosticRoutesApi } from './api';
 import {DiagnosticRepository} from './DiagnosticRepository';
 import {Http} from './Http';
 
@@ -49,7 +49,8 @@ export class DiagnosticHttp extends Http implements DiagnosticRepository {
      */
     public getDiagnosticStorage(): Observable<BlockchainStorageInfo> {
         return observableFrom(
-            this.diagnosticRoutesApi.getDiagnosticStorage()).pipe(map((blockchainStorageInfoDTO: StorageInfoDTO) => {
+            this.diagnosticRoutesApi.getDiagnosticStorage()).pipe(map(response => {
+                const blockchainStorageInfoDTO = response.body;
             return new BlockchainStorageInfo(
                 blockchainStorageInfoDTO.numBlocks,
                 blockchainStorageInfoDTO.numTransactions,
@@ -64,7 +65,8 @@ export class DiagnosticHttp extends Http implements DiagnosticRepository {
      */
     public getServerInfo(): Observable<ServerInfo> {
         return observableFrom(
-            this.diagnosticRoutesApi.getServerInfo()).pipe(map((serverDTO: ServerDTO) => {
+            this.diagnosticRoutesApi.getServerInfo()).pipe(map(response => {
+                const serverDTO = response.body;
             return new ServerInfo(serverDTO.serverInfo.restVersion,
                 serverDTO.serverInfo.sdkVersion);
         }));

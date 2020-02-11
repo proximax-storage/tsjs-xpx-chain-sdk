@@ -22,7 +22,7 @@ describe('BlockHttp', () => {
 
     describe('getBlockTransactions', () => {
         beforeEach(() => {
-            sandbox.on((client as any).blockRoutesApi, 'getBlockTransactions', (number) => Promise.resolve(['api called']));
+            sandbox.on((client as any).blockRoutesApi, 'getBlockTransactions', (number) => Promise.resolve({ body: ['api called'] }));
             sandbox.on(createFromDto, 'CreateTransactionFromDTO', (dto) => dto === 'api called' ? 'deserialization called' : 'not ok');
         });
         afterEach(() => {

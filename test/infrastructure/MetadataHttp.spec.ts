@@ -30,7 +30,7 @@ describe('MetadataHttp', () => {
             }
         };
         beforeEach(() => {
-            sandbox.on((client as any).metadataRoutesApi, 'getAccountMetadata', (number) => Promise.resolve(dto));
+            sandbox.on((client as any).metadataRoutesApi, 'getAccountMetadata', (number) => Promise.resolve({ body: dto }));
         });
         afterEach(() => {
             sandbox.restore();
@@ -62,7 +62,7 @@ describe('MetadataHttp', () => {
             }
         };
         beforeEach(() => {
-            sandbox.on((client as any).metadataRoutesApi, 'getNamespaceMetadata', (number) => Promise.resolve(dto));
+            sandbox.on((client as any).metadataRoutesApi, 'getNamespaceMetadata', (number) => Promise.resolve({ body: dto }));
         });
         afterEach(() => {
             sandbox.restore();
@@ -95,7 +95,7 @@ describe('MetadataHttp', () => {
             }
         };
         beforeEach(() => {
-            sandbox.on((client as any).metadataRoutesApi, 'getMosaicMetadata', (number) => Promise.resolve(dto));
+            sandbox.on((client as any).metadataRoutesApi, 'getMosaicMetadata', (number) => Promise.resolve({ body: dto }));
         });
         afterEach(() => {
             sandbox.restore();

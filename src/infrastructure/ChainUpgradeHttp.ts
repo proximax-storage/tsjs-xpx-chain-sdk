@@ -8,7 +8,6 @@ import { UpgradeRoutesApi } from './api';
 import { ChainUpgradeRepository } from './ChainUpgradeRepository';
 import {Http} from './Http';
 import { ChainUpgrade } from '../model/model';
-import { BlockchainUpgradeDTO } from './model/blockchainUpgradeDTO';
 
 /**
  * Chian http repository.
@@ -38,8 +37,8 @@ export class ChainUpgradeHttp extends Http implements ChainUpgradeRepository {
      */
     public getChainUpgrade(height: number): Observable<ChainUpgrade> {
         return observableFrom(
-            this.upgradeRoutesApi.getUpgrade(height)).pipe(map((BlockchainUpgradeDTO: BlockchainUpgradeDTO) => {
-                return ChainUpgrade.createFromDTO(BlockchainUpgradeDTO.blockchainUpgrade);
+            this.upgradeRoutesApi.getUpgrade(height)).pipe(map(response => {
+                return ChainUpgrade.createFromDTO(response.body.blockchainUpgrade);
         }));
     }
 }

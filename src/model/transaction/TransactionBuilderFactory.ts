@@ -16,7 +16,6 @@ import { ChainConfigTransactionBuilder } from "./ChainConfigTransaction";
 import { ChainUpgradeTransactionBuilder } from "./ChainUpgradeTransaction";
 import { LockFundsTransactionBuilder } from "./LockFundsTransaction";
 import { HashLockTransactionBuilder } from "./HashLockTransaction";
-import { ModifyContractTransactionBuilder } from "./ModifyContractTransaction";
 import { ModifyAccountMetadataTransactionBuilder, ModifyMosaicMetadataTransactionBuilder, ModifyNamespaceMetadataTransactionBuilder } from "./ModifyMetadataTransaction";
 import { ModifyMultisigAccountTransactionBuilder } from "./ModifyMultisigAccountTransaction";
 import { MosaicAliasTransactionBuilder } from "./MosaicAliasTransaction";
@@ -161,12 +160,6 @@ export class TransactionBuilderFactory {
 
     public hashLock(): HashLockTransactionBuilder {
         const builder = new HashLockTransactionBuilder();
-        this.configureBuilder(builder);
-        return builder;
-    }
-
-    public modifyContract(): ModifyContractTransactionBuilder {
-        const builder = new ModifyContractTransactionBuilder();
         this.configureBuilder(builder);
         return builder;
     }

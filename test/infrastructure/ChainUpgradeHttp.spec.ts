@@ -19,7 +19,7 @@ describe('ChainUpgradeHttp', () => {
             }
         };
         beforeEach(() => {
-            sandbox.on((client as any).upgradeRoutesApi, 'getUpgrade', () => Promise.resolve(dto));
+            sandbox.on((client as any).upgradeRoutesApi, 'getUpgrade', () => Promise.resolve({ body: dto }));
         });
         afterEach(() => {
             sandbox.restore();

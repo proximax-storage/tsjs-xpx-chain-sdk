@@ -20,7 +20,6 @@ import * as WebSocket from 'ws';
 import {Address} from '../model/account/Address';
 import {PublicAccount} from '../model/account/PublicAccount';
 import {BlockInfo} from '../model/blockchain/BlockInfo';
-import {NetworkType} from '../model/blockchain/NetworkType';
 import {NamespaceId} from '../model/namespace/NamespaceId';
 import {AggregateTransaction} from '../model/transaction/AggregateTransaction';
 import {AggregateTransactionCosignature} from '../model/transaction/AggregateTransactionCosignature';

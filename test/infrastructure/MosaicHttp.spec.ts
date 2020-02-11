@@ -39,7 +39,7 @@ describe('MosaicHttp', () => {
             }
         };
         beforeEach(() => {
-            sandbox.on((client as any).mosaicRoutesApi, 'getMosaic', () => Promise.resolve(dto));
+            sandbox.on((client as any).mosaicRoutesApi, 'getMosaic', () => Promise.resolve({ body: dto }));
             sandbox.on(client, 'getNetworkTypeObservable', () => of(NetworkType.MIJIN_TEST));
         });
         afterEach(() => {
@@ -86,7 +86,7 @@ describe('MosaicHttp', () => {
             }
         };
         beforeEach(() => {
-            sandbox.on((client as any).mosaicRoutesApi, 'getMosaics', () => Promise.resolve([dto]));
+            sandbox.on((client as any).mosaicRoutesApi, 'getMosaics', () => Promise.resolve({ body: [dto] }));
             sandbox.on(client, 'getNetworkTypeObservable', () => of(NetworkType.MIJIN_TEST));
         });
         afterEach(() => {
@@ -123,7 +123,7 @@ describe('MosaicHttp', () => {
             ]
         };
         beforeEach(() => {
-            sandbox.on((client as any).mosaicRoutesApi, 'getMosaicsNames', () => Promise.resolve([dto]));
+            sandbox.on((client as any).mosaicRoutesApi, 'getMosaicsNames', () => Promise.resolve({ body: [dto] }));
         });
         afterEach(() => {
             sandbox.restore();

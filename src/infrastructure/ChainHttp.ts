@@ -18,9 +18,7 @@ import {from as observableFrom, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {BlockchainScore} from '../model/blockchain/BlockchainScore';
 import {UInt64} from '../model/UInt64';
-import { BlockchainScoreDTO,
-         ChainRoutesApi,
-         HeightInfoDTO } from './api';
+import { ChainRoutesApi } from './api';
 import { ChainRepository } from './ChainRepository';
 import {Http} from './Http';
 
@@ -50,8 +48,8 @@ export class ChainHttp extends Http implements ChainRepository {
      * @returns Observable<UInt64>
      */
     public getBlockchainHeight(): Observable<UInt64> {
-        return observableFrom(this.chainRoutesApi.getBlockchainHeight()).pipe(map((heightDTO: HeightInfoDTO) => {
-            return new UInt64(heightDTO.height);
+        return observableFrom(this.chainRoutesApi.getBlockchainHeight()).pipe(map(response => {
+            return new UInt64(response.body.height);
         }));
     }
 
@@ -60,7 +58,8 @@ export class ChainHttp extends Http implements ChainRepository {
      * @returns Observable<BlockchainScore>
      */
     public getBlockchainScore(): Observable<BlockchainScore> {
-        return observableFrom(this.chainRoutesApi.getBlockchainScore()).pipe(map((blockchainScoreDTO: BlockchainScoreDTO) => {
+        return observableFrom(this.chainRoutesApi.getBlockchainScore()).pipe(map(response => {
+            const blockchainScoreDTO = response.body;
             return new BlockchainScore(
                 new UInt64(blockchainScoreDTO.scoreLow),
                 new UInt64(blockchainScoreDTO.scoreHigh),
