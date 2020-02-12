@@ -83,7 +83,7 @@ export class ExchangeRoutesApi {
      * @summary Get exchange offers by account id
      * @param accountId The public key or address of the account.
      */
-    public async getAccountExchangeOffers (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<AccountExchangesDTO>;  }> {
+    public async getAccountExchangeOffers (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: AccountExchangesDTO;  }> {
         const localVarPath = this.basePath + '/account/{accountId}/exchange'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
         let localVarQueryParameters: any = {};
@@ -131,12 +131,12 @@ export class ExchangeRoutesApi {
                     localVarRequestOptions.form = localVarFormParams;
                 }
             }
-            return new Promise<{ response: http.IncomingMessage; body: Array<AccountExchangesDTO>;  }>((resolve, reject) => {
+            return new Promise<{ response: http.IncomingMessage; body: AccountExchangesDTO;  }>((resolve, reject) => {
                 localVarRequest(localVarRequestOptions, (error, response, body) => {
                     if (error) {
                         reject(error);
                     } else {
-                        body = ObjectSerializer.deserialize(body, "Array<AccountExchangesDTO>");
+                        body = ObjectSerializer.deserialize(body, "AccountExchangesDTO");
                         if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                             resolve({ response: response, body: body });
                         } else {
