@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { CosignatoryModificationDTO } from './cosignatoryModificationDTO';
 import { EntityTypeEnum } from './entityTypeEnum';
 import { ModifyMultisigAccountTransactionBodyDTO } from './modifyMultisigAccountTransactionBodyDTO';

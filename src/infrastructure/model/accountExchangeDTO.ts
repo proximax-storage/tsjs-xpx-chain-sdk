@@ -10,15 +10,16 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { OfferInfoDTO } from './offerInfoDTO';
 
-export class ExchangeDTO {
+export class AccountExchangeDTO {
     /**
-    * The public key of the owner of the namespace.
+    * The public key (accountId) of the owner.
     */
     'owner': string;
     /**
-    * The address of the owner of the namespace in hexadecimal.
+    * The address of the owner.
     */
     'ownerAddress': string;
     'buyOffers': Array<OfferInfoDTO>;
@@ -49,7 +50,7 @@ export class ExchangeDTO {
         }    ];
 
     static getAttributeTypeMap() {
-        return ExchangeDTO.attributeTypeMap;
+        return AccountExchangeDTO.attributeTypeMap;
     }
 }
 

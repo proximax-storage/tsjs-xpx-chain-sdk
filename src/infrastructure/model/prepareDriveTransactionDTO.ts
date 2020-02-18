@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { OfferTypeEnum } from './offerTypeEnum';
 import { PrepareDriveTransactionBodyDTO } from './prepareDriveTransactionBodyDTO';
 import { TransactionDTO } from './transactionDTO';

@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { MosaicPropertyDTO } from './mosaicPropertyDTO';
 
 export class MosaicDefinitionTransactionBodyDTO {

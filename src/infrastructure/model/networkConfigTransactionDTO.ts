@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { EntityTypeEnum } from './entityTypeEnum';
 import { NetworkConfigBodyDTO } from './networkConfigBodyDTO';
 import { TransactionDTO } from './transactionDTO';

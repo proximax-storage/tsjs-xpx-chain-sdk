@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { EntityTypeEnum } from './entityTypeEnum';
 import { HashLockTransactionBodyDTO } from './hashLockTransactionBodyDTO';
 import { MosaicDTO } from './mosaicDTO';

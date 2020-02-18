@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { EntityTypeEnum } from './entityTypeEnum';
 import { MessageDTO } from './messageDTO';
 import { MosaicDTO } from './mosaicDTO';

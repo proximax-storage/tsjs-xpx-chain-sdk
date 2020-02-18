@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { MetadataModificationDTO } from './metadataModificationDTO';
 import { MetadataTypeEnum } from './metadataTypeEnum';
 

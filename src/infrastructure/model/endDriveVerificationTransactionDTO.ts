@@ -10,15 +10,22 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { EntityTypeEnum } from './entityTypeEnum';
+import { FailureVerificationDTO } from './failureVerificationDTO';
 import { TransactionDTO } from './transactionDTO';
 
 export class EndDriveVerificationTransactionDTO extends TransactionDTO {
+    'verificationFailures': Array<FailureVerificationDTO>;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-    ];
+        {
+            "name": "verificationFailures",
+            "baseName": "verificationFailures",
+            "type": "Array<FailureVerificationDTO>"
+        }    ];
 
     static getAttributeTypeMap() {
         return super.getAttributeTypeMap().concat(EndDriveVerificationTransactionDTO.attributeTypeMap);

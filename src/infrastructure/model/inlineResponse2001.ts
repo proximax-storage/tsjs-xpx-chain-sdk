@@ -10,22 +10,23 @@
  * Do not edit the class manually.
  */
 
-import { ExchangeDTO } from './exchangeDTO';
+import { RequestFile } from '../api';
+import { DriveDTO } from './driveDTO';
 
-export class AccountExchangesDTO {
-    'exchange': ExchangeDTO;
+export class InlineResponse2001 {
+    'drive'?: DriveDTO;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            "name": "exchange",
-            "baseName": "exchange",
-            "type": "ExchangeDTO"
+            "name": "drive",
+            "baseName": "drive",
+            "type": "DriveDTO"
         }    ];
 
     static getAttributeTypeMap() {
-        return AccountExchangesDTO.attributeTypeMap;
+        return InlineResponse2001.attributeTypeMap;
     }
 }
 

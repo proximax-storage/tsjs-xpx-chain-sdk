@@ -187,8 +187,8 @@ export class NamespaceHttp extends Http implements NamespaceRepository {
                     throw namespaceInfoDTO;
                 }
 
-                if (namespaceInfoDTO.namespace.alias.type === AliasType.None
-                    || namespaceInfoDTO.namespace.alias.type !== AliasType.Mosaic
+                if (namespaceInfoDTO.namespace.alias.type.valueOf() === AliasType.None
+                    || namespaceInfoDTO.namespace.alias.type.valueOf() !== AliasType.Mosaic
                     || !namespaceInfoDTO.namespace.alias.mosaicId) {
                     throw new Error('No mosaicId is linked to namespace \'' + namespaceInfoDTO.namespace.level0 + '\'');
                 }
@@ -211,8 +211,8 @@ export class NamespaceHttp extends Http implements NamespaceRepository {
                     throw namespaceInfoDTO;
                 }
 
-                if (namespaceInfoDTO.namespace.alias.type === AliasType.None
-                    || namespaceInfoDTO.namespace.alias.type !== AliasType.Address
+                if (namespaceInfoDTO.namespace.alias.type.valueOf() === AliasType.None
+                    || namespaceInfoDTO.namespace.alias.type.valueOf() !== AliasType.Address
                     || !namespaceInfoDTO.namespace.alias.address) {
                     throw new Error('No address is linked to namespace \'' + namespaceInfoDTO.namespace.level0 + '\'');
                 }

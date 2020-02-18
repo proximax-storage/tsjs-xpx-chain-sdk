@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { AggregateTransactionBodyDTO } from './aggregateTransactionBodyDTO';
 import { CosignatureDTO } from './cosignatureDTO';
 import { EmbeddedTransactionInfoDTO } from './embeddedTransactionInfoDTO';

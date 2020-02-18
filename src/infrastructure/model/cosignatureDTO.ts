@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { CosignatureDTOAllOf } from './cosignatureDTOAllOf';
 import { VerifiableEntityDTO } from './verifiableEntityDTO';
 

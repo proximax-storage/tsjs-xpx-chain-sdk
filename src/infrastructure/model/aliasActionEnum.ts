@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 
 /**
 * The alias action: * 0 -  Link alias. * 1 -  Unlink alias. 

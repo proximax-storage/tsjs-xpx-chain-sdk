@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 
 /**
 * The type of the metadata modification: * 0 - Add metadata. * 1 - Remove metadata. 

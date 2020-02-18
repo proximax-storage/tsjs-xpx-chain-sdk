@@ -7,19 +7,28 @@ import { APIUrl, ConfTestingMosaicId } from '../conf/conf.spec';
 import { ExchangeHttp } from '../../src/infrastructure/ExchangeHttp';
 import { TestingAccount, CosignatoryAccount } from '../../e2e/conf/conf.spec';
 import { ExchangeOfferType } from '../../src/model/model';
+import { AccountExchanges } from '../../src/model/exchange/AccountExchanges';
 
 describe('ExchangeHttp', () => {
     const exchangeHttp = new ExchangeHttp(APIUrl);
 
     it('should get offers for an account', (done) => {
-        exchangeHttp.getAccountExchanges(TestingAccount.publicAccount).subscribe(accountExchanges => {
+        exchangeHttp.getAccountExchanges(TestingAccount.publicAccount).subscribe(a => {
+            const accountExchanges = a as AccountExchanges;
             expect(accountExchanges).not.to.be.undefined;
+            expect(accountExchanges.owner).not.to.be.undefined;
+            expect(accountExchanges.buyOffers).not.to.be.undefined;
+            expect(accountExchanges.sellOffers).not.to.be.undefined;
             done();
         });
     });
     it('should get offers for an account, too', (done) => {
-        exchangeHttp.getAccountExchanges(CosignatoryAccount.address).subscribe(accountExchanges => {
+        exchangeHttp.getAccountExchanges(CosignatoryAccount.address).subscribe(a => {
+            const accountExchanges = a as AccountExchanges;
             expect(accountExchanges).not.to.be.undefined;
+            expect(accountExchanges.owner).not.to.be.undefined;
+            expect(accountExchanges.buyOffers).not.to.be.undefined;
+            expect(accountExchanges.sellOffers).not.to.be.undefined;
             done();
         });
     });

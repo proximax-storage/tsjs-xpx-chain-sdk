@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { AccountLinkTransactionBodyDTO } from './accountLinkTransactionBodyDTO';
 import { EntityTypeEnum } from './entityTypeEnum';
 import { LinkActionEnum } from './linkActionEnum';

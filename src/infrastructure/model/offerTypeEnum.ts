@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 
 /**
 * The role of the node: * 0 - A sell offer. * 1 - A buy offer. * 2 - Unknown type. 

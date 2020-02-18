@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { MosaicDTO } from './mosaicDTO';
 
 export class HashLockTransactionBodyDTO {

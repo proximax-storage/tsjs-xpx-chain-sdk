@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { BlockchainUpgradeBodyDTO } from './blockchainUpgradeBodyDTO';
 import { EntityTypeEnum } from './entityTypeEnum';
 import { TransactionDTO } from './transactionDTO';

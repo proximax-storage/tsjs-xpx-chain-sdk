@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { EmbeddedTransactionDTO } from './embeddedTransactionDTO';
 import { EntityTypeEnum } from './entityTypeEnum';
 import { MosaicDirectionEnum } from './mosaicDirectionEnum';

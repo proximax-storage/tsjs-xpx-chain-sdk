@@ -14,6 +14,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { MosaicMetadataDTO } from './mosaicMetadataDTO';
 
 export class MosaicMetadataInfoDTO {

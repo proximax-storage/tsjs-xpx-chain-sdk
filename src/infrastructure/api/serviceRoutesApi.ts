@@ -14,7 +14,7 @@ import localVarRequest = require('request');
 import http = require('http');
 
 /* tslint:disable:no-unused-locals */
-import { InlineResponse200 } from '../model/inlineResponse200';
+import { InlineResponse2001 } from '../model/inlineResponse2001';
 import { RolesTypeEnum } from '../model/rolesTypeEnum';
 
 import { ObjectSerializer, Authentication, VoidAuth, Interceptor } from '../model/models';
@@ -32,7 +32,7 @@ export enum ServiceRoutesApiApiKeys {
 
 export class ServiceRoutesApi {
     protected _basePath = defaultBasePath;
-    protected defaultHeaders : any = {};
+    protected _defaultHeaders : any = {};
     protected _useQuerystring : boolean = false;
 
     protected authentications = {
@@ -62,6 +62,14 @@ export class ServiceRoutesApi {
         this._basePath = basePath;
     }
 
+    set defaultHeaders(defaultHeaders: any) {
+        this._defaultHeaders = defaultHeaders;
+    }
+
+    get defaultHeaders() {
+        return this._defaultHeaders;
+    }
+
     get basePath() {
         return this._basePath;
     }
@@ -83,11 +91,11 @@ export class ServiceRoutesApi {
      * @summary Get drive by accountId
      * @param accountId ID of a drive.
      */
-    public async getAccountDrives (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: InlineResponse200;  }> {
+    public async getAccountDrives (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: InlineResponse2001;  }> {
         const localVarPath = this.basePath + '/drive/{accountId}'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
         const produces = ['application/json'];
         // give precedence to 'application/json'
         if (produces.indexOf('application/json') >= 0) {
@@ -131,12 +139,12 @@ export class ServiceRoutesApi {
                     localVarRequestOptions.form = localVarFormParams;
                 }
             }
-            return new Promise<{ response: http.IncomingMessage; body: InlineResponse200;  }>((resolve, reject) => {
+            return new Promise<{ response: http.IncomingMessage; body: InlineResponse2001;  }>((resolve, reject) => {
                 localVarRequest(localVarRequestOptions, (error, response, body) => {
                     if (error) {
                         reject(error);
                     } else {
-                        body = ObjectSerializer.deserialize(body, "InlineResponse200");
+                        body = ObjectSerializer.deserialize(body, "InlineResponse2001");
                         if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                             resolve({ response: response, body: body });
                         } else {
@@ -156,7 +164,7 @@ export class ServiceRoutesApi {
         const localVarPath = this.basePath + '/account/{accountId}/drive'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
         const produces = ['application/json'];
         // give precedence to 'application/json'
         if (produces.indexOf('application/json') >= 0) {
@@ -227,7 +235,7 @@ export class ServiceRoutesApi {
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)))
             .replace('{' + 'role' + '}', encodeURIComponent(String(role)));
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
         const produces = ['application/json'];
         // give precedence to 'application/json'
         if (produces.indexOf('application/json') >= 0) {

@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 
 /**
 * The type of the metadata: * 1 - Address metadata. * 2 - Mosaic metadata. * 3 - Namespace metadata. 

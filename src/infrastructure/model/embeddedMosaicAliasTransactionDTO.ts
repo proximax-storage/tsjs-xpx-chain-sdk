@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { AliasActionEnum } from './aliasActionEnum';
 import { EmbeddedTransactionDTO } from './embeddedTransactionDTO';
 import { EntityTypeEnum } from './entityTypeEnum';

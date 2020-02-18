@@ -10,18 +10,19 @@
  * Do not edit the class manually.
  */
 
-import { DriveDTO } from './driveDTO';
+import { RequestFile } from '../api';
+import { AccountExchangeDTO } from './accountExchangeDTO';
 
 export class InlineResponse200 {
-    'drive'?: DriveDTO;
+    'exchange'?: AccountExchangeDTO;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            "name": "drive",
-            "baseName": "drive",
-            "type": "DriveDTO"
+            "name": "exchange",
+            "baseName": "exchange",
+            "type": "AccountExchangeDTO"
         }    ];
 
     static getAttributeTypeMap() {

@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { AliasActionEnum } from './aliasActionEnum';
 import { EntityTypeEnum } from './entityTypeEnum';
 import { MosaicAliasTransactionBodyDTO } from './mosaicAliasTransactionBodyDTO';

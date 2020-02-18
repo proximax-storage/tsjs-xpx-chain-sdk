@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { BalanceChangeReceiptDTOAllOf } from './balanceChangeReceiptDTOAllOf';
 import { ReceiptDTO } from './receiptDTO';
 import { ReceiptTypeEnum } from './receiptTypeEnum';

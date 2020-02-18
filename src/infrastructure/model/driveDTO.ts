@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { BillingHistoryDTO } from './billingHistoryDTO';
 import { FileDTO } from './fileDTO';
 import { PaymentsDTO } from './paymentsDTO';

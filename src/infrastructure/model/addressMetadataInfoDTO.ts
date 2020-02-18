@@ -14,6 +14,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { AddressMetadataDTO } from './addressMetadataDTO';
 
 export class AddressMetadataInfoDTO {

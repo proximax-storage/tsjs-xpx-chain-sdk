@@ -41,7 +41,7 @@ export class ExchangeHttp extends Http implements ExchangeRepository {
      * @param accountId - Account public key or address
      * @returns Observable<AccountExchanges>
      */
-    public getAccountExchanges(accountId: Address | PublicAccount): Observable<AccountExchanges> {
+    public getAccountExchanges(accountId: Address | PublicAccount): Observable<AccountExchanges | undefined> {
         const accountIdArg = (accountId instanceof PublicAccount) ? accountId.publicKey : accountId.plain();
         return this.getNetworkTypeObservable().pipe(
             mergeMap(networkType => observableFrom(

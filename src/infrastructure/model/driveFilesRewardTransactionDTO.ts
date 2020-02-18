@@ -10,15 +10,22 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { EntityTypeEnum } from './entityTypeEnum';
 import { TransactionDTO } from './transactionDTO';
+import { UploadInfoDTO } from './uploadInfoDTO';
 
 export class DriveFilesRewardTransactionDTO extends TransactionDTO {
+    'uploadInfos': Array<UploadInfoDTO>;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-    ];
+        {
+            "name": "uploadInfos",
+            "baseName": "uploadInfos",
+            "type": "Array<UploadInfoDTO>"
+        }    ];
 
     static getAttributeTypeMap() {
         return super.getAttributeTypeMap().concat(DriveFilesRewardTransactionDTO.attributeTypeMap);

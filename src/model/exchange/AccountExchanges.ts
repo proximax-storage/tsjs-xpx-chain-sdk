@@ -4,7 +4,7 @@
 
 import { PublicAccount } from "../account/PublicAccount";
 import { OfferInfo } from "./OfferInfo";
-import { ExchangeDTO } from "../../infrastructure/api";
+import { AccountExchangeDTO } from "../../infrastructure/api";
 import { NetworkType } from "../blockchain/NetworkType";
 
 export class AccountExchanges {
@@ -16,11 +16,11 @@ export class AccountExchanges {
 
     }
 
-    static createFromDTO(exchangeDTO: ExchangeDTO, networkType: NetworkType): AccountExchanges {
-        return new AccountExchanges(
+    static createFromDTO(exchangeDTO: AccountExchangeDTO | undefined, networkType: NetworkType): AccountExchanges | undefined {
+        return exchangeDTO ? new AccountExchanges(
             PublicAccount.createFromPublicKey(exchangeDTO.owner, networkType),
             exchangeDTO.buyOffers.map(buyOffer => OfferInfo.createFromDTO(buyOffer)),
             exchangeDTO.sellOffers.map(sellOffer => OfferInfo.createFromDTO(sellOffer))
-        );
+        ) : undefined;
     }
 }

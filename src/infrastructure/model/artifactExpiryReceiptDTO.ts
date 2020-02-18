@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { ArtifactExpiryReceiptDTOAllOf } from './artifactExpiryReceiptDTOAllOf';
 import { ReceiptDTO } from './receiptDTO';
 import { ReceiptTypeEnum } from './receiptTypeEnum';

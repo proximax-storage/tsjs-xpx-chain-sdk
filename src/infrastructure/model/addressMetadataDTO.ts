@@ -14,6 +14,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { AddressMetadataDTOAllOf } from './addressMetadataDTOAllOf';
 import { FieldDTO } from './fieldDTO';
 import { MetadataDTO } from './metadataDTO';

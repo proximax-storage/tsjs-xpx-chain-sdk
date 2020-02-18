@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { EmbeddedAccountLinkTransactionDTO } from './embeddedAccountLinkTransactionDTO';
 import { EmbeddedAccountPropertiesTransactionDTO } from './embeddedAccountPropertiesTransactionDTO';
 import { EmbeddedAddressAliasTransactionDTO } from './embeddedAddressAliasTransactionDTO';

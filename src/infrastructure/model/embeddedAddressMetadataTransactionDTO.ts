@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { AddressMetadataBodyDTO } from './addressMetadataBodyDTO';
 import { EmbeddedTransactionDTO } from './embeddedTransactionDTO';
 import { EntityTypeEnum } from './entityTypeEnum';

@@ -10,15 +10,21 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { EntityTypeEnum } from './entityTypeEnum';
 import { TransactionDTO } from './transactionDTO';
 
 export class JoinToDriveTransactionDTO extends TransactionDTO {
+    'driveKey': string;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-    ];
+        {
+            "name": "driveKey",
+            "baseName": "driveKey",
+            "type": "string"
+        }    ];
 
     static getAttributeTypeMap() {
         return super.getAttributeTypeMap().concat(JoinToDriveTransactionDTO.attributeTypeMap);

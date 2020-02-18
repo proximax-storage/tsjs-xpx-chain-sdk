@@ -10,15 +10,22 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { EntityTypeEnum } from './entityTypeEnum';
+import { RemoveExchangeOfferTransactionBodyDTO } from './removeExchangeOfferTransactionBodyDTO';
 import { TransactionDTO } from './transactionDTO';
 
 export class RemoveExchangeOfferTransactionDTO extends TransactionDTO {
+    'offers': Array<RemoveExchangeOfferTransactionBodyDTO>;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-    ];
+        {
+            "name": "offers",
+            "baseName": "offers",
+            "type": "Array<RemoveExchangeOfferTransactionBodyDTO>"
+        }    ];
 
     static getAttributeTypeMap() {
         return super.getAttributeTypeMap().concat(RemoveExchangeOfferTransactionDTO.attributeTypeMap);

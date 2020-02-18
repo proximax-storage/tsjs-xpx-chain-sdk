@@ -10,15 +10,21 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { OfferDTO } from './offerDTO';
 import { OfferTypeEnum } from './offerTypeEnum';
 
 export class AddExchangeOfferTransactionBodyDTO extends OfferDTO {
+    'duration': Array<number>;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-    ];
+        {
+            "name": "duration",
+            "baseName": "duration",
+            "type": "Array<number>"
+        }    ];
 
     static getAttributeTypeMap() {
         return super.getAttributeTypeMap().concat(AddExchangeOfferTransactionBodyDTO.attributeTypeMap);

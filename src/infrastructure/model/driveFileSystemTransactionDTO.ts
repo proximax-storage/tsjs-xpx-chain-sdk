@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
 import { DriveFileSystemAddActionDTO } from './driveFileSystemAddActionDTO';
 import { DriveFileSystemTransactionBodyDTO } from './driveFileSystemTransactionBodyDTO';
 import { EntityTypeEnum } from './entityTypeEnum';

@@ -14,8 +14,8 @@ import localVarRequest = require('request');
 import http = require('http');
 
 /* tslint:disable:no-unused-locals */
-import { AccountExchangesDTO } from '../model/accountExchangesDTO';
 import { ExchangesDTO } from '../model/exchangesDTO';
+import { InlineResponse200 } from '../model/inlineResponse200';
 
 import { ObjectSerializer, Authentication, VoidAuth, Interceptor } from '../model/models';
 
@@ -32,7 +32,7 @@ export enum ExchangeRoutesApiApiKeys {
 
 export class ExchangeRoutesApi {
     protected _basePath = defaultBasePath;
-    protected defaultHeaders : any = {};
+    protected _defaultHeaders : any = {};
     protected _useQuerystring : boolean = false;
 
     protected authentications = {
@@ -62,6 +62,14 @@ export class ExchangeRoutesApi {
         this._basePath = basePath;
     }
 
+    set defaultHeaders(defaultHeaders: any) {
+        this._defaultHeaders = defaultHeaders;
+    }
+
+    get defaultHeaders() {
+        return this._defaultHeaders;
+    }
+
     get basePath() {
         return this._basePath;
     }
@@ -81,13 +89,13 @@ export class ExchangeRoutesApi {
     /**
      * Return exchange offer by account id.
      * @summary Get exchange offers by account id
-     * @param accountId The public key or address of the account.
+     * @param accountId The public key or address of an account.
      */
-    public async getAccountExchangeOffers (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: AccountExchangesDTO;  }> {
+    public async getAccountExchangeOffers (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: InlineResponse200;  }> {
         const localVarPath = this.basePath + '/account/{accountId}/exchange'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
         const produces = ['application/json'];
         // give precedence to 'application/json'
         if (produces.indexOf('application/json') >= 0) {
@@ -131,12 +139,12 @@ export class ExchangeRoutesApi {
                     localVarRequestOptions.form = localVarFormParams;
                 }
             }
-            return new Promise<{ response: http.IncomingMessage; body: AccountExchangesDTO;  }>((resolve, reject) => {
+            return new Promise<{ response: http.IncomingMessage; body: InlineResponse200;  }>((resolve, reject) => {
                 localVarRequest(localVarRequestOptions, (error, response, body) => {
                     if (error) {
                         reject(error);
                     } else {
-                        body = ObjectSerializer.deserialize(body, "AccountExchangesDTO");
+                        body = ObjectSerializer.deserialize(body, "InlineResponse200");
                         if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                             resolve({ response: response, body: body });
                         } else {
@@ -150,7 +158,7 @@ export class ExchangeRoutesApi {
     /**
      * Get exchange offer by type and mosaic id.
      * @summary Get exchange offer by type and mosaic id
-     * @param offerType The of exchange offer.
+     * @param offerType The type of exchange offer.
      * @param mosaicId The mosaic identifier.
      */
     public async getExchangeOffers (offerType: string, mosaicId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<ExchangesDTO>;  }> {
@@ -158,7 +166,7 @@ export class ExchangeRoutesApi {
             .replace('{' + 'offerType' + '}', encodeURIComponent(String(offerType)))
             .replace('{' + 'mosaicId' + '}', encodeURIComponent(String(mosaicId)));
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
         const produces = ['application/json'];
         // give precedence to 'application/json'
         if (produces.indexOf('application/json') >= 0) {
