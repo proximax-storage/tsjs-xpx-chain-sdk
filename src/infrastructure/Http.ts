@@ -18,6 +18,7 @@ import {Observable, of as observableOf} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {NetworkType} from '../model/blockchain/NetworkType';
 import {NetworkHttp} from './NetworkHttp';
+import {PageQueryParams} from './PageQueryParams';
 import { QueryParams } from './QueryParams';
 /**
  * Http extended by all http services
@@ -55,6 +56,13 @@ export abstract class Http {
             pageSize: queryParams ? queryParams.pageSize : undefined,
             id: queryParams ? queryParams.id : undefined,
             order: queryParams ? queryParams.order : undefined,
+        };
+    }
+
+    pageQueryParams(queryParams?: PageQueryParams): any {
+        return {
+            page: queryParams ? queryParams.page : undefined,
+            pageSize: queryParams ? queryParams.pageSize : undefined
         };
     }
 }
