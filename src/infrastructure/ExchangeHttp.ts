@@ -39,7 +39,7 @@ export class ExchangeHttp extends Http implements ExchangeRepository {
     /**
      * Gets the exchanges for a given accountId
      * @param accountId - Account public key or address
-     * @returns Observable<AccountExchanges>
+     * @returns Observable<AccountExchanges | undefined>
      */
     public getAccountExchanges(accountId: Address | PublicAccount): Observable<AccountExchanges | undefined> {
         const accountIdArg = (accountId instanceof PublicAccount) ? accountId.publicKey : accountId.plain();

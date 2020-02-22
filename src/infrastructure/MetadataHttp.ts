@@ -42,7 +42,7 @@ export class MetadataHttp extends Http implements MetadataRepository {
     /**
      * Gets the Metadata for a given accountId
      * @param accountId - Account address/public key
-     * @returns Observable<MosaicInfo>
+     * @returns Observable<AddressMetadata>
      */
     public getAccountMetadata(accountId: string): Observable<AddressMetadata> {
         return observableFrom(
@@ -55,6 +55,11 @@ export class MetadataHttp extends Http implements MetadataRepository {
             }));
     }
 
+    /**
+     * Gets the Metadata for a given namespaceId
+     * @param namespaceId - the id of the namespace
+     * @returns Observable<NamespaceMetadata>
+     */
     public getNamespaceMetadata(namespaceId: NamespaceId): Observable<NamespaceMetadata> {
         return observableFrom(
             this.metadataRoutesApi.getNamespaceMetadata(namespaceId.id.toHex())).pipe(map(response => {
@@ -66,6 +71,11 @@ export class MetadataHttp extends Http implements MetadataRepository {
             }));
     }
 
+    /**
+     * Gets the Metadata for a given mosaicId
+     * @param mosaicId - the id of the mosaic
+     * @returns Observable<MosaicMetadata>
+     */
     public getMosaicMetadata(mosaicId: MosaicId): Observable<MosaicMetadata> {
         return observableFrom(
             this.metadataRoutesApi.getMosaicMetadata(mosaicId.id.toHex())).pipe(map(response => {

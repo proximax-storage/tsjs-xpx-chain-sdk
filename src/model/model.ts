@@ -46,6 +46,11 @@ export * from './config/ChainConfig';
 // Diagnostic
 export * from './diagnostic/ServerInfo';
 
+// Exchange
+export * from './exchange/AccountExchanges';
+export * from './exchange/MosaicExchange';
+export * from './exchange/OfferInfo';
+
 // Metadata
 export * from './metadata/AddressMetadata';
 export * from './metadata/Field';

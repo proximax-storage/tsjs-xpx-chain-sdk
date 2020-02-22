@@ -33,7 +33,7 @@ export interface DiagnosticRepository {
 
     /**
      * Gets blockchain server info.
-     * @returns Observable<Server>
+     * @returns Observable<ServerInfo>
      */
     getServerInfo(): Observable<ServerInfo>;
 }
