@@ -103,6 +103,9 @@ export * from './receipt/ResolutionType';
 export * from './receipt/Statement';
 export * from './receipt/TransactionStatement';
 
+// Richlist
+export * from './richlist/RichlistEntry';
+
 // Transaction
 export * from './transaction/AccountAddressRestrictionModificationTransaction';
 export * from './transaction/AccountLinkTransaction';
