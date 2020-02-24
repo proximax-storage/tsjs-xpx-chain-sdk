@@ -42,7 +42,7 @@ export class RichlistHttp extends Http implements RichlistRepository {
      * Gets mosaic richlist
      * @param mosaicId - Mosaic id
      * @param queryParams - (Optional) Page query params
-     * @returns Observable<AccountInfo>
+     * @returns Observable<RichlistEntry[]>
      */
     getMosaicRichlist(mosaicId: MosaicId, queryParams?: PageQueryParams): Observable<RichlistEntry[]> {
         return observableFrom(

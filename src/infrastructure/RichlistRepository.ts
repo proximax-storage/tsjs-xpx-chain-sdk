@@ -15,7 +15,7 @@ import {PageQueryParams} from './PageQueryParams';
 export interface RichlistRepository {
     /**
      * Get mosaic richlist
-     * @returns Observable<RichlistEntry>
+     * @returns Observable<RichlistEntry[]>
      */
     getMosaicRichlist(mosaicId: MosaicId, queryParams?: PageQueryParams): Observable<RichlistEntry[]>;
 
