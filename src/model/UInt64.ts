@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import * as Long from 'long';
 import { RawUInt64 as uint64 } from '../core/format';
 
 /**
@@ -51,6 +52,32 @@ export class UInt64 {
     public static fromHex(input: string): UInt64 {
         const dto = uint64.fromHex(input);
         return new UInt64(dto);
+    }
+
+    /**
+     * Parses a numeric string into a UInt64.
+     * @param {string} input A numeric string.
+     * @returns {module:coders/uint64~uint64} The uint64 representation of the input.
+     */
+    public static fromNumericString(input: string): UInt64 {
+        if (!UInt64.isLongNumericString(input)) {
+            throw new Error('Input string is not a valid numeric string');
+        }
+        const input_long = Long.fromString(input, true);
+        return new UInt64([input_long.getLowBitsUnsigned(), input_long.getHighBitsUnsigned()]);
+    }
+
+    /**
+     * Check if input string is a numeric string or not
+     * @param {string} input A string.
+     * @returns {boolean}
+     */
+    public static isLongNumericString(input: string): boolean {
+        const input_long = Long.fromString(input, true);
+        if (! /^\d+$/.test(input) || (input.substr(0, 1) === '0' && input.length > 1) || !Long.isLong(input_long)) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -92,6 +119,15 @@ export class UInt64 {
     }
 
     /**
+     * Get numeric string representation
+     *
+     * @return {string}
+     */
+    public toString(): string {
+        return Long.fromBits(this.lower, this.higher, true).toString();
+    }
+
+    /**
      * Compact higher and lower uint parts into a uint
      * @returns {number}
      */
@@ -106,5 +142,49 @@ export class UInt64 {
      */
     public equals(other: UInt64): boolean {
         return this.lower === other.lower && this.higher === other.higher;
+    }
+
+    /**
+     * Compares two UInt64
+     * @param other
+     * @returns {number} - -1, 0, 1
+     */
+    public compare(other: UInt64): number {
+        const long_a = Long.fromBits(this.lower, this.higher, true);
+        const long_b = Long.fromBits(other.lower, other.higher, true);
+        return long_a.compare(long_b);
+    }
+
+    /**
+     * UInt64 add operation
+     * @param other
+     * @returns {UInt64}
+     */
+    public add(other: UInt64): UInt64 {
+        const long_value = Long.fromBits(this.lower, this.higher, true);
+        const long_b = Long.fromBits(other.lower, other.higher, true);
+        return this.longToUint64(long_value.add(long_b));
+    }
+
+    /**
+     * UInt64 add operation
+     * @param other
+     * @returns {UInt64}
+     */
+    public subtract(other: UInt64): UInt64 {
+        const long_value = Long.fromBits(this.lower, this.higher, true);
+        const long_b = Long.fromBits(other.lower, other.higher, true);
+        if (long_value.compare(long_b) < 0) {
+            throw new Error('Unsigned substraction result cannot be negative.');
+        }
+        return this.longToUint64(long_value.subtract(long_b));
+    }
+
+    /**
+     * Convert long value to UInt64
+     * @param longValue long value
+     */
+    private longToUint64(longValue: Long): UInt64 {
+        return new UInt64([longValue.getLowBitsUnsigned(), longValue.getHighBitsUnsigned()]);
     }
 }

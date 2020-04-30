@@ -169,6 +169,7 @@ export * from './upgrade/ChainUpgrade';
 // Wallet
 export * from './wallet/EncryptedPrivateKey';
 export * from './wallet/Password';
+export * from './wallet/ISimpleWalletDTO';
 export * from './wallet/SimpleWallet';
 export * from './wallet/Wallet';
 export * from './wallet/WalletAlgorithm';

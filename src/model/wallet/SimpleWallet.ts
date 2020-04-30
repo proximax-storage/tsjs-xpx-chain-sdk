@@ -23,6 +23,7 @@ import {NetworkType} from '../blockchain/NetworkType';
 import {EncryptedPrivateKey} from './EncryptedPrivateKey';
 import {Password} from './Password';
 import {Wallet} from './Wallet';
+import { ISimpleWalletDTO } from './ISimpleWalletDTO';
 
 /**
  * Simple wallet model generates a private key from a PRNG
@@ -106,6 +107,25 @@ export class SimpleWallet extends Wallet {
         const encryptedPrivateKey = new EncryptedPrivateKey(encrypted.ciphertext, encrypted.iv);
 
         return new SimpleWallet(name, network, address, LocalDateTime.now(), encryptedPrivateKey);
+    }
+
+
+    /**
+     * Instantiate a SimpleWallet from a DTO
+     * @param simpleWalletDTO simple wallet without prototype
+     * @returns {SimpleWallet}
+     */
+    static createFromDTO(simpleWalletDTO: ISimpleWalletDTO): SimpleWallet {
+        return new SimpleWallet(
+            simpleWalletDTO.name,
+            simpleWalletDTO.network,
+            Address.createFromRawAddress(simpleWalletDTO.address.address),
+            LocalDateTime.now(),
+            new EncryptedPrivateKey(
+                simpleWalletDTO.encryptedPrivateKey.encryptedKey,
+                simpleWalletDTO.encryptedPrivateKey.iv,
+            ),
+        );
     }
 
     /**
