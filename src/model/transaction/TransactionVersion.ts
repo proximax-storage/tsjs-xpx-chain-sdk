@@ -144,7 +144,7 @@ export class TransactionVersion {
      * Add exchange transaction version
      * @type {number}
      */
-    public static readonly ADD_EXCHANGE_OFFER = 1;
+    public static readonly ADD_EXCHANGE_OFFER = 2;
 
     /**
      * Exchange transaction version
