@@ -10,13 +10,13 @@ The official ProximaX Blockchain SDK for TypeScript and JavaScript, available fo
 
 ### NodeJS
 
-- NodeJS 8.9.X
-- NodeJS 9.X.X
 - NodeJS 10.X.X
+- NodeJS 12.X.X
+- NodeJS 14.X.X
 
 ## Installation
 
-```npm install tsjs-xpx-chain-sdk rxjs```
+```npm install tsjs-xpx-chain-sdk```
 
 ## Documentation and Getting Started
 
