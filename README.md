@@ -1,4 +1,4 @@
-<p align="center"><a href="https://golang.org" target="_blank" rel="noopener noreferrer"><img width="300" src="https://user-images.githubusercontent.com/29048783/72934273-4cd5e700-3d31-11ea-8d67-bcfdaf0a6404.png" alt="Golang logo"></a></p>
+<p align="center"><a href="https://www.typescriptlang.org/" target="_blank" rel="noopener noreferrer"><img width="300" src="https://user-images.githubusercontent.com/29048783/72934273-4cd5e700-3d31-11ea-8d67-bcfdaf0a6404.png" alt="TypeScript logo"></a></p>
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
