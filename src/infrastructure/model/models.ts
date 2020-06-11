@@ -147,6 +147,7 @@ export * from './mosaicMetadataTransactionDTO';
 export * from './mosaicNamesDTO';
 export * from './mosaicPropertyDTO';
 export * from './mosaicPropertyIdEnum';
+export * from './mosaicRichListDTO';
 export * from './mosaicSupplyChangeTransactionBodyDTO';
 export * from './mosaicSupplyChangeTransactionDTO';
 export * from './multisigAccountGraphInfoDTO';
@@ -351,6 +352,7 @@ import { MosaicMetadataTransactionDTO } from './mosaicMetadataTransactionDTO';
 import { MosaicNamesDTO } from './mosaicNamesDTO';
 import { MosaicPropertyDTO } from './mosaicPropertyDTO';
 import { MosaicPropertyIdEnum } from './mosaicPropertyIdEnum';
+import { MosaicRichListDTO } from './mosaicRichListDTO';
 import { MosaicSupplyChangeTransactionBodyDTO } from './mosaicSupplyChangeTransactionBodyDTO';
 import { MosaicSupplyChangeTransactionDTO } from './mosaicSupplyChangeTransactionDTO';
 import { MultisigAccountGraphInfoDTO } from './multisigAccountGraphInfoDTO';
@@ -575,6 +577,7 @@ let typeMap: {[index: string]: any} = {
     "MosaicMetadataTransactionDTO": MosaicMetadataTransactionDTO,
     "MosaicNamesDTO": MosaicNamesDTO,
     "MosaicPropertyDTO": MosaicPropertyDTO,
+    "MosaicRichListDTO": MosaicRichListDTO,
     "MosaicSupplyChangeTransactionBodyDTO": MosaicSupplyChangeTransactionBodyDTO,
     "MosaicSupplyChangeTransactionDTO": MosaicSupplyChangeTransactionDTO,
     "MultisigAccountGraphInfoDTO": MultisigAccountGraphInfoDTO,

@@ -18,6 +18,8 @@ import {Observable} from 'rxjs';
 import {MosaicId} from '../model/mosaic/MosaicId';
 import {MosaicInfo} from '../model/mosaic/MosaicInfo';
 import { MosaicNames } from '../model/mosaic/MosaicNames';
+import { PageQueryParams } from './PageQueryParams';
+import { RichlistEntry } from '../model/model';
 
 /**
  * Mosaic interface repository.
@@ -47,4 +49,11 @@ export interface MosaicRepository {
      * @return Observable<MosaicNames[]>
      */
     getMosaicsNames(mosaicIds: MosaicId[]): Observable<MosaicNames[]>;
+
+    /**
+     * Get mosaic richlist
+     * @returns Observable<RichlistEntry[]>
+     */
+    getMosaicRichlist(mosaicId: MosaicId, queryParams?: PageQueryParams): Observable<RichlistEntry[]>;
+
 }

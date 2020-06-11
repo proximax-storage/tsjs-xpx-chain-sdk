@@ -12,15 +12,8 @@
 
 import { RequestFile } from '../api';
 
-export class RichlistEntryDTO {
-    /**
-    * The account address of the richlist entry. 
-    */
+export class MosaicRichListDTO {
     'address': string;
-    /**
-    * The public key of the account of richlist entry. 
-    */
-    'publicKey': string;
     'amount': Array<number>;
 
     static discriminator: string | undefined = undefined;
@@ -32,18 +25,13 @@ export class RichlistEntryDTO {
             "type": "string"
         },
         {
-            "name": "publicKey",
-            "baseName": "publicKey",
-            "type": "string"
-        },
-        {
             "name": "amount",
             "baseName": "amount",
             "type": "Array<number>"
         }    ];
 
     static getAttributeTypeMap() {
-        return RichlistEntryDTO.attributeTypeMap;
+        return MosaicRichListDTO.attributeTypeMap;
     }
 }
 

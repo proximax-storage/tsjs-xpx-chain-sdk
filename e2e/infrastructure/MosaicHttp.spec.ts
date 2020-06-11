@@ -183,4 +183,18 @@ describe('MosaicHttp', () => {
                 });
         });
     });
+
+    describe('getMosaicRichlist', () => {
+        it('should return mosaics richlist', (done) => {
+            mosaicHttp.getMosaicRichlist(mosaicId)
+                .subscribe((richlistEntry) => {
+                    expect(richlistEntry[0].amount).not.to.be.undefined;
+                    expect(richlistEntry[0].address).not.to.be.undefined;
+                    expect(richlistEntry[0].publicKey).not.to.be.undefined;
+                    console.log(richlistEntry)
+                    done();
+                });
+        });
+    });
+
 });

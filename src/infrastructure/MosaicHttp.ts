@@ -29,6 +29,8 @@ import { MosaicRoutesApi } from './api';
 import {Http} from './Http';
 import {MosaicRepository} from './MosaicRepository';
 import {NetworkHttp} from './NetworkHttp';
+import { RichlistEntry, Address } from '../model/model';
+import { PageQueryParams } from './PageQueryParams';
 
 /**
  * Mosaic http repository.
@@ -155,4 +157,28 @@ export class MosaicHttp extends Http implements MosaicRepository {
             });
         }));
     }
+
+    /**
+     * Gets mosaic richlist
+     * @param mosaicId - Mosaic id
+     * @param queryParams - (Optional) Page query params
+     * @returns Observable<RichlistEntry[]>
+     */
+    getMosaicRichlist(mosaicId: MosaicId, queryParams?: PageQueryParams): Observable<RichlistEntry[]> {
+        return observableFrom(
+            this.mosaicRoutesApi.getMosaicRichList(
+                mosaicId.toHex(),
+                this.pageQueryParams(queryParams).page,
+                this.pageQueryParams(queryParams).pageSize,
+            )).pipe(map(response => {
+            return response.body.map((richlistEntryDTO) => {
+                return RichlistEntry.create(
+                    Address.createFromEncoded(richlistEntryDTO.address),
+                    // TODO: check if route response actually have publicKey, FIXME in the .yaml then
+                    (richlistEntryDTO as any).publicKey ? (richlistEntryDTO as any).publicKey : '0'.repeat(64),
+                    new UInt64(richlistEntryDTO.amount));
+            });
+        }));
+    }
+
 }
