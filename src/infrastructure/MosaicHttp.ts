@@ -25,10 +25,12 @@ import { MosaicPropertyType } from '../model/mosaic/MosaicPropertyType';
 import {NamespaceId} from '../model/namespace/NamespaceId';
 import { NamespaceName } from '../model/namespace/NamespaceName';
 import {UInt64} from '../model/UInt64';
-import { MosaicInfoDTO, MosaicNamesDTO, MosaicRoutesApi } from './api';
+import { MosaicRoutesApi } from './api';
 import {Http} from './Http';
 import {MosaicRepository} from './MosaicRepository';
 import {NetworkHttp} from './NetworkHttp';
+import { RichlistEntry, Address } from '../model/model';
+import { PageQueryParams } from './PageQueryParams';
 
 /**
  * Mosaic http repository.
@@ -61,7 +63,8 @@ export class MosaicHttp extends Http implements MosaicRepository {
     public getMosaic(mosaicId: MosaicId): Observable<MosaicInfo> {
         return this.getNetworkTypeObservable().pipe(
             mergeMap((networkType) => observableFrom(
-                this.mosaicRoutesApi.getMosaic(mosaicId.toHex())).pipe(map((mosaicInfoDTO: MosaicInfoDTO) => {
+                this.mosaicRoutesApi.getMosaic(mosaicId.toHex())).pipe(map(response => {
+                    const mosaicInfoDTO = response.body;
                     let mosaicFlag;
                     let divisibility;
                     let duration;
@@ -101,8 +104,8 @@ export class MosaicHttp extends Http implements MosaicRepository {
         };
         return this.getNetworkTypeObservable().pipe(
             mergeMap((networkType) => observableFrom(
-                this.mosaicRoutesApi.getMosaics(mosaicIdsBody)).pipe(map((mosaicInfosDTO: MosaicInfoDTO[]) => {
-                return mosaicInfosDTO.map((mosaicInfoDTO) => {
+                this.mosaicRoutesApi.getMosaics(mosaicIdsBody)).pipe(map(response => {
+                return response.body.map((mosaicInfoDTO) => {
                     let mosaicFlag;
                     let divisibility;
                     let duration;
@@ -143,8 +146,8 @@ export class MosaicHttp extends Http implements MosaicRepository {
             mosaicIds: mosaicIds.map((id) => id.toHex()),
         };
         return observableFrom(
-            this.mosaicRoutesApi.getMosaicsNames(mosaicIdsBody)).pipe(map((mosaics: MosaicNamesDTO[]) => {
-            return mosaics.map((mosaic) => {
+            this.mosaicRoutesApi.getMosaicsNames(mosaicIdsBody)).pipe(map(response => {
+            return response.body.map((mosaic) => {
                 return new MosaicNames(
                     new MosaicId(mosaic.mosaicId),
                     mosaic.names.map((name) => {
@@ -154,4 +157,28 @@ export class MosaicHttp extends Http implements MosaicRepository {
             });
         }));
     }
+
+    /**
+     * Gets mosaic richlist
+     * @param mosaicId - Mosaic id
+     * @param queryParams - (Optional) Page query params
+     * @returns Observable<RichlistEntry[]>
+     */
+    getMosaicRichlist(mosaicId: MosaicId, queryParams?: PageQueryParams): Observable<RichlistEntry[]> {
+        return observableFrom(
+            this.mosaicRoutesApi.getMosaicRichList(
+                mosaicId.toHex(),
+                this.pageQueryParams(queryParams).page,
+                this.pageQueryParams(queryParams).pageSize,
+            )).pipe(map(response => {
+            return response.body.map((richlistEntryDTO) => {
+                return RichlistEntry.create(
+                    Address.createFromEncoded(richlistEntryDTO.address),
+                    // TODO: check if route response actually have publicKey, FIXME in the .yaml then
+                    (richlistEntryDTO as any).publicKey ? (richlistEntryDTO as any).publicKey : '0'.repeat(64),
+                    new UInt64(richlistEntryDTO.amount));
+            });
+        }));
+    }
+
 }

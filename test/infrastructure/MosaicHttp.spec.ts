@@ -3,6 +3,7 @@ import * as spies from 'chai-spies';
 import { MosaicHttp } from '../../src/infrastructure/infrastructure';
 import { NetworkType, PublicAccount, MosaicId, UInt64 } from '../../src/model/model';
 import { of } from 'rxjs';
+import { Convert, RawAddress } from '../../src/core/format';
 
 chai.use(spies);
 const expect = chai.expect;
@@ -39,7 +40,7 @@ describe('MosaicHttp', () => {
             }
         };
         beforeEach(() => {
-            sandbox.on((client as any).mosaicRoutesApi, 'getMosaic', () => Promise.resolve(dto));
+            sandbox.on((client as any).mosaicRoutesApi, 'getMosaic', () => Promise.resolve({ body: dto }));
             sandbox.on(client, 'getNetworkTypeObservable', () => of(NetworkType.MIJIN_TEST));
         });
         afterEach(() => {
@@ -86,7 +87,7 @@ describe('MosaicHttp', () => {
             }
         };
         beforeEach(() => {
-            sandbox.on((client as any).mosaicRoutesApi, 'getMosaics', () => Promise.resolve([dto]));
+            sandbox.on((client as any).mosaicRoutesApi, 'getMosaics', () => Promise.resolve({ body: [dto] }));
             sandbox.on(client, 'getNetworkTypeObservable', () => of(NetworkType.MIJIN_TEST));
         });
         afterEach(() => {
@@ -123,7 +124,7 @@ describe('MosaicHttp', () => {
             ]
         };
         beforeEach(() => {
-            sandbox.on((client as any).mosaicRoutesApi, 'getMosaicsNames', () => Promise.resolve([dto]));
+            sandbox.on((client as any).mosaicRoutesApi, 'getMosaicsNames', () => Promise.resolve({ body: [dto] }));
         });
         afterEach(() => {
             sandbox.restore();
@@ -137,6 +138,34 @@ describe('MosaicHttp', () => {
                     expect(response.names.length).to.be.equal(2);
                     expect(response.names[0].name).to.be.equal('some.name');
                     expect(response.names[1].name).to.be.equal('some.other.name');
+                });
+                done();
+            })
+        });
+    });
+
+    describe('getMosaicRichList', () => {
+        const mosaicId = new MosaicId([66666,99999]);
+
+        const dto = {
+            address: Convert.uint8ToHex(RawAddress.stringToAddress(address.plain())),
+            publicKey: publicAccount.publicKey,
+            amount: UInt64.fromUint(999).toDTO(),
+        };
+        beforeEach(() => {
+            sandbox.on((client as any).mosaicRoutesApi, 'getMosaicRichList', () => Promise.resolve({ body: [dto] }));
+            sandbox.on(client, 'getNetworkTypeObservable', () => of(NetworkType.MIJIN_TEST));
+        });
+        afterEach(() => {
+            sandbox.restore();
+        });
+        it('should call api client', (done) => {
+            client.getMosaicRichlist(mosaicId).subscribe(responses => {
+                expect(responses.length).to.be.equal(1);
+                responses.forEach(response => {
+                    expect(response.address.plain()).to.be.equal(address.plain());
+                    expect(response.publicKey).to.be.equal(publicAccount.publicKey);
+                    expect(response.amount.toDTO()).to.be.deep.equal(dto.amount);
                 });
                 done();
             })

@@ -24,11 +24,7 @@ import { MerkleProofInfoPayload } from '../model/blockchain/MerkleProofInfoPaylo
 import { Statement } from '../model/receipt/Statement';
 import {Transaction} from '../model/transaction/Transaction';
 import {UInt64} from '../model/UInt64';
-import { BlockInfoDTO,
-         BlockRoutesApi,
-         MerkleProofInfoDTO,
-         StatementsDTO,
-         TransactionInfoDTO } from './api';
+import { BlockRoutesApi } from './api';
 import {BlockRepository} from './BlockRepository';
 import {Http} from './Http';
 import { NetworkHttp } from './NetworkHttp';
@@ -79,7 +75,8 @@ export class BlockHttp extends Http implements BlockRepository {
      * @returns Observable<BlockInfo>
      */
     public getBlockByHeight(height: number): Observable<BlockInfo> {
-        return observableFrom(this.blockRoutesApi.getBlockByHeight(height)).pipe(map((blockDTO: BlockInfoDTO) => {
+        return observableFrom(this.blockRoutesApi.getBlockByHeight(height)).pipe(map(response => {
+            const blockDTO = response.body;
             const networkType = parseInt((blockDTO.block.version >>> 0).toString(16).substr(0, 2), 16); // ">>> 0" hack makes it effectively an Uint32
             return new BlockInfo(
                 blockDTO.meta.hash,
@@ -117,8 +114,8 @@ export class BlockHttp extends Http implements BlockRepository {
                                                      this.queryParams(queryParams).pageSize,
                                                      this.queryParams(queryParams).id,
                                                      this.queryParams(queryParams).order))
-                .pipe(map((transactionsDTO: TransactionInfoDTO[]) => {
-                    return transactionsDTO.map((transactionDTO) => {
+                .pipe(map(response => {
+                    return response.body.map((transactionDTO) => {
                         return CreateTransactionFromDTO(transactionDTO);
                     });
         }));
@@ -132,8 +129,8 @@ export class BlockHttp extends Http implements BlockRepository {
      */
     public getBlocksByHeightWithLimit(height: number, limit: LimitType = LimitType.N_25): Observable<BlockInfo[]> {
         return observableFrom(
-            this.blockRoutesApi.getBlocksByHeightWithLimit(height, limit)).pipe(map((blocksDTO: BlockInfoDTO[]) => {
-            return blocksDTO.map((blockDTO) => {
+            this.blockRoutesApi.getBlocksByHeightWithLimit(height, limit)).pipe(map(response => {
+            return response.body.map((blockDTO) => {
                 const networkType = parseInt((blockDTO.block.version >>> 0).toString(16).substr(0, 2), 16);
                 return new BlockInfo(
                     blockDTO.meta.hash,
@@ -171,7 +168,8 @@ export class BlockHttp extends Http implements BlockRepository {
      */
     public getMerkleReceipts(height: number, hash: string): Observable<MerkleProofInfo> {
         return observableFrom(
-            this.blockRoutesApi.getMerkleReceipts(height, hash)).pipe(map((merkleProofReceipt: MerkleProofInfoDTO) => {
+            this.blockRoutesApi.getMerkleReceipts(height, hash)).pipe(map(response => {
+                const merkleProofReceipt = response.body;
                 return new MerkleProofInfo(
                     new MerkleProofInfoPayload(
                         merkleProofReceipt.payload.merklePath!.map(
@@ -193,7 +191,8 @@ export class BlockHttp extends Http implements BlockRepository {
      */
     public getMerkleTransaction(height: number, hash: string): Observable<MerkleProofInfo> {
         return observableFrom(
-            this.blockRoutesApi.getMerkleReceipts(height, hash)).pipe(map((merkleProofTransaction: MerkleProofInfoDTO) => {
+            this.blockRoutesApi.getMerkleReceipts(height, hash)).pipe(map(response => {
+                const merkleProofTransaction = response.body;
                 return new MerkleProofInfo(
                     new MerkleProofInfoPayload(
                         merkleProofTransaction.payload.merklePath!.map((payload) => new MerklePathItem(payload.position, payload.hash))),
@@ -212,8 +211,8 @@ export class BlockHttp extends Http implements BlockRepository {
         return this.getNetworkTypeObservable().pipe(
             mergeMap((networkType) => observableFrom(
                 this.blockRoutesApi.getBlockReceipts(height)).pipe(
-                    map((receiptDTO: StatementsDTO) => {
-                        return CreateStatementFromDTO(receiptDTO, networkType);
+                    map(response => {
+                        return CreateStatementFromDTO(response.body, networkType);
                     }),
                 ),
             ),

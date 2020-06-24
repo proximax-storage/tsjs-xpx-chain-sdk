@@ -28,25 +28,25 @@ export class DtoMapping {
      * @param {object} dataJson The account restriction json object.
      * @returns {module: model/Account/AccountRestrictionsInfo} The AccountRestrictionsInfo class.
      */
-    public static extractAccountRestrictionFromDto(accountRestrictions): AccountRestrictionsInfo {
+    public static extractAccountRestrictionFromDto(accountProperties): AccountRestrictionsInfo {
         return new AccountRestrictionsInfo(
-            accountRestrictions.meta,
-            new AccountRestrictions(Address.createFromEncoded(accountRestrictions.accountRestrictions.address),
-                accountRestrictions.accountRestrictions.restrictions.map((prop) => {
-                        switch (prop.restrictionType) {
+            accountProperties.meta,
+            new AccountRestrictions(Address.createFromEncoded(accountProperties.accountProperties.address),
+            accountProperties.accountProperties.properties.map((prop) => {
+                        switch (prop.propertyType) {
                             case RestrictionType.AllowAddress:
                             case RestrictionType.BlockAddress:
-                                return new AccountRestriction(prop.restrictionType,
+                                return new AccountRestriction(prop.propertyType,
                                                             prop.values.map((value) => Address.createFromEncoded(value)));
                             case RestrictionType.AllowMosaic:
                             case RestrictionType.BlockMosaic:
-                                return new AccountRestriction(prop.restrictionType,
+                                return new AccountRestriction(prop.propertyType,
                                                             prop.values.map((value) => new MosaicId(value)));
                             case RestrictionType.AllowTransaction:
                             case RestrictionType.BlockTransaction:
-                                return new AccountRestriction(prop.restrictionType, prop.values);
+                                return new AccountRestriction(prop.propertyType, prop.values);
                             default:
-                                throw new Error(`Invalid restriction type: ${prop.restrictionType}`);
+                                throw new Error(`Invalid restriction type: ${prop.propertyType}`);
                         }
                     })));
     }

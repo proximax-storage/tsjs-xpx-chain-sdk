@@ -25,6 +25,11 @@
  * Do not edit the class manually.
  */
 
+import { RequestFile } from '../api';
+import { BlockDTOAllOf } from './blockDTOAllOf';
+import { EntityDTO } from './entityDTO';
+import { EntityTypeEnum } from './entityTypeEnum';
+import { VerifiableEntityDTO } from './verifiableEntityDTO';
 
 export class BlockDTO {
     /**
@@ -39,10 +44,7 @@ export class BlockDTO {
     * The entity version. The higher byte represents the network identifier: * 0x68 (MAIN_NET) - Public main network. * 0x98 (TEST_NET) - Public test network. * 0x60 (MIJIN) - Private network. * 0x90 (MIJIN_TEST) - Private test network. 
     */
     'version': number;
-    /**
-    * The block type: * 0x8043 (32835 decimal) - Nemesis block. * 0x8143 (33091 decimal) - Regular block. 
-    */
-    'type': number;
+    'type': EntityTypeEnum;
     'height': Array<number>;
     'timestamp': Array<number>;
     'difficulty': Array<number>;
@@ -100,7 +102,7 @@ export class BlockDTO {
         {
             "name": "type",
             "baseName": "type",
-            "type": "number"
+            "type": "EntityTypeEnum"
         },
         {
             "name": "height",

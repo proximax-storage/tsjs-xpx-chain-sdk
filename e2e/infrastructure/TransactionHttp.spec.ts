@@ -1191,7 +1191,7 @@ describe('TransactionHttp', () => {
                         UInt64.fromUint(10000000),
                         UInt64.fromUint(10000000),
                         ExchangeOfferType.SELL_OFFER,
-                        UInt64.fromUint(1000)
+                        UInt64.fromUint(10000)
                     )
                 ];
                 const addExchangeOfferTransaction = factory.addExchangeOffer()
@@ -1210,7 +1210,7 @@ describe('TransactionHttp', () => {
                         UInt64.fromUint(10000000),
                         UInt64.fromUint(10000000),
                         ExchangeOfferType.BUY_OFFER,
-                        UInt64.fromUint(1000)
+                        UInt64.fromUint(10000)
                     )
                 ];
                 const addExchangeOfferTransaction = factory.addExchangeOffer()

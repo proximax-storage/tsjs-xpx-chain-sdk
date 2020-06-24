@@ -16,7 +16,7 @@ describe('ChainHttp', () => {
             height: UInt64.fromUint(666).toDTO(),
         };
         beforeEach(() => {
-            sandbox.on((client as any).chainRoutesApi, 'getBlockchainHeight', () => Promise.resolve(dto));
+            sandbox.on((client as any).chainRoutesApi, 'getBlockchainHeight', () => Promise.resolve({ body: dto }));
         });
         afterEach(() => {
             sandbox.restore();
@@ -35,7 +35,7 @@ describe('ChainHttp', () => {
             scoreHigh: UInt64.fromUint(999).toDTO(),
         };
         beforeEach(() => {
-            sandbox.on((client as any).chainRoutesApi, 'getBlockchainScore', () => Promise.resolve(dto));
+            sandbox.on((client as any).chainRoutesApi, 'getBlockchainScore', () => Promise.resolve({ body: dto }));
         });
         afterEach(() => {
             sandbox.restore();

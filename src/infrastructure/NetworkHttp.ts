@@ -17,7 +17,7 @@
 import {from as observableFrom, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {NetworkType} from '../model/blockchain/NetworkType';
-import { NetworkRoutesApi, NetworkTypeDTO } from './api';
+import { NetworkRoutesApi } from './api';
 import {Http} from './Http';
 import {NetworkRepository} from './NetworkRepository';
 
@@ -49,7 +49,8 @@ export class NetworkHttp extends Http implements NetworkRepository {
      * @return network type enum.
      */
     public getNetworkType(): Observable<NetworkType> {
-        return observableFrom(this.networkRoutesApi.getNetworkType()).pipe(map((networkTypeDTO: NetworkTypeDTO) => {
+        return observableFrom(this.networkRoutesApi.getNetworkType()).pipe(map(response => {
+          const networkTypeDTO = response.body;
             if (networkTypeDTO.name === 'mijinTest') {
               return NetworkType.MIJIN_TEST;
             } else if (networkTypeDTO.name === 'mijin') {

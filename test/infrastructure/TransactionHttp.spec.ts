@@ -14,7 +14,7 @@ describe('TransactionHttp', () => {
 
     describe('getTransaction', () => {
         beforeEach(() => {
-            sandbox.on((client as any).transactionRoutesApi, 'getTransaction', (tx) => Promise.resolve('api called'));
+            sandbox.on((client as any).transactionRoutesApi, 'getTransaction', (tx) => Promise.resolve({ body: 'api called' }));
             sandbox.on(createFromDto, 'CreateTransactionFromDTO', (dto) => dto === 'api called' ? 'deserialization called': 'not ok');
         });
         afterEach(() => {
@@ -31,7 +31,7 @@ describe('TransactionHttp', () => {
 
     describe('getTransactions', () => {
         beforeEach(() => {
-            sandbox.on((client as any).transactionRoutesApi, 'getTransactions', (tx) => Promise.resolve(['api called']));
+            sandbox.on((client as any).transactionRoutesApi, 'getTransactions', (tx) => Promise.resolve({ body: ['api called'] }));
             sandbox.on(createFromDto, 'CreateTransactionFromDTO', (dto) => dto === 'api called' ? 'deserialization called': 'not ok');
         });
         afterEach(() => {
@@ -55,7 +55,7 @@ describe('TransactionHttp', () => {
             height: undefined
         };
         beforeEach(() => {
-            sandbox.on((client as any).transactionRoutesApi, 'getTransactionStatus', (txId) => Promise.resolve(dto));
+            sandbox.on((client as any).transactionRoutesApi, 'getTransactionStatus', (txId) => Promise.resolve({ body: dto }));
         });
         afterEach(() => {
             sandbox.restore();
@@ -78,7 +78,7 @@ describe('TransactionHttp', () => {
             height: undefined
         };
         beforeEach(() => {
-            sandbox.on((client as any).transactionRoutesApi, 'getTransactionsStatuses', (txId) => Promise.resolve([dto]));
+            sandbox.on((client as any).transactionRoutesApi, 'getTransactionsStatuses', (txId) => Promise.resolve({ body: [dto] }));
         });
         afterEach(() => {
             sandbox.restore();
@@ -94,7 +94,7 @@ describe('TransactionHttp', () => {
 
     describe('announce', () => {
         beforeEach(() => {
-            sandbox.on((client as any).transactionRoutesApi, 'announceTransaction', (tx) => Promise.resolve({message: 'some message'}));
+            sandbox.on((client as any).transactionRoutesApi, 'announceTransaction', (tx) => Promise.resolve({ body: {message: 'some message'} }));
         });
         afterEach(() => {
             sandbox.restore();
@@ -110,7 +110,7 @@ describe('TransactionHttp', () => {
     describe('announceAggregateBonded', () => {
         beforeEach(() => {
             sandbox.on((client as any).transactionRoutesApi, 'announcePartialTransaction', (tx) => {
-                return Promise.resolve({message: 'some message'});
+                return Promise.resolve({ body: {message: 'some message'} });
             });
         });
         afterEach(() => {
@@ -134,7 +134,7 @@ describe('TransactionHttp', () => {
 
     describe('announceAggregateBondedCosignature', () => {
         beforeEach(() => {
-            sandbox.on((client as any).transactionRoutesApi, 'announceCosignatureTransaction', (tx) => Promise.resolve({message: 'some message'}));
+            sandbox.on((client as any).transactionRoutesApi, 'announceCosignatureTransaction', (tx) => Promise.resolve({ body: {message: 'some message'} }));
         });
         afterEach(() => {
             sandbox.restore();
@@ -160,9 +160,9 @@ describe('TransactionHttp', () => {
             }
         };
         beforeEach(() => {
-            sandbox.on((client as any).transactionRoutesApi, 'getTransaction', (tx) => Promise.resolve('api called'));
+            sandbox.on((client as any).transactionRoutesApi, 'getTransaction', (tx) => Promise.resolve({ body: 'api called' }));
             sandbox.on(createFromDto, 'CreateTransactionFromDTO', (dto) => dto === 'api called' ? tx: {not: 'ok'});
-            sandbox.on((client as any).blockRoutesApi, 'getBlockByHeight', (number) => Promise.resolve(blockDto));
+            sandbox.on((client as any).blockRoutesApi, 'getBlockByHeight', (number) => Promise.resolve({ body: blockDto }));
         });
         afterEach(() => {
             sandbox.restore();

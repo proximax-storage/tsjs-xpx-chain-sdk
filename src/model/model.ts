@@ -43,11 +43,13 @@ export * from './blockchain/NetworkType';
 // Config
 export * from './config/ChainConfig';
 
-// Contract
-export * from './contract/Contract';
-
 // Diagnostic
 export * from './diagnostic/ServerInfo';
+
+// Exchange
+export * from './exchange/AccountExchanges';
+export * from './exchange/MosaicExchange';
+export * from './exchange/OfferInfo';
 
 // Metadata
 export * from './metadata/AddressMetadata';
@@ -106,6 +108,9 @@ export * from './receipt/ResolutionType';
 export * from './receipt/Statement';
 export * from './receipt/TransactionStatement';
 
+// Richlist
+export * from './richlist/RichlistEntry';
+
 // Transaction
 export * from './transaction/AccountAddressRestrictionModificationTransaction';
 export * from './transaction/AccountLinkTransaction';
@@ -137,7 +142,6 @@ export * from './transaction/LinkAction';
 export * from './transaction/LockFundsTransaction';
 export * from './transaction/Message';
 export * from './transaction/MessageType';
-export * from './transaction/ModifyContractTransaction';
 export * from './transaction/ModifyMetadataTransaction';
 export * from './transaction/ModifyMultisigAccountTransaction';
 export * from './transaction/MosaicAliasTransaction';

@@ -7,7 +7,6 @@ import { UInt64 } from "../UInt64";
 
 /**
  * The config structure stores a chain configuration as returned from http configRoutesApi.
- * The contract can be created on blockachain using ModifyContractTransaction
  */
 export class ChainConfig {
     constructor(

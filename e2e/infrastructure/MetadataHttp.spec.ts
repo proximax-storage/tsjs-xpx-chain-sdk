@@ -1,3 +1,7 @@
+// Copyright 2020 ProximaX Limited. All rights reserved.
+// Use of this source code is governed by the Apache 2.0
+// license that can be found in the LICENSE file
+
 import {expect} from 'chai';
 import { APIUrl, TestingAccount, ConfTestingNamespaceId, ConfTestingMosaicId, Configuration } from '../conf/conf.spec';
 import { MetadataHttp } from '../../src/infrastructure/MetadataHttp';

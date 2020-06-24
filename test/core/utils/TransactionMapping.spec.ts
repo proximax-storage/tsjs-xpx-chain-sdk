@@ -25,7 +25,7 @@ import { PublicAccount } from '../../../src/model/account/PublicAccount';
 import { RestrictionModificationType } from '../../../src/model/account/RestrictionModificationType';
 import { RestrictionType } from '../../../src/model/account/RestrictionType';
 import { NetworkType } from '../../../src/model/blockchain/NetworkType';
-import { EncryptedMessage, ModifyMetadataTransaction, MetadataType, MetadataModification, Metadata, MetadataModificationType, ChainConfigTransaction, ChainUpgradeTransaction, ModifyContractTransaction } from '../../../src/model/model';
+import { EncryptedMessage, ModifyMetadataTransaction, MetadataType, MetadataModification, Metadata, MetadataModificationType, ChainConfigTransaction, ChainUpgradeTransaction } from '../../../src/model/model';
 import { MosaicId } from '../../../src/model/mosaic/MosaicId';
 import { MosaicNonce } from '../../../src/model/mosaic/MosaicNonce';
 import { MosaicProperties } from '../../../src/model/mosaic/MosaicProperties';
@@ -630,45 +630,6 @@ describe('TransactionMapping - createFromPayload', () => {
         expect(transaction.newBlockchainVersion.toHex()).to.be.equal('FEDCBA9876543210');
     })
 
-    it('should create ModifyContractTransaction', () => {
-        const hash = sha3_256.create().update('something').hex().toUpperCase();
-        const executorPublicKey = '1'.repeat(63) + 'A';
-        const verifierPublicKey1 = '2'.repeat(63) + 'B';
-        const verifierPublicKey2 = '3'.repeat(63) + 'C';
-        const customers = [];
-        const executors = [
-            new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, PublicAccount.createFromPublicKey(executorPublicKey, NetworkType.MIJIN_TEST))
-        ];
-        const verifiers = [
-            new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Remove, PublicAccount.createFromPublicKey(verifierPublicKey1, NetworkType.MIJIN_TEST)),
-            new MultisigCosignatoryModification(MultisigCosignatoryModificationType.Add, PublicAccount.createFromPublicKey(verifierPublicKey2, NetworkType.MIJIN_TEST))
-        ];
-        const modifyContractTransaction = ModifyContractTransaction.create(
-            NetworkType.MIJIN_TEST,
-            Deadline.create(),
-            UInt64.fromHex('0123456789ABCDEF'),
-            hash,
-            customers,
-            executors,
-            verifiers
-        );
-
-        const signedTransaction = modifyContractTransaction.signWith(account, generationHash);
-
-        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as ModifyContractTransaction;
-
-        expect(transaction.durationDelta.toHex()).to.be.equal('0123456789ABCDEF');
-        expect(transaction.hash).to.be.equal(hash);
-        expect(transaction.customers.length).to.be.equal(0);
-        expect(transaction.executors.length).to.be.equal(1);
-        expect(transaction.executors[0].type).to.be.equal(MultisigCosignatoryModificationType.Add);
-        expect(transaction.executors[0].cosignatoryPublicAccount.publicKey).to.be.equal(executorPublicKey);
-        expect(transaction.verifiers.length).to.be.equal(2);
-        expect(transaction.verifiers[0].type).to.be.equal(MultisigCosignatoryModificationType.Remove);
-        expect(transaction.verifiers[0].cosignatoryPublicAccount.publicKey).to.be.equal(verifierPublicKey1);
-        expect(transaction.verifiers[1].type).to.be.equal(MultisigCosignatoryModificationType.Add);
-        expect(transaction.verifiers[1].cosignatoryPublicAccount.publicKey).to.be.equal(verifierPublicKey2);
-    })
     it('should create AddExchangeOfferTransaction', () => {
         const addExchangeOfferTransaction = AddExchangeOfferTransaction.create(
             Deadline.create(),

@@ -129,12 +129,6 @@ export class TransactionVersion {
     public static readonly MODIFY_METADATA = 1;
 
     /**
-     * Modify contract transaction version
-     * @type {number}
-     */
-    public static readonly MODIFY_CONTRACT = 3;
-
-    /**
      * Chain configuration transaction version
      * @type {number}
      */
