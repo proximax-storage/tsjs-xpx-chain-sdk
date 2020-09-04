@@ -104,18 +104,18 @@ export const throwInvalidFqn = (reason, name) => {
 
 export const extractPartName = (name, start, size) => {
     if (0 === size) {
-        this.throwInvalidFqn('empty part', name);
+        throwInvalidFqn('empty part', name);
     }
     const partName = name.substr(start, size);
     if (!idGeneratorConst.name_pattern.test(partName)) {
-        this.throwInvalidFqn(`invalid part name [${partName}]`, name);
+        throwInvalidFqn(`invalid part name [${partName}]`, name);
     }
     return partName;
 };
 
 export const append = (path, id, name) => {
     if (idGeneratorConst.namespace_max_depth === path.length) {
-        this.throwInvalidFqn('too many parts', name);
+        throwInvalidFqn('too many parts', name);
     }
     path.push(id);
 };
@@ -152,7 +152,7 @@ export const encodeBlock = (input, inputOffset, output, outputOffset) => {
 };
 
 export const Char_To_Decoded_Char_Map = () => {
-    const builder = this.createBuilder();
+    const builder = createBuilder();
     builder.addRange('A', 'Z', 0);
     builder.addRange('2', '7', 26);
     return builder.map;
@@ -168,8 +168,8 @@ export const decodeChar = (c) => {
 };
 
 export const decodeBlock = (input, inputOffset, output, outputOffset) => {
-    const bytes = new Uint8Array(this.Encoded_Block_Size);
-    for (let i = 0; i < this.Encoded_Block_Size; ++i) {
+    const bytes = new Uint8Array(Encoded_Block_Size);
+    for (let i = 0; i < Encoded_Block_Size; ++i) {
         bytes[i] = decodeChar(input[inputOffset + i]);
     }
 
