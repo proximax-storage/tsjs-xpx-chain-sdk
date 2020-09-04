@@ -61,12 +61,12 @@ export class TransactionVersion {
      * Aggregate complete transaction version.
      * @type {number}
      */
-    public static readonly AGGREGATE_COMPLETE = 2;
+    public static readonly AGGREGATE_COMPLETE = 3;
 
     /**
      * Aggregate bonded transaction version
      */
-    public static readonly AGGREGATE_BONDED = 2;
+    public static readonly AGGREGATE_BONDED = 3;
 
     /**
      * Lock transaction version
@@ -144,18 +144,18 @@ export class TransactionVersion {
      * Add exchange transaction version
      * @type {number}
      */
-    public static readonly ADD_EXCHANGE_OFFER = 2;
+    public static readonly ADD_EXCHANGE_OFFER = 4;
 
     /**
      * Exchange transaction version
      * @type {number}
      */
-    public static readonly EXCHANGE_OFFER = 1;
+    public static readonly EXCHANGE_OFFER = 2;
 
     /**
      * Remove exchange transaction version
      * @type {number}
      */
-    public static readonly REMOVE_EXCHANGE_OFFER = 1;
+    public static readonly REMOVE_EXCHANGE_OFFER = 2;
 
 }
