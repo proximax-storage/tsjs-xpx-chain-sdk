@@ -27,6 +27,7 @@ export * from './MosaicHttp';
 export * from './NamespaceHttp';
 export * from './TransactionHttp';
 export * from './Listener';
+export * from './PageQueryParams';
 export * from './QueryParams';
 export * from './NetworkHttp';
 export * from './NodeHttp';
