@@ -23,12 +23,15 @@ import {NetworkType} from '../../../src/model/blockchain/NetworkType';
 import {Mosaic} from '../../../src/model/mosaic/Mosaic';
 import {UInt64} from '../../../src/model/UInt64';
 import {MosaicId} from '../../../src/model/mosaic/MosaicId';
+import { AccountLinkTypeEnum } from '../../../src/infrastructure/api';
 
 describe('AccountInfo', () => {
 
     it('should createComplete an AccountInfo object', () => {
         const accountInfoDTO = {
             account: {
+                accountType: AccountLinkTypeEnum.NUMBER_1,
+                linkedAccountKey: '0'.repeat(64),
                 address: Address.createFromEncoded('9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142'),
                 addressHeight: new UInt64([1, 0]),
                 importance: new UInt64([405653170, 0]),
@@ -49,6 +52,8 @@ describe('AccountInfo', () => {
             accountInfoDTO.account.addressHeight,
             accountInfoDTO.account.publicKey,
             accountInfoDTO.account.publicKeyHeight,
+            accountInfoDTO.account.accountType.valueOf(),
+            accountInfoDTO.account.linkedAccountKey,
             accountInfoDTO.account.mosaics.map((mosaicDTO) => new Mosaic(mosaicDTO.id, mosaicDTO.amount))
         );
 
@@ -57,6 +62,8 @@ describe('AccountInfo', () => {
         deepEqual(accountInfo.addressHeight, accountInfoDTO.account.addressHeight);
         expect(accountInfo.publicKey).to.be.equal(accountInfoDTO.account.publicKey);
         deepEqual(accountInfo.publicKeyHeight, accountInfoDTO.account.publicKeyHeight);
+        expect(accountInfo.accountType).to.be.equal(accountInfoDTO.account.accountType);
+        expect(accountInfo.linkedAccountKey).to.be.equal(accountInfoDTO.account.linkedAccountKey);
         deepEqual(accountInfo.publicAccount, PublicAccount.createFromPublicKey(accountInfoDTO.account.publicKey, NetworkType.MIJIN_TEST));
 
     });
