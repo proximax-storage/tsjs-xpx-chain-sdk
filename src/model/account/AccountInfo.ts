@@ -16,6 +16,7 @@
 
 import {Mosaic} from '../mosaic/Mosaic';
 import {UInt64} from '../UInt64';
+import {AccountType} from './AccountType';
 import {Address} from './Address';
 import {PublicAccount} from './PublicAccount';
 
@@ -48,6 +49,14 @@ export class AccountInfo {
          * Height when the public key was published.
          */
         public readonly publicKeyHeight: UInt64,
+        /**
+         * Account type
+         */
+        public readonly accountType: AccountType,
+        /**
+         * Linked account key
+         */
+        public readonly linkedAccountKey: string,
         /**
          * Mosaics hold by the account.
          */

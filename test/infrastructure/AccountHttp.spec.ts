@@ -7,6 +7,7 @@ import * as dtoMapping from '../../src/core/utils/DtoMapping'
 import { Address, NetworkType, PublicAccount, UInt64, MultisigAccountInfo } from '../../src/model/model';
 import { RawAddress, Convert } from '../../src/core/format';
 import { of } from 'rxjs';
+import { AccountLinkTypeEnum } from '../../src/infrastructure/api';
 
 chai.use(spies);
 const expect = chai.expect;
@@ -28,6 +29,8 @@ describe('AccountHttp', () => {
                 addressHeight: UInt64.fromUint(666).toDTO(),
                 publicKey: publicAccount.publicKey,
                 publicKeyHeight: UInt64.fromUint(777).toDTO(),
+                accountType: AccountLinkTypeEnum.NUMBER_1,
+                linkedAccountKey: '1'.repeat(64),
                 mosaics: [
                     {
                         id: UInt64.fromUint(888).toDTO(),
@@ -50,6 +53,8 @@ describe('AccountHttp', () => {
                 expect(response.publicKey).to.be.equal(dto.account.publicKey);
                 expect(response.publicAccount.publicKey).to.be.equal(dto.account.publicKey);
                 deepEqual(response.publicKeyHeight.toDTO(), dto.account.publicKeyHeight);
+                expect(response.accountType).to.be.equal(dto.account.accountType);
+                expect(response.linkedAccountKey).to.be.equal(dto.account.linkedAccountKey);
                 expect(response.mosaics.length).to.be.equal(dto.account.mosaics.length);
                 deepEqual(response.mosaics[0].id.toDTO().id, dto.account.mosaics[0].id);
                 deepEqual(response.mosaics[0].amount.toDTO(), dto.account.mosaics[0].amount);
@@ -66,6 +71,8 @@ describe('AccountHttp', () => {
                 addressHeight: UInt64.fromUint(666).toDTO(),
                 publicKey: publicAccount.publicKey,
                 publicKeyHeight: UInt64.fromUint(777).toDTO(),
+                accountType: AccountLinkTypeEnum.NUMBER_1,
+                linkedAccountKey: '1'.repeat(64),
                 mosaics: [
                     {
                         id: UInt64.fromUint(888).toDTO(),
@@ -90,6 +97,8 @@ describe('AccountHttp', () => {
                     expect(response.publicKey).to.be.equal(dto.account.publicKey);
                     expect(response.publicAccount.publicKey).to.be.equal(dto.account.publicKey);
                     deepEqual(response.publicKeyHeight.toDTO(), dto.account.publicKeyHeight);
+                    expect(response.accountType).to.be.equal(dto.account.accountType);
+                    expect(response.linkedAccountKey).to.be.equal(dto.account.linkedAccountKey);
                     expect(response.mosaics.length).to.be.equal(dto.account.mosaics.length);
                     deepEqual(response.mosaics[0].id.toDTO().id, dto.account.mosaics[0].id);
                     deepEqual(response.mosaics[0].amount.toDTO(), dto.account.mosaics[0].amount);

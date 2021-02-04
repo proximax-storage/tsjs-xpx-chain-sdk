@@ -24,6 +24,7 @@ export * from './account/AccountNames';
 export * from './account/AccountRestriction';
 export * from './account/AccountRestrictions';
 export * from './account/AccountRestrictionsInfo';
+export * from './account/AccountType';
 export * from './account/Address';
 export * from './account/MultisigAccountGraphInfo';
 export * from './account/MultisigAccountInfo';
