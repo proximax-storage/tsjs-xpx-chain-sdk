@@ -15,9 +15,10 @@
  */
 
 import {expect} from 'chai';
-import { SignSchema } from '../../../src/core/crypto';
+import { SignSchema, Crypto } from '../../../src/core/crypto';
 import {Account} from '../../../src/model/account/Account';
 import {NetworkType} from '../../../src/model/blockchain/NetworkType';
+
 
 describe('Account', () => {
     const accountInformation = {
@@ -52,6 +53,14 @@ describe('Account', () => {
 
     it('should generate a new account', () => {
         const account = Account.generateNewAccount(NetworkType.MIJIN_TEST);
+        expect(account.publicKey).to.not.be.equal(undefined);
+        expect(account.privateKey).to.not.be.equal(undefined);
+        expect(account.address).to.not.be.equal(undefined);
+    });
+
+    it('should create a new account from mnemonic', () => {
+        const mnemonic = Crypto.randomMnemonic();
+        const account = Account.createFromMnemonic(mnemonic,NetworkType.MIJIN_TEST);
         expect(account.publicKey).to.not.be.equal(undefined);
         expect(account.privateKey).to.not.be.equal(undefined);
         expect(account.address).to.not.be.equal(undefined);
