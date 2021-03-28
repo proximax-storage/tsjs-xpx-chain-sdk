@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { has } from 'lodash';
 import { Crypto, KeyPair, SignSchema } from '../../core/crypto';
 import { Convert as convert, RawAddress as AddressLibrary } from '../../core/format';
 import { NetworkType } from '../blockchain/NetworkType';
@@ -95,12 +96,8 @@ export class Account {
       
         const hashKey = convert.uint8ToHex(Crypto.mnemonicToSeed(mnemonic));
       
-        // Create KeyPair from hash key
-        const keyPair = KeyPair.createKeyPairFromPrivateKeyString(hashKey, signSchema);
-
-        const address = Address.createFromPublicKey(convert.uint8ToHex(keyPair.publicKey), networkType, signSchema);
-        
-        return new Account(address, keyPair, signSchema);
+        return Account.createFromPrivateKey(hashKey,networkType, signSchema);
+    
     }
 
     /**
