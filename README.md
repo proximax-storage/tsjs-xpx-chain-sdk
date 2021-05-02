@@ -20,9 +20,9 @@ This is a collaboration capstone project for final years students between Taylor
 
 ## Credits
 
-University: [Taylor's University](https://university.taylors.edu.my/en.html)
-Faculty: [School of Computing & Engineering (SCE)](https://university.taylors.edu.my/en/study/undergraduate/computing-engineering.html)
-Industry Partner: [ProximaX](https://www.proximax.io)
+University: [Taylor's University](https://university.taylors.edu.my/en.html)  
+Faculty: [School of Computing & Engineering (SCE)](https://university.taylors.edu.my/en/study/undergraduate/computing-engineering.html)  
+Industry Partner: [ProximaX](https://www.proximax.io). 
 
 ## Contacts
 
