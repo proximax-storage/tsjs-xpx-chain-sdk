@@ -26,4 +26,4 @@ Industry Partner: [ProximaX](https://www.proximax.io)
 
 ## Contacts
 
-Email: [Contact Us](masscheck2021@gmail.com)
+Email: masscheck2021@gmail.com
