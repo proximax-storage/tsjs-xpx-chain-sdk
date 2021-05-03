@@ -16,15 +16,15 @@ firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
 
-const getAccById = async (id: string) => {
+const getAccPrivateKeyById = (id: string): (string | void) => {
   const accRef = db.collection('accounts').doc(id);
 
   accRef.get().then((doc) => {
     if (!doc.exists) return;
     console.log('Document data:', doc.data());
 
-    return doc.data();
+    return doc.data().xpx_address;
   });
 };
 
-export { getAccById };
+export { getAccPrivateKeyById };
