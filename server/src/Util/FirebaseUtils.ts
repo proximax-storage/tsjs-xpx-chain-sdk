@@ -1,5 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import 'firebase/auth';
 
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
@@ -28,3 +29,20 @@ const getAccPrivateKeyById = (id: string): (string | void) => {
 };
 
 export { getAccPrivateKeyById };
+
+export const auth = firebase.auth();
+
+export const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+export const twitterProvider = new firebase.auth.TwitterAuthProvider();
+
+export const signInWithGoogle = () => auth.signInWithPopup(googleProvider);
+
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = auth.onAuthStateChanged((userAuth)=> {
+      unsubscribe();
+      resolve(userAuth);
+    }, reject);
+  });
+}
