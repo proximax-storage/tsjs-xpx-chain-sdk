@@ -61,7 +61,6 @@ const NavBar: React.FC = (props: any) =>{
         </MenuList>
       </Drawer>
 
-      {/* This will be the main content to be displayed */}
       <main className={classes.content}>
         <div className={classes.toolbar} />
         {/* This is where the page component should be */}
