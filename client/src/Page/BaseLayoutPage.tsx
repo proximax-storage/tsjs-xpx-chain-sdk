@@ -11,14 +11,14 @@ import './BaseLayoutPage.scss';
 const BaseLayoutPage: React.FC = () => {
   return (
     <Router>
-      <div className="base-layout">
-        <div className="nav-bar">
+      <div className='base-layout'>
+        <div className='nav-bar'>
           <NavBar />
         </div>
-        <div className="header">
-          <Header>Sign In</Header>
+        <div className='header'>
+          <Header />
         </div>
-        <div className="content">
+        <div className='content'>
           <Switch>
             <Route path="/sign-up" component={SignUp} />
             <Route path="/" component={TestPage} />
