@@ -1,0 +1,30 @@
+@import '../Util/Styles/Color.scss';
+
+.nav-bar-container {
+  padding-left: 50%;
+  height: 100%;
+
+  h1 {
+    margin: 0;
+    padding-top: 3rem;
+  }
+
+  .flex-container {
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+    justify-content: center;
+
+    .nav-link {
+      margin-bottom: 1rem;
+      display: block;
+      font-size: 1.875rem;
+      text-decoration: none;
+      color: $nav-secondary-color;
+    }
+
+    .nav-link:hover {
+      color: $nav-primary-color;
+    }
+  }
+}

@@ -1,0 +1,15 @@
+@import '../Util/Styles/Color.scss';
+
+.header-container {
+  padding: 0;
+
+  h1 {
+    margin: 0;
+    margin-top: 3rem;
+    color: $text-color;
+  }
+
+  hr {
+    color: #e1e8ed;
+  }
+}

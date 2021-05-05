@@ -1,14 +1,12 @@
-import NavBar from "../Component/NavBar";
-import Header from "../Component/Header";
+import BaseLayoutPage from './BaseLayoutPage';
+import './App.scss';
 
 const App: React.FC = () => {
   return (
     <div>
-      <NavBar/>
-      <Header/>
+      <BaseLayoutPage />
     </div>
   );
 };
-
 
 export default App;

@@ -1,72 +1,27 @@
 import React from 'react';
-import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { Drawer, MenuList, MenuItem, } from '@material-ui/core';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import { NavLink } from 'react-router-dom';
 
-const drawerWidth = "30%";
+import './NavBar.scss';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: 'flex',
-    },
-    drawer: {
-      width: drawerWidth,
-      flexShrink: 0,
-      backgroundColor: "#FFF",
-    },
-    drawerPaper: {
-      width: drawerWidth,
-      alignItems: "flex-end",
-      paddingRight: "30px",
-    },
-    // necessary for content to be below app bar
-    toolbar: theme.mixins.toolbar,
-    content: {
-      flexGrow: 1,
-      backgroundColor: "#f5f9fb",
-      padding: theme.spacing(3),
-      marginRight: "20px",
-    },
-  }),
-);
-
-const NavBar: React.FC = (props: any) =>{
-  const classes = useStyles();
-
+const NavBar: React.FC = (props: any) => {
   return (
-    <div className={classes.root}>
-      <CssBaseline />
-      
-      <Drawer
-        className={classes.drawer}
-        variant="permanent"
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-        anchor="left"
-      >
-        <h1>Mass Check</h1>
-        <div className={classes.toolbar} />
-        <MenuList>
-          <MenuItem>
+    <div className="nav-bar-container">
+      <h1>Mass Check</h1>
+      <div className="flex-container">
+        <div className="nav-link-list">
+          <NavLink className="nav-link" to="/sign-in">
             Sign In
-          </MenuItem>
-          <MenuItem>
+          </NavLink>
+          <NavLink className="nav-link" to="/sign-up">
             Sign Up
-          </MenuItem>
-          <MenuItem>
+          </NavLink>
+          <NavLink className="nav-link" to="/faq">
             FAQ
-          </MenuItem>
-        </MenuList>
-      </Drawer>
-
-      <main className={classes.content}>
-        <div className={classes.toolbar} />
-        {/* This is where the page component should be */}
-      </main>
+          </NavLink>
+        </div>
+      </div>
     </div>
   );
-}
+};
 
 export default NavBar;
