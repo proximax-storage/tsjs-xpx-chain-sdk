@@ -23,6 +23,14 @@
       color: $nav-secondary-color;
     }
 
+    .nav-link-active {
+      margin-bottom: 1rem;
+      display: block;
+      font-size: 1.875rem;
+      text-decoration: none;
+      color: $nav-primary-color;
+    }
+
     .nav-link:hover {
       color: $nav-primary-color;
     }

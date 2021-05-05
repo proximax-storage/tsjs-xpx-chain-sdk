@@ -9,13 +9,25 @@ const NavBar: React.FC = (props: any) => {
       <h1>Mass Check</h1>
       <div className="flex-container">
         <div className="nav-link-list">
-          <NavLink className="nav-link" to="/sign-in">
+          <NavLink
+            className="nav-link"
+            activeClassName="nav-link-active"
+            to="/sign-in"
+          >
             Sign In
           </NavLink>
-          <NavLink className="nav-link" to="/sign-up">
+          <NavLink
+            className="nav-link"
+            activeClassName="nav-link-active"
+            to="/sign-up"
+          >
             Sign Up
           </NavLink>
-          <NavLink className="nav-link" to="/faq">
+          <NavLink
+            className="nav-link"
+            activeClassName="nav-link-active"
+            to="/faq"
+          >
             FAQ
           </NavLink>
         </div>
