@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import NavBar from '../Component/NavBar';
 import Header from '../Component/Header';
 import TestPage from './TestPage';
+import SignUp from './SignUp';
 
 import './BaseLayoutPage.scss';
 
@@ -19,6 +20,7 @@ const BaseLayoutPage: React.FC = () => {
         </div>
         <div className="content">
           <Switch>
+            <Route path="/sign-up" component={SignUp} />
             <Route path="/" component={TestPage} />
           </Switch>
         </div>
