@@ -1,5 +1,7 @@
+import SignUp from "./SignUp";
+
 const App: React.FC = () => {
-  return <h1>Mass Check</h1>;
+  return <SignUp />;
 };
 
 export default App;
