@@ -6,6 +6,7 @@ type AuthContextType = {
   emailSignIn: (email: string, password: string) => void;
   googleSignIn: () => void;
   signOut: () => void;
+  currentUser: any;
 };
 
 const AuthContext = React.createContext<Partial<AuthContextType>>({});

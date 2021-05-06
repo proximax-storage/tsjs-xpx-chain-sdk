@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 import { AuthProvider } from '../Context/AuthContext';
 import { NotificationProvider } from '../Context/NotificationContext';
+import PrivateRoute from '../Component/PrivateRoute';
 
 import NavBar from '../Component/NavBar';
 import Header from '../Component/Header';
@@ -28,7 +29,7 @@ const BaseLayoutPage: React.FC = () => {
               <Switch>
                 <Route path='/sign-up' component={SignUp} />
                 <Route path='/sign-in' component={SignIn} />
-                <Route path='/' component={Home} />
+                <PrivateRoute exact path='/' component={Home} />
               </Switch>
             </div>
           </div>
