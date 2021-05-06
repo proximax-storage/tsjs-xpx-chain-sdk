@@ -1,18 +1,40 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'firebase/auth';
+// import firebase from 'firebase/app';
+// import 'firebase/firestore';
+import admin from 'firebase-admin';
+const serviceAccount = require('./ServiceAccountKey.json');
 
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
-const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
+const db = admin.firestore();
+
+const createAcc = async (uid: string, username: string, email: string) => {
+  db.collection('accounts')
+    .doc(uid)
+    .set({
+      username: username,
+      email: email,
+    })
+    .then(() => {
+      console.log('Document successfully written!');
+    })
+    .catch((error) => {
+      console.error('Error writing document: ', error);
+    });
 };
 
-firebase.initializeApp(firebaseConfig);
+const getAccPrivateKeyById = (id: string): string | void => {
+  const accRef = db.collection('accounts').doc(id);
 
-const db = firebase.firestore();
+  accRef.get().then((doc) => {
+    if (!doc.exists) return;
+    console.log('Document data:', doc.data());
+
+    return doc.data().xpx_address;
+  });
+};
+
+export { getAccPrivateKeyById, createAcc };

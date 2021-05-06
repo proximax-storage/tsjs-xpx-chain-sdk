@@ -3,7 +3,7 @@ import { getAccPrivateKeyById } from '../Util/FirebaseUtils';
 
 const router = express.Router();
 
-router.get('/download-private-key', (req, res, next) => {
+router.post('/download-private-key', (req, res, next) => {
   let id = req.body;
   const accPrivateKey = getAccPrivateKeyById(id);
 
