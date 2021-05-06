@@ -119,4 +119,4 @@ dist
 .DS_Store
 
 # firebase config
-./server/src/Util/ServiceAccountKey.json
+server/src/Util/ServiceAccountKey.json
