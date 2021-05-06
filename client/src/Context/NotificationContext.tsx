@@ -41,7 +41,7 @@ const NotificationProvider: React.FC = ({ children }) => {
 
   return (
     <NotificationContext.Provider value={value}>
-      <ToastContainer />
+      <ToastContainer newestOnTop />
       {children}
     </NotificationContext.Provider>
   );

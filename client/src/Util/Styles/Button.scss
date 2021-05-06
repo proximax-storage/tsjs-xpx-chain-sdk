@@ -1,1 +1,23 @@
-@import 'Button.scss';
+@import './Color.scss';
+
+@mixin sign-in-and-sign-up-button {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: bold;
+  font-family: 'Open Sans', sans-serif;
+  background-color: $button-primary-color;
+  border-radius: 2rem;
+  width: 25.8rem;
+  height: 2.8rem;
+  border-style: hidden;
+  margin-bottom: 1rem;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &:disabled {
+    background: $button-disabled-color;
+    cursor: not-allowed;
+  }
+}

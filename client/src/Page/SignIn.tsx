@@ -11,50 +11,83 @@ const signInSchema = Joi.object({
   email: Joi.string()
     .email({ tlds: { allow: false } })
     .required(),
-  password: Joi.string()
-    .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
-    .min(8)
-    .max(30)
-    .required(),
+  password: Joi.string().min(8).max(30).required(),
 });
 
+interface validationErrorInterface {
+  email?: string;
+  password?: string;
+}
+
 const SignIn: React.FC = () => {
-  // Store the password to be validated with the confirmation input
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [counter, setCounter] = useState(0);
+  const [hasNoError, setHasNoError] = useState(false);
+  const [
+    validationError,
+    setValidationError,
+  ] = useState<validationErrorInterface>({});
   const history = useHistory();
   const { googleSignIn, emailSignIn } = useAuth();
   const { successToast, errorToast } = useNotification();
-  let hasNoError = false;
 
   useEffect(() => {
-    setCounter(counter + 1);
-
-    if (counter > 10) {
-      hasNoError = true;
-    }
-
-    console.log(counter);
-    console.log(hasNoError);
+    setHasNoError(!!(email && password));
   }, [email, password]);
-
-  const errors = {};
 
   const onEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-    console.log(email);
   };
 
   const onPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
-    console.log(password);
   };
 
-  const onEmailSignIn = async () => {
+  const onGoogleSignIn = async () => {
     try {
       await googleSignIn();
-      // await emailSignIn(emailAddress, password);
+      history.push('/');
+
+      successToast('Sign Up Successfully');
+    } catch (err) {
+      errorToast(err.message);
+    }
+  };
+
+  const onEmailSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const validated = signInSchema.validate(
+      { email, password },
+      { abortEarly: false }
+    );
+
+    // Check if the validation got error
+    if (!!validated.error) {
+      const { details, _original: dict } = validated.error;
+      const key = Object.getOwnPropertyNames(dict);
+
+      let errorArr = details.map((element) => {
+        return [element.context.key, element.message];
+      });
+
+      const constructObject = (arr) => {
+        return arr.reduce((acc, val) => {
+          const [key, value] = val;
+          acc[key] = value;
+          return acc;
+        }, {});
+      };
+
+      setValidationError(constructObject(errorArr));
+
+      errorToast('Validation Error');
+
+      return;
+    }
+
+    try {
+      await emailSignIn(email, password);
       history.push('/');
 
       successToast('Sign Up Successfully');
@@ -65,7 +98,11 @@ const SignIn: React.FC = () => {
 
   return (
     <div className='sign-in'>
-      <form className='sign-in__form' noValidate>
+      <form
+        className='sign-in__form'
+        onSubmit={(e) => onEmailSignIn(e)}
+        noValidate
+      >
         <div>
           <label htmlFor='email'>Email Address</label>
           <input
@@ -75,9 +112,9 @@ const SignIn: React.FC = () => {
             value={email}
             onChange={(e) => onEmailChange(e)}
           />
-          {/* {errors.emailAddress && (
-            <div className='error'>{errors.emailAddress.message}</div>
-          )} */}
+          {!!validationError.email && (
+            <div className='error'>{`Invalid email address`}</div>
+          )}
         </div>
         <div>
           <label htmlFor='password'>Password</label>
@@ -88,17 +125,14 @@ const SignIn: React.FC = () => {
             value={password}
             onChange={(e) => onPasswordChange(e)}
           />
-          {/* {errors.password && (
-            <div className='error'>{errors.password.message}</div>
-          )} */}
+          {!!validationError.password && (
+            <div className='sign-in__form--error'>{`Password should have 8 to 30 characters`}</div>
+          )}
         </div>
-
-        {/* Styling for submit button */}
         <button
           type='submit'
-          className={`valid-button`}
+          className='sign-in__form__submit-btn'
           disabled={!hasNoError}
-          onClick={onEmailSignIn}
         >
           Sign In
         </button>
