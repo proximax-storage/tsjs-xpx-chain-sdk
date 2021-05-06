@@ -1,0 +1,47 @@
+@import '../Util/Styles/Color.scss';
+@import '../Util/Styles/Button.scss';
+
+@mixin btn-for-sign-up {
+  @include btn-base;
+  width: 12.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  color: white;
+}
+
+.sign-up-success {
+  width: 60%;
+
+  &__description {
+    font-weight: 400;
+    color: $text-color;
+    text-align: center;
+    font-size: 1.875rem;
+  }
+
+  &__note {
+    font-weight: 600;
+    color: $text-color;
+    text-align: center;
+  }
+
+  &__btn-group {
+  }
+
+  &__btn-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-top: 3rem;
+  }
+
+  &__download-btn {
+    @include btn-for-sign-up;
+    background-color: $button-primary-color;
+  }
+
+  &__get-started-btn {
+    @include btn-for-sign-up;
+    background-color: $button-secondary-color;
+  }
+}

@@ -61,7 +61,7 @@ const SignIn: React.FC = () => {
 
       console.log('JSON', curUserJSON);
 
-      // history.push('/');
+      history.push('/');
 
       successToast('Sign In Successfully');
     } catch (err) {

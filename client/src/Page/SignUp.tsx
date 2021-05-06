@@ -37,8 +37,8 @@ const SignUp: React.FC = () => {
   const { successToast, errorToast, warnToast } = useNotification();
 
   useEffect(() => {
-    setHasNoError(!!(email && password));
-  }, [email, password]);
+    setHasNoError(!!(username && email && password && confirmPassword));
+  }, [username, email, password, confirmPassword]);
 
   const onUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value);
@@ -89,7 +89,15 @@ const SignUp: React.FC = () => {
 
     try {
       await signUp(email, password);
-      // history.push('/');
+
+      const curUserJSON = {
+        uid: currentUser.uid,
+        username: currentUser.displayName,
+        email: currentUser.email,
+      };
+      await axios.post('/api/create-acc', curUserJSON);
+
+      history.push('/');
 
       console.log(currentUser);
 
@@ -115,7 +123,7 @@ const SignUp: React.FC = () => {
             value={username}
             onChange={(e) => onUsernameChange(e)}
           />
-          {!!validationError.email && (
+          {!!validationError.username && (
             <div className='sign-up__form--error'>{`Username can't contain special characters`}</div>
           )}
         </div>
@@ -164,7 +172,7 @@ const SignUp: React.FC = () => {
           className='sign-up__form__submit-btn'
           disabled={!hasNoError}
         >
-          Sign In
+          Sign Up
         </button>
       </form>
     </div>

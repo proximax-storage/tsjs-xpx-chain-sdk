@@ -14,7 +14,7 @@ const Header: React.FC = () => {
           ? 'Sign Up'
           : location.pathname === '/faq'
           ? 'FAQ'
-          : ''}
+          : 'Home'}
       </h1>
       <hr />
     </div>
