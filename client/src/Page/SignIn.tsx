@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useHistory } from 'react-router-dom';
+import { useNotification } from '../Context/NotificationContext';
 
 import AltSignIn from '../Component/AltSignIn';
 import './SignIn.scss';
@@ -12,6 +14,8 @@ type User = {
 const SignIn: React.FC = () => {
   // Store the password to be validated with the confirmation input
   const [password, setPassword] = useState();
+  const history = useHistory();
+  const { successToast } = useNotification();
 
   // Declare useForm hook
   const {

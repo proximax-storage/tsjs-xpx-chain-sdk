@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
+import { useHistory } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
+import { useNotification } from '../Context/NotificationContext';
+
 import './SignUp.scss';
 
 // Custom type to hold the user registration info, to be used for validation
@@ -18,6 +21,8 @@ const SignUp: React.FC = () => {
   // Store the password to be validated with the confirmation input
   const [password, setPassword] = useState();
   const { signUp } = useAuth();
+  const history = useHistory();
+  const { successToast } = useNotification();
 
   // Declare useForm hook
   const {
@@ -31,7 +36,8 @@ const SignUp: React.FC = () => {
     const { emailAddress, password } = data;
 
     await signUp(emailAddress, password);
-
+    successToast('Sign Up Successfully');
+    history.push('/');
     console.log('success');
   });
 
