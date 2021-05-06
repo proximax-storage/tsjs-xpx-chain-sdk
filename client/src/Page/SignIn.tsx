@@ -9,8 +9,6 @@ type User = {
   password: string;
 };
 
-
-
 const SignIn: React.FC = () => {
   // Store the password to be validated with the confirmation input
   const [password, setPassword] = useState();
@@ -21,9 +19,9 @@ const SignIn: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<User>();
-  
+
   // Dummy onSubmit function
-   const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit((data) => {
     alert(JSON.stringify(data));
   });
 
@@ -32,14 +30,12 @@ const SignIn: React.FC = () => {
     setPassword(e.target.value);
     console.log(password);
   };
-  
+
   return (
-
     // {...register())} registers inputs to be validated
-    <form onSubmit={onSubmit} className="sign-in-form">
-
+    <form onSubmit={onSubmit} className='sign-in-form'>
       <div>
-        <label htmlFor="emailAddress">Email Address</label>
+        <label htmlFor='emailAddress'>Email Address</label>
         <input
           {...register('emailAddress', {
             required: 'Required',
@@ -48,19 +44,19 @@ const SignIn: React.FC = () => {
               message: 'invalid email address',
             },
           })}
-          name="emailAddress"
-          type="emailAddress"
-          placeholder="Email Address"
+          name='emailAddress'
+          type='emailAddress'
+          placeholder='Email Address'
         />
         {errors.emailAddress && (
-          <div className="error">{errors.emailAddress.message}</div>
+          <div className='error'>{errors.emailAddress.message}</div>
         )}
       </div>
 
       <br />
 
       <div>
-        <label htmlFor="password">Password</label>
+        <label htmlFor='password'>Password</label>
         <input
           {...register('password', {
             required: 'Required',
@@ -73,34 +69,29 @@ const SignIn: React.FC = () => {
               message: 'Password should have 8 to 30 characters',
             },
           })}
-          name="password"
-          type="password"
-          placeholder="Password (8 - 30 characters)"
+          name='password'
+          type='password'
+          placeholder='Password (8 - 30 characters)'
           onChange={onChange}
         />
         {errors.password && (
-          <div className="error">{errors.password.message}</div>
+          <div className='error'>{errors.password.message}</div>
         )}
       </div>
 
       <br />
 
       {/* Styling for submit button */}
-      <button type="submit" className={`valid-button`}>
+      <button type='submit' className={`valid-button`}>
         Sign In
       </button>
-          
+
       <br />
-          
+
       <div>
-      <AltSignIn />
+        <AltSignIn />
       </div>
-
     </form>
-
-
-    
-    
   );
 };
 

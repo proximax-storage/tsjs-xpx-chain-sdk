@@ -1,9 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
+import { AuthProvider } from '../Context/AuthContext';
+
 import NavBar from '../Component/NavBar';
 import Header from '../Component/Header';
-import TestPage from './TestPage';
 import SignUp from './SignUp';
 import SignIn from './SignIn';
 
@@ -20,11 +21,13 @@ const BaseLayoutPage: React.FC = () => {
           <Header />
         </div>
         <div className='content'>
-          <Switch>
-            <Route path="/sign-up" component={SignUp} />
-            <Route path="/sign-in" component={SignIn} />
-            <Route path="/" component={SignIn} />
-          </Switch>
+          <AuthProvider>
+            <Switch>
+              <Route path='/sign-up' component={SignUp} />
+              <Route path='/sign-in' component={SignIn} />
+              <Route path='/' component={SignIn} />
+            </Switch>
+          </AuthProvider>
         </div>
       </div>
     </Router>

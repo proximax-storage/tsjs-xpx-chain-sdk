@@ -1,6 +1,7 @@
-import axios from 'axios';
 import React, { useState } from 'react';
+import axios from 'axios';
 import { useForm } from 'react-hook-form';
+import { useAuth } from '../Context/AuthContext';
 import './SignUp.scss';
 
 // Custom type to hold the user registration info, to be used for validation
@@ -11,9 +12,12 @@ type User = {
   confirmPassword: string;
 };
 
+type signUpAuth = (email: string, password: string) => void;
+
 const SignUp: React.FC = () => {
   // Store the password to be validated with the confirmation input
   const [password, setPassword] = useState();
+  const { signUp } = useAuth();
 
   // Declare useForm hook
   const {
@@ -26,12 +30,9 @@ const SignUp: React.FC = () => {
   const onSubmit = handleSubmit(async (data) => {
     const { emailAddress, password } = data;
 
-    const res = await axios.post('/api/sign-up', {
-      email: emailAddress,
-      password: password,
-    });
+    await signUp(emailAddress, password);
 
-    console.log(res);
+    console.log('success');
   });
 
   // Update password state onChange
