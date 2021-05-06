@@ -18,16 +18,16 @@ const useAuth = () => {
 const AuthProvider: React.FC = ({ children }) => {
   const [currentUser, setCurrentUser] = useState();
 
-  const signUp = (email: string, password: string) => {
-    return auth.createUserWithEmailAndPassword(email, password);
+  const signUp = async (email: string, password: string) => {
+    await auth.createUserWithEmailAndPassword(email, password);
   };
 
-  const emailSignIn = (email: string, password: string) => {
-    return auth.signInWithEmailAndPassword(email, password);
+  const emailSignIn = async (email: string, password: string) => {
+    await auth.signInWithEmailAndPassword(email, password);
   };
 
-  const googleSignIn = () => {
-    return signInWithGoogle();
+  const googleSignIn = async () => {
+    await signInWithGoogle();
   };
 
   const signOut = () => {

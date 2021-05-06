@@ -33,7 +33,7 @@ const SignUp: React.FC = () => {
     setValidationError,
   ] = useState<validationErrorInterface>({});
   const history = useHistory();
-  const { signUp } = useAuth();
+  const { signUp, currentUser } = useAuth();
   const { successToast, errorToast, warnToast } = useNotification();
 
   useEffect(() => {
@@ -89,7 +89,9 @@ const SignUp: React.FC = () => {
 
     try {
       await signUp(email, password);
-      history.push('/');
+      // history.push('/');
+
+      console.log(currentUser);
 
       successToast('Sign Up Successfully');
     } catch (err) {

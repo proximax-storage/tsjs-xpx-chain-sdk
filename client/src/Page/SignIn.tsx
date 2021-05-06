@@ -28,7 +28,7 @@ const SignIn: React.FC = () => {
     setValidationError,
   ] = useState<validationErrorInterface>({});
   const history = useHistory();
-  const { googleSignIn, emailSignIn } = useAuth();
+  const { googleSignIn, emailSignIn, currentUser } = useAuth();
   const { successToast, errorToast, warnToast } = useNotification();
 
   useEffect(() => {
@@ -50,10 +50,22 @@ const SignIn: React.FC = () => {
 
     try {
       await googleSignIn();
-      history.push('/');
+
+      console.log(currentUser);
+
+      const curUserJSON = {
+        uid: currentUser.uid,
+        username: currentUser.displayName,
+        email: currentUser.email,
+      };
+
+      console.log('JSON', curUserJSON);
+
+      // history.push('/');
 
       successToast('Sign In Successfully');
     } catch (err) {
+      console.log(err);
       errorToast(err.message);
     }
   };
