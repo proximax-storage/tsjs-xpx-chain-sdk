@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
+import { useAuth } from '../Context/AuthContext';
 import { useNotification } from '../Context/NotificationContext';
 
 import AltSignIn from '../Component/AltSignIn';
@@ -15,7 +16,8 @@ const SignIn: React.FC = () => {
   // Store the password to be validated with the confirmation input
   const [password, setPassword] = useState();
   const history = useHistory();
-  const { successToast } = useNotification();
+  const { googleSignIn, emailSignIn } = useAuth();
+  const { successToast, errorToast } = useNotification();
 
   // Declare useForm hook
   const {
@@ -25,8 +27,18 @@ const SignIn: React.FC = () => {
   } = useForm<User>();
 
   // Dummy onSubmit function
-  const onSubmit = handleSubmit((data) => {
-    alert(JSON.stringify(data));
+  const onSubmit = handleSubmit(async (data) => {
+    const { emailAddress, password } = data;
+
+    try {
+      await googleSignIn();
+      // await emailSignIn(emailAddress, password);
+      history.push('/');
+
+      successToast('Sign Up Successfully');
+    } catch (err) {
+      errorToast(err.message);
+    }
   });
 
   // Update password state onChange

@@ -1,9 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { auth } from '../Util/Firebase/FirebaseConfig';
+import { auth, signInWithGoogle } from '../Util/Firebase/FirebaseConfig';
 
 type AuthContextType = {
   signUp: (email: string, password: string) => void;
   emailSignIn: (email: string, password: string) => void;
+  googleSignIn: () => void;
   signOut: () => void;
 };
 
@@ -24,6 +25,10 @@ const AuthProvider: React.FC = ({ children }) => {
     return auth.signInWithEmailAndPassword(email, password);
   };
 
+  const googleSignIn = () => {
+    return signInWithGoogle();
+  };
+
   const signOut = () => {
     return auth.signOut();
   };
@@ -39,6 +44,7 @@ const AuthProvider: React.FC = ({ children }) => {
   const value = {
     currentUser,
     emailSignIn,
+    googleSignIn,
     signUp,
     signOut,
   };

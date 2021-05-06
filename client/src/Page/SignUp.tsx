@@ -22,7 +22,7 @@ const SignUp: React.FC = () => {
   const [password, setPassword] = useState();
   const { signUp } = useAuth();
   const history = useHistory();
-  const { successToast } = useNotification();
+  const { successToast, errorToast } = useNotification();
 
   // Declare useForm hook
   const {
@@ -35,10 +35,14 @@ const SignUp: React.FC = () => {
   const onSubmit = handleSubmit(async (data) => {
     const { emailAddress, password } = data;
 
-    await signUp(emailAddress, password);
-    successToast('Sign Up Successfully');
-    history.push('/');
-    console.log('success');
+    try {
+      await signUp(emailAddress, password);
+      history.push('/');
+      
+      successToast('Sign Up Successfully');
+    } catch (err) {
+      errorToast(err.message);
+    }
   });
 
   // Update password state onChange
