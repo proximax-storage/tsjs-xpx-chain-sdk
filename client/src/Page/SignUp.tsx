@@ -1,139 +1,171 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useForm } from 'react-hook-form';
+import Joi from 'joi';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
 import { useNotification } from '../Context/NotificationContext';
 
 import './SignUp.scss';
 
-// Custom type to hold the user registration info, to be used for validation
-type User = {
-  username: string;
-  emailAddress: string;
-  password: string;
-  confirmPassword: string;
-};
-
-type signUpAuth = (email: string, password: string) => void;
+const signInSchema = Joi.object({
+  username: Joi.string().alphanum().required(),
+  email: Joi.string()
+    .email({ tlds: { allow: false } })
+    .required(),
+  password: Joi.string().min(8).max(30).required(),
+  confirmPassword: Joi.string().required().valid(Joi.ref('password')),
+});
+interface validationErrorInterface {
+  username?: string;
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+}
 
 const SignUp: React.FC = () => {
-  // Store the password to be validated with the confirmation input
-  const [password, setPassword] = useState();
-  const { signUp } = useAuth();
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [hasNoError, setHasNoError] = useState(false);
+  const [
+    validationError,
+    setValidationError,
+  ] = useState<validationErrorInterface>({});
   const history = useHistory();
-  const { successToast, errorToast } = useNotification();
+  const { signUp } = useAuth();
+  const { successToast, errorToast, warnToast } = useNotification();
 
-  // Declare useForm hook
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<User>();
+  useEffect(() => {
+    setHasNoError(!!(email && password));
+  }, [email, password]);
 
-  // Route to server
-  const onSubmit = handleSubmit(async (data) => {
-    const { emailAddress, password } = data;
+  const onUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value);
+  };
+
+  const onEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  const onPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
+  const onConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPassword(e.target.value);
+  };
+
+  const onEmailSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const validated = signInSchema.validate(
+      { username, email, password, confirmPassword },
+      { abortEarly: false }
+    );
+
+    // Check if the validation got error
+    if (!!validated.error) {
+      const { details } = validated.error;
+
+      let errorArr = details.map((element) => {
+        return [element.context.key, element.message];
+      });
+
+      const constructObject = (arr) => {
+        return arr.reduce((acc, val) => {
+          const [key, value] = val;
+          acc[key] = value;
+          return acc;
+        }, {});
+      };
+
+      setValidationError(constructObject(errorArr));
+
+      errorToast('Validation Error');
+
+      return;
+    }
 
     try {
-      await signUp(emailAddress, password);
+      await signUp(email, password);
       history.push('/');
-      
+
       successToast('Sign Up Successfully');
     } catch (err) {
       errorToast(err.message);
     }
-  });
-
-  // Update password state onChange
-  const onChange = (e: any) => {
-    setPassword(e.target.value);
   };
 
   return (
-    // {...register())} registers inputs to be validated
-    <form onSubmit={onSubmit} className='sign-up-form'>
-      <div>
-        <label htmlFor='username'>Username</label>
-        <input
-          {...register('username', { required: 'Required' })}
-          name='username'
-          placeholder='Username'
-          type='text'
-        />
-        {errors.username && (
-          <div className='error'>{errors.username.message}</div>
-        )}
-      </div>
-
-      <div>
-        <label htmlFor='emailAddress'>Email Address</label>
-        <input
-          {...register('emailAddress', {
-            required: 'Required',
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: 'invalid email address',
-            },
-          })}
-          name='emailAddress'
-          type='emailAddress'
-          placeholder='Email Address'
-        />
-        {errors.emailAddress && (
-          <div className='error'>{errors.emailAddress.message}</div>
-        )}
-      </div>
-
-      <br />
-
-      <div>
-        <label htmlFor='password'>Password</label>
-        <input
-          {...register('password', {
-            required: 'Required',
-            minLength: {
-              value: 8,
-              message: 'Password should have 8 to 30 characters',
-            },
-            maxLength: {
-              value: 30,
-              message: 'Password should have 8 to 30 characters',
-            },
-          })}
-          name='password'
-          type='password'
-          placeholder='Password (8 - 30 characters)'
-          onChange={onChange}
-        />
-        {errors.password && (
-          <div className='error'>{errors.password.message}</div>
-        )}
-      </div>
-
-      <div>
-        <label htmlFor='confirmPassword'>Confirm Password</label>
-        <input
-          {...register('confirmPassword', {
-            required: 'Required',
-            validate: (v) => v === password || 'Password does not match',
-          })}
-          name='confirmPassword'
-          type='password'
-          placeholder='Re-enter Password'
-        />
-        {errors.confirmPassword && (
-          <div className='error'>{errors.confirmPassword.message}</div>
-        )}
-      </div>
-
-      <br />
-
-      {/* Styling for submit button */}
-      <button type='submit' className={`valid-button`}>
-        Sign Up
-      </button>
-    </form>
+    <div className='sign-up'>
+      <form
+        className='sign-up__form'
+        onSubmit={(e) => onEmailSignUp(e)}
+        noValidate
+      >
+        <div>
+          <label htmlFor='username'>Username</label>
+          <input
+            name='username'
+            type='text'
+            placeholder='Username'
+            value={username}
+            onChange={(e) => onUsernameChange(e)}
+          />
+          {!!validationError.email && (
+            <div className='sign-up__form--error'>{`Username can't contain special characters`}</div>
+          )}
+        </div>
+        <div>
+          <label htmlFor='email'>Email Address</label>
+          <input
+            name='email'
+            type='email'
+            placeholder='Email Address'
+            value={email}
+            onChange={(e) => onEmailChange(e)}
+          />
+          {!!validationError.email && (
+            <div className='sign-up__form--error'>{`Invalid email address`}</div>
+          )}
+        </div>
+        <div className='sign-up__form__password-group'></div>
+        <div>
+          <label htmlFor='password'>Password</label>
+          <input
+            name='password'
+            type='password'
+            placeholder='Password (8 - 30 characters)'
+            value={password}
+            onChange={(e) => onPasswordChange(e)}
+          />
+          {!!validationError.password && (
+            <div className='sign-up__form--error'>{`Password should have 8 to 30 characters`}</div>
+          )}
+        </div>
+        <div>
+          <label htmlFor='confirmPassword'>Confirm Password</label>
+          <input
+            name='confirmPassword'
+            type='password'
+            placeholder='Re-enter Password'
+            value={confirmPassword}
+            onChange={(e) => onConfirmPasswordChange(e)}
+          />
+          {!!validationError.confirmPassword && (
+            <div className='sign-up__form--error'>{`Password does not match`}</div>
+          )}
+        </div>
+        <button
+          type='submit'
+          className='sign-up__form__submit-btn'
+          disabled={!hasNoError}
+        >
+          Sign In
+        </button>
+      </form>
+    </div>
   );
 };
 

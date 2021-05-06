@@ -52,7 +52,7 @@ const SignIn: React.FC = () => {
       await googleSignIn();
       history.push('/');
 
-      successToast('Sign Up Successfully');
+      successToast('Sign In Successfully');
     } catch (err) {
       errorToast(err.message);
     }
@@ -76,8 +76,7 @@ const SignIn: React.FC = () => {
 
     // Check if the validation got error
     if (!!validated.error) {
-      const { details, _original: dict } = validated.error;
-      const key = Object.getOwnPropertyNames(dict);
+      const { details } = validated.error;
 
       let errorArr = details.map((element) => {
         return [element.context.key, element.message];
@@ -102,7 +101,7 @@ const SignIn: React.FC = () => {
       await emailSignIn(email, password);
       history.push('/');
 
-      successToast('Sign Up Successfully');
+      successToast('Sign In Successfully');
     } catch (err) {
       errorToast(err.message);
     }
