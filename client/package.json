@@ -49,14 +49,10 @@
     ]
   },
   "devDependencies": {
-<<<<<<< HEAD
-    "@types/react-router-dom": "^5.1.7"
-  },
-  "proxy": "http://localhost:5000"
-=======
+    "@types/react-router-dom": "^5.1.7",
     "@types/node-sass": "^4.11.1",
     "@types/react-router-dom": "^5.1.7",
     "node-sass": "^5.0.0"
-  }
->>>>>>> master
+  },
+  "proxy": "http://localhost:5000"
 }
