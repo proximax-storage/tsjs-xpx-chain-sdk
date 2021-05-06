@@ -12,6 +12,7 @@
     "@types/react-dom": "^17.0.3",
     "axios": "^0.21.1",
     "firebase": "^8.5.0",
+    "joi": "^17.4.0",
     "node-sass": "^5.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -47,8 +48,9 @@
     ]
   },
   "devDependencies": {
-    "@types/react-router-dom": "^5.1.7",
+    "@types/joi": "^17.2.3",
     "@types/node-sass": "^4.11.1",
+    "@types/react-router-dom": "^5.1.7",
     "node-sass": "^5.0.0"
   },
   "proxy": "http://localhost:5000"

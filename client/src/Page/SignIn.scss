@@ -1,8 +1,8 @@
-.sign-in-form {
+@import '../Util/Styles/ErrorMessage.scss';
+
+.sign-in__form {
   .error {
-    color: red;
-    font-size: 0.9rem;
-    font-family: 'Open Sans', sans-serif;
+    @include error-message;
   }
 
   .valid-button {

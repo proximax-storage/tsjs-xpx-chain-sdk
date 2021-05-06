@@ -1,35 +1,57 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import Joi from 'joi';
+
 import { useAuth } from '../Context/AuthContext';
 import { useNotification } from '../Context/NotificationContext';
 
-import AltSignIn from '../Component/AltSignIn';
 import './SignIn.scss';
 
-type User = {
-  emailAddress: string;
-  password: string;
-};
+const signInSchema = Joi.object({
+  email: Joi.string()
+    .email({ tlds: { allow: false } })
+    .required(),
+  password: Joi.string()
+    .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
+    .min(8)
+    .max(30)
+    .required(),
+});
 
 const SignIn: React.FC = () => {
   // Store the password to be validated with the confirmation input
-  const [password, setPassword] = useState();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [counter, setCounter] = useState(0);
   const history = useHistory();
   const { googleSignIn, emailSignIn } = useAuth();
   const { successToast, errorToast } = useNotification();
+  let hasNoError = false;
 
-  // Declare useForm hook
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<User>();
+  useEffect(() => {
+    setCounter(counter + 1);
 
-  // Dummy onSubmit function
-  const onSubmit = handleSubmit(async (data) => {
-    const { emailAddress, password } = data;
+    if (counter > 10) {
+      hasNoError = true;
+    }
 
+    console.log(counter);
+    console.log(hasNoError);
+  }, [email, password]);
+
+  const errors = {};
+
+  const onEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    console.log(email);
+  };
+
+  const onPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+    console.log(password);
+  };
+
+  const onEmailSignIn = async () => {
     try {
       await googleSignIn();
       // await emailSignIn(emailAddress, password);
@@ -39,75 +61,49 @@ const SignIn: React.FC = () => {
     } catch (err) {
       errorToast(err.message);
     }
-  });
-
-  // Update password state onChange
-  const onChange = (e: any) => {
-    setPassword(e.target.value);
-    console.log(password);
   };
 
   return (
-    // {...register())} registers inputs to be validated
-    <form onSubmit={onSubmit} className='sign-in-form'>
-      <div>
-        <label htmlFor='emailAddress'>Email Address</label>
-        <input
-          {...register('emailAddress', {
-            required: 'Required',
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: 'invalid email address',
-            },
-          })}
-          name='emailAddress'
-          type='emailAddress'
-          placeholder='Email Address'
-        />
-        {errors.emailAddress && (
-          <div className='error'>{errors.emailAddress.message}</div>
-        )}
-      </div>
+    <div className='sign-in'>
+      <form className='sign-in__form' noValidate>
+        <div>
+          <label htmlFor='email'>Email Address</label>
+          <input
+            name='email'
+            type='email'
+            placeholder='Email Address'
+            value={email}
+            onChange={(e) => onEmailChange(e)}
+          />
+          {/* {errors.emailAddress && (
+            <div className='error'>{errors.emailAddress.message}</div>
+          )} */}
+        </div>
+        <div>
+          <label htmlFor='password'>Password</label>
+          <input
+            name='password'
+            type='password'
+            placeholder='Password (8 - 30 characters)'
+            value={password}
+            onChange={(e) => onPasswordChange(e)}
+          />
+          {/* {errors.password && (
+            <div className='error'>{errors.password.message}</div>
+          )} */}
+        </div>
 
-      <br />
-
-      <div>
-        <label htmlFor='password'>Password</label>
-        <input
-          {...register('password', {
-            required: 'Required',
-            minLength: {
-              value: 8,
-              message: 'Password should have 8 to 30 characters',
-            },
-            maxLength: {
-              value: 30,
-              message: 'Password should have 8 to 30 characters',
-            },
-          })}
-          name='password'
-          type='password'
-          placeholder='Password (8 - 30 characters)'
-          onChange={onChange}
-        />
-        {errors.password && (
-          <div className='error'>{errors.password.message}</div>
-        )}
-      </div>
-
-      <br />
-
-      {/* Styling for submit button */}
-      <button type='submit' className={`valid-button`}>
-        Sign In
-      </button>
-
-      <br />
-
-      <div>
-        <AltSignIn />
-      </div>
-    </form>
+        {/* Styling for submit button */}
+        <button
+          type='submit'
+          className={`valid-button`}
+          disabled={!hasNoError}
+          onClick={onEmailSignIn}
+        >
+          Sign In
+        </button>
+      </form>
+    </div>
   );
 };
 
