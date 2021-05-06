@@ -9,7 +9,7 @@ router.post('/email-sign-in', (req, res, next) => {
   console.log(error);
 
   res.send('success');
-})
+});
 
 // Require req json in following format
 // email: string
