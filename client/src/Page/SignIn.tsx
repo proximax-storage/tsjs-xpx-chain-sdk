@@ -29,7 +29,7 @@ const SignIn: React.FC = () => {
   ] = useState<validationErrorInterface>({});
   const history = useHistory();
   const { googleSignIn, emailSignIn } = useAuth();
-  const { successToast, errorToast } = useNotification();
+  const { successToast, errorToast, warnToast } = useNotification();
 
   useEffect(() => {
     setHasNoError(!!(email && password));
@@ -43,7 +43,11 @@ const SignIn: React.FC = () => {
     setPassword(e.target.value);
   };
 
-  const onGoogleSignIn = async () => {
+  const onGoogleSignIn = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+
     try {
       await googleSignIn();
       history.push('/');
@@ -52,6 +56,14 @@ const SignIn: React.FC = () => {
     } catch (err) {
       errorToast(err.message);
     }
+  };
+
+  const onTwitterSignIn = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+
+    warnToast('Twitter Sign In Still Being Developed');
   };
 
   const onEmailSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -113,7 +125,7 @@ const SignIn: React.FC = () => {
             onChange={(e) => onEmailChange(e)}
           />
           {!!validationError.email && (
-            <div className='error'>{`Invalid email address`}</div>
+            <div className='sign-in__form--error'>{`Invalid email address`}</div>
           )}
         </div>
         <div>
@@ -137,6 +149,18 @@ const SignIn: React.FC = () => {
           Sign In
         </button>
       </form>
+      <button
+        className='sign-in__google-button'
+        onClick={(e) => onGoogleSignIn(e)}
+      >
+        Sign In with <strong>Google</strong>
+      </button>
+      <button
+        className='sign-in__twitter-button'
+        onClick={(e) => onTwitterSignIn(e)}
+      >
+        Sign In with <strong>Twitter</strong>
+      </button>
     </div>
   );
 };

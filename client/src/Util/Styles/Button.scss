@@ -1,23 +1,36 @@
 @import './Color.scss';
 
-@mixin sign-in-and-sign-up-button {
-  color: white;
-  font-size: 1.25rem;
-  font-weight: bold;
-  font-family: 'Open Sans', sans-serif;
-  background-color: $button-primary-color;
+@mixin btn-base {
   border-radius: 2rem;
-  width: 25.8rem;
-  height: 2.8rem;
-  border-style: hidden;
   margin-bottom: 1rem;
+  border-style: hidden;
+  height: 2.8rem;
 
   &:hover {
     cursor: pointer;
   }
+}
+
+@mixin sign-in-and-sign-up-button {
+  @include btn-base;
+
+  font-weight: bold;
+  font-size: 1.25rem;
+  color: white;
+  background-color: $button-primary-color;
+  width: 25.8rem;
 
   &:disabled {
     background: $button-disabled-color;
     cursor: not-allowed;
   }
+}
+
+@mixin sign-in-external-button {
+  @include btn-base;
+
+  width: 12.5rem;
+  background-color: white;
+  color: $text-color;
+  font-size: 1rem;
 }

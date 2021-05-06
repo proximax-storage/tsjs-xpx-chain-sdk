@@ -1,0 +1,8 @@
+@import './Color.scss';
+
+@mixin form-label {
+  color: $text-color;
+  font-size: 1.25rem;
+  font-weight: bold;
+  font-family: 'Open Sans', sans-serif;
+}
