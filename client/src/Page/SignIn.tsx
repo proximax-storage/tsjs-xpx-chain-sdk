@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+
+import AltSignIn from '../Component/AltSignIn';
 import './SignIn.scss';
 
 type User = {
@@ -32,6 +34,7 @@ const SignIn: React.FC = () => {
   };
   
   return (
+
     // {...register())} registers inputs to be validated
     <form onSubmit={onSubmit} className="sign-in-form">
 
@@ -86,8 +89,18 @@ const SignIn: React.FC = () => {
       <button type="submit" className={`valid-button`}>
         Sign In
       </button>
+          
+      <br />
+          
+      <div>
+      <AltSignIn />
+      </div>
 
     </form>
+
+
+    
+    
   );
 };
 
