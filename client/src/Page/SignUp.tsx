@@ -1,0 +1,122 @@
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import './SignUp.scss';
+
+// Custom type to hold the user registration info, to be used for validation
+type User = {
+  username: string;
+  emailAddress: string;
+  password: string;
+  confirmPassword: string;
+};
+
+const SignUp: React.FC = () => {
+  // Store the password to be validated with the confirmation input
+  const [password, setPassword] = useState();
+
+  // Declare useForm hook
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<User>();
+
+  // Dummy onSubmit function
+  const onSubmit = handleSubmit((data) => {
+    alert(JSON.stringify(data));
+  });
+
+  // Update password state onChange
+  const onChange = (e: any) => {
+    setPassword(e.target.value);
+    console.log(password);
+  };
+
+  return (
+    // {...register())} registers inputs to be validated
+    <form onSubmit={onSubmit} className="sign-up-form">
+      <div>
+        <label htmlFor="username">Username</label>
+        <input
+          {...register('username', { required: 'Required' })}
+          name="username"
+          placeholder="Username"
+          type="text"
+        />
+        {errors.username && (
+          <div className="error">{errors.username.message}</div>
+        )}
+      </div>
+
+      <div>
+        <label htmlFor="emailAddress">Email Address</label>
+        <input
+          {...register('emailAddress', {
+            required: 'Required',
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: 'invalid email address',
+            },
+          })}
+          name="emailAddress"
+          type="emailAddress"
+          placeholder="Email Address"
+        />
+        {errors.emailAddress && (
+          <div className="error">{errors.emailAddress.message}</div>
+        )}
+      </div>
+
+      <br />
+
+      <div>
+        <label htmlFor="password">Password</label>
+        <input
+          {...register('password', {
+            required: 'Required',
+            minLength: {
+              value: 8,
+              message: 'Password should have 8 to 30 characters',
+            },
+            maxLength: {
+              value: 30,
+              message: 'Password should have 8 to 30 characters',
+            },
+          })}
+          name="password"
+          type="password"
+          placeholder="Password (8 - 30 characters)"
+          onChange={onChange}
+        />
+        {errors.password && (
+          <div className="error">{errors.password.message}</div>
+        )}
+      </div>
+
+      <div>
+        <label htmlFor="confirmPassword">Confirm Password</label>
+        <input
+          {...register('confirmPassword', {
+            required: 'Required',
+            validate: (v) => v === password || 'Password does not match',
+          })}
+          name="confirmPassword"
+          type="password"
+          placeholder="Re-enter Password"
+        />
+        {errors.confirmPassword && (
+          <div className="error">{errors.confirmPassword.message}</div>
+        )}
+      </div>
+
+      <br />
+
+      {/* Styling for submit button */}
+      <button type="submit" className={`valid-button`}>
+        Sign Up
+      </button>
+    </form>
+  );
+};
+
+export default SignUp;

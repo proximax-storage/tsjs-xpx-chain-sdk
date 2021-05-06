@@ -1,5 +1,12 @@
+import BaseLayoutPage from './BaseLayoutPage';
+import './App.scss';
+
 const App: React.FC = () => {
-  return <h1>Mass Check</h1>;
+  return (
+    <div>
+      <BaseLayoutPage />
+    </div>
+  );
 };
 
 export default App;
