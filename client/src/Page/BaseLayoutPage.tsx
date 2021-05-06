@@ -5,6 +5,7 @@ import NavBar from '../Component/NavBar';
 import Header from '../Component/Header';
 import TestPage from './TestPage';
 import SignUp from './SignUp';
+import SignIn from './SignIn';
 
 import './BaseLayoutPage.scss';
 
@@ -21,7 +22,8 @@ const BaseLayoutPage: React.FC = () => {
         <div className='content'>
           <Switch>
             <Route path="/sign-up" component={SignUp} />
-            <Route path="/" component={TestPage} />
+            <Route path="/sign-in" component={SignIn} />
+            <Route path="/" component={SignIn} />
           </Switch>
         </div>
       </div>
