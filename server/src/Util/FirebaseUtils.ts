@@ -17,7 +17,7 @@ firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
 
-const getAccPrivateKeyById = (id: string): (string | void) => {
+const getAccPrivateKeyById = (id: string): string | void => {
   const accRef = db.collection('accounts').doc(id);
 
   accRef.get().then((doc) => {
@@ -28,21 +28,50 @@ const getAccPrivateKeyById = (id: string): (string | void) => {
   });
 };
 
-export { getAccPrivateKeyById };
-
-export const auth = firebase.auth();
-
-export const googleProvider = new firebase.auth.GoogleAuthProvider();
-
-export const twitterProvider = new firebase.auth.TwitterAuthProvider();
-
-export const signInWithGoogle = () => auth.signInWithPopup(googleProvider);
-
-export const getCurrentUser = () => {
-  return new Promise((resolve, reject) => {
-    const unsubscribe = auth.onAuthStateChanged((userAuth)=> {
-      unsubscribe();
-      resolve(userAuth);
-    }, reject);
+const newUserWithEmailAndPwd = (email: string, password: string) => {
+  firebase.auth().signInWithEmailAndPassword(email, password)
+  .then((userCredential) => {
+    // Signed in
+    var user = userCredential.user;
+    // ...
+  })
+  .catch((error) => {
+    var errorCode = error.code;
+    var errorMessage = error.message;
   });
-}
+};
+
+const signInWithEmail = (email: string, password: string) => {
+  firebase
+    .auth()
+    .createUserWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      // Signed in
+      var user = userCredential.user;
+      console.log('### Firebase Auth', user.uid);
+    })
+    .catch((error) => {
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      return error;
+    });
+};
+
+export { getAccPrivateKeyById, newUserWithEmailAndPwd };
+
+// const auth = firebase.auth();
+
+// export const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+// export const twitterProvider = new firebase.auth.TwitterAuthProvider();
+
+// export const signInWithGoogle = () => auth.signInWithPopup(googleProvider);
+
+// export const getCurrentUser = () => {
+//   return new Promise((resolve, reject) => {
+//     const unsubscribe = auth.onAuthStateChanged((userAuth)=> {
+//       unsubscribe();
+//       resolve(userAuth);
+//     }, reject);
+//   });
+// }
