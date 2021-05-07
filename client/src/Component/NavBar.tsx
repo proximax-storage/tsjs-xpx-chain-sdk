@@ -1,11 +1,12 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
 
 import './NavBar.scss';
 
 const NavBar: React.FC = (props: any) => {
-  const {signOut} = useAuth();
+  const { signOut } = useAuth();
+  const location = useLocation();
 
   return (
     <div className='nav-bar-container'>
@@ -20,7 +21,11 @@ const NavBar: React.FC = (props: any) => {
             Sign In
           </NavLink>
           <NavLink
-            className='nav-link'
+            className={
+              location.pathname === '/sign-up-success'
+                ? 'nav-link-active'
+                : 'nav-link'
+            }
             activeClassName='nav-link-active'
             to='/sign-up'
           >
