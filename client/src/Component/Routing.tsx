@@ -13,7 +13,7 @@ const Routing: React.FC = () => {
       <PrivateRoute path='/sign-up-success' component={SignUpSuccess} />
       <Route path='/sign-up' component={SignUp} />
       <Route path='/sign-in' component={SignIn} />
-      <Route path='/faq' component={SignUpSuccess} />
+      {/* <Route path='/faq' component={SignUpSuccess} /> */}
       <PrivateRoute path='/' component={Home} />
     </Switch>
   );
