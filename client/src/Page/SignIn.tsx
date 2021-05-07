@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import Joi from 'joi';
+import axios from 'axios';
 
 import { useAuth } from '../Context/AuthContext';
 import { useNotification } from '../Context/NotificationContext';
@@ -49,21 +50,23 @@ const SignIn: React.FC = () => {
     e.preventDefault();
 
     try {
-      await googleSignIn();
+      const { uid, email, username, isNewUser } = await googleSignIn();
 
-      console.log(currentUser);
+      if (isNewUser) {
+        await axios.post('/api/create-acc', {
+          uid: uid,
+          email: email,
+          username: username,
+        });
 
-      const curUserJSON = {
-        uid: currentUser.uid,
-        username: currentUser.displayName,
-        email: currentUser.email,
-      };
+        history.push('/sign-up-success');
 
-      console.log('JSON', curUserJSON);
+        successToast('Sign Up Successfully');
+      } else {
+        history.push('/');
 
-      history.push('/');
-
-      successToast('Sign In Successfully');
+        successToast('Sign In Successfully');
+      }
     } catch (err) {
       console.log(err);
       errorToast(err.message);

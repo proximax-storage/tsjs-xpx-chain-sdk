@@ -1,11 +1,10 @@
-import { UserInfo } from 'node:os';
 import React, { useContext, useState, useEffect } from 'react';
 import { auth, googleProvider } from '../Util/Firebase/FirebaseConfig';
 
 type AuthContextType = {
   signUp: (email: string, password: string, username: string) => void;
   emailSignIn: (email: string, password: string) => void;
-  googleSignIn: () => void;
+  googleSignIn: () => any;
   signOut: () => void;
   currentUser: any;
   curAddress: string;
@@ -19,13 +18,13 @@ const useAuth = () => {
 };
 
 const AuthProvider: React.FC = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState();
+  const [currentUser, setCurrentUser] = useState(null);
   const [curAddress, setAddress] = useState('');
 
   const signUp = async (email: string, password: string, username: string) => {
     try {
       const result = await auth.createUserWithEmailAndPassword(email, password);
-      
+
       return result.user.uid;
     } catch (err) {
       console.log(err);
@@ -42,7 +41,12 @@ const AuthProvider: React.FC = ({ children }) => {
       const result = await auth.signInWithPopup(googleProvider);
       const isNewUser = result.additionalUserInfo.isNewUser;
 
-      return {uid: result.user.uid, isNewUser: isNewUser}
+      return {
+        uid: result.user.uid,
+        email: result.user.email,
+        username: result.user.displayName,
+        isNewUser: isNewUser,
+      };
     } catch (err) {
       console.log(err);
     }
