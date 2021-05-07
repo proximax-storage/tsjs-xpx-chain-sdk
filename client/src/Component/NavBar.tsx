@@ -5,6 +5,8 @@ import { useAuth } from '../Context/AuthContext';
 import './NavBar.scss';
 
 const NavBar: React.FC = (props: any) => {
+  const {signOut} = useAuth();
+
   return (
     <div className='nav-bar-container'>
       <h1>Mass Check</h1>
@@ -30,6 +32,14 @@ const NavBar: React.FC = (props: any) => {
             to='/faq'
           >
             FAQ
+          </NavLink>
+          <NavLink
+            className='nav-link'
+            activeClassName='nav-link-active'
+            to='/sign-out'
+            onClick={signOut}
+          >
+            Sign Out
           </NavLink>
         </div>
       </div>

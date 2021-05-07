@@ -88,18 +88,17 @@ const SignUp: React.FC = () => {
     }
 
     try {
-      await signUp(email, password);
+      const uid = await signUp(email, password, username);
 
-      const curUserJSON = {
-        uid: currentUser.uid,
-        username: currentUser.displayName,
-        email: currentUser.email,
-      };
-      await axios.post('/api/create-acc', curUserJSON);
+      console.log(uid);
 
-      history.push('/');
+      await axios.post('/api/create-acc', {
+        uid: uid,
+        email: email,
+        username: username,
+      });
 
-      console.log(currentUser);
+      history.push('/sign-up-success');
 
       successToast('Sign Up Successfully');
     } catch (err) {

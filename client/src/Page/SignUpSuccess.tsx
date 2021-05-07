@@ -1,7 +1,8 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
-
+import axios from 'axios';
 import { useNotification } from '../Context/NotificationContext';
 import './SignUpSuccess.scss';
 
@@ -11,10 +12,33 @@ const SignUpSuccess: React.FC = () => {
   const { currentUser } = useAuth();
   const { warnToast } = useNotification();
 
-  const onDownload = () => {
-    setHasRemind(true);
+  const downloadFile = (filename: string, text: string) => {
+    var element = document.createElement('a');
+    element.setAttribute(
+      'href',
+      'data:text/plain;charset=utf-8,' + encodeURIComponent(text)
+    );
+    element.setAttribute('download', filename);
 
-    // TODO call to server to get the download folder
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+  };
+
+  const onDownload = async () => {
+    setHasRemind(true);
+    try {
+      console.log(currentUser.uid);
+      const res = await axios.post('/api/download-private-key', {
+        uid: currentUser.uid,
+      });
+      downloadFile('xpx-private-key', res.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const onGetStart = () => {

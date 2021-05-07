@@ -1,3 +1,4 @@
+import React from 'react';
 import BaseLayoutPage from './BaseLayoutPage';
 import './App.scss';
 

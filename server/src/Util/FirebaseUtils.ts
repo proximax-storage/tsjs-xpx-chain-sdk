@@ -17,24 +17,29 @@ const createAcc = async (uid: string, username: string, email: string) => {
     .set({
       username: username,
       email: email,
+      address: null,
     })
     .then(() => {
-      console.log('Document successfully written!');
+      console.log('Acc successfully created!');
     })
     .catch((error) => {
       console.error('Error writing document: ', error);
+      throw error;
     });
 };
 
-const getAccPrivateKeyById = (id: string): string | void => {
-  const accRef = db.collection('accounts').doc(id);
+const addAccAddress = async (uid: string, address: string) => {
+  const accRef = db.collection('accounts').doc(uid);
 
-  accRef.get().then((doc) => {
-    if (!doc.exists) return;
-    console.log('Document data:', doc.data());
-
-    return doc.data().xpx_address;
-  });
+  try {
+    const res = await accRef.update({
+      address: address,
+    });
+    console.log(res);
+  } catch (error) {
+    console.log('Add address to db failed');
+    console.log(error);
+  }
 };
 
-export { getAccPrivateKeyById, createAcc };
+export { addAccAddress, createAcc };
