@@ -8,6 +8,7 @@ import './SignUpSuccess.scss';
 
 const SignUpSuccess: React.FC = () => {
   const [hasRemind, setHasRemind] = useState(false);
+  const [privateKey, setPrivateKey] = useState('');
   const history = useHistory();
   const { currentUser } = useAuth();
   const { warnToast } = useNotification();
@@ -29,16 +30,23 @@ const SignUpSuccess: React.FC = () => {
   };
 
   const onDownload = async () => {
-    setHasRemind(true);
-    try {
-      console.log(currentUser.uid);
-      const res = await axios.post('/api/download-private-key', {
-        uid: currentUser.uid,
-      });
-      downloadFile('xpx-private-key', res.data);
-    } catch (error) {
-      console.log(error);
+    if (!hasRemind) {
+      try {
+        console.log(currentUser.uid);
+        const res = await axios.post('/api/download-private-key', {
+          uid: currentUser.uid,
+        });
+        downloadFile('xpx-private-key', res.data);
+
+        setPrivateKey(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      downloadFile('xpx-private-key', privateKey);
     }
+
+    setHasRemind(true);
   };
 
   const onGetStart = () => {
