@@ -42,4 +42,10 @@ const addAccAddress = async (uid: string, address: string) => {
   }
 };
 
-export { addAccAddress, createAcc };
+const isNewAcc = async (uid: string) => {
+  const accRef = db.collection('accounts').doc(uid);
+  const result = await accRef.get();
+  return !result.exists;
+};
+
+export { addAccAddress, createAcc, isNewAcc };

@@ -51,6 +51,7 @@ const SignIn: React.FC = () => {
 
     try {
       const { uid, email, username, isNewUser } = await googleSignIn();
+      console.log('is-new-user', isNewUser);
 
       if (isNewUser) {
         await axios.post('/api/create-acc', {

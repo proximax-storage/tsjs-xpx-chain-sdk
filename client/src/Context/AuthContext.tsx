@@ -1,4 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
+import axios from 'axios';
+
 import {
   auth,
   googleProvider,
@@ -52,16 +54,13 @@ const AuthProvider: React.FC = ({ children }) => {
   const externalSignIn = async (provider: any) => {
     try {
       const result = await auth.signInWithPopup(provider);
-
-      console.log(result);
-
-      const isNewUser = result.additionalUserInfo.isNewUser;
+      const hasAcc = await axios.post('/api/is-new-acc', { uid: result.user.uid });
 
       return {
         uid: result.user.uid,
         email: result.user.email,
         username: result.user.displayName,
-        isNewUser: isNewUser,
+        isNewUser: hasAcc.data.msg,
       };
     } catch (err) {
       console.log(err);
