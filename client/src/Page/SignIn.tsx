@@ -29,7 +29,7 @@ const SignIn: React.FC = () => {
     setValidationError,
   ] = useState<validationErrorInterface>({});
   const history = useHistory();
-  const { googleSignIn, emailSignIn, currentUser } = useAuth();
+  const { googleSignIn, emailSignIn, currentUser, twitterSignIn } = useAuth();
   const { successToast, errorToast, warnToast } = useNotification();
 
   useEffect(() => {
@@ -78,7 +78,29 @@ const SignIn: React.FC = () => {
   ) => {
     e.preventDefault();
 
-    warnToast('Twitter Sign In Still Being Developed');
+    try {
+      await twitterSignIn();
+      const { uid, email, username, isNewUser } = await twitterSignIn();
+
+      if (isNewUser) {
+        await axios.post('/api/create-acc', {
+          uid: uid,
+          email: email,
+          username: username,
+        });
+
+        history.push('/sign-up-success');
+
+        successToast('Sign Up Successfully');
+      } else {
+        history.push('/');
+
+        successToast('Sign In Successfully');
+      }
+    } catch (err) {
+      console.log(err);
+      errorToast(err.message);
+    }
   };
 
   const onEmailSignIn = async (e: React.FormEvent<HTMLFormElement>) => {

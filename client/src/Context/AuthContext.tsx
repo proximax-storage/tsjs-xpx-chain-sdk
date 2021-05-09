@@ -1,10 +1,15 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { auth, googleProvider } from '../Util/Firebase/FirebaseConfig';
+import {
+  auth,
+  googleProvider,
+  twitterProvider,
+} from '../Util/Firebase/FirebaseConfig';
 
 type AuthContextType = {
   signUp: (email: string, password: string, username: string) => void;
   emailSignIn: (email: string, password: string) => void;
   googleSignIn: () => any;
+  twitterSignIn: () => any;
   signOut: () => void;
   currentUser: any;
   curAddress: string;
@@ -37,8 +42,19 @@ const AuthProvider: React.FC = ({ children }) => {
 
   const googleSignIn = async () => {
     googleProvider.setCustomParameters({ prompt: 'select_account' });
+    return await externalSignIn(googleProvider);
+  };
+
+  const twitterSignIn = async () => {
+    return await externalSignIn(twitterProvider);
+  };
+
+  const externalSignIn = async (provider: any) => {
     try {
-      const result = await auth.signInWithPopup(googleProvider);
+      const result = await auth.signInWithPopup(provider);
+
+      console.log(result);
+
       const isNewUser = result.additionalUserInfo.isNewUser;
 
       return {
@@ -70,6 +86,7 @@ const AuthProvider: React.FC = ({ children }) => {
     setAddress,
     emailSignIn,
     googleSignIn,
+    twitterSignIn,
     signUp,
     signOut,
   };
