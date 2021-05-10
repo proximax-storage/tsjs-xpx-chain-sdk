@@ -79,7 +79,6 @@ const SignIn: React.FC = () => {
     e.preventDefault();
 
     try {
-      await twitterSignIn();
       const { uid, email, username, isNewUser } = await twitterSignIn();
 
       if (isNewUser) {
