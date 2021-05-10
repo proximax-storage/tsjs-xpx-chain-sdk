@@ -54,13 +54,12 @@ const AuthProvider: React.FC = ({ children }) => {
   const externalSignIn = async (provider: any) => {
     try {
       const result = await auth.signInWithPopup(provider);
-      const hasAcc = await axios.post('/api/is-new-acc', { uid: result.user.uid });
 
       return {
         uid: result.user.uid,
         email: result.user.email,
         username: result.user.displayName,
-        isNewUser: hasAcc.data.msg,
+        isNewUser: result.additionalUserInfo.isNewUser,
       };
     } catch (err) {
       console.log(err);
