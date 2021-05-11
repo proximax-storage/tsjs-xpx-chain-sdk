@@ -10,6 +10,7 @@ import Header from '../Component/Header';
 import RoutingPath from '../Component/Routing';
 
 import './BaseLayoutPage.scss';
+import InvestigateStepOne from './InvestigateStepOne';
 
 const BaseLayoutPage: React.FC = () => {
   return (
@@ -25,7 +26,8 @@ const BaseLayoutPage: React.FC = () => {
                 <Header />
               </div>
               <div className='content'>
-                <RoutingPath />
+                {/* <RoutingPath /> */}
+                <InvestigateStepOne />
               </div>
             </div>
           </AuthProvider>
