@@ -11,6 +11,8 @@ const NavBarHome: React.FC = (props: any) => {
   const [username, setUsername] = useState('LOADING...');
 
   const loadUsername = async () => {
+    setTimeout(() => {}, 2000);
+
     const result = await axios.post('/api/get-username', {
       uid: currentUser.uid,
     });
