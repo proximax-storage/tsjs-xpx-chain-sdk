@@ -1,12 +1,13 @@
-// import firebase from 'firebase/app';
-// import 'firebase/firestore';
 import admin from 'firebase-admin';
-const serviceAccount = require('./ServiceAccountKey.json');
 
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert(
+    JSON.parse(
+      Buffer.from(process.env.FIREBASE_CONFIG, 'base64').toString('ascii')
+    )
+  ),
 });
 
 const db = admin.firestore();
