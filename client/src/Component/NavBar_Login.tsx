@@ -1,33 +1,24 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { useAuth } from '../Context/AuthContext';
-import NavBar_Login from './NavBar_Login';
-
+import { useAuth,AuthProvider } from '../Context/AuthContext';
 import './NavBar.scss';
 
-const NavBar_Selection = () => {
-  const { currentUser } = useAuth();
-    return currentUser ?   
-      (<NavBar_Login/>) 
-      :
-      (<NavBar/>)
-};
-
-const NavBar: React.FC = (props: any) => {
-  const { signOut } = useAuth();
+/*TODO: Retrive Username */ 
+const NavBar_Login: React.FC = (props: any) => {
+  const { signOut, currentUser } = useAuth();
   const location = useLocation();
-
-  return (
+  return (  
     <div className='nav-bar-container'>
-      <h1>Mass Check</h1>
+      <h1>User Name</h1>
+      <h1>XPX Balance</h1>
       <div className='flex-container'>
         <div className='nav-link-list'>
           <NavLink
             className='nav-link'
             activeClassName='nav-link-active'
-            to='/sign-in'
+            to='/homepage'
           >
-            Sign In
+            Home
           </NavLink>
           <NavLink
             className={
@@ -36,16 +27,16 @@ const NavBar: React.FC = (props: any) => {
                 : 'nav-link'
             }
             activeClassName='nav-link-active'
-            to='/sign-up'
+            to='/investigate'
           >
-            Sign Up
+            Investigate
           </NavLink>
           <NavLink
             className='nav-link'
             activeClassName='nav-link-active'
-            to='/faq'
+            to='/verify'
           >
-            FAQ
+            Verify
           </NavLink>
           <NavLink
             className='nav-link'
@@ -53,7 +44,7 @@ const NavBar: React.FC = (props: any) => {
             to='/sign-out'
             onClick={signOut}
           >
-            Sign Out
+            Log Out
           </NavLink>
         </div>
       </div>
@@ -61,4 +52,4 @@ const NavBar: React.FC = (props: any) => {
   );
 };
 
-export default NavBar_Selection; 
+export default NavBar_Login;
