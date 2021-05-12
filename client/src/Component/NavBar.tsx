@@ -1,11 +1,9 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { useAuth } from '../Context/AuthContext';
 
 import './NavBar.scss';
 
 const NavBar: React.FC = (props: any) => {
-  const { signOut } = useAuth();
   const location = useLocation();
 
   return (
@@ -37,14 +35,6 @@ const NavBar: React.FC = (props: any) => {
             to='/faq'
           >
             FAQ
-          </NavLink>
-          <NavLink
-            className='nav-link'
-            activeClassName='nav-link-active'
-            to='/sign-out'
-            onClick={signOut}
-          >
-            Sign Out
           </NavLink>
         </div>
       </div>

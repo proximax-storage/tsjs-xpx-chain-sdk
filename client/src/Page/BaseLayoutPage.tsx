@@ -5,7 +5,7 @@ import { AuthProvider } from '../Context/AuthContext';
 import { NotificationProvider } from '../Context/NotificationContext';
 import Spinner from '../Component/Spinner';
 
-import NavBar from '../Component/NavBar';
+import NavBarSelection from '../Component/NavBarSelection';
 import Header from '../Component/Header';
 import RoutingPath from '../Component/Routing';
 
@@ -19,7 +19,7 @@ const BaseLayoutPage: React.FC = () => {
           <AuthProvider>
             <div className='base-layout'>
               <div className='nav-bar'>
-                <NavBar />
+                <NavBarSelection />
               </div>
               <div className='header'>
                 <Header />
