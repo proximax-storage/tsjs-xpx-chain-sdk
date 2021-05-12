@@ -1,22 +1,22 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { useAuth,AuthProvider } from '../Context/AuthContext';
+import { useAuth } from '../Context/AuthContext';
 import './NavBar.scss';
 
-/*TODO: Retrive Username */ 
-const NavBar_Login: React.FC = (props: any) => {
+/*TODO: Retrive Username */
+const NavBarHome: React.FC = (props: any) => {
   const { signOut, currentUser } = useAuth();
   const location = useLocation();
-  return (  
+
+  return (
     <div className='nav-bar-container'>
       <h1>User Name</h1>
-      <h1>XPX Balance</h1>
       <div className='flex-container'>
         <div className='nav-link-list'>
           <NavLink
             className='nav-link'
             activeClassName='nav-link-active'
-            to='/homepage'
+            to='/'
           >
             Home
           </NavLink>
@@ -41,10 +41,17 @@ const NavBar_Login: React.FC = (props: any) => {
           <NavLink
             className='nav-link'
             activeClassName='nav-link-active'
+            to='/faq'
+          >
+            FAQ
+          </NavLink>
+          <NavLink
+            className='nav-link'
+            activeClassName='nav-link-active'
             to='/sign-out'
             onClick={signOut}
           >
-            Log Out
+            Sign Out
           </NavLink>
         </div>
       </div>
@@ -52,4 +59,4 @@ const NavBar_Login: React.FC = (props: any) => {
   );
 };
 
-export default NavBar_Login;
+export default NavBarHome;
