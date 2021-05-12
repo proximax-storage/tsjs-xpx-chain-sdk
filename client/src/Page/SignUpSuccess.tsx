@@ -10,8 +10,15 @@ const SignUpSuccess: React.FC = () => {
   const [hasRemind, setHasRemind] = useState(false);
   const [privateKey, setPrivateKey] = useState('');
   const history = useHistory();
-  const { currentUser } = useAuth();
+  const { currentUser, setHasXpxAcc } = useAuth();
   const { warnToast } = useNotification();
+
+  // Disable existing user to future access this page
+  useEffect(() => {
+    return () => {
+      setHasXpxAcc(true);
+    };
+  }, []);
 
   const downloadFile = (filename: string, text: string) => {
     var element = document.createElement('a');

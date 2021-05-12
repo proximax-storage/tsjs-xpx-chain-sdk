@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect } from 'react';
-import axios from 'axios';
 
 import {
   auth,
@@ -15,6 +14,8 @@ type AuthContextType = {
   signOut: () => void;
   currentUser: any;
   curAddress: string;
+  hasXpxAcc: boolean;
+  setHasXpxAcc: (x: boolean) => void;
   setAddress: (add: string) => void;
 };
 
@@ -27,6 +28,7 @@ const useAuth = () => {
 const AuthProvider: React.FC = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [curAddress, setAddress] = useState('');
+  const [hasXpxAcc, setHasXpxAcc] = useState(true);
 
   const signUp = async (email: string, password: string, username: string) => {
     try {
@@ -71,9 +73,14 @@ const AuthProvider: React.FC = ({ children }) => {
   };
 
   useEffect(() => {
+    setHasXpxAcc(false);
+  }, [signUp, googleSignIn, twitterSignIn]);
+
+  useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user: any) => {
       setCurrentUser(user);
     });
+    console.log('User State', currentUser);
 
     return unsubscribe;
   }, []);
@@ -82,6 +89,8 @@ const AuthProvider: React.FC = ({ children }) => {
     currentUser,
     curAddress,
     setAddress,
+    hasXpxAcc,
+    setHasXpxAcc,
     emailSignIn,
     googleSignIn,
     twitterSignIn,
