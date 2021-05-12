@@ -1,5 +1,3 @@
-// import firebase from 'firebase/app';
-// import 'firebase/firestore';
 import admin from 'firebase-admin';
 const serviceAccount = require('./ServiceAccountKey.json');
 
@@ -42,10 +40,25 @@ const addAccAddress = async (uid: string, address: string) => {
   }
 };
 
+const getUsername = async (uid: string) => {
+  const accRef = db.collection('accounts').doc(uid);
+  let username;
+  
+  try {
+    const result = await accRef.get();
+    username = result.data().username;
+  } catch (error) {
+    throw error;
+  }
+  
+  return username;
+};
+
+export { addAccAddress, createAcc, getUsername };
+
+// retrive info from firestore
 // const isNewAcc = async (uid: string) => {
 //   const accRef = db.collection('accounts').doc(uid);
 //   const result = await accRef.get();
 //   return !result.exists;
 // };
-
-export { addAccAddress, createAcc };
