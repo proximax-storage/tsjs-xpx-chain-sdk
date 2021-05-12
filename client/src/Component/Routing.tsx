@@ -11,12 +11,13 @@ import Error404 from '../Page/Error404';
 const Routing: React.FC = () => {
   return (
     <Switch>
-      <PrivateRoute path='/sign-up-success' component={SignUpSuccess} />
-      <Route path='/sign-up' component={SignUp} />
-      <Route path='/sign-in' component={SignIn} />
+      <PrivateRoute exact path='/sign-up-success' component={SignUpSuccess} />
+      <Route exact path='/sign-up' component={SignUp} />
+      <Route exact path='/sign-in' component={SignIn} />
       {/* <Route path='/faq' component={SignUpSuccess} /> */}
-      <Route path='/error-404' component={Error404} />
-      <PrivateRoute path='/' component={Home} />
+      <PrivateRoute exact path='/' component={Home} />
+      <Route path='/error' component={Error404} />
+      <Route component={Error404} />
     </Switch>
   );
 };
