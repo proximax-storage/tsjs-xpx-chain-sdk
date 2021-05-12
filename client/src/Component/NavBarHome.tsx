@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 import { useAuth } from '../Context/AuthContext';
-import './NavBar.scss';
+import './NavBarHome.scss';
 
 const NavBarHome: React.FC = (props: any) => {
   const { signOut, currentUser } = useAuth();
@@ -23,13 +23,14 @@ const NavBarHome: React.FC = (props: any) => {
   }, []);
 
   return (
-    <div className='nav-bar-container'>
-      <h1>{username}</h1>
+    <div className='nav-bar-home-container'>
       <div className='flex-container'>
+        <h1>{username}</h1>
         <div className='nav-link-list'>
           <NavLink
             className='nav-link'
             activeClassName='nav-link-active'
+            exact
             to='/'
           >
             Home
@@ -52,6 +53,8 @@ const NavBarHome: React.FC = (props: any) => {
           >
             Verify
           </NavLink>
+        </div>
+        <div className='nav-link-list'>
           <NavLink
             className='nav-link'
             activeClassName='nav-link-active'
