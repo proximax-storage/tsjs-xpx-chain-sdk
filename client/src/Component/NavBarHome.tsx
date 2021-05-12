@@ -65,7 +65,7 @@ const NavBarHome: React.FC = (props: any) => {
           <NavLink
             className='nav-link'
             activeClassName='nav-link-active'
-            to='/sign-out'
+            to='/sign-in'
             onClick={signOut}
           >
             Sign Out
