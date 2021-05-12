@@ -6,6 +6,7 @@ import SignUp from '../Page/SignUp';
 import SignIn from '../Page/SignIn';
 import Home from '../Page/Home';
 import SignUpSuccess from '../Page/SignUpSuccess';
+import Error404 from '../Page/Error404';
 
 const Routing: React.FC = () => {
   return (
@@ -14,6 +15,7 @@ const Routing: React.FC = () => {
       <Route path='/sign-up' component={SignUp} />
       <Route path='/sign-in' component={SignIn} />
       {/* <Route path='/faq' component={SignUpSuccess} /> */}
+      <Route path='/error-404' component={Error404} />
       <PrivateRoute path='/' component={Home} />
     </Switch>
   );
