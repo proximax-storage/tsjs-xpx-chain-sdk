@@ -19,6 +19,9 @@ const Header: React.FC = () => {
       case '/faq':
         setTitle('FAQ');
         break;
+      case '/error-404':
+        setTitle('Error 404');
+        break;
       default:
         setTitle('Home');
     }

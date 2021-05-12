@@ -1,0 +1,23 @@
+@import '../Util/Styles/Color.scss';
+
+.error-404 {
+  width: 70%;
+
+  &__oops {
+    font-weight: 400;
+    color: $text-color;
+    text-align: center;
+    font-size: 2rem;
+  }
+
+  &__description {
+    font-weight: 400;
+    color: $text-color;
+    text-align: center;
+    font-size: 1.2rem;
+  }
+}
+
+.twitter {
+  color: $twitter-color;
+}
