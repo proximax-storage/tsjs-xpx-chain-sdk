@@ -26,8 +26,7 @@ const BaseLayoutPage: React.FC = () => {
                 <Header />
               </div>
               <div className='content'>
-                {/* <RoutingPath /> */}
-                <InvestigateStepOne />
+                <RoutingPath />
               </div>
             </div>
           </AuthProvider>
