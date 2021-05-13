@@ -19,6 +19,9 @@ const Header: React.FC = () => {
       case '/faq':
         setTitle('FAQ');
         break;
+      case '/investigate-step-one':
+        setTitle('Investigate (1/4)');
+        break;
       case '/':
         setTitle('Home');
         break;
