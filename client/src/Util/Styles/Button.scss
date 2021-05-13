@@ -11,6 +11,16 @@
   }
 }
 
+@mixin regular-blue-button {
+  @include btn-base;
+
+  font-weight: bold;
+  font-size: 1.25rem;
+  color: white;
+  background-color: $button-primary-color;
+  width: 12.5rem;
+}
+
 @mixin sign-in-and-sign-up-button {
   @include btn-base;
 
