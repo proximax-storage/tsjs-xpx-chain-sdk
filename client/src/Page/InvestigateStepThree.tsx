@@ -1,4 +1,5 @@
 import React from 'react';
+import Timer from '../Component/Timer';
 import './InvestigateStepThree.scss';
 
 const InvestigateStepThree: React.FC = () => {
@@ -10,13 +11,10 @@ const InvestigateStepThree: React.FC = () => {
             You have been matched with a news tweet!
           </p>
           <p>
-            Would you like to start investigating?
+            Would you like to start investigating? <br/> You have <Timer/> left to decide.
           </p>
         </div>
         <div className='investigate-step-three__timer'>
-            <p>
-                Timer
-            </p>
         </div>
         <div className='investigate-step-three__small-description'>
             <br/>
