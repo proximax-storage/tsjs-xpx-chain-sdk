@@ -1,7 +1,13 @@
 @import './Color.scss';
 
 @mixin body-text {
-  color: $body-text-color;
+  color: $text-color;
   font-size: 1.25rem;
+  font-family: 'Open Sans', sans-serif;
+}
+
+@mixin smaller-body-text {
+  color: $body-text-color;
+  font-size: 0.9rem;
   font-family: 'Open Sans', sans-serif;
 }
