@@ -1,0 +1,21 @@
+@import '../Util/Styles/Color.scss';
+@import '../Util/Styles/Button.scss';
+@import '../Util/Styles/BodyText.scss';
+
+.investigate-step-two {
+  &__animation {
+    //
+  }
+
+  &__description {
+    p {
+      @include body-text;
+    }
+  }
+
+  &__button {
+    @include regular-blue-button;
+  }
+
+  text-align: center;
+}
