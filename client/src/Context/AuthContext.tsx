@@ -37,6 +37,7 @@ const AuthProvider: React.FC = ({ children }) => {
       return result.user.uid;
     } catch (err) {
       console.log(err);
+      throw err;
     }
   };
 
