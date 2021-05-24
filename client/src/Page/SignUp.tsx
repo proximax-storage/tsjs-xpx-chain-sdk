@@ -92,9 +92,7 @@ const SignUp: React.FC = () => {
       console.log(uid);
 
       await postCreateAcc(uid, email, username);
-      setTimeout(() => {
-        console.log('Timeout 2sec');
-      }, 2000);
+      setTimeout(() => {}, 5000);
       history.push('/sign-up-success');
 
       successToast('Sign Up Successfully');
