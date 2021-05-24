@@ -122,3 +122,5 @@ dist
 server/src/Util/ServiceAccountKey.json
 
 .gitignore
+
+*/build
