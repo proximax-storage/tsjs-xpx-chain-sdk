@@ -53,6 +53,9 @@ const SignIn: React.FC = () => {
       if (isNewUser) {
         await postCreateAcc(uid, email, username);
         history.push('/sign-up-success');
+        setTimeout(() => {
+          console.log('Timeout 2sec');
+        }, 2000);
         successToast('Sign Up Successfully');
       } else {
         history.push('/');
@@ -74,6 +77,9 @@ const SignIn: React.FC = () => {
 
       if (isNewUser) {
         await postCreateAcc(uid, email, username);
+        setTimeout(() => {
+          console.log('Timeout 2sec');
+        }, 2000);
         history.push('/sign-up-success');
         successToast('Sign Up Successfully');
       } else {

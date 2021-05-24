@@ -39,11 +39,7 @@ const NavBarHome: React.FC = (props: any) => {
             Home
           </NavLink>
           <NavLink
-            className={
-              location.pathname === '/sign-up-success'
-                ? 'nav-link-active'
-                : 'nav-link'
-            }
+            className='nav-link'
             activeClassName='nav-link-active'
             to='/investigate-step-one'
           >

@@ -1,5 +1,5 @@
 import express from 'express';
-import cors from 'cors';
+const cors = require('cors');
 // import path from 'path';
 // import enforce from 'express-sslify';
 
