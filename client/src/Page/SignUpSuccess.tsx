@@ -1,9 +1,11 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+
 import { useAuth } from '../Context/AuthContext';
-import axios from 'axios';
 import { useNotification } from '../Context/NotificationContext';
+import { downloadPrivateKey } from '../Util/API/SignUpAPI';
+
 import './SignUpSuccess.scss';
 
 const SignUpSuccess: React.FC = () => {
@@ -40,9 +42,12 @@ const SignUpSuccess: React.FC = () => {
     if (!hasRemind) {
       try {
         console.log(currentUser.uid);
-        const res = await axios.post('/api/download-private-key', {
-          uid: currentUser.uid,
-        });
+        // const res = await axios.post('/api/download-private-key', {
+        //   uid: currentUser.uid,
+        // });
+
+        const res = await downloadPrivateKey(currentUser.uid);
+
         downloadFile('xpx-private-key', res.data);
 
         setPrivateKey(res.data);

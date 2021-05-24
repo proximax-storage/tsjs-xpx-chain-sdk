@@ -7,7 +7,7 @@ import {
 } from '../Util/Firebase/FirebaseConfig';
 
 type AuthContextType = {
-  signUp: (email: string, password: string, username: string) => void;
+  signUp: (email: string, password: string, username: string) => any;
   emailSignIn: (email: string, password: string) => void;
   googleSignIn: () => any;
   twitterSignIn: () => any;

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import Joi from 'joi';
-import axios from 'axios';
 
 import { useAuth } from '../Context/AuthContext';
 import { useNotification } from '../Context/NotificationContext';
+import { postCreateAcc } from '../Util/API/SignUpAPI';
 
 import './SignIn.scss';
 
@@ -24,10 +24,8 @@ const SignIn: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [hasNoError, setHasNoError] = useState(false);
-  const [
-    validationError,
-    setValidationError,
-  ] = useState<validationErrorInterface>({});
+  const [validationError, setValidationError] =
+    useState<validationErrorInterface>({});
   const history = useHistory();
   const { googleSignIn, emailSignIn, currentUser, twitterSignIn } = useAuth();
   const { successToast, errorToast, warnToast } = useNotification();
@@ -51,21 +49,13 @@ const SignIn: React.FC = () => {
 
     try {
       const { uid, email, username, isNewUser } = await googleSignIn();
-      console.log('is-new-user', isNewUser);
 
       if (isNewUser) {
-        await axios.post('/api/create-acc', {
-          uid: uid,
-          email: email,
-          username: username,
-        });
-
+        await postCreateAcc(uid, email, username);
         history.push('/sign-up-success');
-
         successToast('Sign Up Successfully');
       } else {
         history.push('/');
-
         successToast('Sign In Successfully');
       }
     } catch (err) {
@@ -83,18 +73,11 @@ const SignIn: React.FC = () => {
       const { uid, email, username, isNewUser } = await twitterSignIn();
 
       if (isNewUser) {
-        await axios.post('/api/create-acc', {
-          uid: uid,
-          email: email,
-          username: username,
-        });
-
+        await postCreateAcc(uid, email, username);
         history.push('/sign-up-success');
-
         successToast('Sign Up Successfully');
       } else {
         history.push('/');
-
         successToast('Sign In Successfully');
       }
     } catch (err) {

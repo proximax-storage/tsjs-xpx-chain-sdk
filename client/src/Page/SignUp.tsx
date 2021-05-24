@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Joi from 'joi';
+
 import { useHistory } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
 import { useNotification } from '../Context/NotificationContext';
+import { postCreateAcc} from '../Util/API/SignUpAPI'
 
 import './SignUp.scss';
 
@@ -92,11 +93,7 @@ const SignUp: React.FC = () => {
 
       console.log(uid);
 
-      await axios.post('/api/create-acc', {
-        uid: uid,
-        email: email,
-        username: username,
-      });
+      await postCreateAcc(uid, email, username)
 
       history.push('/sign-up-success');
 
