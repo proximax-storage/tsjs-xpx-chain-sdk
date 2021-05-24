@@ -4,7 +4,7 @@ import Joi from 'joi';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
 import { useNotification } from '../Context/NotificationContext';
-import { postCreateAcc} from '../Util/API/SignUpAPI'
+import { postCreateAcc } from '../Util/API/SignUpAPI';
 
 import './SignUp.scss';
 
@@ -29,10 +29,8 @@ const SignUp: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [hasNoError, setHasNoError] = useState(false);
-  const [
-    validationError,
-    setValidationError,
-  ] = useState<validationErrorInterface>({});
+  const [validationError, setValidationError] =
+    useState<validationErrorInterface>({});
   const history = useHistory();
   const { signUp, currentUser } = useAuth();
   const { successToast, errorToast, warnToast } = useNotification();
@@ -93,8 +91,10 @@ const SignUp: React.FC = () => {
 
       console.log(uid);
 
-      await postCreateAcc(uid, email, username)
-
+      await postCreateAcc(uid, email, username);
+      setTimeout(() => {
+        console.log('Timeout 2sec');
+      }, 2000);
       history.push('/sign-up-success');
 
       successToast('Sign Up Successfully');

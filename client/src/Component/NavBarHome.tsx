@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
 import { useAuth } from '../Context/AuthContext';
-import { getUsername } from '../Util/API/NavBarHomeAPI';
+import { getUsernameByUid } from '../Util/API/NavBarHomeAPI';
 
 import './NavBarHome.scss';
 
@@ -14,7 +14,9 @@ const NavBarHome: React.FC = (props: any) => {
   const loadUsername = async () => {
     setTimeout(() => {}, 5000);
 
-    const result = await getUsername(currentUser.uid);
+    console.log('Cur user', currentUser);
+
+    const result = await getUsernameByUid(currentUser.uid);
 
     setUsername(result.data.username);
   };
