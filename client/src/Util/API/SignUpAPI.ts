@@ -10,7 +10,7 @@ const postCreateAcc = async (uid: string, email: string, username: string) => {
 };
 
 const downloadPrivateKey = async (uid: string) => {
-  const res = await axios.post('/api/download-private-key', {
+  const res = await axios.post(`${API_URL}/api/download-private-key`, {
     uid: uid,
   });
 

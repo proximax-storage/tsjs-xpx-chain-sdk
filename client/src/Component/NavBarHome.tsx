@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import axios from 'axios';
 
 import { useAuth } from '../Context/AuthContext';
+import { getUsername } from '../Util/API/NavBarHomeAPI';
+
 import './NavBarHome.scss';
 
 const NavBarHome: React.FC = (props: any) => {
@@ -13,9 +14,7 @@ const NavBarHome: React.FC = (props: any) => {
   const loadUsername = async () => {
     setTimeout(() => {}, 5000);
 
-    const result = await axios.post('/api/get-username', {
-      uid: currentUser.uid,
-    });
+    const result = await getUsername(currentUser.uid);
 
     setUsername(result.data.username);
   };
