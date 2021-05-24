@@ -28,6 +28,10 @@ app.use('/api', downloadPrivateKeyRoute);
 app.use('/api', createAcc);
 app.use('/api', getUserInfo);
 
+app.use('/', (req, res, next) => {
+  res.send('MassCheck API');
+});
+
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log('Local server port number:', port);
