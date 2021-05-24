@@ -120,3 +120,5 @@ dist
 
 # firebase config
 server/src/Util/ServiceAccountKey.json
+
+.gitignore
