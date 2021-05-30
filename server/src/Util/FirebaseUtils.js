@@ -1,4 +1,4 @@
-import admin from 'firebase-admin';
+const admin = require('firebase-admin');
 
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
@@ -12,7 +12,7 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-const createAcc = async (uid: string, username: string, email: string) => {
+const createAcc = async (uid, username, email) => {
   db.collection('accounts')
     .doc(uid)
     .set({
@@ -29,7 +29,7 @@ const createAcc = async (uid: string, username: string, email: string) => {
     });
 };
 
-const addAccAddress = async (uid: string, address: string) => {
+const addAccAddress = async (uid, address) => {
   const accRef = db.collection('accounts').doc(uid);
 
   try {
@@ -43,7 +43,7 @@ const addAccAddress = async (uid: string, address: string) => {
   }
 };
 
-const getUsername = async (uid: string) => {
+const getUsername = async (uid) => {
   const accRef = db.collection('accounts').doc(uid);
   let username;
 
@@ -57,10 +57,12 @@ const getUsername = async (uid: string) => {
   return username;
 };
 
-export { addAccAddress, createAcc, getUsername };
+exports.addAccAddress = addAccAddress;
+exports.createAcc = createAcc;
+exports.getUsername = getUsername;
 
 // retrive info from firestore
-// const isNewAcc = async (uid: string) => {
+// const isNewAcc = async (uid) => {
 //   const accRef = db.collection('accounts').doc(uid);
 //   const result = await accRef.get();
 //   return !result.exists;

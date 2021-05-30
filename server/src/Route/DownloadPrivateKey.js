@@ -1,6 +1,6 @@
-import express from 'express';
-import { generateXpxAcc } from '../Blockchain/CreateXpxAcc';
-import { addAccAddress } from '../Util/FirebaseUtils';
+const express = require('express');
+const { generateXpxAcc } = require('../Blockchain/CreateXpxAcc');
+const { addAccAddress } = require('../Util/FirebaseUtils');
 
 const router = express.Router();
 
@@ -15,8 +15,7 @@ router.post('/download-private-key', async (req, res, next) => {
     console.log(error);
   }
 
-  // res.status(200).attachment(`xpx_private_key.txt`).send(privateKey);
   res.status(200).send(privateKey);
 });
 
-export default router;
+module.exports = router;

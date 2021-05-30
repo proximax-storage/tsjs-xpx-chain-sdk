@@ -1,12 +1,12 @@
-import express from 'express';
+const express = require('express');
 const cors = require('cors');
-// import path from 'path';
-// import enforce from 'express-sslify';
+// const path = require('path');
+// const enforce = require('express-sslify')
 
 // Route
-import downloadPrivateKeyRoute from './Route/DownloadPrivateKey';
-import createAcc from './Route/CreateAcc';
-import getUserInfo from './Route/GetUserInfo';
+const downloadPrivateKeyRoute = require('./Route/DownloadPrivateKey');
+const createAcc = require('./Route/CreateAcc');
+const getUserInfo = require('./Route/GetUserInfo');
 
 const app = express();
 
