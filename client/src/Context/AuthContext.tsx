@@ -5,6 +5,7 @@ import {
   googleProvider,
   twitterProvider,
 } from '../Util/Firebase/FirebaseConfig';
+import { LocalStorageEnum } from '../Util/Constant/LocalStorageEnum';
 
 type AuthContextType = {
   signUp: (email: string, password: string, username: string) => any;
@@ -30,9 +31,19 @@ const AuthProvider: React.FC = ({ children }) => {
   const [curAddress, setAddress] = useState('');
   const [hasXpxAcc, setHasXpxAcc] = useState(true);
 
+  const setLocalStorageUser = (result: any) => {
+    localStorage.setItem(
+      LocalStorageEnum.DISPLAY_NAME,
+      result.user.displayName
+    );
+    localStorage.setItem(LocalStorageEnum.UID, result.user.uid);
+  };
+
   const signUp = async (email: string, password: string, username: string) => {
     try {
       const result = await auth.createUserWithEmailAndPassword(email, password);
+
+      setLocalStorageUser(result);
 
       return result.user.uid;
     } catch (err) {
@@ -42,7 +53,9 @@ const AuthProvider: React.FC = ({ children }) => {
   };
 
   const emailSignIn = async (email: string, password: string) => {
-    await auth.signInWithEmailAndPassword(email, password);
+    const result = await auth.signInWithEmailAndPassword(email, password);
+
+    setLocalStorageUser(result);
   };
 
   const googleSignIn = async () => {
@@ -58,6 +71,8 @@ const AuthProvider: React.FC = ({ children }) => {
     try {
       const result = await auth.signInWithPopup(provider);
 
+      setLocalStorageUser(result);
+
       return {
         uid: result.user.uid,
         email: result.user.email,
@@ -70,6 +85,11 @@ const AuthProvider: React.FC = ({ children }) => {
   };
 
   const signOut = () => {
+    // Clear user info
+    localStorage.setItem(LocalStorageEnum.DISPLAY_NAME, null);
+    localStorage.setItem(LocalStorageEnum.UID, null);
+    localStorage.setItem(LocalStorageEnum.ADDRESS, null);
+
     return auth.signOut();
   };
 
