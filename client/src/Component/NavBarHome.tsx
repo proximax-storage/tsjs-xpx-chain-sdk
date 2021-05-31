@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useHistory } from 'react-router-dom';
 
 import { useAuth } from '../Context/AuthContext';
 import { getUsernameByUid } from '../Util/API/NavBarHomeAPI';
@@ -8,7 +8,6 @@ import './NavBarHome.scss';
 
 const NavBarHome: React.FC = (props: any) => {
   const { signOut, currentUser } = useAuth();
-  const location = useLocation();
   const [username, setUsername] = useState('LOADING...');
 
   const loadUsername = async () => {
@@ -21,8 +20,11 @@ const NavBarHome: React.FC = (props: any) => {
     setUsername(result.data.username);
   };
 
+  const history = useHistory();
+
   useEffect(() => {
     loadUsername();
+    history.push('/');
   }, []);
 
   return (

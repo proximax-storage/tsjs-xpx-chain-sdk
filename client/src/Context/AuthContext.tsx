@@ -86,14 +86,6 @@ const AuthProvider: React.FC = ({ children }) => {
     return unsubscribe;
   }, []);
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user: any) => {
-      setCurrentUser(user);
-    });
-
-    return unsubscribe;
-  }, [currentUser]);
-
   const value = {
     currentUser,
     curAddress,
