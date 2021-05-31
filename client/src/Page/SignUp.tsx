@@ -87,9 +87,7 @@ const SignUp: React.FC = () => {
     }
 
     try {
-      const uid = await signUp(email, password);
-
-      console.log(uid);
+      const uid = await signUp(email, password, username);
 
       await postCreateAcc(uid, email, username);
       setTimeout(() => {}, 5000);

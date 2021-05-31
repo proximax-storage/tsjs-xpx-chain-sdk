@@ -9,7 +9,7 @@ import { LocalStorageEnum } from '../Util/Constant/LocalStorageEnum';
 import { getUserInfoByUid } from '../Util/API/NavBarHomeAPI';
 
 type AuthContextType = {
-  signUp: (email: string, password: string) => any;
+  signUp: (email: string, password: string, username: string) => any;
   emailSignIn: (email: string, password: string) => void;
   googleSignIn: () => any;
   twitterSignIn: () => any;
@@ -40,11 +40,12 @@ const AuthProvider: React.FC = ({ children }) => {
     localStorage.setItem(LocalStorageEnum.UID, result.user.uid);
   };
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string, username: string) => {
     try {
       const result = await auth.createUserWithEmailAndPassword(email, password);
 
       setLocalStorageUser(result);
+      localStorage.setItem(LocalStorageEnum.DISPLAY_NAME, username)
 
       return result.user.uid;
     } catch (err) {
