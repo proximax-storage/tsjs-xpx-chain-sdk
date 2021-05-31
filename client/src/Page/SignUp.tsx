@@ -32,8 +32,8 @@ const SignUp: React.FC = () => {
   const [validationError, setValidationError] =
     useState<validationErrorInterface>({});
   const history = useHistory();
-  const { signUp, currentUser } = useAuth();
-  const { successToast, errorToast, warnToast } = useNotification();
+  const { signUp } = useAuth();
+  const { successToast, errorToast } = useNotification();
 
   useEffect(() => {
     setHasNoError(!!(username && email && password && confirmPassword));
@@ -87,7 +87,7 @@ const SignUp: React.FC = () => {
     }
 
     try {
-      const uid = await signUp(email, password, username);
+      const uid = await signUp(email, password);
 
       console.log(uid);
 

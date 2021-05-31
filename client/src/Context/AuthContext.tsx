@@ -6,9 +6,10 @@ import {
   twitterProvider,
 } from '../Util/Firebase/FirebaseConfig';
 import { LocalStorageEnum } from '../Util/Constant/LocalStorageEnum';
+import { getUserInfoByUid } from '../Util/API/NavBarHomeAPI';
 
 type AuthContextType = {
-  signUp: (email: string, password: string, username: string) => any;
+  signUp: (email: string, password: string) => any;
   emailSignIn: (email: string, password: string) => void;
   googleSignIn: () => any;
   twitterSignIn: () => any;
@@ -39,7 +40,7 @@ const AuthProvider: React.FC = ({ children }) => {
     localStorage.setItem(LocalStorageEnum.UID, result.user.uid);
   };
 
-  const signUp = async (email: string, password: string, username: string) => {
+  const signUp = async (email: string, password: string) => {
     try {
       const result = await auth.createUserWithEmailAndPassword(email, password);
 
@@ -54,8 +55,15 @@ const AuthProvider: React.FC = ({ children }) => {
 
   const emailSignIn = async (email: string, password: string) => {
     const result = await auth.signInWithEmailAndPassword(email, password);
-
     setLocalStorageUser(result);
+
+    const user = await getUserInfoByUid(result.user.uid);
+    const { username } = user.data.userInfo;
+
+    console.log('Email Sign In', user);
+    localStorage.setItem(LocalStorageEnum.DISPLAY_NAME, username);
+
+    console.log('LS', LocalStorageEnum.DISPLAY_NAME, username);
   };
 
   const googleSignIn = async () => {
@@ -101,7 +109,6 @@ const AuthProvider: React.FC = ({ children }) => {
     const unsubscribe = auth.onAuthStateChanged((user: any) => {
       setCurrentUser(user);
     });
-    console.log('User State', currentUser);
 
     return unsubscribe;
   }, []);

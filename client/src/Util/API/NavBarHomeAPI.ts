@@ -1,9 +1,9 @@
 import axios from 'axios';
 import API_URL from './EndPoint';
 
-const getUsernameByUid = async (uid: string) => {
+const getUserInfoByUid = async (uid: string) => {
   return await axios.post(
-    `${API_URL}/api/get-username`,
+    `${API_URL}/api/get-userinfo`,
     {
       uid: uid,
     },
@@ -11,4 +11,4 @@ const getUsernameByUid = async (uid: string) => {
   );
 };
 
-export { getUsernameByUid };
+export { getUserInfoByUid };
