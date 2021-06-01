@@ -1,0 +1,30 @@
+.tweet {
+  text-align: left;
+  max-width: 43.75rem;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  font-family: 'Open Sans', sans-serif;
+
+  &__name {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+
+  &__content {
+    font-size: 1.25rem;
+  }
+
+  &__submit-by,
+  &__submit-time {
+    font-size: 0.935rem;
+  }
+
+  &__authenticity-score {
+    font-size: 0.935rem;
+    color: #78c71d;
+  }
+
+  &__stage {
+    font-size: 0.935rem;
+  }
+}
