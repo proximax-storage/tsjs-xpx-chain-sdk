@@ -1,0 +1,17 @@
+@import '../Util/Styles/Color.scss';
+@import '../Util/Styles/Button.scss';
+@import '../Util/Styles/BodyText.scss';
+
+.investigate-step-four {
+  text-align: center;
+  max-width: 43.75rem;
+
+  &__description {
+    @include body-text;
+  }
+
+  &__button {
+    @include regular-blue-button;
+    align-items: center;
+  }
+}
