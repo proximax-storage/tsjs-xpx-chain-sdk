@@ -1,10 +1,9 @@
-import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { LocalStorageEnum } from '../../Util/Constant/LocalStorageEnum';
 
 import './StepTwo.scss';
 
-const InvestigateStepTwo = ({ nextUrl }) => {
+const StepTwo = ({ nextUrl }) => {
   const history = useHistory();
 
   const onCancel = () => {
@@ -34,4 +33,4 @@ const InvestigateStepTwo = ({ nextUrl }) => {
   );
 };
 
-export default InvestigateStepTwo;
+export default StepTwo;
