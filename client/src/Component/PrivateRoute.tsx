@@ -1,5 +1,6 @@
 import { Route, Redirect } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
+import { LocalStorageEnum } from '../Util/Constant/LocalStorageEnum';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
   const { currentUser } = useAuth();
@@ -10,7 +11,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
     <Route
       {...rest}
       render={(props) => {
-        return currentUser ? (
+        return localStorage.getItem(LocalStorageEnum.IS_SIGN_IN) ? (
           <Component {...props} />
         ) : (
           <Redirect to='/sign-in' />

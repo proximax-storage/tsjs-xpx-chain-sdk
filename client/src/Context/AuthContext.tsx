@@ -38,6 +38,7 @@ const AuthProvider: React.FC = ({ children }) => {
       result.user.displayName
     );
     localStorage.setItem(LocalStorageEnum.UID, result.user.uid);
+    localStorage.setItem(LocalStorageEnum.IS_SIGN_IN, 'true');
   };
 
   const signUp = async (email: string, password: string, username: string) => {
@@ -45,7 +46,7 @@ const AuthProvider: React.FC = ({ children }) => {
       const result = await auth.createUserWithEmailAndPassword(email, password);
 
       setLocalStorageUser(result);
-      localStorage.setItem(LocalStorageEnum.DISPLAY_NAME, username)
+      localStorage.setItem(LocalStorageEnum.DISPLAY_NAME, username);
 
       return result.user.uid;
     } catch (err) {
@@ -95,9 +96,7 @@ const AuthProvider: React.FC = ({ children }) => {
 
   const signOut = () => {
     // Clear user info
-    localStorage.setItem(LocalStorageEnum.DISPLAY_NAME, null);
-    localStorage.setItem(LocalStorageEnum.UID, null);
-    localStorage.setItem(LocalStorageEnum.ADDRESS, null);
+    localStorage.clear();
 
     return auth.signOut();
   };
