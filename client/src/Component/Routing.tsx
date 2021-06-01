@@ -11,6 +11,7 @@ import SignUpSuccess from '../Page/SignUpSuccess';
 import Error404 from '../Page/Error404';
 import InvestigateStepOne from '../Page/InvestigateStepOne';
 import InvestigateStepTwo from '../Page/InvestigateStepTwo';
+import InvestigateStepThree from '../Page/InvestigateStepThree';
 
 const Routing: React.FC = () => {
   const { hasXpxAcc } = useAuth();
@@ -33,6 +34,11 @@ const Routing: React.FC = () => {
         exact
         path='/investigate-step-two'
         component={InvestigateStepTwo}
+      />
+      <Route
+        exact
+        path='/investigate-step-three'
+        component={InvestigateStepThree}
       />
       <Route path='/error' component={Error404} />
       <Route component={Error404} />

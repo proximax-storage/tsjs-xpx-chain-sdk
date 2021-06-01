@@ -1,0 +1,33 @@
+@import '../Util/Styles/Color.scss';
+@import '../Util/Styles/Button.scss';
+@import '../Util/Styles/BodyText.scss';
+
+.investigate-step-three {
+  &__image {
+    //
+  }
+
+  &__description {
+    p {
+      @include body-text;
+    }
+  }
+
+  &__small-description {
+    p {
+      @include smaller-body-text;
+    }
+  }
+
+  &__yes-button {
+    @include regular-blue-button;
+  }
+
+  &__no-button {
+    @include regular-blue-button;
+    background-color: $button-secondary-color;
+    margin-left: 0.8rem;
+  }
+
+  text-align: center;
+}
