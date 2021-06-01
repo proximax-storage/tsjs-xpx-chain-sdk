@@ -1,19 +1,32 @@
 import React from 'react';
+import { useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { useNotification } from '../Context/NotificationContext';
 
 import './UploadBox.scss';
 
 const UploadBox: React.FC = () => {
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
-    maxFiles: 1,
-    accept: '.pdf',
-  });
+  const { warnToast } = useNotification();
+
+  const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
+    useDropzone({
+      maxFiles: 1,
+      accept: '.pdf',
+    });
 
   const files = acceptedFiles.map((file) => (
-    <li key={(file as any).path}>
-      {(file as any).path} - {file.size} bytes
-    </li>
+    <li key={(file as any).path}>{(file as any).path}</li>
   ));
+
+  useEffect(() => {
+    fileRejections.map(({ file, errors }) => {
+      if (errors) {
+        warnToast('PDF File Format Only');
+      }
+
+      return true;
+    });
+  }, [fileRejections]);
 
   return (
     <div className='upload-box'>
@@ -24,7 +37,7 @@ const UploadBox: React.FC = () => {
           <em>(The maximum number of files you can drop here is 1)</em>
         </div>
         <aside>
-          <h4>Files</h4>
+          {files.length ? <h4>Files</h4> : null}
           <ul>{files}</ul>
         </aside>
       </section>

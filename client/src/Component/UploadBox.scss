@@ -15,6 +15,7 @@
     color: #bdbdbd;
     outline: none;
     transition: border 0.24s ease-in-out;
+    cursor: pointer;
   }
 
   &__container {
@@ -23,5 +24,17 @@
     border-radius: 3px;
     width: 100%;
     display: inline-block;
+  }
+
+  aside {
+    text-align: left;
+
+    h4 {
+      margin-bottom: 0;
+    }
+
+    ul {
+      margin: 0;
+    }
   }
 }
