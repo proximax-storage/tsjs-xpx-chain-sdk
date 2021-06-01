@@ -1,13 +1,20 @@
+@import '../Util/Styles/BodyText.scss';
+
 .tweet {
+  @include body-text;
   text-align: left;
   max-width: 43.75rem;
   padding: 1.5rem;
   background-color: #ffffff;
-  font-family: 'Open Sans', sans-serif;
+  color: black;
 
   &__name {
     font-size: 1.25rem;
-    font-weight: bold;
+    font-weight: 800;
+  }
+
+  &__tag {
+    font-style: italic;
   }
 
   &__content {
@@ -25,6 +32,7 @@
   }
 
   &__stage {
+    @include body-text;
     font-size: 0.935rem;
   }
 }

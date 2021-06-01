@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import Tweet from '../Component/Tweet';
 import UploadBox from '../Component/UploadBox';
 
@@ -6,6 +7,10 @@ import './InvestigateStepFour.scss';
 
 const InvestigateStepFour: React.FC = () => {
   // TODO: Incorporate handle submit
+  const history = useHistory();
+  const onNext = () => {
+    history.push('/investigate-step-five');
+  };
 
   return (
     <div className='investigate-step-four'>
@@ -41,7 +46,9 @@ const InvestigateStepFour: React.FC = () => {
 
       <br />
 
-      <button className='investigate-step-four__button'>Submit</button>
+      <button className='investigate-step-four__button' onClick={onNext}>
+        Submit
+      </button>
     </div>
   );
 };
