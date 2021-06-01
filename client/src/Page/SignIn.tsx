@@ -5,6 +5,7 @@ import Joi from 'joi';
 import { useAuth } from '../Context/AuthContext';
 import { useNotification } from '../Context/NotificationContext';
 import { postCreateAcc } from '../Util/API/SignUpAPI';
+import { LocalStorageEnum } from '../Util/Constant/LocalStorageEnum';
 
 import './SignIn.scss';
 
@@ -52,6 +53,8 @@ const SignIn: React.FC = () => {
 
       if (isNewUser) {
         await postCreateAcc(uid, email, username);
+        localStorage.setItem(LocalStorageEnum.IS_NEW_USER, 'true');
+
         history.push('/sign-up-success');
         setTimeout(() => {}, 5000);
         successToast('Sign Up Successfully');
@@ -75,7 +78,9 @@ const SignIn: React.FC = () => {
 
       if (isNewUser) {
         await postCreateAcc(uid, email, username);
+        localStorage.setItem(LocalStorageEnum.IS_NEW_USER, 'true');
         setTimeout(() => {}, 5000);
+
         history.push('/sign-up-success');
         successToast('Sign Up Successfully');
       } else {

@@ -15,8 +15,11 @@ const NavBarHome: React.FC = (props: any) => {
   const loadUsername = () => {
     setTimeout(async () => {
       const result = await getUserInfoByUid(currentUser.uid);
+
       const { address } = result.data.userInfo;
       localStorage.setItem(LocalStorageEnum.ADDRESS, address);
+      localStorage.setItem(LocalStorageEnum.IS_NEW_USER, null);
+
       setUsername(localStorage.getItem(LocalStorageEnum.DISPLAY_NAME));
     }, 500);
   };

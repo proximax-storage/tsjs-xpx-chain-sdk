@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
 import { useNotification } from '../Context/NotificationContext';
 import { postCreateAcc } from '../Util/API/SignUpAPI';
+import { LocalStorageEnum } from '../Util/Constant/LocalStorageEnum';
 
 import './SignUp.scss';
 
@@ -91,6 +92,7 @@ const SignUp: React.FC = () => {
 
       await postCreateAcc(uid, email, username);
       setTimeout(() => {}, 5000);
+      localStorage.setItem(LocalStorageEnum.IS_NEW_USER, 'true');
       history.push('/sign-up-success');
 
       successToast('Sign Up Successfully');
