@@ -6,6 +6,7 @@ type NotificationContextType = {
   successToast: (msg: string) => void;
   warnToast: (msg: string) => void;
   errorToast: (msg: string) => void;
+  errorToastPersistent: (msg: string) => void;
 };
 
 const NotificationContext = React.createContext<
@@ -33,10 +34,18 @@ const NotificationProvider: React.FC = ({ children }) => {
     return toast.error(msg, toastConfig);
   };
 
+  const errorToastPersistent = (msg: string) => {
+    return toast.error(msg, {
+      closeOnClick: true,
+      autoClose: false,
+    });
+  };
+
   const value = {
     successToast,
     warnToast,
     errorToast,
+    errorToastPersistent,
   };
 
   return (
