@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useNotification } from '../Context/NotificationContext';
@@ -7,16 +7,37 @@ import './UploadBox.scss';
 
 const UploadBox: React.FC = () => {
   const { warnToast } = useNotification();
+  const [files, setFiles] = useState([]);
 
-  const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
-    useDropzone({
-      maxFiles: 1,
-      accept: '.pdf',
-    });
+  const {
+    acceptedFiles,
+    fileRejections,
+    getRootProps,
+    getInputProps,
+    isDragAccept,
+    isDragReject,
+  } = useDropzone({
+    maxFiles: 1,
+    accept: '.pdf',
+  });
 
-  const files = acceptedFiles.map((file) => (
-    <li key={(file as any).path}>{(file as any).path}</li>
-  ));
+  const remove = (file) => {
+    const newFiles = [...files];
+    newFiles.splice(file, 1);
+
+    setFiles(newFiles);
+  };
+
+  useEffect(() => {
+    const newFiles = acceptedFiles.map((file, index) => (
+      <li key={(file as any).path}>
+        {(file as any).path}{' '}
+        <button onClick={() => remove(index)}>Delete</button>
+      </li>
+    ));
+
+    setFiles(newFiles);
+  }, [acceptedFiles]);
 
   useEffect(() => {
     fileRejections.map(({ file, errors }) => {
