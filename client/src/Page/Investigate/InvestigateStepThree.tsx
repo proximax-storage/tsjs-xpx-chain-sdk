@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import Countdown from '../../Component/Countdown';
+import CountdownTimer from '../../Component/CountdownTimer';
 
 import './InvestigateStepThree.scss';
 
@@ -23,7 +23,10 @@ const InvestigateStepThree: React.FC = () => {
         <p>You have been matched with a news tweet!</p>
         <p>
           Would you like to start investigating? <br /> You have &nbsp;
-          <Countdown time={1} isHour={false} />
+          <CountdownTimer
+            hoursMinSecs={{ hours: 0, minutes: 0, seconds: 60 }}
+            isHour={false}
+          />
           &nbsp; left to decide.
         </p>
       </div>

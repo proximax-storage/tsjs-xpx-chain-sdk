@@ -4,6 +4,7 @@ import Tweet from '../../Component/Tweet';
 import UploadBox from '../../Component/UploadBox';
 
 import './InvestigateStepFour.scss';
+import CountDownTimer from '../../Component/CountdownTimer';
 
 const InvestigateStepFour: React.FC = () => {
   // TODO: Incorporate handle submit
@@ -14,7 +15,13 @@ const InvestigateStepFour: React.FC = () => {
 
   return (
     <div className='investigate-step-four'>
-      <div className='investigate-step-four__timer'></div>
+      <div className='investigate-step-four__timer'>
+        Timer:&nbsp;
+        <CountDownTimer
+          hoursMinSecs={{ hours: 1, minutes: 0, seconds: 0 }}
+          isHour={true}
+        />
+      </div>
 
       <div className='investigate-step-four__tweet'>
         <Tweet
