@@ -12,7 +12,6 @@ import Error404 from '../Page/Error404';
 import InvestigateStepOne from '../Page/InvestigateStepOne';
 import InvestigateStepTwo from '../Page/InvestigateStepTwo';
 
-
 const Routing: React.FC = () => {
   const { hasXpxAcc } = useAuth();
 
@@ -23,10 +22,18 @@ const Routing: React.FC = () => {
       )}
       <Route exact path='/sign-up' component={SignUp} />
       <Route exact path='/sign-in' component={SignIn} />
-      {/* <Route path='/faq' component={SignUpSuccess} /> */}
+      <Route path='/faq' component={SignUpSuccess} />
       <PrivateRoute exact path='/' component={Home} />
-      <Route path='/investigate-step-one' component={InvestigateStepOne} />
-      <Route path='/investigate-step-two' component={InvestigateStepTwo} />
+      <Route
+        exact
+        path='/investigate-step-one'
+        component={InvestigateStepOne}
+      />
+      <Route
+        exact
+        path='/investigate-step-two'
+        component={InvestigateStepTwo}
+      />
       <Route path='/error' component={Error404} />
       <Route component={Error404} />
     </Switch>
