@@ -4,7 +4,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import './NavBar.scss';
 
 const NavBar: React.FC = (props: any) => {
-  const location = useLocation();
+  const { pathname } = useLocation();
 
   return (
     <div className='nav-bar-container'>
@@ -19,12 +19,9 @@ const NavBar: React.FC = (props: any) => {
             Sign In
           </NavLink>
           <NavLink
-            className={
-              location.pathname === '/sign-up-success'
-                ? 'nav-link-active'
-                : 'nav-link'
-            }
+            className={'nav-link'}
             activeClassName='nav-link-active'
+            isActive={() => ['/sign-up', '/sign-up-success'].includes(pathname)}
             to='/sign-up'
           >
             Sign Up

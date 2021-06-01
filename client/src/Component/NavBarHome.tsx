@@ -10,6 +10,7 @@ import './NavBarHome.scss';
 const NavBarHome: React.FC = (props: any) => {
   const { signOut, currentUser } = useAuth();
   const [username, setUsername] = useState('LOADING...');
+  const { pathname } = useLocation();
 
   const loadUsername = () => {
     setTimeout(async () => {
@@ -43,6 +44,15 @@ const NavBarHome: React.FC = (props: any) => {
           <NavLink
             className='nav-link'
             activeClassName='nav-link-active'
+            isActive={() =>
+              [
+                '/investigate-step-one',
+                '/investigate-step-two',
+                '/investigate-step-three',
+                '/investigate-step-four',
+                '/investigate-step-five',
+              ].includes(pathname)
+            }
             to='/investigate-step-one'
           >
             Investigate
