@@ -1,7 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import Tweet from '../Component/Tweet';
-import UploadBox from '../Component/UploadBox';
+import Tweet from '../../Component/Tweet';
+import UploadBox from '../../Component/UploadBox';
 
 import './InvestigateStepFour.scss';
 

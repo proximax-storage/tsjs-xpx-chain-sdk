@@ -9,11 +9,11 @@ import SignIn from '../Page/SignIn';
 import Home from '../Page/Home';
 import SignUpSuccess from '../Page/SignUpSuccess';
 import Error404 from '../Page/Error404';
-import InvestigateStepOne from '../Page/InvestigateStepOne';
-import InvestigateStepTwo from '../Page/InvestigateStepTwo';
-import InvestigateStepThree from '../Page/InvestigateStepThree';
-import InvestigateStepFour from '../Page/InvestigateStepFour';
-import InvestigateStepFive from '../Page/InvestigateStepFive';
+import InvestigateStepOne from '../Page/Investigate/InvestigateStepOne';
+import InvestigateStepTwo from '../Page/Investigate/InvestigateStepTwo';
+import InvestigateStepThree from '../Page/Investigate/InvestigateStepThree';
+import InvestigateStepFour from '../Page/Investigate/InvestigateStepFour';
+import InvestigateStepFive from '../Page/Investigate/InvestigateStepFive';
 
 const Routing: React.FC = () => {
   const { hasXpxAcc } = useAuth();

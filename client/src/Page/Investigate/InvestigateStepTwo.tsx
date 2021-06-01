@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { LocalStorageEnum } from '../Util/Constant/LocalStorageEnum';
+import { LocalStorageEnum } from '../../Util/Constant/LocalStorageEnum';
 
 import './InvestigateStepTwo.scss';
 
