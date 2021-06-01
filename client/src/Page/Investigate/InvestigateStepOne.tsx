@@ -9,7 +9,7 @@ const InvestigateStepOne: React.FC = () => {
     history.push('/investigate-step-two');
   };
 
-  return <StepOne onNextPage={onNextPage} role='investigator' />;
+  return <StepOne onNextPage={onNextPage} role='Investigator' />;
 };
 
 export default InvestigateStepOne;
