@@ -18,6 +18,7 @@ const createAcc = async (uid, username, email) => {
     .set({
       username: username,
       email: email,
+      stage: 'sign-up-success',
     })
     .then(() => {
       console.log('Acc successfully created!');
@@ -34,6 +35,7 @@ const addAccAddress = async (uid, address) => {
   try {
     const res = await accRef.update({
       xpx_address: address,
+      stage: 'home',
     });
     console.log(res);
   } catch (error) {
@@ -54,8 +56,9 @@ const getUserInfo = async (uid) => {
 
     return {
       username: result.data().username,
-      address: result.data().address
-    }
+      address: result.data().xpx_address,
+      stage: result.data().stage,
+    };
   } catch (error) {
     throw error;
   }

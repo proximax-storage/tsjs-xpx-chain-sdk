@@ -5,6 +5,8 @@ import Joi from 'joi';
 import { useAuth } from '../Context/AuthContext';
 import { useNotification } from '../Context/NotificationContext';
 import { postCreateAcc } from '../Util/API/SignUpAPI';
+import { LocalStorageEnum } from '../Util/Constant/LocalStorageEnum';
+import { getUserInfoByUid } from '../Util/API/NavBarHomeAPI';
 
 import './SignIn.scss';
 
@@ -53,12 +55,22 @@ const SignIn: React.FC = () => {
       if (isNewUser) {
         await postCreateAcc(uid, email, username);
 
+        localStorage.setItem(LocalStorageEnum.STAGE, 'sign-up-success');
         history.push('/sign-up-success');
-        setTimeout(() => {}, 5000);
         successToast('Sign Up Successfully');
       } else {
-        history.push('/');
-        successToast('Sign In Successfully');
+        const user = await getUserInfoByUid(uid);
+        const { stage } = user.data.userInfo;
+        localStorage.setItem(LocalStorageEnum.STAGE, stage);
+
+        setTimeout(() => {
+          if (stage === 'sign-up-success') {
+            history.push('/sign-up-success');
+          } else {
+            history.push('/');
+            successToast('Sign In Successfully');
+          }
+        }, 500);
       }
     } catch (err) {
       console.log(err);
@@ -76,13 +88,22 @@ const SignIn: React.FC = () => {
 
       if (isNewUser) {
         await postCreateAcc(uid, email, username);
-        setTimeout(() => {}, 5000);
-
+        localStorage.setItem(LocalStorageEnum.STAGE, 'sign-up-success');
         history.push('/sign-up-success');
         successToast('Sign Up Successfully');
       } else {
-        history.push('/');
-        successToast('Sign In Successfully');
+        const user = await getUserInfoByUid(uid);
+        const { stage } = user.data.userInfo;
+        localStorage.setItem(LocalStorageEnum.STAGE, stage);
+
+        setTimeout(() => {
+          if (stage === 'sign-up-success') {
+            history.push('/sign-up-success');
+          } else {
+            history.push('/');
+            successToast('Sign In Successfully');
+          }
+        }, 500);
       }
     } catch (err) {
       console.log(err);
@@ -123,7 +144,12 @@ const SignIn: React.FC = () => {
 
     try {
       await emailSignIn(email, password);
-      history.push('/');
+
+      if (localStorage.getItem(LocalStorageEnum.STAGE) === 'sign-up-success') {
+        history.push('/sign-up-success');
+      } else {
+        history.push('/');
+      }
 
       successToast('Sign In Successfully');
     } catch (err) {

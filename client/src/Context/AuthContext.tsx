@@ -60,12 +60,12 @@ const AuthProvider: React.FC = ({ children }) => {
     setLocalStorageUser(result);
 
     const user = await getUserInfoByUid(result.user.uid);
-    const { username } = user.data.userInfo;
+    console.log(user);
 
-    console.log('Email Sign In', user);
+    const { username, stage } = user.data.userInfo;
+
     localStorage.setItem(LocalStorageEnum.DISPLAY_NAME, username);
-
-    console.log('LS', LocalStorageEnum.DISPLAY_NAME, username);
+    localStorage.setItem(LocalStorageEnum.STAGE, stage);
   };
 
   const googleSignIn = async () => {

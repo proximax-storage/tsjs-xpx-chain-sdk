@@ -1,10 +1,20 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import { LocalStorageEnum } from '../Util/Constant/LocalStorageEnum';
+import { useNotification } from '../Context/NotificationContext';
 
 import './NavBar.scss';
 
 const NavBar: React.FC = (props: any) => {
   const { pathname } = useLocation();
+  const { warnToast } = useNotification();
+
+  const onNext = (event) => {
+    if (localStorage.getItem(LocalStorageEnum.STAGE) === 'sign-up-success') {
+      event.preventDefault();
+      warnToast('Please Complete Sign-Up Application Before Proceeding');
+    }
+  };
 
   return (
     <div className='nav-bar-container'>
@@ -15,6 +25,7 @@ const NavBar: React.FC = (props: any) => {
             className='nav-link'
             activeClassName='nav-link-active'
             to='/sign-in'
+            onClick={onNext}
           >
             Sign In
           </NavLink>
@@ -23,6 +34,7 @@ const NavBar: React.FC = (props: any) => {
             activeClassName='nav-link-active'
             isActive={() => ['/sign-up', '/sign-up-success'].includes(pathname)}
             to='/sign-up'
+            onClick={onNext}
           >
             Sign Up
           </NavLink>
@@ -30,6 +42,7 @@ const NavBar: React.FC = (props: any) => {
             className='nav-link'
             activeClassName='nav-link-active'
             to='/faq'
+            onClick={onNext}
           >
             FAQ
           </NavLink>
