@@ -1,5 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import { LocalStorageEnum } from '../Util/Constant/LocalStorageEnum';
+
 import './InvestigateStepTwo.scss';
 
 const InvestigateStepTwo: React.FC = () => {
@@ -11,6 +13,7 @@ const InvestigateStepTwo: React.FC = () => {
 
   // TODO Match tweet
   const matchTweet = () => {
+    localStorage.setItem(LocalStorageEnum.IS_FIRST_COUNTDOWN, 'true');
     history.push('/investigate-step-three');
   };
 
@@ -24,7 +27,7 @@ const InvestigateStepTwo: React.FC = () => {
       <button className='investigate-step-two__button' onClick={onCancel}>
         Cancel
       </button>
-      <button className='investigate-step-two__button' onClick={onCancel}>
+      <button className='investigate-step-two__button' onClick={matchTweet}>
         Next
       </button>
     </div>
