@@ -8,6 +8,7 @@ import SignUp from '../Page/SignUp';
 import SignIn from '../Page/SignIn';
 import Home from '../Page/Home';
 import SignUpSuccess from '../Page/SignUpSuccess';
+import Faq from '../Page/Faq';
 import Error404 from '../Page/Error404';
 import InvestigateStepOne from '../Page/Investigate/InvestigateStepOne';
 import InvestigateStepTwo from '../Page/Investigate/InvestigateStepTwo';
@@ -25,29 +26,29 @@ const Routing: React.FC = () => {
       )}
       <Route exact path='/sign-up' component={SignUp} />
       <Route exact path='/sign-in' component={SignIn} />
-      <Route path='/faq' component={SignUpSuccess} />
+      <Route exact path='/faq' component={Faq} />
       <PrivateRoute exact path='/' component={Home} />
-      <Route
+      <PrivateRoute
         exact
         path='/investigate-step-one'
         component={InvestigateStepOne}
       />
-      <Route
+      <PrivateRoute
         exact
         path='/investigate-step-two'
         component={InvestigateStepTwo}
       />
-      <Route
+      <PrivateRoute
         exact
         path='/investigate-step-three'
         component={InvestigateStepThree}
       />
-      <Route
+      <PrivateRoute
         exact
         path='/investigate-step-four'
         component={InvestigateStepFour}
       />
-      <Route
+      <PrivateRoute
         exact
         path='/investigate-step-five'
         component={InvestigateStepFive}

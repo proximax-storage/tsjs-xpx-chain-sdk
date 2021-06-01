@@ -27,7 +27,7 @@ const NavBarHome: React.FC = (props: any) => {
 
   useEffect(() => {
     loadUsername();
-    history.push('/');
+    // history.push('/');
   }, []);
 
   return (
