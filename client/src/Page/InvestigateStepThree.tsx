@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import Timer from '../Component/Timer';
 import Countdown from '../Component/Countdown';
 
 import './InvestigateStepThree.scss';
