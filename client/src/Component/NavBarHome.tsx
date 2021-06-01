@@ -18,7 +18,6 @@ const NavBarHome: React.FC = (props: any) => {
 
       const { address } = result.data.userInfo;
       localStorage.setItem(LocalStorageEnum.ADDRESS, address);
-      localStorage.setItem(LocalStorageEnum.IS_NEW_USER, null);
 
       setUsername(localStorage.getItem(LocalStorageEnum.DISPLAY_NAME));
     }, 500);

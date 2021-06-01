@@ -53,7 +53,6 @@ const SignIn: React.FC = () => {
 
       if (isNewUser) {
         await postCreateAcc(uid, email, username);
-        localStorage.setItem(LocalStorageEnum.IS_NEW_USER, 'true');
 
         history.push('/sign-up-success');
         setTimeout(() => {}, 5000);
@@ -78,7 +77,6 @@ const SignIn: React.FC = () => {
 
       if (isNewUser) {
         await postCreateAcc(uid, email, username);
-        localStorage.setItem(LocalStorageEnum.IS_NEW_USER, 'true');
         setTimeout(() => {}, 5000);
 
         history.push('/sign-up-success');

@@ -92,7 +92,6 @@ const SignUp: React.FC = () => {
 
       await postCreateAcc(uid, email, username);
       setTimeout(() => {}, 5000);
-      localStorage.setItem(LocalStorageEnum.IS_NEW_USER, 'true');
       history.push('/sign-up-success');
 
       successToast('Sign Up Successfully');

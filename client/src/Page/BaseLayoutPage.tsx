@@ -10,7 +10,6 @@ import Header from '../Component/Header';
 import RoutingPath from '../Component/Routing';
 
 import './BaseLayoutPage.scss';
-import InvestigateStepOne from './InvestigateStepOne';
 
 const BaseLayoutPage: React.FC = () => {
   return (
@@ -20,7 +19,7 @@ const BaseLayoutPage: React.FC = () => {
           <AuthProvider>
             <div className='base-layout'>
               <div className='nav-bar'>
-                <NavBarSelection />
+                <NavBarSelection/>
               </div>
               <div className='header'>
                 <Header />
