@@ -18,7 +18,6 @@ const createAcc = async (uid, username, email) => {
     .set({
       username: username,
       email: email,
-      address: null,
     })
     .then(() => {
       console.log('Acc successfully created!');
@@ -34,7 +33,7 @@ const addAccAddress = async (uid, address) => {
 
   try {
     const res = await accRef.update({
-      address: address,
+      xpx_address: address,
     });
     console.log(res);
   } catch (error) {

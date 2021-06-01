@@ -4,13 +4,14 @@ import { useHistory } from 'react-router-dom';
 
 import { useAuth } from '../Context/AuthContext';
 import { useNotification } from '../Context/NotificationContext';
-import { downloadPrivateKey } from '../Util/API/SignUpAPI';
+import { downloadPrivateKey, storeXpxAddress } from '../Util/API/SignUpAPI';
 
 import './SignUpSuccess.scss';
 
 const SignUpSuccess: React.FC = () => {
   const [hasRemind, setHasRemind] = useState(false);
   const [privateKey, setPrivateKey] = useState('');
+  const [address, setAddress] = useState('');
   const history = useHistory();
   const { currentUser, setHasXpxAcc } = useAuth();
   const { warnToast } = useNotification();
@@ -42,15 +43,16 @@ const SignUpSuccess: React.FC = () => {
     if (!hasRemind) {
       try {
         console.log(currentUser.uid);
-        // const res = await axios.post('/api/download-private-key', {
-        //   uid: currentUser.uid,
-        // });
 
-        const res = await downloadPrivateKey(currentUser.uid);
+        const res = await downloadPrivateKey();
 
-        downloadFile('xpx-private-key', res.data);
+        const { address, privateKey } = res.data;
 
-        setPrivateKey(res.data);
+        console.log(res);
+
+        downloadFile('xpx-private-key', privateKey);
+        setPrivateKey(privateKey);
+        setAddress(address);
       } catch (error) {
         console.log(error);
       }
@@ -61,10 +63,17 @@ const SignUpSuccess: React.FC = () => {
     setHasRemind(true);
   };
 
-  const onGetStart = () => {
+  const onGetStart = async () => {
     if (!hasRemind) {
       warnToast('Please download your XPX private key before proceeding');
       return;
+    }
+    try {
+      const res = await storeXpxAddress(currentUser.uid, address);
+
+      console.log(res);
+    } catch (err) {
+      console.log(err);
     }
 
     history.push('/');

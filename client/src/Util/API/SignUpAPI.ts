@@ -13,16 +13,22 @@ const postCreateAcc = async (uid: string, email: string, username: string) => {
   );
 };
 
-const downloadPrivateKey = async (uid: string) => {
+const downloadPrivateKey = async () => {
+  const res = await axios.post(`${API_URL}/api/download-private-key`, {
+    headers: { 'Access-Control-Allow-Origin': '*' },
+  });
+
+  return res;
+};
+
+const storeXpxAddress = async (uid: string, address: string) => {
   const res = await axios.post(
-    `${API_URL}/api/download-private-key`,
-    {
-      uid: uid,
-    },
+    `${API_URL}/api/store-xpx-address`,
+    { uid: uid, address: address },
     { headers: { 'Access-Control-Allow-Origin': '*' } }
   );
 
   return res;
 };
 
-export { postCreateAcc, downloadPrivateKey };
+export { postCreateAcc, downloadPrivateKey, storeXpxAddress };
