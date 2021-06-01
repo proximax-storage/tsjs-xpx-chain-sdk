@@ -3,13 +3,13 @@
 @import '../Util/Styles/BodyText.scss';
 
 .investigate-step-five {
-
   &__description {
     p {
       @include body-text;
-      font-size: 30px;
-      font-family:"Times New Roman", Times, serif;
+      font-size: 2rem;
     }
+
+    margin-bottom: 12rem;
   }
 
   &__button {
@@ -17,5 +17,4 @@
   }
 
   text-align: center;
- 
 }

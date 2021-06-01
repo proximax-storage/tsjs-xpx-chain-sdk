@@ -50,7 +50,7 @@ const Routing: React.FC = () => {
       <Route
         exact
         path='/investigate-step-five'
-        component={InvestigateStepFour}
+        component={InvestigateStepFive}
       />
       <Route path='/error' component={Error404} />
       <Route component={Error404} />
