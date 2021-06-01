@@ -15,6 +15,11 @@ import InvestigateStepTwo from '../Page/Investigate/InvestigateStepTwo';
 import InvestigateStepThree from '../Page/Investigate/InvestigateStepThree';
 import InvestigateStepFour from '../Page/Investigate/InvestigateStepFour';
 import InvestigateStepFive from '../Page/Investigate/InvestigateStepFive';
+import VerifyStepOne from '../Page/Verify/VerifyStepOne';
+import VerifyStepTwo from '../Page/Verify/VerifyStepTwo';
+import VerifyStepThree from '../Page/Verify/VerifyStepThree';
+import VerifyStepFour from '../Page/Verify/VerifyStepFour';
+import VerifyStepFive from '../Page/Verify/VerifyStepFive';
 
 const Routing: React.FC = () => {
   const { hasXpxAcc } = useAuth();
@@ -53,6 +58,16 @@ const Routing: React.FC = () => {
         path='/investigate-step-five'
         component={InvestigateStepFive}
       />
+
+      <PrivateRoute exact path='/verify-step-one' component={VerifyStepOne} />
+      <PrivateRoute exact path='/verify-step-two' component={VerifyStepTwo} />
+      <PrivateRoute
+        exact
+        path='/verify-step-three'
+        component={VerifyStepThree}
+      />
+      <PrivateRoute exact path='/verify-step-four' component={VerifyStepFour} />
+      <PrivateRoute exact path='/verify-step-five' component={VerifyStepFive} />
       <Route path='/error' component={Error404} />
       <Route component={Error404} />
     </Switch>

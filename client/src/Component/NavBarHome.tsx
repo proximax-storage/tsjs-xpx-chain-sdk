@@ -62,7 +62,16 @@ const NavBarHome: React.FC = (props: any) => {
           <NavLink
             className='nav-link'
             activeClassName='nav-link-active'
-            to='/verify'
+            isActive={() =>
+              [
+                '/verify-step-one',
+                '/verify-step-two',
+                '/verify-step-three',
+                '/verify-step-four',
+                '/verify-step-five',
+              ].includes(pathname)
+            }
+            to='/verify-step-one'
           >
             Verify
           </NavLink>

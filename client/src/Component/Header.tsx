@@ -33,7 +33,22 @@ const Header: React.FC = () => {
         break;
       case '/investigate-step-five':
         setTitle('Investigate');
-        break;  
+        break;
+      case '/verify-step-one':
+        setTitle('Verify (1/4)');
+        break;
+      case '/verify-step-two':
+        setTitle('Verify (2/4)');
+        break;
+      case '/verify-step-three':
+        setTitle('Verify (3/4)');
+        break;
+      case '/verify-step-four':
+        setTitle('Verify (4/4)');
+        break;
+      case '/verify-step-five':
+        setTitle('Verify');
+        break;
       case '/':
         setTitle('Home');
         break;
