@@ -1,0 +1,21 @@
+@import '../../Util/Styles/Color.scss';
+@import '../../Util/Styles/Button.scss';
+@import '../../Util/Styles/BodyText.scss';
+
+.step-five {
+  &__description {
+    p {
+      @include body-text;
+      font-size: 1.8rem;
+      padding: 0 2rem;
+    }
+
+    margin-bottom: 5rem;
+  }
+
+  &__button {
+    @include regular-blue-button;
+  }
+
+  text-align: center;
+}
