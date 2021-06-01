@@ -1,0 +1,21 @@
+@import '../Util/Styles/Color.scss';
+@import '../Util/Styles/Button.scss';
+@import '../Util/Styles/BodyText.scss';
+
+.investigate-step-five {
+
+  &__description {
+    p {
+      @include body-text;
+      font-size: 30px;
+      font-family:"Times New Roman", Times, serif;
+    }
+  }
+
+  &__button {
+    @include regular-blue-button;
+  }
+
+  text-align: center;
+ 
+}

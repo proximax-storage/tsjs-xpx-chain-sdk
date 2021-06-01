@@ -3,10 +3,11 @@ import { useHistory } from 'react-router-dom';
 import './InvestigateStepOne.scss';
 
 const InvestigateStepOne: React.FC = () => {
-  const history = useHistory(); 
+  const history = useHistory();
   const onNextPage = () => {
-    history.push('/investigate-step-two')
-  }
+    history.push('/investigate-step-two');
+  };
+  
   return (
     <div className='investigate-step-one'>
       <div className='investigate-step-one__image'></div>
@@ -18,7 +19,9 @@ const InvestigateStepOne: React.FC = () => {
         <br />
         <p>Click on the button to be queued for a news tweet!</p>
       </div>
-      <button className='investigate-step-one__button' onClick={onNextPage}>Give me a tweet!</button>
+      <button className='investigate-step-one__button' onClick={onNextPage}>
+        Give me a tweet!
+      </button>
     </div>
   );
 };
