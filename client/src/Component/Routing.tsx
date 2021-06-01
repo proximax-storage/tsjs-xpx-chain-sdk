@@ -10,13 +10,10 @@ import Home from '../Page/Home';
 import SignUpSuccess from '../Page/SignUpSuccess';
 import Error404 from '../Page/Error404';
 import InvestigateStepOne from '../Page/InvestigateStepOne';
-<<<<<<< HEAD
 import InvestigateStepTwo from '../Page/InvestigateStepTwo';
 import InvestigateStepThree from '../Page/InvestigateStepThree';
 import InvestigateStepFour from '../Page/InvestigateStepFour';
-=======
 import InvestigateStepFive from '../Page/InvestigateStepFive';
->>>>>>> features/page-investigate-step-five
 
 const Routing: React.FC = () => {
   const { hasXpxAcc } = useAuth();
