@@ -1,0 +1,39 @@
+@import '../Util/Styles/Color.scss';
+
+@keyframes gavelStrike {
+  0% {
+    transform: scale(0.5) rotate(0deg);
+  }
+  49% {
+    transform: scale(0.5) rotate(0deg);
+  }
+
+  50% {
+    transform: scale(0.5) rotate(-45deg);
+  }
+  85% {
+    transform: scale(0.5) rotate(-45deg);
+  }
+  100% {
+    transform: scale(0.5) rotate(0deg);
+  }
+}
+
+.gavel {
+  animation-duration: 1s;
+  transform-origin: 50% 50%;
+  animation-name: gavelStrike;
+  animation-iteration-count: infinite;
+  display: block;
+  margin: 0 auto;
+  fill: $text-color;
+}
+
+.gavel_base {
+  padding-left: 1rem;
+  display: block;
+  margin: 0 auto;
+  transform: scale(0.5);
+  margin-top: -5rem;
+  fill: $text-color;
+}

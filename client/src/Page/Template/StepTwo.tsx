@@ -1,5 +1,7 @@
 import { useHistory } from 'react-router-dom';
 import { LocalStorageEnum } from '../../Util/Constant/LocalStorageEnum';
+import Gavel from '../../Asset/Gavel';
+import GavelBase from '../../Asset/GavelBase';
 
 import './StepTwo.scss';
 
@@ -18,7 +20,10 @@ const StepTwo = ({ nextUrl }) => {
 
   return (
     <div className='step-two'>
-      <div className='step-two__animation'></div>
+      <div className='step-two__animation'>
+        <Gavel />
+        <GavelBase />
+      </div>
       <div className='step-two__description'>
         <br />
         <p>Matching you to a news tweet...</p>
