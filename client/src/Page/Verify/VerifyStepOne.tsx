@@ -9,7 +9,7 @@ const VerifyStepOne: React.FC = () => {
     history.push('/verify-step-two');
   };
 
-  return <StepOne onNextPage={onNextPage} role='Juror' />;
+  return <StepOne onNextPage={onNextPage} role='Juror' iconName='Jury' />;
 };
 
 export default VerifyStepOne;

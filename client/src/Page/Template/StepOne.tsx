@@ -1,10 +1,11 @@
-import { useHistory } from 'react-router-dom';
 import './StepOne.scss';
 
-const StepOne = ({ role, onNextPage }) => {
+const StepOne = ({ role, onNextPage, iconName }) => {
   return (
     <div className='step-one'>
-      <div className='step-one__image'></div>
+      <div className='step-one__image'>
+        <img src={require(`../../Asset/${iconName}.png`).default} />
+      </div>
       <div className='step-one_description'>
         <p>
           Want to unearth the truth? Contribute to our cause and detect fake
