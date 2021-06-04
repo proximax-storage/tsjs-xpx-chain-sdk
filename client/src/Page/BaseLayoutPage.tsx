@@ -19,7 +19,7 @@ const BaseLayoutPage: React.FC = () => {
           <AuthProvider>
             <div className='base-layout'>
               <div className='nav-bar'>
-                <NavBarSelection/>
+                <NavBarSelection />
               </div>
               <div className='header'>
                 <Header />

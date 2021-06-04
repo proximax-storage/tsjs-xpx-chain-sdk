@@ -1,13 +1,19 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 
+import { LocalStorageEnum } from '../Util/Constant/LocalStorageEnum';
+
 import './Error404.scss';
 
 const Error404: React.FC = () => {
   const history = useHistory();
 
   const onNext = () => {
-    // history.push('/');
+    if (localStorage.getItem(LocalStorageEnum.STAGE) === 'home') {
+      history.push('/');
+    } else {
+      history.push('/sign-in');
+    }
   };
 
   return (
