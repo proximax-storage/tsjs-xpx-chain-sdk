@@ -5,7 +5,7 @@ import { useNotification } from '../Context/NotificationContext';
 
 import './UploadBox.scss';
 
-const UploadBox: React.FC = () => {
+const UploadBox = ({ onSetFile }) => {
   const { warnToast } = useNotification();
   const [files, setFiles] = useState([]);
 
@@ -26,15 +26,20 @@ const UploadBox: React.FC = () => {
     newFiles.splice(file, 1);
 
     setFiles(newFiles);
+    onSetFile(null);
   };
 
   useEffect(() => {
-    const newFiles = acceptedFiles.map((file, index) => (
-      <li key={(file as any).path}>
-        {(file as any).path}{' '}
-        <button onClick={() => remove(index)}>Delete</button>
-      </li>
-    ));
+    const newFiles = acceptedFiles.map((file, index) => {
+      onSetFile(file);
+
+      return (
+        <li key={(file as any).path}>
+          {(file as any).path}{' '}
+          <button onClick={() => remove(index)}>Delete</button>
+        </li>
+      );
+    });
 
     setFiles(newFiles);
   }, [acceptedFiles]);

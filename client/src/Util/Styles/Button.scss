@@ -19,6 +19,11 @@
   color: white;
   background-color: $button-primary-color;
   width: 12.5rem;
+
+  &:disabled {
+    background: $button-disabled-color;
+    cursor: not-allowed;
+  }
 }
 
 @mixin sign-in-and-sign-up-button {
