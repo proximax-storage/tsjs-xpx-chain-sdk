@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
 import { useNotification } from '../Context/NotificationContext';
 import { downloadPrivateKey, storeXpxAddress } from '../Util/API/SignUpAPI';
+import downloadFile from '../Util/Useful/DownloadFile';
 
 import './SignUpSuccess.scss';
 
@@ -22,22 +23,6 @@ const SignUpSuccess: React.FC = () => {
       setHasXpxAcc(true);
     };
   }, []);
-
-  const downloadFile = (filename: string, text: string) => {
-    var element = document.createElement('a');
-    element.setAttribute(
-      'href',
-      'data:text/plain;charset=utf-8,' + encodeURIComponent(text)
-    );
-    element.setAttribute('download', filename);
-
-    element.style.display = 'none';
-    document.body.appendChild(element);
-
-    element.click();
-
-    document.body.removeChild(element);
-  };
 
   const onDownload = async () => {
     if (!hasRemind) {
