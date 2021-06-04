@@ -7,17 +7,23 @@ import './InvestigateStepFour.scss';
 import CountDownTimer from '../../Component/CountdownTimer';
 
 const InvestigateStepFour: React.FC = () => {
-  // TODO: Incorporate handle submit
   const history = useHistory();
-  const onNext = () => {
-    history.push('/investigate-step-five');
-  };
   const [file, setFile] = useState<File>();
 
   useEffect(() => {
     console.log('File', file);
     console.log(!!file);
+
+    const formData = new FormData();
+
+    formData.append('pdfFile', file);
+
+    console.log('FD', formData);
   }, [file]);
+
+  const onNext = () => {
+    history.push('/investigate-step-five');
+  };
 
   return (
     <div className='investigate-step-four'>
