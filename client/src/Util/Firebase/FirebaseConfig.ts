@@ -1,5 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import 'firebase/storage';
 
 const app = firebase.initializeApp({
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -12,9 +13,10 @@ const app = firebase.initializeApp({
 });
 
 const auth = firebase.auth();
+const storage = firebase.storage();
 
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 const twitterProvider = new firebase.auth.TwitterAuthProvider();
 
-export { auth, googleProvider, twitterProvider };
+export { auth, googleProvider, twitterProvider, storage };
 export default app;

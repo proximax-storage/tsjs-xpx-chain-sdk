@@ -1,28 +1,33 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+
 import Tweet from '../../Component/Tweet';
 import UploadBox from '../../Component/UploadBox';
+import CountDownTimer from '../../Component/CountdownTimer';
+import { storage } from '../../Util/Firebase/FirebaseConfig';
+import { useNotification } from '../../Context/NotificationContext';
 
 import './InvestigateStepFour.scss';
-import CountDownTimer from '../../Component/CountdownTimer';
 
 const InvestigateStepFour: React.FC = () => {
   const history = useHistory();
   const [file, setFile] = useState<File>();
+  const { errorToastPersistent } = useNotification();
 
-  useEffect(() => {
-    console.log('File', file);
-    console.log(!!file);
+  const onNext = async () => {
+    const storageRef = storage.ref();
 
-    const formData = new FormData();
+    // FileName: Tweet ID_DateTime_File Name
+    const fileRef = storageRef.child(`${new Date().toString()}_${file.name}`);
 
-    formData.append('pdfFile', file);
-
-    console.log('FD', formData);
-  }, [file]);
-
-  const onNext = () => {
-    history.push('/investigate-step-five');
+    try {
+      const res = await fileRef.put(file);
+      console.log(res);
+      history.push('/investigate-step-five');
+    } catch (err) {
+      console.log(err);
+      errorToastPersistent('Upload Failed! Please Try Again.');
+    }
   };
 
   return (
