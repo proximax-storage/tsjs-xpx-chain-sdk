@@ -1,16 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+
 import Tweet from '../../Component/Tweet';
 import UploadBox from '../../Component/UploadBox';
+import CountDownTimer from '../../Component/CountdownTimer';
+import { storage } from '../../Util/Firebase/FirebaseConfig';
+import { useNotification } from '../../Context/NotificationContext';
 
 import './InvestigateStepFour.scss';
-import CountDownTimer from '../../Component/CountdownTimer';
 
 const InvestigateStepFour: React.FC = () => {
-  // TODO: Incorporate handle submit
   const history = useHistory();
-  const onNext = () => {
-    history.push('/investigate-step-five');
+  const [file, setFile] = useState<File>();
+  const { errorToastPersistent } = useNotification();
+
+  const onNext = async () => {
+    const storageRef = storage.ref();
+
+    // FileName: Tweet ID_DateTime_File Name
+    const fileRef = storageRef.child(`${new Date().toString()}_${file.name}`);
+
+    try {
+      const res = await fileRef.put(file);
+      console.log(res);
+      history.push('/investigate-step-five');
+    } catch (err) {
+      console.log(err);
+      errorToastPersistent('Upload Failed! Please Try Again.');
+    }
   };
 
   return (
@@ -48,12 +65,16 @@ const InvestigateStepFour: React.FC = () => {
       <br />
 
       <div className='investigate-step-four__upload-box'>
-        <UploadBox />
+        <UploadBox onSetFile={setFile} />
       </div>
 
       <br />
 
-      <button className='investigate-step-four__button' onClick={onNext}>
+      <button
+        className='investigate-step-four__button'
+        onClick={onNext}
+        disabled={!!!file}
+      >
         Submit
       </button>
     </div>
