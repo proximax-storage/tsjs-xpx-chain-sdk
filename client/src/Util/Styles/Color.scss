@@ -6,6 +6,10 @@ $nav-secondary-color: #000000;
 $button-primary-color: #55acee;
 $button-secondary-color: #66757f;
 $button-disabled-color: rgba(85, 172, 238, 0.5);
+$button-deselected-real-color: rgba(85, 238, 129, 0.5);
+$button-selected-real-color: rgba(85, 238, 129, 1);
+$button-deselected-fake-color: rgba(238, 85, 85, 0.5);
+$button-selected-fake-color: rgba(238, 85, 85, 1);
 
 // Text
 $text-color: #66757f;

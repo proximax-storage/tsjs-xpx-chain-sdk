@@ -1,0 +1,57 @@
+@import '../../Util/Styles/Color.scss';
+@import '../../Util/Styles/Button.scss';
+@import '../../Util/Styles/BodyText.scss';
+
+.verify-step-four {
+  &__timer {
+    @include body-text;
+    text-align: left;
+    font-size: 1.65rem;
+    margin-bottom: 0.8rem;
+  }
+
+  &__container {
+    display: flex;
+
+    &__left {
+      width: 60%;
+      button {
+        @include pdf-tab-button;
+        width: 19%;
+        margin-inline-end: 0.2rem;
+      }
+    }
+
+    &__right {
+      width: 40%;
+
+      button {
+        max-width: none;
+      }
+    }
+  }
+}
+
+.selected-real {
+  @include vote-button;
+  background-color: $button-selected-real-color;
+}
+
+.deselected-real {
+  @include vote-button;
+  background-color: $button-deselected-real-color;
+}
+
+.selected-fake {
+  @include vote-button;
+  background-color: $button-selected-fake-color;
+}
+
+.deselected-fake {
+  @include vote-button;
+  background-color: $button-deselected-fake-color;
+}
+
+.confirm {
+  @include sign-in-and-sign-up-button;
+}
