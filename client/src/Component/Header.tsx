@@ -20,34 +20,34 @@ const Header: React.FC = () => {
         setTitle('FAQ');
         break;
       case '/investigate-step-one':
-        setTitle('Investigate (1/4)');
+        setTitle('Investigate (1/5)');
         break;
       case '/investigate-step-two':
-        setTitle('Investigate (2/4)');
+        setTitle('Investigate (2/5)');
         break;
       case '/investigate-step-three':
-        setTitle('Investigate (3/4)');
+        setTitle('Investigate (3/5)');
         break;
       case '/investigate-step-four':
-        setTitle('Investigate (4/4)');
+        setTitle('Investigate (4/5)');
         break;
       case '/investigate-step-five':
-        setTitle('Investigate');
+        setTitle('Investigate (5/5)');
         break;
       case '/verify-step-one':
-        setTitle('Verify (1/4)');
+        setTitle('Verify (1/5)');
         break;
       case '/verify-step-two':
-        setTitle('Verify (2/4)');
+        setTitle('Verify (2/5)');
         break;
       case '/verify-step-three':
-        setTitle('Verify (3/4)');
+        setTitle('Verify (3/5)');
         break;
       case '/verify-step-four':
-        setTitle('Verify (4/4)');
+        setTitle('Verify (4/5)');
         break;
       case '/verify-step-five':
-        setTitle('Verify');
+        setTitle('Verify (5/5)');
         break;
       case '/':
         setTitle('Home');
