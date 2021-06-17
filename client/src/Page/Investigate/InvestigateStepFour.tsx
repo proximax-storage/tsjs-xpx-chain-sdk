@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 
 import Tweet from '../../Component/Tweet';
@@ -6,6 +7,7 @@ import UploadBox from '../../Component/UploadBox';
 import CountDownTimer from '../../Component/CountdownTimer';
 import { storage } from '../../Util/Firebase/FirebaseConfig';
 import { useNotification } from '../../Context/NotificationContext';
+import downloadFile from '../../Util/Useful/DownloadFile';
 
 import './InvestigateStepFour.scss';
 
@@ -60,6 +62,19 @@ const InvestigateStepFour: React.FC = () => {
         Compile your findings into a PDF document to submit below.
         <br />
         It will be read by the jury for their final verdict.
+      </div>
+
+      <div className='investigate-step-four__download'>
+        Please download the
+        <Link
+          to='/SAMPLE 5.pdf'
+          target='_blank'
+          className='investigate-step-four__download__link'
+          download
+        >
+          {` report template here `}
+        </Link>
+        and add your findings directly into it.
       </div>
 
       <br />

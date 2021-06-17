@@ -18,6 +18,26 @@
     color: black;
   }
 
+  &__download {
+    @include body-text;
+    color: black;
+    margin-top: 1rem;
+    padding: 0 5rem;
+
+    &__link {
+      @include body-text;
+      color: $nav-primary-color;
+      text-decoration: none;
+      font-weight: bold;
+      border: none;
+      background-color: $content-background-color;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
   &__button {
     @include regular-blue-button;
     align-items: center;
