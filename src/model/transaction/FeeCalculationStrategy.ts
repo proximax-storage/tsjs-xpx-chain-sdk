@@ -6,12 +6,12 @@ import { UInt64 } from "../UInt64";
 
 export enum FeeCalculationStrategy {
     ZeroFeeCalculationStrategy = 0,
-    LowFeeCalculationStrategy = 25,
-    MiddleFeeCalculationStrategy = 250,
-    HighFeeCalculationStrategy = 2500
+    LowFeeCalculationStrategy = 15000,
+    MiddleFeeCalculationStrategy = 150000,
+    HighFeeCalculationStrategy = 1500000
 }
 
-export const DefaultMaxFee = 5000000;
+export const DefaultMaxFee = 75000000;
 
 export const DefaultFeeCalculationStrategy: FeeCalculationStrategy = FeeCalculationStrategy.MiddleFeeCalculationStrategy;
 
