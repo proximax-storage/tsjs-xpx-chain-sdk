@@ -67,7 +67,7 @@ const InvestigateStepFour: React.FC = () => {
       <div className='investigate-step-four__download'>
         Please download the
         <Link
-          to='/SAMPLE 5.pdf'
+          to='/Investigation_Report_Template.docx'
           target='_blank'
           className='investigate-step-four__download__link'
           download
