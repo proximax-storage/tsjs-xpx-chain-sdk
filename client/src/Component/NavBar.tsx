@@ -24,6 +24,7 @@ const NavBar: React.FC = (props: any) => {
           <NavLink
             className='nav-link'
             activeClassName='nav-link-active'
+            isActive={() => ['/sign-in', '/reset-password'].includes(pathname)}
             to='/sign-in'
             onClick={onNext}
           >

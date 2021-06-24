@@ -14,6 +14,7 @@ type AuthContextType = {
   googleSignIn: () => any;
   twitterSignIn: () => any;
   signOut: () => void;
+  resetPassword: (email: string) => any;
   currentUser: any;
   curAddress: string;
   hasXpxAcc: boolean;
@@ -101,6 +102,17 @@ const AuthProvider: React.FC = ({ children }) => {
     return auth.signOut();
   };
 
+  const resetPassword = async (email: string) => {
+    try {
+      const result = await auth.sendPasswordResetEmail(email);
+      return true;
+    } catch (error) {
+      console.log(error);
+
+      return false;
+    }
+  };
+
   useEffect(() => {
     setHasXpxAcc(false);
   }, [signUp, googleSignIn, twitterSignIn]);
@@ -124,6 +136,7 @@ const AuthProvider: React.FC = ({ children }) => {
     twitterSignIn,
     signUp,
     signOut,
+    resetPassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

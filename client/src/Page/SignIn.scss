@@ -5,6 +5,8 @@
 @import '../Util/Styles/FormLabel.scss';
 
 .sign-in {
+  width: 80%;
+
   &__form {
     &--error {
       @include error-message;
@@ -29,6 +31,15 @@
 
     div {
       margin-bottom: 1rem;
+    }
+
+    &__forget-password {
+      margin-left: 16rem;
+      color: $nav-primary-color;
+
+      &:visited {
+        color: $nav-primary-color;
+      }
     }
   }
 

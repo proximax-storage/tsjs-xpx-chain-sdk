@@ -16,6 +16,9 @@ const Header: React.FC = () => {
       case '/sign-up-success':
         setTitle('Sign Up');
         break;
+      case '/reset-password':
+        setTitle('Reset Your Password');
+        break;
       case '/faq':
         setTitle('FAQ');
         break;

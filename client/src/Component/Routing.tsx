@@ -4,10 +4,11 @@ import PrivateRoute from './PrivateRoute';
 
 import { useAuth } from '../Context/AuthContext';
 
+import Home from '../Page/Home';
 import SignUp from '../Page/SignUp';
 import SignIn from '../Page/SignIn';
-import Home from '../Page/Home';
 import SignUpSuccess from '../Page/SignUpSuccess';
+import ResetPassword from '../Page/ResetPassword';
 import Faq from '../Page/Faq';
 import Error404 from '../Page/Error404';
 import InvestigateStepOne from '../Page/Investigate/InvestigateStepOne';
@@ -31,6 +32,7 @@ const Routing: React.FC = () => {
       )}
       <Route exact path='/sign-up' component={SignUp} />
       <Route exact path='/sign-in' component={SignIn} />
+      <Route exact path='/reset-password' component={ResetPassword} />
       <Route exact path='/faq' component={Faq} />
       <PrivateRoute exact path='/' component={Home} />
       <PrivateRoute

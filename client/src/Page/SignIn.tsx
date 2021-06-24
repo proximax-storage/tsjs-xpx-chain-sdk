@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, NavLink } from 'react-router-dom';
 import Joi from 'joi';
 
 import { useAuth } from '../Context/AuthContext';
@@ -189,6 +189,15 @@ const SignIn: React.FC = () => {
           {!!validationError.password && (
             <div className='sign-in__form--error'>{`Password should have 8 to 30 characters`}</div>
           )}
+        </div>
+        {/* TODO Forget password layout need to put properly using flex */}
+        <div>
+          <NavLink
+            className='sign-in__form__forget-password'
+            to='/reset-password'
+          >
+            I forgot my password
+          </NavLink>
         </div>
         <button
           type='submit'
