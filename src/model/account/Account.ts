@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-import {Crypto, KeyPair, SignSchema} from '../../core/crypto';
-import {Convert as convert, RawAddress as AddressLibrary} from '../../core/format';
-import {NetworkType} from '../blockchain/NetworkType';
-import {AggregateTransaction} from '../transaction/AggregateTransaction';
-import {CosignatureSignedTransaction} from '../transaction/CosignatureSignedTransaction';
-import {CosignatureTransaction} from '../transaction/CosignatureTransaction';
-import {EncryptedMessage} from '../transaction/EncryptedMessage';
-import {PlainMessage} from '../transaction/PlainMessage';
-import {SignedTransaction} from '../transaction/SignedTransaction';
-import {Transaction} from '../transaction/Transaction';
-import {Address} from './Address';
-import {PublicAccount} from './PublicAccount';
+import { has } from 'lodash';
+import { Crypto, KeyPair, SignSchema } from '../../core/crypto';
+import { Convert as convert, RawAddress as AddressLibrary } from '../../core/format';
+import { NetworkType } from '../blockchain/NetworkType';
+import { AggregateTransaction } from '../transaction/AggregateTransaction';
+import { CosignatureSignedTransaction } from '../transaction/CosignatureSignedTransaction';
+import { CosignatureTransaction } from '../transaction/CosignatureTransaction';
+import { EncryptedMessage } from '../transaction/EncryptedMessage';
+import { PlainMessage } from '../transaction/PlainMessage';
+import { SignedTransaction } from '../transaction/SignedTransaction';
+import { Transaction } from '../transaction/Transaction';
+import { Address } from './Address';
+import { PublicAccount } from './PublicAccount';
 
 interface IKeyPair {
     privateKey: Uint8Array;
@@ -44,18 +45,18 @@ export class Account {
      * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      */
     private constructor(
-                        /**
-                         * The account address.
-                         */
-                        public readonly address: Address,
-                        /**
-                         * The account keyPair, public and private key.
-                         */
-                        private readonly keyPair: IKeyPair,
-                        /**
-                         * The Sign Schema (KECCAK_REVERSED_KEY / SHA3).
-                         */
-                        private readonly signSchema: SignSchema = SignSchema.SHA3) {
+        /**
+         * The account address.
+         */
+        public readonly address: Address,
+        /**
+         * The account keyPair, public and private key.
+         */
+        private readonly keyPair: IKeyPair,
+        /**
+         * The Sign Schema (KECCAK_REVERSED_KEY / SHA3).
+         */
+        private readonly signSchema: SignSchema = SignSchema.SHA3) {
     }
 
     /**
@@ -66,8 +67,8 @@ export class Account {
      * @return {Account}
      */
     public static createFromPrivateKey(privateKey: string,
-                                       networkType: NetworkType,
-                                       signSchema: SignSchema = SignSchema.SHA3): Account {
+        networkType: NetworkType,
+        signSchema: SignSchema = SignSchema.SHA3): Account {
         const keyPair: IKeyPair = KeyPair.createKeyPairFromPrivateKeyString(privateKey, signSchema);
         const address = AddressLibrary.addressToString(
             AddressLibrary.publicKeyToAddress(keyPair.publicKey, networkType, signSchema));
@@ -76,6 +77,27 @@ export class Account {
             keyPair,
             signSchema,
         );
+    }
+
+    /**
+    * Create an Account from a given mnemonic string
+    * @param mnemonic - The mnemonic string
+    * @param networkType - Network type
+    * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+    * @return {Account}
+    */
+    public static createFromMnemonic(mnemonic: string,
+        networkType: NetworkType,
+        signSchema: SignSchema = SignSchema.SHA3): Account {
+
+        if(!Crypto.isValidMnemonic(mnemonic)) {
+            throw Error(`Invalid mnemonic: ${mnemonic.length}`);
+        }
+      
+        const hashKey = convert.uint8ToHex(Crypto.mnemonicToSeed(mnemonic));
+      
+        return Account.createFromPrivateKey(hashKey,networkType, signSchema);
+    
     }
 
     /**
@@ -104,8 +126,8 @@ export class Account {
      * @returns {EncryptedMessage}
      */
     public encryptMessage(message: string,
-                          recipientPublicAccount: PublicAccount,
-                          signSchema: SignSchema = SignSchema.SHA3): EncryptedMessage {
+        recipientPublicAccount: PublicAccount,
+        signSchema: SignSchema = SignSchema.SHA3): EncryptedMessage {
         return EncryptedMessage.create(message, recipientPublicAccount, this.privateKey, signSchema);
     }
 
@@ -117,8 +139,8 @@ export class Account {
      * @returns {PlainMessage}
      */
     public decryptMessage(encryptedMessage: EncryptedMessage,
-                          publicAccount: PublicAccount,
-                          signSchema: SignSchema = SignSchema.SHA3): PlainMessage {
+        publicAccount: PublicAccount,
+        signSchema: SignSchema = SignSchema.SHA3): PlainMessage {
         return EncryptedMessage.decrypt(encryptedMessage, this.privateKey, publicAccount, signSchema);
     }
     /**
@@ -165,10 +187,10 @@ export class Account {
      * @return {SignedTransaction}
      */
     public signTransactionWithCosignatories(transaction: AggregateTransaction,
-                                            cosignatories: Account[],
-                                            generationHash: string,
-                                            signSchema: SignSchema = SignSchema.SHA3): SignedTransaction {
-    return transaction.signTransactionWithCosignatories(this, cosignatories, generationHash, signSchema);
+        cosignatories: Account[],
+        generationHash: string,
+        signSchema: SignSchema = SignSchema.SHA3): SignedTransaction {
+        return transaction.signTransactionWithCosignatories(this, cosignatories, generationHash, signSchema);
     }
 
     /**
@@ -178,7 +200,7 @@ export class Account {
      * @return {CosignatureSignedTransaction}
      */
     public signCosignatureTransaction(cosignatureTransaction: CosignatureTransaction,
-                                      signSchema: SignSchema = SignSchema.SHA3): CosignatureSignedTransaction {
+        signSchema: SignSchema = SignSchema.SHA3): CosignatureSignedTransaction {
         return cosignatureTransaction.signWith(this, signSchema);
     }
 
@@ -190,8 +212,8 @@ export class Account {
      */
     public signData(data: string, signSchema: SignSchema = SignSchema.SHA3): string {
         return convert.uint8ToHex(KeyPair.sign(this.keyPair,
-                            convert.hexToUint8(convert.utf8ToHex(data)),
-                            signSchema,
-                        ));
+            convert.hexToUint8(convert.utf8ToHex(data)),
+            signSchema,
+        ));
     }
 }

@@ -15,9 +15,10 @@
  */
 
 import {expect} from 'chai';
-import { SignSchema } from '../../../src/core/crypto';
+import { SignSchema, Crypto } from '../../../src/core/crypto';
 import {Account} from '../../../src/model/account/Account';
 import {NetworkType} from '../../../src/model/blockchain/NetworkType';
+
 
 describe('Account', () => {
     const accountInformation = {
@@ -55,6 +56,33 @@ describe('Account', () => {
         expect(account.publicKey).to.not.be.equal(undefined);
         expect(account.privateKey).to.not.be.equal(undefined);
         expect(account.address).to.not.be.equal(undefined);
+    });
+
+    it('should create a new account from random mnemonic', () => {
+        const mnemonic = Crypto.randomMnemonic();
+        const account = Account.createFromMnemonic(mnemonic,NetworkType.MIJIN_TEST);
+        expect(account.publicKey).to.not.be.equal(undefined);
+        expect(account.privateKey).to.not.be.equal(undefined);
+        expect(account.address).to.not.be.equal(undefined);
+    });
+
+
+    it('should create a new account from mnemonic with 12 words', () => {
+        const mnemonic = 'fish palm fall kick undo fine match welcome early three once unfair';
+        const account = Account.createFromMnemonic(mnemonic,NetworkType.MIJIN_TEST);
+   
+        expect(account.publicKey).equal('3520DCC5F559FA5A5F64D837D1919052E4C00EA317FAEF6164657CA7E1803123');
+        expect(account.privateKey).equal('524694E81B43FB4AA46313A73A39DA0929C8F98D1C5BD73B20806C1F5485C249');
+        expect(account.address.plain()).equal('SAWLSZ5VWGPENUEZ6PY6DLSM7O4GEVM4MP2KQGNN');
+    });
+
+    it('should create a new account from mnemonic with 24 words', () => {
+        const mnemonic = 'forest pole smooth device derive party ribbon hedgehog spring tent frown mask alter tape describe such anchor goddess example screen pistol guilt close twin';
+        const account = Account.createFromMnemonic(mnemonic,NetworkType.MIJIN_TEST);
+        console.log(account.address.plain());
+        expect(account.publicKey).equal('2D704BE5512CA4C0C73132F86F3D7E8CCE81E43E30404BD4BC70A01667FA4906');
+        expect(account.privateKey).equal('2E8BC60687339B50D5EB501D025EBE177D302CDB1A661BE14D22FFF76D788F30');
+        expect(account.address.plain()).equal('SAAOBNQSY47CIOYF6HLEPOOFHM7WLCEHLUB5J64M');
     });
 
     it('should generate a new account using NIS1 schema', () => {
@@ -112,3 +140,4 @@ describe('Account', () => {
         });
     });
 });
+

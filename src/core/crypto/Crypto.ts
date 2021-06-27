@@ -21,6 +21,7 @@ import { encode as utf8encode } from 'utf8';
 import * as utility from './Utilities';
 import { SignSchema } from './SignSchema';
 const CryptoJS = require('crypto-js');
+import { generateMnemonic, mnemonicToSeedSync, validateMnemonic } from 'bip39';
 export class Crypto {
     /**
      * Encrypt a private key for mobile apps (AES_PBKF2)
@@ -316,5 +317,25 @@ export class Crypto {
     public static randomBytes = (length) => {
         const crypto = require('crypto');
         return crypto.randomBytes(length);
+    }
+
+    public static randomMnemonic = (strength?: number,
+        rng?: (size: number) => Buffer,
+        wordlist?: string[],) => {
+       const nmenomic =  generateMnemonic(strength,rng,wordlist);
+       return nmenomic;
+    }
+
+    public static isValidMnemonic = (mnemonic: string,wordlist?: string[],) => {
+        return validateMnemonic(mnemonic,wordlist);
+    }
+
+    public static mnemonicToSeed = (mnemonic: string, password?: string) => {
+        const seed = mnemonicToSeedSync(mnemonic,password);
+
+        if(seed.length > 32) {
+            return seed.slice(0,32);
+        }
+        return seed;
     }
 }

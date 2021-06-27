@@ -64,7 +64,8 @@
     "rxjs": "^6.5.2",
     "rxjs-compat": "^6.5.2",
     "utf8": "^3.0.0",
-    "ws": "^7.1.1"
+    "ws": "^7.1.1",
+    "bip39": "^3.0.3"
   },
   "peerDependencies": {},
   "files": [
