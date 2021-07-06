@@ -19,38 +19,38 @@ describe('FeeCalculationStrategy', () => {
         });
 
         it('should return default FeeCalculationStrategy values', () => {
-            expect(DefaultMaxFee).to.be.equal(5000000);
+            expect(DefaultMaxFee).to.be.equal(75000000);
             expect(calculateFee(1)).to.be.eql(UInt64.fromUint(DefaultFeeCalculationStrategy));
             expect(calculateFee(1, DefaultFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(FeeCalculationStrategy.MiddleFeeCalculationStrategy));
             expect(calculateFee(1, FeeCalculationStrategy.ZeroFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(0));
-            expect(calculateFee(1, FeeCalculationStrategy.LowFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(25));
-            expect(calculateFee(1, FeeCalculationStrategy.MiddleFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(250));
-            expect(calculateFee(1, FeeCalculationStrategy.HighFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(2500));
+            expect(calculateFee(1, FeeCalculationStrategy.LowFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(15000));
+            expect(calculateFee(1, FeeCalculationStrategy.MiddleFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(150000));
+            expect(calculateFee(1, FeeCalculationStrategy.HighFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(1500000));
         });
 
-        for (let length of [10, 100, 1000]) {
+        for (let length of [10, 100, 151]) {
             it('should return correctly computed maxFee with length ' + length + ' for all FeeCalculationStrategy values', () => {
                 expect(calculateFee(length)).to.be.eql(UInt64.fromUint(length * DefaultFeeCalculationStrategy));
                 expect(calculateFee(length, DefaultFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(length * FeeCalculationStrategy.MiddleFeeCalculationStrategy));
                 expect(calculateFee(length, FeeCalculationStrategy.ZeroFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(0));
-                expect(calculateFee(length, FeeCalculationStrategy.LowFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(length * 25));
-                expect(calculateFee(length, FeeCalculationStrategy.MiddleFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(length * 250));
-                expect(calculateFee(length, FeeCalculationStrategy.HighFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(length * 2500));
+                expect(calculateFee(length, FeeCalculationStrategy.LowFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(length * 15000));
+                expect(calculateFee(length, FeeCalculationStrategy.MiddleFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(length * 150000));
+                expect(calculateFee(length, FeeCalculationStrategy.HighFeeCalculationStrategy)).to.be.eql(length > 10 ? UInt64.fromUint(DefaultMaxFee): UInt64.fromUint(length * 1500000));
             });
         }
 
         it('should return DefaultMaxFee if calculated fee exceeds it', () => {
-            expect(calculateFee(199999, FeeCalculationStrategy.LowFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(199999 * 25));
-            expect(calculateFee(200000, FeeCalculationStrategy.LowFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(DefaultMaxFee));
-            expect(calculateFee(200001, FeeCalculationStrategy.LowFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(DefaultMaxFee));
+            expect(calculateFee(4999, FeeCalculationStrategy.LowFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(4999 * 15000));
+            expect(calculateFee(5000, FeeCalculationStrategy.LowFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(DefaultMaxFee));
+            expect(calculateFee(5001, FeeCalculationStrategy.LowFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(DefaultMaxFee));
 
-            expect(calculateFee(19999, FeeCalculationStrategy.MiddleFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(19999 * 250));
-            expect(calculateFee(20000, FeeCalculationStrategy.MiddleFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(DefaultMaxFee));
-            expect(calculateFee(20001, FeeCalculationStrategy.MiddleFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(DefaultMaxFee));
+            expect(calculateFee(499, FeeCalculationStrategy.MiddleFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(499 * 150000));
+            expect(calculateFee(500, FeeCalculationStrategy.MiddleFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(DefaultMaxFee));
+            expect(calculateFee(501, FeeCalculationStrategy.MiddleFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(DefaultMaxFee));
 
-            expect(calculateFee(1999, FeeCalculationStrategy.HighFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(1999 * 2500));
-            expect(calculateFee(2000, FeeCalculationStrategy.HighFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(DefaultMaxFee));
-            expect(calculateFee(2001, FeeCalculationStrategy.HighFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(DefaultMaxFee));
+            expect(calculateFee(49, FeeCalculationStrategy.HighFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(49 * 1500000));
+            expect(calculateFee(50, FeeCalculationStrategy.HighFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(DefaultMaxFee));
+            expect(calculateFee(51, FeeCalculationStrategy.HighFeeCalculationStrategy)).to.be.eql(UInt64.fromUint(DefaultMaxFee));
         });
     });
 
@@ -62,22 +62,22 @@ describe('FeeCalculationStrategy', () => {
                 const transfer = factory.transfer().build();
                 expect(transfer.maxFee.compact()).to.be.eql(transfer.size * DefaultFeeCalculationStrategy);
             });
-            it('should return 3725 for LowFeeCalculationStrategy', () => {
+            it('should return 2265000 for LowFeeCalculationStrategy', () => {
                 const factory = new TransactionBuilderFactory();
                 factory.feeCalculationStrategy = FeeCalculationStrategy.LowFeeCalculationStrategy;
                 expect(factory.transfer().build().maxFee).to.be.eql(UInt64.fromUint(emptyTransferTxSize * FeeCalculationStrategy.LowFeeCalculationStrategy));
             });
 
-            it('should return 37250 for MiddleFeeCalculationStrategy', () => {
+            it('should return 22650000 for MiddleFeeCalculationStrategy', () => {
                 const factory = new TransactionBuilderFactory();
                 factory.feeCalculationStrategy = FeeCalculationStrategy.MiddleFeeCalculationStrategy;
                 expect(factory.transfer().build().maxFee).to.be.eql(UInt64.fromUint(emptyTransferTxSize * FeeCalculationStrategy.MiddleFeeCalculationStrategy));
             });
 
-            it('should return 372500 for HighFeeCalculationStrategy', () => {
+            it('should return 75000000 for HighFeeCalculationStrategy', () => {
                 const factory = new TransactionBuilderFactory();
                 factory.feeCalculationStrategy = FeeCalculationStrategy.HighFeeCalculationStrategy;
-                expect(factory.transfer().build().maxFee).to.be.eql(UInt64.fromUint(emptyTransferTxSize * FeeCalculationStrategy.HighFeeCalculationStrategy));
+                expect(factory.transfer().build().maxFee).to.be.eql(UInt64.fromUint(DefaultMaxFee));
             });
         });
     });
