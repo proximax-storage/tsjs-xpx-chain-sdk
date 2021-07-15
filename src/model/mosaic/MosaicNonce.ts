@@ -48,7 +48,7 @@ export class MosaicNonce {
         const uint8 = convert.hexToUint8(hex);
 
         if (uint8.length !== 4) {
-            throw new Error('Expected 4 bytes for Nonce and got ' + hex.length + ' instead.');
+            throw new Error('Expected 4 bytes for Nonce and got ' + uint8.length + ' instead.');
         }
 
         return new MosaicNonce(uint8);
