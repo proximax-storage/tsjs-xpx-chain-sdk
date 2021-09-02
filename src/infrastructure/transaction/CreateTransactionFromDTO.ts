@@ -61,6 +61,7 @@ import { ExchangeOfferTransaction } from '../../model/transaction/ExchangeOfferT
 import { ExchangeOffer } from '../../model/transaction/ExchangeOffer';
 import { RemoveExchangeOfferTransaction } from '../../model/transaction/RemoveExchangeOfferTransaction';
 import { RemoveExchangeOffer } from '../../model/transaction/RemoveExchangeOffer';
+import { MosaicNonce } from '../../model/mosaic/MosaicNonce';
 
 /**
  * @internal
@@ -176,7 +177,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             extractTransactionVersion(transactionDTO.version),
             Deadline.createFromDTO(transactionDTO.deadline),
             new UInt64(transactionDTO.maxFee || [0, 0]),
-            transactionDTO.nonce,
+            MosaicNonce.createFromHex(transactionDTO.mosaicNonce.toString(16)),
             new MosaicId(transactionDTO.mosaicId),
             new MosaicProperties(
                 new UInt64(transactionDTO.properties[MosaicPropertyType.MosaicFlags].value),
