@@ -15,7 +15,7 @@
  */
 
 import {expect} from 'chai';
-import {ChronoUnit, Instant, LocalDateTime, ZoneId} from 'js-joda';
+import {ChronoUnit, Instant, LocalDateTime, ZoneId} from '@js-joda/core';
 import {Deadline} from '../../../src/model/transaction/Deadline';
 
 describe('Deadline', () => {

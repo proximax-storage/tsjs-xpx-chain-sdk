@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {ChronoUnit, Instant, LocalDateTime, ZoneId} from 'js-joda';
+import {ChronoUnit, Instant, LocalDateTime, ZoneId} from '@js-joda/core';
 import {UInt64} from '../UInt64';
 
 /**

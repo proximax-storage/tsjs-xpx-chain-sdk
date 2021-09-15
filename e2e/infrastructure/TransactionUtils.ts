@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {ChronoUnit} from 'js-joda';
+import {ChronoUnit} from '@js-joda/core';
 import {TransactionHttp} from '../../src/infrastructure/TransactionHttp';
 import {Account} from '../../src/model/account/Account';
 import {Address} from '../../src/model/account/Address';

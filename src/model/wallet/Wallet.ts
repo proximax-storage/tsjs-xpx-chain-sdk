@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {LocalDateTime} from 'js-joda';
+import {LocalDateTime} from '@js-joda/core';
 import {Account} from '../account/Account';
 import {Address} from '../account/Address';
 import {NetworkType} from '../blockchain/NetworkType';
