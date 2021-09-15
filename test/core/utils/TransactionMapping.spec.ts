@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {deepEqual} from 'assert';
+import {deepStrictEqual, deepEqual} from 'assert';
 import { expect } from 'chai';
 import { sha3_256 } from 'js-sha3';
 import {Convert as convert} from '../../../src/core/format';
@@ -480,7 +480,7 @@ describe('TransactionMapping - createFromPayload', () => {
 
         const transaction = TransactionMapping.createFromPayload(signedLockFundTransaction.payload) as LockFundsTransaction;
 
-        deepEqual(transaction.mosaic.id.id, XpxMosaicProperties.ID.id);
+        deepStrictEqual(transaction.mosaic.id.id, XpxMosaicProperties.ID.id);
         expect(transaction.mosaic.amount.compact()).to.be.equal(10000000);
         expect(transaction.hash).to.be.equal(signedTransaction.hash);
     });

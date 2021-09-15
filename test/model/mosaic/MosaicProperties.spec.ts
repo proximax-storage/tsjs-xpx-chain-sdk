@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {deepEqual} from 'assert';
+import {deepStrictEqual} from 'assert';
 import {expect} from 'chai';
 import {MosaicProperties} from '../../../src/model/mosaic/MosaicProperties';
 import {UInt64} from '../../../src/model/UInt64';
@@ -44,7 +44,7 @@ describe('MosaicProperties', () => {
         );
 
         expect(mosaicProperties.divisibility).to.be.equal(propertiesDTO[1].lower);
-        deepEqual(mosaicProperties.duration, propertiesDTO[2]);
+        deepStrictEqual(mosaicProperties.duration, propertiesDTO[2]);
 
         expect(mosaicProperties.supplyMutable).to.be.equal(true);
         expect(mosaicProperties.transferable).to.be.equal(true);
@@ -61,7 +61,7 @@ describe('MosaicProperties', () => {
         });
 
         expect(mosaicProperties.divisibility).to.be.equal(10);
-        deepEqual(mosaicProperties.duration, duration);
+        deepStrictEqual(mosaicProperties.duration, duration);
 
         expect(mosaicProperties.supplyMutable).to.be.equal(false);
         expect(mosaicProperties.transferable).to.be.equal(false);
@@ -75,7 +75,7 @@ describe('MosaicProperties', () => {
         });
 
         expect(mosaicProperties.divisibility).to.be.equal(10);
-        deepEqual(mosaicProperties.duration, undefined);
+        deepStrictEqual(mosaicProperties.duration, undefined);
 
         expect(mosaicProperties.supplyMutable).to.be.equal(false);
         expect(mosaicProperties.transferable).to.be.equal(false);

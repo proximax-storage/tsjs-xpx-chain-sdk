@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {deepEqual} from 'assert';
+import {deepStrictEqual} from 'assert';
 import {expect} from 'chai';
 import {PublicAccount} from '../../../src/model/account/PublicAccount';
 import {NetworkType} from '../../../src/model/blockchain/NetworkType';
@@ -23,8 +23,8 @@ describe('MosaicNonce', () => {
 
     it('should be created from Uint8Array', () => {
         const nonce = new MosaicNonce(new Uint8Array([0x12, 0x34, 0x56, 0x78]));
-        deepEqual(nonce.nonce, new Uint8Array([0x12, 0x34, 0x56, 0x78]));
-        deepEqual(nonce.toDTO(), new Uint8Array([0x12, 0x34, 0x56, 0x78]));
+        deepStrictEqual(nonce.nonce, new Uint8Array([0x12, 0x34, 0x56, 0x78]));
+        deepStrictEqual(nonce.toDTO(), new Uint8Array([0x12, 0x34, 0x56, 0x78]));
     });
 
     it('should create random nonce', () => {
@@ -43,6 +43,6 @@ describe('MosaicNonce', () => {
     it('should create nonce from hexadecimal notation', () => {
         const nonce = MosaicNonce.createFromHex('12345678');
         expect(nonce.nonce).to.not.be.null;
-        deepEqual(nonce.nonce, new Uint8Array([0x12, 0x34, 0x56, 0x78]));
+        deepStrictEqual(nonce.nonce, new Uint8Array([0x12, 0x34, 0x56, 0x78]));
     });
 });

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { deepEqual } from 'assert';
+import { deepStrictEqual } from 'assert';
 import { CreateReceiptFromDTO } from '../../../src/infrastructure/receipt/CreateReceiptFromDTO';
 import {Account} from '../../../src/model/account/Account';
 import { Address } from '../../../src/model/account/Address';
@@ -154,11 +154,11 @@ describe('Receipt', () => {
             receiptDTO.type,
         );
 
-        deepEqual(receipt.amount.toDTO(), receiptDTO.amount);
-        deepEqual(receipt.mosaicId.toDTO().id, receiptDTO.mosaicId);
-        deepEqual(receipt.type, ReceiptType.Mosaic_Levy);
-        deepEqual(receipt.version, ReceiptVersion.BALANCE_TRANSFER);
-        deepEqual(receipt.recipient, Address.createFromEncoded('9103B60AAF2762688300000000000000000000000000000000'));
+        deepStrictEqual(receipt.amount.toDTO(), receiptDTO.amount);
+        deepStrictEqual(receipt.mosaicId.toDTO().id, receiptDTO.mosaicId);
+        deepStrictEqual(receipt.type, ReceiptType.Mosaic_Levy);
+        deepStrictEqual(receipt.version, ReceiptVersion.BALANCE_TRANSFER);
+        deepStrictEqual(receipt.recipient, Address.createFromEncoded('9103B60AAF2762688300000000000000000000000000000000'));
     });
 
     it('should createComplete a balance transfer receipt - Mosaic Rental Fee', () => {
@@ -180,11 +180,11 @@ describe('Receipt', () => {
             receiptDTO.type,
         );
 
-        deepEqual(receipt.amount.toDTO(), receiptDTO.amount);
-        deepEqual(receipt.recipient, Address.createFromEncoded('9103B60AAF2762688300000000000000000000000000000000'));
-        deepEqual(receipt.mosaicId.toDTO().id, receiptDTO.mosaicId);
-        deepEqual(receipt.type, ReceiptType.Mosaic_Rental_Fee);
-        deepEqual(receipt.version, ReceiptVersion.BALANCE_TRANSFER);
+        deepStrictEqual(receipt.amount.toDTO(), receiptDTO.amount);
+        deepStrictEqual(receipt.recipient, Address.createFromEncoded('9103B60AAF2762688300000000000000000000000000000000'));
+        deepStrictEqual(receipt.mosaicId.toDTO().id, receiptDTO.mosaicId);
+        deepStrictEqual(receipt.type, ReceiptType.Mosaic_Rental_Fee);
+        deepStrictEqual(receipt.version, ReceiptVersion.BALANCE_TRANSFER);
     });
 
     it('should createComplete a balance change receipt - Harvest Fee', () => {
@@ -204,11 +204,11 @@ describe('Receipt', () => {
             receiptDTO.type,
         );
 
-        deepEqual(receipt.account.publicKey, receiptDTO.account);
-        deepEqual(receipt.amount.toDTO(), receiptDTO.amount);
-        deepEqual(receipt.mosaicId.toDTO().id, receiptDTO.mosaicId);
-        deepEqual(receipt.type, ReceiptType.Harvest_Fee);
-        deepEqual(receipt.version, ReceiptVersion.BALANCE_CHANGE);
+        deepStrictEqual(receipt.account.publicKey, receiptDTO.account);
+        deepStrictEqual(receipt.amount.toDTO(), receiptDTO.amount);
+        deepStrictEqual(receipt.mosaicId.toDTO().id, receiptDTO.mosaicId);
+        deepStrictEqual(receipt.type, ReceiptType.Harvest_Fee);
+        deepStrictEqual(receipt.version, ReceiptVersion.BALANCE_CHANGE);
     });
 
     it('should createComplete a balance change receipt - LockHash', () => {
@@ -228,11 +228,11 @@ describe('Receipt', () => {
             receiptDTO.type,
         );
 
-        deepEqual(receipt.account.publicKey, receiptDTO.account);
-        deepEqual(receipt.amount.toDTO(), receiptDTO.amount);
-        deepEqual(receipt.mosaicId.toDTO().id, receiptDTO.mosaicId);
-        deepEqual(receipt.type, ReceiptType.LockHash_Created);
-        deepEqual(receipt.version, ReceiptVersion.BALANCE_CHANGE);
+        deepStrictEqual(receipt.account.publicKey, receiptDTO.account);
+        deepStrictEqual(receipt.amount.toDTO(), receiptDTO.amount);
+        deepStrictEqual(receipt.mosaicId.toDTO().id, receiptDTO.mosaicId);
+        deepStrictEqual(receipt.type, ReceiptType.LockHash_Created);
+        deepStrictEqual(receipt.version, ReceiptVersion.BALANCE_CHANGE);
     });
 
     it('should createComplete an artifact expiry receipt - address', () => {
@@ -248,9 +248,9 @@ describe('Receipt', () => {
             receiptDTO.type,
         );
 
-        deepEqual(receipt.artifactId.toDTO().id, receiptDTO.artifactId);
-        deepEqual(receipt.type, ReceiptType.Namespace_Expired);
-        deepEqual(receipt.version, ReceiptVersion.ARTIFACT_EXPIRY);
+        deepStrictEqual(receipt.artifactId.toDTO().id, receiptDTO.artifactId);
+        deepStrictEqual(receipt.type, ReceiptType.Namespace_Expired);
+        deepStrictEqual(receipt.version, ReceiptVersion.ARTIFACT_EXPIRY);
     });
 
     it('should createComplete an artifact expiry receipt - mosaic', () => {
@@ -265,9 +265,9 @@ describe('Receipt', () => {
             receiptDTO.version,
             receiptDTO.type,
         );
-        deepEqual(receipt.artifactId.toDTO().id, receiptDTO.artifactId);
-        deepEqual(receipt.type, ReceiptType.Mosaic_Expired);
-        deepEqual(receipt.version, ReceiptVersion.ARTIFACT_EXPIRY);
+        deepStrictEqual(receipt.artifactId.toDTO().id, receiptDTO.artifactId);
+        deepStrictEqual(receipt.type, ReceiptType.Mosaic_Expired);
+        deepStrictEqual(receipt.version, ReceiptVersion.ARTIFACT_EXPIRY);
     });
 
     it('should createComplete a transaction statement', () => {
@@ -278,9 +278,9 @@ describe('Receipt', () => {
             statementDto.receipts.map((receipt) =>
             CreateReceiptFromDTO(receipt, netWorkType)),
         );
-        deepEqual(statement.source.primaryId, statementDto.source.primaryId);
-        deepEqual(statement.source.secondaryId, statementDto.source.secondaryId);
-        deepEqual((statement.receipts[0] as BalanceChangeReceipt).account.publicKey, account.publicKey);
+        deepStrictEqual(statement.source.primaryId, statementDto.source.primaryId);
+        deepStrictEqual(statement.source.secondaryId, statementDto.source.secondaryId);
+        deepStrictEqual((statement.receipts[0] as BalanceChangeReceipt).account.publicKey, account.publicKey);
     });
 
     it('should createComplete resolution statement - mosaic', () => {
@@ -293,8 +293,8 @@ describe('Receipt', () => {
                 new ReceiptSource( resolved.source.primaryId, resolved.source.secondaryId));
             }),
         );
-        deepEqual((statement.unresolved as MosaicId).toDTO().id, statementDto.unresolved);
-        deepEqual((statement.resolutionEntries[0].resolved as MosaicAlias).mosaicId.id.toDTO(), [2553890912, 2234768168]);
+        deepStrictEqual((statement.unresolved as MosaicId).toDTO().id, statementDto.unresolved);
+        deepStrictEqual((statement.resolutionEntries[0].resolved as MosaicAlias).mosaicId.id.toDTO(), [2553890912, 2234768168]);
     });
 
     it('should createComplete resolution statement - address', () => {
@@ -307,9 +307,9 @@ describe('Receipt', () => {
                 new ReceiptSource( resolved.source.primaryId, resolved.source.secondaryId));
             }),
         );
-        deepEqual((statement.unresolved as Address).plain(),
+        deepStrictEqual((statement.unresolved as Address).plain(),
             Address.createFromEncoded('9103B60AAF2762688300000000000000000000000000000000').plain());
-        deepEqual((statement.resolutionEntries[0].resolved as AddressAlias).address.plain(),
+        deepStrictEqual((statement.resolutionEntries[0].resolved as AddressAlias).address.plain(),
             Address.createFromEncoded('917E7E29A01014C2F300000000000000000000000000000000').plain());
     });
 
@@ -328,9 +328,9 @@ describe('Receipt', () => {
             receiptDTO.type,
         );
 
-        deepEqual(receipt.amount.compact(), receiptDTO.amount);
-        deepEqual(receipt.mosaicId.toDTO().id, receiptDTO.mosaicId);
-        deepEqual(receipt.type, ReceiptType.Inflation);
-        deepEqual(receipt.version, ReceiptVersion.INFLATION_RECEIPT);
+        deepStrictEqual(receipt.amount.compact(), receiptDTO.amount);
+        deepStrictEqual(receipt.mosaicId.toDTO().id, receiptDTO.mosaicId);
+        deepStrictEqual(receipt.type, ReceiptType.Inflation);
+        deepStrictEqual(receipt.version, ReceiptVersion.INFLATION_RECEIPT);
     });
 });

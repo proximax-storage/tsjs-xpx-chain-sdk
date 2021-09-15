@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {deepEqual} from 'assert';
+import {deepStrictEqual} from 'assert';
 import {expect} from 'chai';
 import {PublicAccount} from '../../../src/model/account/PublicAccount';
 import {BlockInfo} from '../../../src/model/blockchain/BlockInfo';
@@ -48,7 +48,7 @@ describe('BlockInfo', () => {
             },
         };
 
-        const network = parseInt(blockDTO.block.version.toString(16).substr(0, 2), 16);
+        const network = parseInt(blockDTO.block.version.toString(16).substring(0, 2), 16);
         const blockInfo = new BlockInfo(
             blockDTO.meta.hash,
             blockDTO.meta.generationHash,
@@ -57,7 +57,7 @@ describe('BlockInfo', () => {
             blockDTO.block.signature,
             PublicAccount.createFromPublicKey(blockDTO.block.signer, network),
             network,
-            parseInt(blockDTO.block.version.toString(16).substr(2, 2), 16), // Tx version
+            parseInt(blockDTO.block.version.toString(16).substring(2, 4), 16), // Tx version
             blockDTO.block.type,
             blockDTO.block.height,
             blockDTO.block.timestamp,
@@ -72,16 +72,16 @@ describe('BlockInfo', () => {
 
         expect(blockInfo.hash).to.be.equal(blockDTO.meta.hash);
         expect(blockInfo.generationHash).to.be.equal(blockDTO.meta.generationHash);
-        deepEqual(blockInfo.totalFee, blockDTO.meta.totalFee);
+        deepStrictEqual(blockInfo.totalFee, blockDTO.meta.totalFee);
         expect(blockInfo.numTransactions).to.be.equal(blockDTO.meta.numTransactions);
         expect(blockInfo.signature).to.be.equal(blockDTO.block.signature);
         expect(blockInfo.signer.publicKey).to.be.equal(blockDTO.block.signer);
-        expect(blockInfo.networkType).to.be.equal(parseInt(blockDTO.block.version.toString(16).substr(0, 2), 16));
-        expect(blockInfo.version).to.be.equal(parseInt(blockDTO.block.version.toString(16).substr(2, 2), 16));
+        expect(blockInfo.networkType).to.be.equal(parseInt(blockDTO.block.version.toString(16).substring(0, 2), 16));
+        expect(blockInfo.version).to.be.equal(parseInt(blockDTO.block.version.toString(16).substring(2, 4), 16));
         expect(blockInfo.type).to.be.equal(blockDTO.block.type);
-        deepEqual(blockInfo.height, blockDTO.block.height);
-        deepEqual(blockInfo.timestamp, blockDTO.block.timestamp);
-        deepEqual(blockInfo.difficulty, blockDTO.block.difficulty);
+        deepStrictEqual(blockInfo.height, blockDTO.block.height);
+        deepStrictEqual(blockInfo.timestamp, blockDTO.block.timestamp);
+        deepStrictEqual(blockInfo.difficulty, blockDTO.block.difficulty);
         expect(blockInfo.feeMultiplier).to.be.equal(blockDTO.block.feeMultiplier);
         expect(blockInfo.previousBlockHash).to.be.equal(blockDTO.block.previousBlockHash);
         expect(blockInfo.blockTransactionsHash).to.be.equal(blockDTO.block.blockTransactionsHash);

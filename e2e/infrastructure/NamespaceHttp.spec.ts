@@ -16,7 +16,7 @@
 import {expect} from 'chai';
 import {NamespaceHttp} from '../../src/infrastructure/NamespaceHttp';
 import {APIUrl, GetNemesisBlockDataPromise, ConfTestingNamespaceId, TestingAccount} from '../conf/conf.spec';
-import { deepEqual } from 'assert';
+import { deepStrictEqual } from 'assert';
 
 describe('NamespaceHttp', () => {
     const namespaceHttp = new NamespaceHttp(APIUrl);
@@ -39,7 +39,7 @@ describe('NamespaceHttp', () => {
             GetNemesisBlockDataPromise().then(data => {
                 namespaceHttp.getNamespacesFromAccount(data.nemesisBlockInfo.signer.address)
                 .subscribe((namespaces) => {
-                    deepEqual(namespaces[0].owner, data.nemesisBlockInfo.signer);
+                    deepStrictEqual(namespaces[0].owner, data.nemesisBlockInfo.signer);
                     done();
                 });
             });
@@ -51,7 +51,7 @@ describe('NamespaceHttp', () => {
             GetNemesisBlockDataPromise().then(data => {
                 namespaceHttp.getNamespacesFromAccounts([data.nemesisBlockInfo.signer.address])
                 .subscribe((namespaces) => {
-                    deepEqual(namespaces[0].owner, data.nemesisBlockInfo.signer);
+                    deepStrictEqual(namespaces[0].owner, data.nemesisBlockInfo.signer);
                     done();
                 });
             });

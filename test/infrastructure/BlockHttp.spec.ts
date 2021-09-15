@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import { BlockHttp } from '../../src/infrastructure/infrastructure';
-import { deepEqual } from 'assert';
+import { deepStrictEqual } from 'assert';
 import * as createFromDto from '../../src/infrastructure/transaction/CreateTransactionFromDTO';
 import * as dtoMapping from '../../src/core/utils/DtoMapping'
 import { NetworkType, PublicAccount } from '../../src/model/model';
@@ -22,7 +22,7 @@ describe('BlockHttp', () => {
 
     describe('getBlockTransactions', () => {
         beforeEach(() => {
-            sandbox.on((client as any).blockRoutesApi, 'getBlockTransactions', (number) => Promise.resolve({ body: ['api called'] }));
+            sandbox.on((client as any).blockRoutesApi, 'getBlockTransactions', (number) => Promise.resolve(({ body: {data: ['api called'], pagination: { }} })));
             sandbox.on(createFromDto, 'CreateTransactionFromDTO', (dto) => dto === 'api called' ? 'deserialization called' : 'not ok');
         });
         afterEach(() => {

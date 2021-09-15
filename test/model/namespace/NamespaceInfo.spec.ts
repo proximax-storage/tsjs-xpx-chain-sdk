@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {deepEqual} from 'assert';
+import {deepStrictEqual} from 'assert';
 import {expect} from 'chai';
 import {PublicAccount} from '../../../src/model/account/PublicAccount';
 import {NetworkType} from '../../../src/model/blockchain/NetworkType';
@@ -87,10 +87,10 @@ describe('NamespaceInfo', () => {
         expect(namespaceInfo.index).to.be.equal(rootNamespaceDTO.meta.index);
         expect(namespaceInfo.metaId).to.be.equal(rootNamespaceDTO.meta.id);
         expect(namespaceInfo.depth).to.be.equal(rootNamespaceDTO.namespace.depth);
-        deepEqual(namespaceInfo.levels[0], rootNamespaceDTO.namespace.level0);
+        deepStrictEqual(namespaceInfo.levels[0], rootNamespaceDTO.namespace.level0);
         expect(namespaceInfo.owner.publicKey).to.be.equal(rootNamespaceDTO.namespace.owner);
-        deepEqual(namespaceInfo.startHeight, rootNamespaceDTO.namespace.startHeight);
-        deepEqual(namespaceInfo.endHeight, rootNamespaceDTO.namespace.endHeight);
+        deepStrictEqual(namespaceInfo.startHeight, rootNamespaceDTO.namespace.startHeight);
+        deepStrictEqual(namespaceInfo.endHeight, rootNamespaceDTO.namespace.endHeight);
         expect(namespaceInfo.alias.type).to.be.equal(rootNamespaceDTO.namespace.alias.type);
         expect(namespaceInfo.alias.mosaicId).to.be.equal(rootNamespaceDTO.namespace.alias.mosaicId);
     });

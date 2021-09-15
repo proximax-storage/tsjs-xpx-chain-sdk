@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { deepEqual } from 'assert';
+import { deepStrictEqual } from 'assert';
 import { expect } from 'chai';
 import { CreateStatementFromDTO } from '../../../src/infrastructure/receipt/CreateReceiptFromDTO';
 import {Account} from '../../../src/model/account/Account';
@@ -128,22 +128,22 @@ describe('Receipt - CreateStatementFromDTO', () => {
         expect(statement.mosaicResolutionStatements.length).to.be.equal(2);
 
         expect(statement.transactionStatements[0].receipts.length).to.be.equal(1);
-        deepEqual(statement.transactionStatements[0].height, [52, 0]);
+        deepStrictEqual(statement.transactionStatements[0].height, [52, 0]);
         expect(statement.transactionStatements[0].source.primaryId).to.be.equal(0);
         expect(statement.transactionStatements[0].source.secondaryId).to.be.equal(0);
         expect(statement.transactionStatements[0].receipts[0].type).to.be.equal(ReceiptType.Harvest_Fee);
 
-        deepEqual(statement.addressResolutionStatements[0].height, [1488, 0]);
-        deepEqual(unresolvedAddress.plain(),
+        deepStrictEqual(statement.addressResolutionStatements[0].height, [1488, 0]);
+        deepStrictEqual(unresolvedAddress.plain(),
                 Address.createFromEncoded('9103B60AAF2762688300000000000000000000000000000000').plain());
         expect(statement.addressResolutionStatements[0].resolutionEntries.length).to.be.equal(1);
         expect((statement.addressResolutionStatements[0].resolutionEntries[0].resolved as AddressAlias)
                 .address.plain()).to.be.equal(Address.createFromEncoded('917E7E29A01014C2F300000000000000000000000000000000').plain());
 
-        deepEqual(statement.mosaicResolutionStatements[0].height, [1506, 0]);
-        deepEqual(unresolvedMosaicId.toDTO().id, [4014740460, 2448037180]);
+        deepStrictEqual(statement.mosaicResolutionStatements[0].height, [1506, 0]);
+        deepStrictEqual(unresolvedMosaicId.toDTO().id, [4014740460, 2448037180]);
         expect(statement.mosaicResolutionStatements[0].resolutionEntries.length).to.be.equal(1);
-        deepEqual((statement.mosaicResolutionStatements[0].resolutionEntries[0].resolved as MosaicAlias)
+        deepStrictEqual((statement.mosaicResolutionStatements[0].resolutionEntries[0].resolved as MosaicAlias)
                 .mosaicId.id.toDTO(), [2553890912, 2234768168]);
     });
 });

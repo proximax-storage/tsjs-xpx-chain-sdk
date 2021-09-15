@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {deepEqual} from 'assert';
+import {deepStrictEqual} from 'assert';
 import {expect} from 'chai';
 import { AccountRestriction } from '../../../src/model/account/AccountRestriction';
 import { Address } from '../../../src/model/account/Address';
@@ -35,6 +35,6 @@ describe('AccountRestriction', () => {
         );
 
         expect(accountRestriction.restrictionType).to.be.equal(accountRestrictionDTO.restrictionType);
-        deepEqual(accountRestriction.values.length, accountRestrictionDTO.values.length);
+        deepStrictEqual(accountRestriction.values.length, accountRestrictionDTO.values.length);
     });
 });

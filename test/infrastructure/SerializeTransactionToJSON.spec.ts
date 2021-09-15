@@ -53,7 +53,7 @@ import { TransactionType } from '../../src/model/transaction/TransactionType' ;
 import { TransferTransaction } from '../../src/model/transaction/TransferTransaction';
 import { UInt64 } from '../../src/model/UInt64';
 import { TestingAccount } from '../conf/conf.spec';
-import { deepEqual } from 'assert';
+import { deepStrictEqual } from 'assert';
 import { NamespaceType, ModifyMetadataTransaction, MetadataModification, MetadataModificationType, Mosaic, MetadataType, ChainUpgradeTransaction, ChainConfigTransaction } from '../../src/model/model';
 
 describe('SerializeTransactionToJSON', () => {
@@ -118,7 +118,7 @@ describe('SerializeTransactionToJSON', () => {
         expect(json.transaction.restrictionType).to.be.equal(RestrictionType.AllowMosaic);
         expect(json.transaction.modifications.length).to.be.equal(1);
         expect(json.transaction.modifications[0].type).to.be.equal(RestrictionModificationType.Add);
-        deepEqual(json.transaction.modifications[0].value, mosaicId.id.toDTO());
+        deepStrictEqual(json.transaction.modifications[0].value, mosaicId.id.toDTO());
     });
 
     it('should create AccountRestrictionOperationTransaction', () => {
@@ -158,7 +158,7 @@ describe('SerializeTransactionToJSON', () => {
 
         expect(json.transaction.type).to.be.equal(TransactionType.ADDRESS_ALIAS);
         expect(json.transaction.aliasAction).to.be.equal(AliasActionType.Link);
-        deepEqual(json.transaction.namespaceId.id, namespaceId.id.toDTO());
+        deepStrictEqual(json.transaction.namespaceId.id, namespaceId.id.toDTO());
         expect(json.transaction.address.address).to.be.equal(address.plain());
     });
 
@@ -176,8 +176,8 @@ describe('SerializeTransactionToJSON', () => {
 
         expect(json.transaction.type).to.be.equal(TransactionType.MOSAIC_ALIAS);
         expect(json.transaction.aliasAction).to.be.equal(AliasActionType.Link);
-        deepEqual(json.transaction.namespaceId.id, namespaceId.id.toDTO());
-        deepEqual(json.transaction.mosaicId.id, mosaicId.id.toDTO());
+        deepStrictEqual(json.transaction.namespaceId.id, namespaceId.id.toDTO());
+        deepStrictEqual(json.transaction.mosaicId.id, mosaicId.id.toDTO());
     });
 
     it('should create MosaicDefinitionTransaction', () => {
@@ -198,9 +198,9 @@ describe('SerializeTransactionToJSON', () => {
 
         expect(json.transaction.type).to.be.equal(TransactionType.MOSAIC_DEFINITION);
         expect(json.transaction.properties.length).to.be.equal(3);
-        expect(new UInt64(json.transaction.properties[1].value).compact()).to.be.equal(UInt64.fromUint(3).compact());
-        expect(new UInt64(json.transaction.properties[2].value).compact()).to.be.equal(UInt64.fromUint(1000).compact());
-        expect(new UInt64(json.transaction.properties[2].value).lower).to.be.equal(UInt64.fromUint(1000).lower);
+        expect(json.transaction.properties[1].value).to.be.equal(3);
+        expect(json.transaction.properties[2].value).to.be.equal(1000);
+        expect(json.transaction.properties[2].value).to.be.equal(1000);
 
     });
 
@@ -238,7 +238,7 @@ describe('SerializeTransactionToJSON', () => {
 
         expect(json.transaction.type).to.be.equal(TransactionType.MOSAIC_SUPPLY_CHANGE);
         expect(json.transaction.direction).to.be.equal(MosaicSupplyType.Increase);
-        deepEqual(json.transaction.delta, UInt64.fromUint(10).toDTO());
+        deepStrictEqual(json.transaction.delta, UInt64.fromUint(10).toDTO());
     });
 
     it('should create TransferTransaction with an address', () => {
@@ -261,8 +261,8 @@ describe('SerializeTransactionToJSON', () => {
         expect(json.transaction.message.payload).to.be.equal('746573742d6d657373616765');
         expect(json.transaction.message.type).to.be.equal(0);
         expect(json.transaction.mosaics.length).to.be.equal(1);
-        deepEqual(json.transaction.mosaics[0].id, mosaic.id.id.toDTO());
-        deepEqual(json.transaction.mosaics[0].amount, mosaic.amount.toDTO());
+        deepStrictEqual(json.transaction.mosaics[0].id, mosaic.id.id.toDTO());
+        deepStrictEqual(json.transaction.mosaics[0].amount, mosaic.amount.toDTO());
     });
 
     it('should create TransferTransaction with a namespace', () => {
@@ -282,12 +282,12 @@ describe('SerializeTransactionToJSON', () => {
 
         expect(json.transaction.type).to.be.equal(TransactionType.TRANSFER);
         expect((json.transaction.recipient as any).fullName).to.be.equal('some-namespace');
-        deepEqual((json.transaction.recipient as any).id, namespaceId.id.toDTO());
+        deepStrictEqual((json.transaction.recipient as any).id, namespaceId.id.toDTO());
         expect(json.transaction.message.payload).to.be.equal('746573742d6d657373616765');
         expect(json.transaction.message.type).to.be.equal(0);
         expect(json.transaction.mosaics.length).to.be.equal(1);
-        deepEqual(json.transaction.mosaics[0].id, mosaic.id.id.toDTO());
-        deepEqual(json.transaction.mosaics[0].amount, mosaic.amount.toDTO());
+        deepStrictEqual(json.transaction.mosaics[0].id, mosaic.id.id.toDTO());
+        deepStrictEqual(json.transaction.mosaics[0].amount, mosaic.amount.toDTO());
     });
 
     it('should create SecretLockTransaction', () => {
@@ -308,9 +308,9 @@ describe('SerializeTransactionToJSON', () => {
         const json = secretLockTransaction.toJSON();
 
         expect(json.transaction.type).to.be.equal(TransactionType.SECRET_LOCK);
-        deepEqual(json.transaction.mosaicId, mosaic.id.id.toDTO());
-        deepEqual(json.transaction.amount, UInt64.fromUint(10).toDTO());
-        deepEqual(json.transaction.duration, UInt64.fromUint(100).toDTO());
+        deepStrictEqual(json.transaction.mosaicId, mosaic.id.id.toDTO());
+        deepStrictEqual(json.transaction.amount, UInt64.fromUint(10).toDTO());
+        deepStrictEqual(json.transaction.duration, UInt64.fromUint(100).toDTO());
         expect(json.transaction.hashAlgorithm).to.be.equal(HashType.Op_Sha3_256);
         expect(json.transaction.secret).to.be.equal(secret);
         expect(json.transaction.recipient.address).to.be.equal(recipient.plain());
@@ -425,9 +425,9 @@ describe('SerializeTransactionToJSON', () => {
 
         expect(json.transaction.type).to.be.equal(TransactionType.LOCK);
         expect(json.transaction.hash).to.be.equal(signedTransaction.hash);
-        deepEqual(json.transaction.mosaicId, mosaic.id.id.toDTO());
-        deepEqual(json.transaction.amount, mosaic.amount.toDTO());
-        deepEqual(json.transaction.duration, UInt64.fromUint(10).toDTO());
+        deepStrictEqual(json.transaction.mosaicId, mosaic.id.id.toDTO());
+        deepStrictEqual(json.transaction.amount, mosaic.amount.toDTO());
+        deepStrictEqual(json.transaction.duration, UInt64.fromUint(10).toDTO());
     });
 
     it('should create RegisterNamespaceTransaction - Root', () => {
@@ -542,7 +542,7 @@ describe('SerializeTransactionToJSON', () => {
         const json = chainConfigureTransaction.toJSON();
 
         expect(json.transaction.type).to.be.equal(TransactionType.CHAIN_CONFIGURE);
-        deepEqual(json.transaction.applyHeightDelta, UInt64.fromUint(12345678901234567890).toDTO());
+        deepStrictEqual(json.transaction.applyHeightDelta, UInt64.fromUint(12345678901234567890).toDTO());
         expect(json.transaction.networkConfig).to.be.equal('some-network-config');
         expect(json.transaction.supportedEntityVersions).to.be.equal('some-supported-entity-versions');
     });
@@ -558,8 +558,8 @@ describe('SerializeTransactionToJSON', () => {
         const json = chainUpgradeTransaction.toJSON();
 
         expect(json.transaction.type).to.be.equal(TransactionType.CHAIN_UPGRADE);
-        deepEqual(json.transaction.upgradePeriod, UInt64.fromUint(1234).toDTO());
-        deepEqual(json.transaction.newBlockchainVersion, UInt64.fromUint(12345678901234567890).toDTO());
+        deepStrictEqual(json.transaction.upgradePeriod, UInt64.fromUint(1234).toDTO());
+        deepStrictEqual(json.transaction.newBlockchainVersion, UInt64.fromUint(12345678901234567890).toDTO());
     });
 
 });

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {deepEqual} from 'assert';
+import {deepStrictEqual} from 'assert';
 import {expect} from 'chai';
 import {MultisigAccountGraphInfo} from '../../../src/model/account/MultisigAccountGraphInfo';
 import {MultisigAccountInfo} from '../../../src/model/account/MultisigAccountInfo';
@@ -74,9 +74,9 @@ describe('MultisigAccountGraphInfo', () => {
             .to.be.equal(multisigAccountGraphInfoDTO.multisigEntries[0].multisig.minApproval);
         expect(multisigAccountInfoGraph.multisigAccounts.get(2)![0].minRemoval)
             .to.be.equal(multisigAccountGraphInfoDTO.multisigEntries[0].multisig.minRemoval);
-        deepEqual(multisigAccountInfoGraph.multisigAccounts.get(2)![0].cosignatories,
+        deepStrictEqual(multisigAccountInfoGraph.multisigAccounts.get(2)![0].cosignatories,
             multisigAccountGraphInfoDTO.multisigEntries[0].multisig.cosignatories);
-        deepEqual(multisigAccountInfoGraph.multisigAccounts.get(2)![0].multisigAccounts,
+        deepStrictEqual(multisigAccountInfoGraph.multisigAccounts.get(2)![0].multisigAccounts,
             multisigAccountGraphInfoDTO.multisigEntries[0].multisig.multisigAccounts);
     });
 

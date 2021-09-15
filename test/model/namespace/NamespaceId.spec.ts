@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {deepEqual} from 'assert';
+import {deepStrictEqual} from 'assert';
 import {expect} from 'chai';
 import {Id} from '../../../src/model/Id';
 import {NamespaceId} from '../../../src/model/namespace/NamespaceId';
@@ -22,19 +22,19 @@ import {NamespaceId} from '../../../src/model/namespace/NamespaceId';
 describe('NamespaceId', () => {
     it('should be created from root namespace name', () => {
         const id = new NamespaceId('nem');
-        deepEqual(id.id, new Id([929036875, 2226345261]));
+        deepStrictEqual(id.id, new Id([929036875, 2226345261]));
         expect(id.fullName).to.be.equal('nem');
     });
 
     it('should be created from subnamespace name ', () => {
         const id = new NamespaceId('nem.subnem');
-        deepEqual(id.id, new Id([373240754, 3827892399]));
+        deepStrictEqual(id.id, new Id([373240754, 3827892399]));
         expect(id.fullName).to.be.equal('nem.subnem');
     });
 
     it('should be created from id', () => {
         const id = new NamespaceId([3646934825, 3576016193]);
-        deepEqual(id.id, new Id([3646934825, 3576016193]));
+        deepStrictEqual(id.id, new Id([3646934825, 3576016193]));
         expect(id.fullName).to.be.equal(undefined);
     });
 
@@ -51,7 +51,7 @@ describe('NamespaceId', () => {
         vectors.map(({encoded, uint}) => {
             const fromHex = NamespaceId.createFromEncoded(encoded.toUpperCase());
             const fromId = new NamespaceId(uint);
-            deepEqual(fromId.id, fromHex.id);
+            deepStrictEqual(fromId.id, fromHex.id);
         });
     });
 });
