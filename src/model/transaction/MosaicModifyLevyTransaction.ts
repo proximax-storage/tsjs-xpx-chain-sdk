@@ -21,21 +21,21 @@ import { MosaicLevyType } from '../mosaic/MosaicLevyType';
 /**
  * Mosaic Modify levy transaction contains information about levy of mosaic being modified.
  */
-export class MosaicModifyLevyTansaction extends Transaction {
+export class MosaicModifyLevyTransaction extends Transaction {
 
     public mosaicId: MosaicId;
     public mosaicLevy: MosaicLevy;
 
     /**
      * Create a mosaic modify levy transaction object
-     * @returns {MosaicModifyLevyTansaction}
+     * @returns {MosaicModifyLevyTransaction}
      */
     public static create(
         deadline: Deadline,
         mosaicId: MosaicId,
         mosaicLevy: MosaicLevy,
         networkType: NetworkType,
-        maxFee?: UInt64): MosaicModifyLevyTansaction {
+        maxFee?: UInt64): MosaicModifyLevyTransaction {
         return new MosaicModifyLevyTransactionBuilder()
             .networkType(networkType)
             .deadline(deadline)
@@ -57,7 +57,6 @@ export class MosaicModifyLevyTansaction extends Transaction {
      * @param transactionInfo
      */
     constructor(
-        transactionType: number,
         networkType: NetworkType,
         version: number,
         deadline: Deadline,
@@ -71,7 +70,7 @@ export class MosaicModifyLevyTansaction extends Transaction {
         if (mosaicLevy.type === MosaicLevyType.LevyNone) {
             throw new Error('Levy type not allowed');
         };
-        super(transactionType, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
+        super(TransactionType.MODIFY_MOSAIC_LEVY, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
         this.mosaicId = mosaicId;
         this.mosaicLevy = mosaicLevy;
     }
@@ -82,7 +81,7 @@ export class MosaicModifyLevyTansaction extends Transaction {
      * @memberof Transaction
      */
     public get size(): number {
-        return MosaicModifyLevyTansaction.calculateSize();
+        return MosaicModifyLevyTransaction.calculateSize();
     }
 
     public static calculateSize(): number {
@@ -99,7 +98,7 @@ export class MosaicModifyLevyTansaction extends Transaction {
      * @override Transaction.toJSON()
      * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
      * @return {Object}
-     * @memberof MosaicModifyLevyTansaction
+     * @memberof MosaicModifyLevyTransaction
      */
     public toJSON() {
         const parent = super.toJSON();
@@ -158,13 +157,12 @@ export class MosaicModifyLevyTransactionBuilder extends TransactionBuilder {
         return this;
     }
 
-    public build(): MosaicModifyLevyTansaction {
-        return new MosaicModifyLevyTansaction(
-            this._transactionType,
+    public build(): MosaicModifyLevyTransaction {
+        return new MosaicModifyLevyTransaction(
             this._networkType,
             this._version || TransactionVersion.MOSAIC_MODIFY_LEVY,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._maxFee ? this._maxFee : calculateFee(MosaicModifyLevyTansaction.calculateSize(), this._feeCalculationStrategy),
+            this._maxFee ? this._maxFee : calculateFee(MosaicModifyLevyTransaction.calculateSize(), this._feeCalculationStrategy),
             this._mosaicId,
             this._mosaicLevy,
             this._signature,

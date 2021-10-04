@@ -19,19 +19,19 @@ import { MosaicId } from '../mosaic/MosaicId';
 /**
  * Mosaic Modify levy transaction contains information about levy of mosaic being modified.
  */
-export class MosaicRemoveLevyTansaction extends Transaction {
+export class MosaicRemoveLevyTransaction extends Transaction {
 
     public mosaicId: MosaicId;
 
     /**
      * Create a mosaic modify levy transaction object
-     * @returns {MosaicRemoveLevyTansaction}
+     * @returns {MosaicRemoveLevyTransaction}
      */
     public static create(
         deadline: Deadline,
         mosaicId: MosaicId,
         networkType: NetworkType,
-        maxFee?: UInt64): MosaicRemoveLevyTansaction {
+        maxFee?: UInt64): MosaicRemoveLevyTransaction {
         return new MosaicRemoveLevyTransactionBuilder()
             .networkType(networkType)
             .deadline(deadline)
@@ -52,7 +52,6 @@ export class MosaicRemoveLevyTansaction extends Transaction {
      * @param transactionInfo
      */
     constructor(
-        transactionType: number,
         networkType: NetworkType,
         version: number,
         deadline: Deadline,
@@ -61,7 +60,7 @@ export class MosaicRemoveLevyTansaction extends Transaction {
         signature?: string,
         signer?: PublicAccount,
         transactionInfo?: TransactionInfo | AggregateTransactionInfo) {
-        super(transactionType, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
+        super(TransactionType.REMOVE_MOSAIC_LEVY, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
         this.mosaicId = mosaicId;
     }
     /**
@@ -71,7 +70,7 @@ export class MosaicRemoveLevyTansaction extends Transaction {
      * @memberof Transaction
      */
     public get size(): number {
-        return MosaicRemoveLevyTansaction.calculateSize();
+        return MosaicRemoveLevyTransaction.calculateSize();
     }
 
     public static calculateSize(): number {
@@ -84,7 +83,7 @@ export class MosaicRemoveLevyTansaction extends Transaction {
      * @override Transaction.toJSON()
      * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
      * @return {Object}
-     * @memberof MosaicRemoveLevyTansaction
+     * @memberof MosaicRemoveLevyTransaction
      */
     public toJSON() {
         const parent = super.toJSON();
@@ -127,13 +126,12 @@ export class MosaicRemoveLevyTransactionBuilder extends TransactionBuilder {
         return this;
     }
 
-    public build(): MosaicRemoveLevyTansaction {
-        return new MosaicRemoveLevyTansaction(
-            this._transactionType,
+    public build(): MosaicRemoveLevyTransaction {
+        return new MosaicRemoveLevyTransaction(
             this._networkType,
             this._version || TransactionVersion.MOSAIC_REMOVE_LEVY,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._maxFee ? this._maxFee : calculateFee(MosaicRemoveLevyTansaction.calculateSize(), this._feeCalculationStrategy),
+            this._maxFee ? this._maxFee : calculateFee(MosaicRemoveLevyTransaction.calculateSize(), this._feeCalculationStrategy),
             this._mosaicId,
             this._signature,
             this._signer,
