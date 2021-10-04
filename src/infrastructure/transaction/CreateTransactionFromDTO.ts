@@ -61,7 +61,13 @@ import { ExchangeOfferTransaction } from '../../model/transaction/ExchangeOfferT
 import { ExchangeOffer } from '../../model/transaction/ExchangeOffer';
 import { RemoveExchangeOfferTransaction } from '../../model/transaction/RemoveExchangeOfferTransaction';
 import { RemoveExchangeOffer } from '../../model/transaction/RemoveExchangeOffer';
+import { AccountMetadataTransaction } from '../../model/transaction/AccountMetadataTransaction';
+import { MosaicMetadataTransaction } from '../../model/transaction/MosaicMetadataTransaction';
+import { NamespaceMetadataTransaction } from '../../model/transaction/NamespaceMetadataTransaction';
+import { MosaicModifyLevyTransaction } from '../../model/transaction/MosaicModifyLevyTransaction';
+import { MosaicRemoveLevyTransaction } from '../../model/transaction/MosaicRemoveLevyTransaction';
 import { MosaicNonce } from '../../model/mosaic/MosaicNonce';
+import { MosaicLevy } from '../../model/mosaic/MosaicLevy';
 
 /**
  * @internal
@@ -177,7 +183,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             extractTransactionVersion(transactionDTO.version),
             Deadline.createFromDTO(transactionDTO.deadline),
             new UInt64(transactionDTO.maxFee || [0, 0]),
-            MosaicNonce.createFromHex(transactionDTO.mosaicNonce.toString(16)),
+            MosaicNonce.createFromNumber(transactionDTO.mosaicNonce),
             new MosaicId(transactionDTO.mosaicId),
             new MosaicProperties(
                 new UInt64(transactionDTO.properties[MosaicPropertyType.MosaicFlags].value),
@@ -245,7 +251,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             new Mosaic(new MosaicId(transactionDTO.mosaicId), new UInt64(transactionDTO.amount)),
             new UInt64(transactionDTO.duration),
             transactionDTO.hashAlgorithm,
-            (transactionDTO.hashAlgorithm === 2 ? transactionDTO.secret.substr(0, 40) : transactionDTO.secret),
+            (transactionDTO.hashAlgorithm === 2 ? transactionDTO.secret.substring(0, 40) : transactionDTO.secret),
             typeof recipient === 'object' && recipient.hasOwnProperty('address') ?
                 Address.createFromRawAddress(recipient.address) : Address.createFromEncoded(recipient),
             transactionDTO.signature,
@@ -260,7 +266,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
             Deadline.createFromDTO(transactionDTO.deadline),
             new UInt64(transactionDTO.maxFee || [0, 0]),
             transactionDTO.hashAlgorithm,
-            (transactionDTO.hashAlgorithm === 2 ? transactionDTO.secret.substr(0, 40) : transactionDTO.secret),
+            (transactionDTO.hashAlgorithm === 2 ? transactionDTO.secret.substring(0, 40) : transactionDTO.secret),
             transactionDTO.recipient,
             transactionDTO.proof,
             transactionDTO.signature,
@@ -504,13 +510,98 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo): Tr
                             extractNetworkType(transactionDTO.version)) : undefined,
             transactionInfo,
         );
+    } else if (transactionDTO.type === TransactionType.ACCOUNT_METADATA_NEM) {
+        const networkType = extractNetworkType(transactionDTO.version);
+        return new AccountMetadataTransaction(
+            networkType,
+            extractTransactionVersion(transactionDTO.version),
+            Deadline.createFromDTO(transactionDTO.deadline),
+            new UInt64(transactionDTO.maxFee || [0, 0]),
+            new UInt64(transactionDTO.scopedMetadataKey),
+            PublicAccount.createFromPublicKey(transactionDTO.targetPublicKey, networkType),
+            transactionDTO.valueSizeDelta,
+            "",
+            "",
+            transactionDTO.valueSize,
+            convert.hexToUint8(transactionDTO.value),
+            transactionDTO.signature,
+            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                            extractNetworkType(transactionDTO.version)) : undefined,
+            transactionInfo,
+        );
+    } else if (transactionDTO.type === TransactionType.MOSAIC_METADATA_NEM) {
+        const networkType = extractNetworkType(transactionDTO.version);
+        return new MosaicMetadataTransaction(
+            networkType,
+            extractTransactionVersion(transactionDTO.version),
+            Deadline.createFromDTO(transactionDTO.deadline),
+            new UInt64(transactionDTO.maxFee || [0, 0]),
+            new UInt64(transactionDTO.scopedMetadataKey),
+            PublicAccount.createFromPublicKey(transactionDTO.targetPublicKey, networkType),
+            new MosaicId(transactionDTO.namespaceId),
+            transactionDTO.valueSizeDelta,
+            "",
+            "",
+            transactionDTO.valueSize,
+            convert.hexToUint8(transactionDTO.value),
+            transactionDTO.signature,
+            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                            extractNetworkType(transactionDTO.version)) : undefined,
+            transactionInfo,
+        );
+    } else if (transactionDTO.type === TransactionType.NAMESPACE_METADATA_NEM) {
+        const networkType = extractNetworkType(transactionDTO.version);
+        return new NamespaceMetadataTransaction(
+            networkType,
+            extractTransactionVersion(transactionDTO.version),
+            Deadline.createFromDTO(transactionDTO.deadline),
+            new UInt64(transactionDTO.maxFee || [0, 0]),
+            new UInt64(transactionDTO.scopedMetadataKey),
+            PublicAccount.createFromPublicKey(transactionDTO.targetPublicKey, networkType),
+            new NamespaceId(transactionDTO.namespaceId),
+            transactionDTO.valueSizeDelta,
+            "",
+            "",
+            transactionDTO.valueSize,
+            convert.hexToUint8(transactionDTO.value),
+            transactionDTO.signature,
+            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                            extractNetworkType(transactionDTO.version)) : undefined,
+            transactionInfo,
+        );
+    } else if (transactionDTO.type === TransactionType.MODIFY_MOSAIC_LEVY) {
+        return new MosaicModifyLevyTransaction(
+            extractNetworkType(transactionDTO.version),
+            extractTransactionVersion(transactionDTO.version),
+            Deadline.createFromDTO(transactionDTO.deadline),
+            new UInt64(transactionDTO.maxFee || [0, 0]),
+            new MosaicId(transactionDTO.mosaicId),
+            new MosaicLevy(1, Address.createFromEncoded("VABCBC"), new MosaicId("0ABC"), new UInt64([0,0])), // To do, to be fix
+            transactionDTO.signature,
+            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                            extractNetworkType(transactionDTO.version)) : undefined,
+            transactionInfo,
+        );
+    } else if (transactionDTO.type === TransactionType.REMOVE_MOSAIC_LEVY) {
+        return new MosaicRemoveLevyTransaction(
+            extractNetworkType(transactionDTO.version),
+            extractTransactionVersion(transactionDTO.version),
+            Deadline.createFromDTO(transactionDTO.deadline),
+            new UInt64(transactionDTO.maxFee || [0, 0]),
+            new MosaicId(transactionDTO.mosaicId),
+            transactionDTO.signature,
+            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                            extractNetworkType(transactionDTO.version)) : undefined,
+            transactionInfo,
+        );
     }
+    
 
     throw new Error('Unimplemented transaction with type ' + transactionDTO.type);
 };
 
 export const extractNetworkType = (version: number): NetworkType => {
-    const networkType = parseInt((version >>> 0).toString(16).substr(0, 2), 16); // ">>> 0" hack makes it effectively an Uint32
+    const networkType = parseInt((version >>> 0).toString(16).substring(0, 2), 16); // ">>> 0" hack makes it effectively an Uint32
     if (networkType === NetworkType.MAIN_NET) {
         return NetworkType.MAIN_NET;
     } else if (networkType === NetworkType.TEST_NET) {
@@ -528,7 +619,7 @@ export const extractNetworkType = (version: number): NetworkType => {
 };
 
 export const extractTransactionVersion = (version: number): number => {
-    return parseInt((version >>> 0).toString(16).substr(2), 16); // ">>> 0" hack makes it effectively an Uint32
+    return parseInt((version >>> 0).toString(16).substring(2), 16); // ">>> 0" hack makes it effectively an Uint32
 };
 
 /**
@@ -544,11 +635,11 @@ export const extractRecipient = (recipient: any): Address | NamespaceId => {
     if (typeof recipient === 'string') {
         // If bit 0 of byte 0 is not set (like in 0x90), then it is a regular address.
         // Else (e.g. 0x91) it represents a namespace id which starts at byte 1.
-        const bit0 = convert.hexToUint8(recipient.substr(1, 2))[0];
+        const bit0 = convert.hexToUint8(recipient.substring(1, 3))[0];
         if ((bit0 & 16) === 16) {
             // namespaceId encoded hexadecimal notation provided
             // only 8 bytes are relevant to resolve the NamespaceId
-            const relevantPart = recipient.substr(2, 16);
+            const relevantPart = recipient.substring(2, 18);
             return NamespaceId.createFromEncoded(relevantPart);
         }
 
@@ -618,10 +709,10 @@ export const extractBeneficiary = (
 
     let dtoPublicAccount: PublicAccount | undefined;
     let dtoFieldValue: string | undefined;
-    if (blockDTO.beneficiaryPublicKey) {
-        dtoFieldValue = blockDTO.beneficiaryPublicKey;
-    } else if (blockDTO.beneficiary) {
-        dtoFieldValue = blockDTO.beneficiary;
+    if (blockDTO.block.beneficiaryPublicKey) {
+        dtoFieldValue = blockDTO.block.beneficiaryPublicKey;
+    } else if (blockDTO.block.beneficiary) {
+        dtoFieldValue = blockDTO.block.beneficiary;
     }
 
     if (! dtoFieldValue) {
