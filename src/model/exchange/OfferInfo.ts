@@ -5,7 +5,6 @@
 import { OfferInfoDTO } from "../../infrastructure/api";
 import { UInt64 } from "../UInt64";
 import { MosaicId } from "../mosaic/MosaicId";
-import { Deadline } from "../transaction/Deadline";
 
 export class OfferInfo {
     constructor(
@@ -14,7 +13,7 @@ export class OfferInfo {
         readonly price: number,
         readonly initialAmount: UInt64,
         readonly initialCost: UInt64,
-        readonly deadline: Deadline,
+        readonly deadline: UInt64,
     ) {
 
     }
@@ -26,7 +25,7 @@ export class OfferInfo {
             offerInfoDTO.price,
             new UInt64(offerInfoDTO.initialAmount),
             new UInt64(offerInfoDTO.initialCost),
-            Deadline.createFromDTO(offerInfoDTO.deadline)
+            new UInt64(offerInfoDTO.deadline)
         );
     }
 }
