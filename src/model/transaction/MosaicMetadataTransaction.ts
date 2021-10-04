@@ -29,8 +29,10 @@ export class MosaicMetadataTransaction extends Transaction {
     scopedMetadataKey: UInt64;
     targetMosaicId: MosaicId;
     valueSizeDelta: number;
+    valueSize: number;
     value: string;
     oldValue: string;
+    valueDifferences: Uint8Array;
 
     public static create(
         deadline: Deadline,
@@ -44,6 +46,17 @@ export class MosaicMetadataTransaction extends Transaction {
     ): MosaicMetadataTransaction {
         let scopedMetadataKey = KeyGenerator.generateUInt64Key(scopedMetadataKeyString);
         let valueSizeDelta = (Convert.utf8ToHex(value).length /2) - (Convert.utf8ToHex(oldValue).length / 2);
+        let valueSize = Math.max(Convert.utf8ToHex(value).length/2, Convert.utf8ToHex(oldValue).length/2, 0);
+
+        let valueUint8Array = new Uint8Array(valueSize);
+        valueUint8Array.set(Convert.hexToUint8(Convert.utf8ToHex(value)), 0);
+        let oldValueUint8Array = new Uint8Array(valueSize);
+        oldValueUint8Array.set(Convert.hexToUint8(Convert.utf8ToHex(oldValue)), 0);
+        let valueDifferenceBytes = new Uint8Array(valueSize);
+
+        for(let i =0; i < valueSize; ++i){
+            valueDifferenceBytes[i] = valueUint8Array[i] ^ oldValueUint8Array[i];
+        }
 
         return new MosaicMetadataTransactionBuilder()
             .networkType(networkType)
@@ -55,6 +68,8 @@ export class MosaicMetadataTransaction extends Transaction {
             .valueSizeDelta(valueSizeDelta)
             .value(value)
             .oldValue(oldValue)
+            .valueSize(valueSize)
+            .valueDifferences(valueDifferenceBytes)
             .build();
     }
 
@@ -72,7 +87,6 @@ export class MosaicMetadataTransaction extends Transaction {
      * @param transactionInfo
      */
     constructor(
-        transactionType: number,
         networkType: NetworkType,
         version: number,
         deadline: Deadline,
@@ -83,9 +97,12 @@ export class MosaicMetadataTransaction extends Transaction {
         valueSizeDelta: number,
         value: string,
         oldValue: string,
+        valueSize: number,
+        valueDifferences: Uint8Array,
         signature?: string,
         signer?: PublicAccount,
         transactionInfo?: TransactionInfo | AggregateTransactionInfo) {
+        let transactionType = TransactionType.MOSAIC_METADATA_NEM;
         super(transactionType, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
         this.scopedMetadataKey = scopedMetadataKey;
         this.targetPublicKey = targetPublicKey;
@@ -93,6 +110,8 @@ export class MosaicMetadataTransaction extends Transaction {
         this.valueSizeDelta = valueSizeDelta;
         this.value = value;
         this.oldValue = oldValue;
+        this.valueSize = valueSize;
+        this.valueDifferences = valueDifferences;
     }
     /**
      * @override Transaction.size()
@@ -135,7 +154,9 @@ export class MosaicMetadataTransaction extends Transaction {
                 targetMosaicId: this.targetMosaicId,
                 valueSizeDelta: this.valueSizeDelta,
                 value: this.value,
-                oldValue: this.oldValue
+                oldValue: this.oldValue,
+                valueSize: this.valueSize,
+                valueDifferences: Convert.uint8ToHex(this.valueDifferences) 
             }
         }
     }
@@ -156,6 +177,8 @@ export class MosaicMetadataTransaction extends Transaction {
             .addTargetMosaicId(this.targetMosaicId.id.toDTO())
             .addValueSizeDelta(this.valueSizeDelta)
             .addValue(this.value)
+            .addValueSize(this.valueSize)
+            .addValueDifferences(this.valueDifferences)
             .addOldValue(this.oldValue)
             .build();
     }
@@ -169,6 +192,8 @@ export class MosaicMetadataTransactionBuilder extends TransactionBuilder {
     protected _valueSizeDelta: number;
     protected _value: string;
     protected _oldValue: string;
+    protected _valueSize: number;
+    protected _valueDifferences: Uint8Array;
 
     constructor() {
         super();
@@ -205,9 +230,18 @@ export class MosaicMetadataTransactionBuilder extends TransactionBuilder {
         return this;
     }
 
+    public valueSize(valueSize: number){
+        this._valueSize = valueSize;
+        return this;
+    }
+
+    public valueDifferences(_valueDifferences: Uint8Array){
+        this._valueDifferences = _valueDifferences;
+        return this;
+    }
+
     public build(): MosaicMetadataTransaction {
         return new MosaicMetadataTransaction(
-            this._transactionType,
             this._networkType,
             this._version || TransactionVersion.MOSAIC_METADATA_NEM,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
@@ -218,6 +252,8 @@ export class MosaicMetadataTransactionBuilder extends TransactionBuilder {
             this._valueSizeDelta,
             this._value,
             this._oldValue,
+            this._valueSize,
+            this._valueDifferences,
             this._signature,
             this._signer,
             this._transactionInfo

@@ -29,6 +29,8 @@ export class Builder {
     valueSizeDelta: number;
     value: string;
     oldValue: string;
+    valueSize: number;
+    valueDifferences: Uint8Array;
 
     constructor() {
         this.fee = [0, 0];
@@ -85,22 +87,18 @@ export class Builder {
         return this;
     }
 
+    addValueSize(valueSize: number) {
+        this.valueSize = valueSize;
+        return this;
+    }
+
+    addValueDifferences(valueDifferences: Uint8Array) {
+        this.valueDifferences = valueDifferences;
+        return this;
+    }
+
     build() {
         const builder = new flatbuffers.Builder(1);
-
-        const valueSizeBytesCount = Math.max(convert.utf8ToHex(this.value).length/2, convert.utf8ToHex(this.oldValue).length/2, 0);
-        
-        let valueUint8Array = new Uint8Array(valueSizeBytesCount);
-        valueUint8Array.set(Builder.stringToUint8(this.value), 0);
-        let oldValueUint8Array = new Uint8Array(valueSizeBytesCount);
-        oldValueUint8Array.set(Builder.stringToUint8(this.oldValue), 0);
-        let valueDifferenceBytes = new Uint8Array(valueSizeBytesCount);
-
-        for(let i =0; i < valueSizeBytesCount; ++i){
-            valueDifferenceBytes[i] = valueUint8Array[i] ^ oldValueUint8Array[i];
-        }
-
-        const targetIdUint32 = new Uint32Array([0,0]);
 
         // Create vectors
         const signatureVector = AccountMetadataTransactionBuffer
@@ -110,8 +108,7 @@ export class Builder {
         const feeVector = AccountMetadataTransactionBuffer.createMaxFeeVector(builder, this.fee);
         const targetKeyVector = AccountMetadataTransactionBuffer.createTargetKeyVector(builder, convert.hexToUint8(this.targetPublicKey));
         const scopedMetadataKeyVector = AccountMetadataTransactionBuffer.createScopedMetadataKeyVector(builder, this.scopedMetadataKey);
-        //const targetIdVector = AccountMetadataTransactionBuffer.createTargetIdVector(builder, targetIdUint32);
-        const valueVector = AccountMetadataTransactionBuffer.createValueVector(builder, valueDifferenceBytes);
+        const valueVector = AccountMetadataTransactionBuffer.createValueVector(builder, this.valueDifferences);
 
         AccountMetadataTransactionBuffer.startAccountMetadataTransactionBuffer(builder);
         AccountMetadataTransactionBuffer.addSize(builder, this.size);
@@ -123,9 +120,8 @@ export class Builder {
         AccountMetadataTransactionBuffer.addDeadline(builder, deadlineVector);
         AccountMetadataTransactionBuffer.addTargetKey(builder, targetKeyVector);
         AccountMetadataTransactionBuffer.addScopedMetadataKey(builder, scopedMetadataKeyVector);
-        // AccountMetadataTransactionBuffer.addTargetId(builder, targetIdVector);
         AccountMetadataTransactionBuffer.addValueSizeDelta(builder, this.valueSizeDelta);
-        AccountMetadataTransactionBuffer.addValueSize(builder, valueSizeBytesCount);    
+        AccountMetadataTransactionBuffer.addValueSize(builder, this.valueSize);    
         AccountMetadataTransactionBuffer.addValue(builder, valueVector);
 
         const codedTransfer = AccountMetadataTransactionBuffer.endAccountMetadataTransactionBuffer(builder);

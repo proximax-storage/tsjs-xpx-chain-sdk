@@ -30,6 +30,8 @@ export class Builder {
     valueSizeDelta: number;
     value: string;
     oldValue: string;
+    valueSize: number;
+    valueDifferences: Uint8Array;
 
     constructor() {
         this.fee = [0, 0];
@@ -91,20 +93,18 @@ export class Builder {
         return this;
     }
 
+    addValueSize(valueSize: number) {
+        this.valueSize = valueSize;
+        return this;
+    }
+
+    addValueDifferences(valueDifferences: Uint8Array) {
+        this.valueDifferences = valueDifferences;
+        return this;
+    }
+
     build() {
         const builder = new flatbuffers.Builder(1);
-
-        const valueSizeBytesCount = Math.max(convert.utf8ToHex(this.value).length/2, convert.utf8ToHex(this.oldValue).length/2, 0);
-
-        let valueUint8Array = new Uint8Array(valueSizeBytesCount);
-        valueUint8Array.set(Builder.stringToUint8(this.value), 0);
-        let oldValueUint8Array = new Uint8Array(valueSizeBytesCount);
-        oldValueUint8Array.set(Builder.stringToUint8(this.oldValue), 0);
-        let valueDifferenceBytes = new Uint8Array(valueSizeBytesCount);
-
-        for(let i =0; i < valueSizeBytesCount; ++i){
-            valueDifferenceBytes[i] = valueUint8Array[i] ^ oldValueUint8Array[i];
-        }
 
         const targetIdUint8 = new Uint32Array(this.targetNamespaceId);
 
@@ -117,7 +117,7 @@ export class Builder {
         const targetKeyVector = MetadataTransactionBuffer.createTargetKeyVector(builder, convert.hexToUint8(this.targetPublicKey));
         const scopedMetadataKeyVector = MetadataTransactionBuffer.createScopedMetadataKeyVector(builder, this.scopedMetadataKey);
         const targetIdVector = MetadataTransactionBuffer.createTargetIdVector(builder, targetIdUint8);
-        const valueVector = MetadataTransactionBuffer.createValueVector(builder, valueDifferenceBytes);
+        const valueVector = MetadataTransactionBuffer.createValueVector(builder, this.valueDifferences);
 
         MetadataTransactionBuffer.startMetadataTransactionBuffer(builder);
         MetadataTransactionBuffer.addSize(builder, this.size);
@@ -131,7 +131,7 @@ export class Builder {
         MetadataTransactionBuffer.addScopedMetadataKey(builder, scopedMetadataKeyVector);
         MetadataTransactionBuffer.addTargetId(builder, targetIdVector);
         MetadataTransactionBuffer.addValueSizeDelta(builder, this.valueSizeDelta);
-        MetadataTransactionBuffer.addValueSize(builder, valueSizeBytesCount);    
+        MetadataTransactionBuffer.addValueSize(builder, this.valueSize);    
         MetadataTransactionBuffer.addValue(builder, valueVector);
 
         const codedTransfer = MetadataTransactionBuffer.endMetadataTransactionBuffer(builder);
