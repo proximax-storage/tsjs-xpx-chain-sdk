@@ -156,4 +156,30 @@ export class TransactionType {
      * Remove exchange transaction type
      */
     public static readonly REMOVE_EXCHANGE_OFFER = 0x435D;
+
+    /**
+     * Modify account metadata transaction type - NEM 
+     */
+    public static readonly ACCOUNT_METADATA_NEM = 0x413F;
+
+    /**
+    * Modify mosaic metadata transaction type - NEM 
+    */
+    public static readonly MOSAIC_METADATA_NEM = 0x423F;
+
+    /**
+    * Modify namespace metadata transaction type - NEM
+    */
+    public static readonly NAMESPACE_METADATA_NEM = 0x433F;
+
+    /**
+    * Modify mosaic levy transaction type
+    */
+    public static readonly MODIFY_MOSAIC_LEVY = 0x434D;
+
+    /**
+    * Remove mosaic levy transaction type
+    */
+    public static readonly REMOVE_MOSAIC_LEVY = 0x444D;
+
 }
