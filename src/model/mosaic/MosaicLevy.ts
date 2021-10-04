@@ -7,8 +7,6 @@ const defaultMosaicLevyOnePercentValue: number = 100000; // default amount that 
 
 export class MosaicLevy{
 
-    public mosaicOnePercentValue: number = defaultMosaicLevyOnePercentValue;
-
     constructor(
         public readonly type: MosaicLevyType,
         public readonly recipient: Address,
@@ -42,9 +40,5 @@ export class MosaicLevy{
             return UInt64.fromUint(percentage * mosaicOnePercentValue);
         }
         return UInt64.fromUint(percentage * defaultMosaicLevyOnePercentValue);
-    }
-
-    updateLevyFeePercentile(percentage: number): void{
-        this.fee = UInt64.fromUint(percentage * this.mosaicOnePercentValue);
     }
 }

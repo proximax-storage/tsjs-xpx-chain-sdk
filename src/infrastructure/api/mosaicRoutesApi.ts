@@ -33,6 +33,7 @@ import { MosaicIds } from '../model/mosaicIds';
 import { MosaicInfoDTO } from '../model/mosaicInfoDTO';
 import { MosaicNamesDTO } from '../model/mosaicNamesDTO';
 import { MosaicRichListDTO } from '../model/mosaicRichListDTO';
+import { MosaicLevyDTO } from '../model/mosaicLevyDTO';
 
 import { ObjectSerializer, Authentication, VoidAuth, Interceptor } from '../model/models';
 
@@ -379,6 +380,76 @@ export class MosaicRoutesApi {
                         reject(error);
                     } else {
                         body = ObjectSerializer.deserialize(body, "Array<MosaicNamesDTO>");
+                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
+                            resolve({ response: response, body: body });
+                        } else {
+                            reject(new HttpError(response, body, response.statusCode));
+                        }
+                    }
+                });
+            });
+        });
+    }
+
+    /**
+     * Get mosaic levy of mosaic.
+     * @summary Get mosaic levy information for a mosaic
+     * @param mosaicId 
+     */
+     public async getMosaicLevy (mosaicId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: MosaicLevyDTO;  }> {
+        const localVarPath = this.basePath + '/mosaic/{mosaicId}/levy'
+            .replace('{' + 'mosaicId' + '}', encodeURIComponent(String(mosaicId)));;
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
+        const produces = ['application/json'];
+        // give precedence to 'application/json'
+        if (produces.indexOf('application/json') >= 0) {
+            localVarHeaderParams.Accept = 'application/json';
+        } else {
+            localVarHeaderParams.Accept = produces.join(',');
+        }
+        let localVarFormParams: any = {};
+
+        // verify required parameter 'mosaicId' is not null or undefined
+        if (mosaicId === null || mosaicId === undefined) {
+            throw new Error('Required parameter mosaicId was null or undefined when calling getMosaicLevy.');
+        }
+
+        (<any>Object).assign(localVarHeaderParams, options.headers);
+
+        let localVarUseFormData = false;
+
+        let localVarRequestOptions: localVarRequest.Options = {
+            method: 'GET',
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
+            uri: localVarPath,
+            useQuerystring: this._useQuerystring,
+            json: true
+        };
+
+        let authenticationPromise = Promise.resolve();
+        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
+
+        let interceptorPromise = authenticationPromise;
+        for (const interceptor of this.interceptors) {
+            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
+        }
+
+        return interceptorPromise.then(() => {
+            if (Object.keys(localVarFormParams).length) {
+                if (localVarUseFormData) {
+                    (<any>localVarRequestOptions).formData = localVarFormParams;
+                } else {
+                    localVarRequestOptions.form = localVarFormParams;
+                }
+            }
+            return new Promise<{ response: http.IncomingMessage; body: MosaicLevyDTO;  }>((resolve, reject) => {
+                localVarRequest(localVarRequestOptions, (error, response, body) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        body = ObjectSerializer.deserialize(body, "MosaicLevyDTO");
                         if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                             resolve({ response: response, body: body });
                         } else {
