@@ -112,7 +112,7 @@ export * from './hashLockWithMeta';
 export * from './heightInfoDTO';
 export * from './inflationReceiptDTO';
 export * from './inflationReceiptDTOAllOf';
-export * from './inlineResponse200';
+export * from './ExchangeInlineResponse200';
 export * from './inlineResponse2001';
 export * from './joinToDriveTransactionDTO';
 export * from './linkActionEnum';
@@ -317,7 +317,7 @@ import { HashLockWithMeta } from './hashLockWithMeta';
 import { HeightInfoDTO } from './heightInfoDTO';
 import { InflationReceiptDTO } from './inflationReceiptDTO';
 import { InflationReceiptDTOAllOf } from './inflationReceiptDTOAllOf';
-import { InlineResponse200 } from './inlineResponse200';
+import { ExchangeInlineResponse200 } from './ExchangeInlineResponse200';
 import { InlineResponse2001 } from './inlineResponse2001';
 import { JoinToDriveTransactionDTO } from './joinToDriveTransactionDTO';
 import { LinkActionEnum } from './linkActionEnum';
@@ -548,7 +548,7 @@ let typeMap: {[index: string]: any} = {
     "HeightInfoDTO": HeightInfoDTO,
     "InflationReceiptDTO": InflationReceiptDTO,
     "InflationReceiptDTOAllOf": InflationReceiptDTOAllOf,
-    "InlineResponse200": InlineResponse200,
+    "ExchangeInlineResponse200": ExchangeInlineResponse200,
     "InlineResponse2001": InlineResponse2001,
     "JoinToDriveTransactionDTO": JoinToDriveTransactionDTO,
     "MerklePathItem": MerklePathItem,

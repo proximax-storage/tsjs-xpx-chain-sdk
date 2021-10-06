@@ -13,7 +13,7 @@
 import { RequestFile } from '../api';
 import { AccountExchangeDTO } from './accountExchangeDTO';
 
-export class InlineResponse200 {
+export class ExchangeInlineResponse200 {
     'exchange'?: AccountExchangeDTO;
 
     static discriminator: string | undefined = undefined;
@@ -26,7 +26,7 @@ export class InlineResponse200 {
         }    ];
 
     static getAttributeTypeMap() {
-        return InlineResponse200.attributeTypeMap;
+        return ExchangeInlineResponse200.attributeTypeMap;
     }
 }
 
