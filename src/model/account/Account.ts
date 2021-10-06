@@ -81,6 +81,20 @@ export class Account {
 
     /**
     * Create an Account from a given mnemonic string
+    * mnenonic language supported, 
+    * need to setDefaultWordlist to specific langauge in order to use other langauge
+    * default is english
+    * langauge supported:
+    * chinese_simplified
+    * chinese_traditional 
+    * english
+    * japanese
+    * spanish
+    * italian
+    * french
+    * korean
+    * czech
+    * portuguese
     * @param mnemonic - The mnemonic string
     * @param networkType - Network type
     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
@@ -166,6 +180,10 @@ export class Account {
         return convert.uint8ToHex(this.keyPair.privateKey);
     }
 
+    /**
+     * Account private key represent by mnemonic
+     * @return {string}
+     */
     get mnemonic(): string{
         return Crypto.entropyToMnemonic(this.privateKey);
     }

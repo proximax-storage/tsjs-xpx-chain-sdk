@@ -21,7 +21,7 @@ import { encode as utf8encode } from 'utf8';
 import * as utility from './Utilities';
 import { SignSchema } from './SignSchema';
 const CryptoJS = require('crypto-js');
-import { generateMnemonic, mnemonicToSeedSync, validateMnemonic, entropyToMnemonic, mnemonicToEntropy } from 'bip39';
+import { generateMnemonic, validateMnemonic, entropyToMnemonic, mnemonicToEntropy } from 'bip39';
 export class Crypto {
     /**
      * Encrypt a private key for mobile apps (AES_PBKF2)
