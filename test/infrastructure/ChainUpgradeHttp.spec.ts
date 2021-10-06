@@ -27,7 +27,7 @@ describe('ChainUpgradeHttp', () => {
         it('should call api client', (done) => {
             client.getChainUpgrade(666).subscribe(response => {
                 expect(response.height.compact()).to.be.equal(666);
-                expect(response.catapultVersion.compact()).to.be.equal(999);
+                expect(response.catapultVersion.minor).to.be.equal(999);
                 done();
             })
         });
