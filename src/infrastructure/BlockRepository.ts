@@ -19,6 +19,7 @@ import {BlockInfo} from '../model/blockchain/BlockInfo';
 import { MerkleProofInfo } from '../model/blockchain/MerkleProofInfo';
 import { Statement } from '../model/receipt/Statement';
 import { TransactionSearch } from '../model/transaction/TransactionSearch';
+import { Transaction } from '../model/transaction/Transaction';
 import {QueryParams} from './QueryParams';
 
 /**
@@ -42,7 +43,16 @@ export interface BlockRepository {
      * @returns Observable<Transaction[]>
      */
     getBlockTransactions(height: number,
-                         queryParams?: QueryParams): Observable<TransactionSearch>;
+                         queryParams?: QueryParams): Observable<Transaction[]>;
+
+    /**
+     * Gets array of transactions included in a block for a block height
+     * @param height - Block height
+     * @param queryParams - (Optional) Query params
+     * @returns Observable<TransactionSearch>
+     */
+     getBlockTransactionsWithPagination(height: number,
+        queryParams?: QueryParams): Observable<TransactionSearch>;
 
     /**
      * Gets array of BlockInfo for a block height with limit

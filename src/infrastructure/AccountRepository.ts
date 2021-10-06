@@ -22,6 +22,7 @@ import {MultisigAccountInfo} from '../model/account/MultisigAccountInfo';
 import {PublicAccount} from '../model/account/PublicAccount';
 import {AggregateTransaction} from '../model/transaction/AggregateTransaction';
 import {Transaction} from '../model/transaction/Transaction';
+import {TransactionSearch} from '../model/transaction/TransactionSearch';
 import {QueryParams} from './QueryParams';
 import {AccountRestrictionsInfo} from "../model/account/AccountRestrictionsInfo";
 import { AccountNames } from '../model/account/AccountNames';
@@ -93,14 +94,33 @@ export interface AccountRepository {
                  queryParams?: QueryParams): Observable<Transaction[]>;
 
     /**
+     * Gets an array of confirmed transactions for which an account is signer or receiver.
+     * @param publicAccount - User public account
+     * @param queryParams - (Optional) Query params
+     * @returns Observable<TransactionSearch>
+     */
+     transactionsWithPagination(publicAccount: PublicAccount,
+        queryParams?: QueryParams): Observable<TransactionSearch>;
+
+    /**
      * Gets an array of transactions for which an account is the recipient of a transaction.
      * A transaction is said to be incoming with respect to an account if the account is the recipient of a transaction.
      * @param publicAccount - User public account
      * @param queryParams - (Optional) Query params
      * @returns Observable<Transaction[]>
      */
-    incomingTransactions(publicAccount: PublicAccount,
+    incomingTransactions(accountId: Address | PublicAccount,
                          queryParams?: QueryParams): Observable<Transaction[]>;
+
+    /**
+     * Gets an array of transactions for which an account is the recipient of a transaction.
+     * A transaction is said to be incoming with respect to an account if the account is the recipient of a transaction.
+     * @param publicAccount - User public account
+     * @param queryParams - (Optional) Query params
+     * @returns Observable<TransactionSearch>
+     */
+     incomingTransactionsWithPagination(accountId: Address | PublicAccount,
+        queryParams?: QueryParams): Observable<TransactionSearch>;
 
     /**
      * Gets an array of transactions for which an account is the sender a transaction.
@@ -113,6 +133,16 @@ export interface AccountRepository {
                          queryParams?: QueryParams): Observable<Transaction[]>;
 
     /**
+     * Gets an array of transactions for which an account is the sender a transaction.
+     * A transaction is said to be outgoing with respect to an account if the account is the sender of a transaction.
+     * @param publicAccount - User public account
+     * @param queryParams - (Optional) Query params
+     * @returns Observable<TransactionSearch>
+     */
+     outgoingTransactionsWithPagination(publicAccount: PublicAccount,
+        queryParams?: QueryParams): Observable<TransactionSearch>;
+
+    /**
      * Gets the array of transactions for which an account is the sender or receiver and which have not yet been included in a block.
      * Unconfirmed transactions are those transactions that have not yet been included in a block.
      * Unconfirmed transactions are not guaranteed to be included in any block.
@@ -122,6 +152,17 @@ export interface AccountRepository {
      */
     unconfirmedTransactions(publicAccount: PublicAccount,
                             queryParams?: QueryParams): Observable<Transaction[]>;
+
+    /**
+     * Gets the array of transactions for which an account is the sender or receiver and which have not yet been included in a block.
+     * Unconfirmed transactions are those transactions that have not yet been included in a block.
+     * Unconfirmed transactions are not guaranteed to be included in any block.
+     * @param publicAccount - User public account
+     * @param queryParams - (Optional) Query params
+     * @returns Observable<TransactionSearch>
+     */
+     unconfirmedTransactionsWithPagination(publicAccount: PublicAccount,
+        queryParams?: QueryParams): Observable<TransactionSearch>;
 
     /**
      * Gets an array of transactions for which an account is the sender or has sign the transaction.

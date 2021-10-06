@@ -109,6 +109,30 @@ export class BlockHttp extends Http implements BlockRepository {
      * @returns Observable<Transaction[]>
      */
     public getBlockTransactions(height: number,
+                                queryParams?: QueryParams): Observable<Transaction[]> {
+        return observableFrom(
+            this.blockRoutesApi.getBlockTransactions(height,
+                                                     this.queryParams(queryParams).pageSize,
+                                                     this.queryParams(queryParams).id,
+                                                     this.queryParams(queryParams).order))
+                .pipe(map(response => {
+                    let transactions: Transaction[] = [];
+                    if(response.body.data.length){
+                        transactions = response.body.data.map((transactionDTO) => {
+                            return CreateTransactionFromDTO(transactionDTO);
+                        });
+                    }
+                    return transactions;
+        }));
+    }
+
+    /**
+     * Gets array of transactions included in a block for a block height
+     * @param height - Block height
+     * @param queryParams - (Optional) Query params
+     * @returns Observable<TransactionSearch>
+     */
+    public getBlockTransactionsWithPagination(height: number,
                                 queryParams?: QueryParams): Observable<TransactionSearch> {
         return observableFrom(
             this.blockRoutesApi.getBlockTransactions(height,
