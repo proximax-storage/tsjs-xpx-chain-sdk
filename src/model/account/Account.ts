@@ -94,10 +94,9 @@ export class Account {
             throw Error(`Invalid mnemonic: ${mnemonic.length}`);
         }
       
-        const hashKey = convert.uint8ToHex(Crypto.mnemonicToSeed(mnemonic));
+        const hashKey = Crypto.mnemonicToHex(mnemonic);
       
-        return Account.createFromPrivateKey(hashKey,networkType, signSchema);
-    
+        return Account.createFromPrivateKey(hashKey, networkType, signSchema);
     }
 
     /**
@@ -165,6 +164,10 @@ export class Account {
      */
     get privateKey(): string {
         return convert.uint8ToHex(this.keyPair.privateKey);
+    }
+
+    get mnemonic(): string{
+        return Crypto.entropyToMnemonic(this.privateKey);
     }
 
     /**
