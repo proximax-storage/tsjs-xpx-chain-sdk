@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import * as utilities from './Utilities';
+import {decode} from 'utf8';
 
 export class Convert {
 
@@ -186,4 +187,16 @@ export class Convert {
             (input[1] & 0xff0000)    >>> 16,
             (input[1] & 0xff000000)  >>> 24,
         ];
+
+    public static decodeHexToUtf8(hex: string): string {
+        let str = '';
+        for (let i = 0; i < hex.length; i += 2) {
+            str += String.fromCharCode(parseInt(hex.substring(i, i + 2), 16));
+        }
+        try {
+            return decode(str);
+        } catch (e) {
+             return str;
+        }
+    }
 }
