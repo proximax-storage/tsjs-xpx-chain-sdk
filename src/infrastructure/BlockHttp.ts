@@ -23,6 +23,7 @@ import { MerkleProofInfo } from '../model/blockchain/MerkleProofInfo';
 import { MerkleProofInfoPayload } from '../model/blockchain/MerkleProofInfoPayload';
 import { Statement } from '../model/receipt/Statement';
 import {Transaction} from '../model/transaction/Transaction';
+import { TransactionSearch } from '../model/transaction/TransactionSearch';
 import {UInt64} from '../model/UInt64';
 import { BlockRoutesApi } from './api';
 import {BlockRepository} from './BlockRepository';
@@ -77,7 +78,7 @@ export class BlockHttp extends Http implements BlockRepository {
     public getBlockByHeight(height: number): Observable<BlockInfo> {
         return observableFrom(this.blockRoutesApi.getBlockByHeight(height)).pipe(map(response => {
             const blockDTO = response.body;
-            const networkType = parseInt((blockDTO.block.version >>> 0).toString(16).substr(0, 2), 16); // ">>> 0" hack makes it effectively an Uint32
+            const networkType = parseInt((blockDTO.block.version >>> 0).toString(16).substring(0, 2), 16); // ">>> 0" hack makes it effectively an Uint32
             return new BlockInfo(
                 blockDTO.meta.hash,
                 blockDTO.meta.generationHash,
@@ -86,7 +87,7 @@ export class BlockHttp extends Http implements BlockRepository {
                 blockDTO.block.signature,
                 PublicAccount.createFromPublicKey(blockDTO.block.signer, networkType),
                 networkType,
-                parseInt((blockDTO.block.version >>> 0).toString(16).substr(2, 2), 16), // Tx version
+                parseInt((blockDTO.block.version >>> 0).toString(16).substring(2, 4), 16), // Tx version
                 blockDTO.block.type,
                 new UInt64(blockDTO.block.height),
                 new UInt64(blockDTO.block.timestamp),
@@ -108,16 +109,20 @@ export class BlockHttp extends Http implements BlockRepository {
      * @returns Observable<Transaction[]>
      */
     public getBlockTransactions(height: number,
-                                queryParams?: QueryParams): Observable<Transaction[]> {
+                                queryParams?: QueryParams): Observable<TransactionSearch> {
         return observableFrom(
             this.blockRoutesApi.getBlockTransactions(height,
                                                      this.queryParams(queryParams).pageSize,
                                                      this.queryParams(queryParams).id,
                                                      this.queryParams(queryParams).order))
                 .pipe(map(response => {
-                    return response.body.map((transactionDTO) => {
-                        return CreateTransactionFromDTO(transactionDTO);
-                    });
+                    let transactions: Transaction[] = [];
+                    if(response.body.data.length){
+                        transactions = response.body.data.map((transactionDTO) => {
+                            return CreateTransactionFromDTO(transactionDTO);
+                        });
+                    }
+                    return new TransactionSearch(transactions, response.body.pagination);
         }));
     }
 
@@ -131,7 +136,7 @@ export class BlockHttp extends Http implements BlockRepository {
         return observableFrom(
             this.blockRoutesApi.getBlocksByHeightWithLimit(height, limit)).pipe(map(response => {
             return response.body.map((blockDTO) => {
-                const networkType = parseInt((blockDTO.block.version >>> 0).toString(16).substr(0, 2), 16);
+                const networkType = parseInt((blockDTO.block.version >>> 0).toString(16).substring(0, 2), 16);
                 return new BlockInfo(
                     blockDTO.meta.hash,
                     blockDTO.meta.generationHash,
@@ -140,7 +145,7 @@ export class BlockHttp extends Http implements BlockRepository {
                     blockDTO.block.signature,
                     PublicAccount.createFromPublicKey(blockDTO.block.signer, networkType),
                     networkType,
-                    parseInt((blockDTO.block.version >>> 0).toString(16).substr(2, 2), 16), // Tx version
+                    parseInt((blockDTO.block.version >>> 0).toString(16).substring(2, 4), 16), // Tx version
                     blockDTO.block.type,
                     new UInt64(blockDTO.block.height),
                     new UInt64(blockDTO.block.timestamp),

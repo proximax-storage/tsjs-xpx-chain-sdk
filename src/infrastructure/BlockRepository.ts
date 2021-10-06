@@ -18,7 +18,7 @@ import {Observable} from 'rxjs';
 import {BlockInfo} from '../model/blockchain/BlockInfo';
 import { MerkleProofInfo } from '../model/blockchain/MerkleProofInfo';
 import { Statement } from '../model/receipt/Statement';
-import {Transaction} from '../model/transaction/Transaction';
+import { TransactionSearch } from '../model/transaction/TransactionSearch';
 import {QueryParams} from './QueryParams';
 
 /**
@@ -42,7 +42,7 @@ export interface BlockRepository {
      * @returns Observable<Transaction[]>
      */
     getBlockTransactions(height: number,
-                         queryParams?: QueryParams): Observable<Transaction[]>;
+                         queryParams?: QueryParams): Observable<TransactionSearch>;
 
     /**
      * Gets array of BlockInfo for a block height with limit
