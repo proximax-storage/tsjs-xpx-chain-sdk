@@ -21,6 +21,7 @@ import { PublicAccount } from '../../model/account/PublicAccount';
 import { NetworkType } from '../../model/blockchain/NetworkType';
 import { Mosaic } from '../../model/mosaic/Mosaic';
 import { MosaicId } from '../../model/mosaic/MosaicId';
+import { MosaicLevy } from '../../model/mosaic/MosaicLevy'
 import { MosaicNonce } from '../../model/mosaic/MosaicNonce';
 import { MosaicProperties } from '../../model/mosaic/MosaicProperties';
 import { NamespaceId } from '../../model/namespace/NamespaceId';
@@ -37,7 +38,7 @@ import { SignedTransaction } from '../../model/transaction/SignedTransaction';
 import { Transaction } from '../../model/transaction/Transaction';
 import { TransactionType } from '../../model/transaction/TransactionType';
 import { UInt64 } from '../../model/UInt64';
-import { TransactionBuilderFactory, MetadataType, MetadataModification, Metadata, MultisigCosignatoryModificationType } from '../../model/model';
+import { TransactionBuilderFactory, MultisigCosignatoryModificationType } from '../../model/model';
 import { AddExchangeOffer } from '../../model/transaction/AddExchangeOffer';
 import { ExchangeOffer } from '../../model/transaction/ExchangeOffer';
 import { RemoveExchangeOffer } from '../../model/transaction/RemoveExchangeOffer';
@@ -380,30 +381,56 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                     PublicAccount.createFromPublicKey(cosignature.substring(0, 64), networkType),
                 )) : [])
                 .build();
+        
+        case TransactionType.MOSAIC_METADATA_NEM:
+            return factory.mosaicMetadata()
+                .targetPublicKey(PublicAccount.createFromPublicKey(transactionData.substring(0, 16), networkType))
+                .scopedMetadataKey(UInt64.fromHex(reverse(transactionData.substring(16, 32))))
+                .targetMosaicId(new MosaicId(UInt64.fromHex(reverse(transactionData.substring(32, 48))).toDTO()))
+                .valueSizeDelta(parseInt(reverse(transactionData.substring(48, 52)), 16))
+                .valueSize(parseInt(reverse(transactionData.substring(52, 56)), 16))
+                .valueDifferences(convert.hexToUint8(transactionData.substring(56)))
+                .build();
+            
+        case TransactionType.NAMESPACE_METADATA_NEM:
+            return factory.namespaceMetadata()
+                .targetPublicKey(PublicAccount.createFromPublicKey(transactionData.substring(0, 16), networkType))
+                .scopedMetadataKey(UInt64.fromHex(reverse(transactionData.substring(16, 32))))
+                .targetNamespaceId(new NamespaceId(UInt64.fromHex(reverse(transactionData.substring(32, 48))).toDTO()))
+                .valueSizeDelta(parseInt(reverse(transactionData.substring(48, 52)), 16))
+                .valueSize(parseInt(reverse(transactionData.substring(52, 56)), 16))
+                .valueDifferences(convert.hexToUint8(transactionData.substring(56)))
+                .build();
 
-        case TransactionType.MODIFY_ACCOUNT_METADATA:
-        case TransactionType.MODIFY_MOSAIC_METADATA:
-        case TransactionType.MODIFY_NAMESPACE_METADATA:
-            const metadataType = extractNumberFromHex(transactionData.substring(0, 2));
-            const metadataIdLength = type === TransactionType.MODIFY_ACCOUNT_METADATA ? 25 : 8;
-            const metadataId = transactionData.substring(2, 2 + metadataIdLength * 2);
-            const metadataModifications = extractMetadataModifications(transactionData.substring(2 + metadataIdLength * 2));
-            if (type === TransactionType.MODIFY_ACCOUNT_METADATA) {
-                return factory.accountMetadata()
-                    .address(Address.createFromEncoded(metadataId))
-                    .modifications(metadataModifications)
+        case TransactionType.ACCOUNT_METADATA_NEM:
+            return factory.accountMetadata()
+                .targetPublicKey(PublicAccount.createFromPublicKey(transactionData.substring(0, 16), networkType))
+                .scopedMetadataKey(UInt64.fromHex(reverse(transactionData.substring(16, 32))))
+                .valueSizeDelta(parseInt(reverse(transactionData.substring(32, 36)), 16))
+                .valueSize(parseInt(reverse(transactionData.substring(36, 40)), 16))
+                .valueDifferences(convert.hexToUint8(transactionData.substring(40)))
+                .build();
+            
+        case TransactionType.MODIFY_MOSAIC_LEVY:
+            return factory.mosaicModifyLevy()
+                .mosaicId(new MosaicId(UInt64.fromHex(reverse(transactionData.substring(0, 16))).toDTO()))
+                .mosaicLevy(
+                    new MosaicLevy(
+                        parseInt(transactionData.substring(16, 18), 16), 
+                        Address.createFromEncoded(transactionData.substring(18, 43)), 
+                        new MosaicId(
+                            UInt64.fromHex(reverse(transactionData.substring(43, 59))).toDTO()
+                        ),
+                        UInt64.fromHex(reverse(transactionData.substring(59, 75)))
+                    )
+                )    
+                .build();
+
+        case TransactionType.REMOVE_MOSAIC_LEVY:
+        
+            return factory.mosaicRemoveLevy()
+                    .mosaicId(new MosaicId(UInt64.fromHex(reverse(transactionData.substring(0, 16))).toDTO()))
                     .build();
-            } else if (type === TransactionType.MODIFY_MOSAIC_METADATA) {
-                return factory.mosaicMetadata()
-                    .mosaicId(new MosaicId(UInt64.fromHex(reverse(metadataId)).toDTO()))
-                    .modifications(metadataModifications)
-                    .build();
-            } else {// if type === TransactionType.MODIFY_NAMESPACE_METADATA
-                return factory.namespaceMetadata()
-                    .namespaceId(new NamespaceId(UInt64.fromHex(reverse(metadataId)).toDTO()))
-                    .modifications(metadataModifications)
-                    .build();
-            }
 
         case TransactionType.CHAIN_CONFIGURE:
             const applyHeightDelta = transactionData.substring(0, 16);
@@ -427,7 +454,7 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
 
         case TransactionType.ADD_EXCHANGE_OFFER:
             // const numOffers = extractNumberFromHex(transactionData.substring(0, 2));
-            const addOffersArray =  transactionData.substr(2).match(/.{66}/g) || [];
+            const addOffersArray =  transactionData.substring(2).match(/.{66}/g) || [];
             return factory.addExchangeOffer()
                 .offers(addOffersArray.map(o => {
                     const id = o.substring(0, 16);
@@ -447,7 +474,7 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                 .build();
         case TransactionType.EXCHANGE_OFFER:
             // const numOffers = extractNumberFromHex(transactionData.substring(0, 2));
-            const offersArray =  transactionData.substr(2).match(/.{114}/g) || [];
+            const offersArray =  transactionData.substring(2).match(/.{114}/g) || [];
             return factory.exchangeOffer()
                 .offers(offersArray.map(o => {
                     const id = o.substring(0, 16);
@@ -467,7 +494,7 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                 .build();
         case TransactionType.REMOVE_EXCHANGE_OFFER:
             // const numOffers = extractNumberFromHex(transactionData.substring(0, 2));
-            const removeOffersArray =  transactionData.substr(2).match(/.{18}/g) || [];
+            const removeOffersArray =  transactionData.substring(2).match(/.{18}/g) || [];
             return factory.removeExchangeOffer()
                 .offers(removeOffersArray.map(o => {
                     const id = o.substring(0, 16);
@@ -484,34 +511,6 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
             throw new Error ('Transaction type not implemented yet.');
         }
 };
-
-/**
- * @internal
- * @param modificationsStringHex
- * @returns {MetadataModification[]}
- */
-const extractMetadataModifications = (modificationsStringHex: string): MetadataModification[] => {
-    let modificationArr = [] as MetadataModification[];
-    let offset = 0;
-    while (offset < modificationsStringHex.length) {
-        const modificationSize = extractNumberFromHex(modificationsStringHex.substring(offset, offset + 8));
-        const modificationType = extractNumberFromHex(modificationsStringHex.substring(offset + 8, offset + 10));
-        const keyLength = extractNumberFromHex(modificationsStringHex.substring(offset + 10, offset + 12));
-        const valueLength = extractNumberFromHex(modificationsStringHex.substring(offset + 12, offset + 16));
-        const keyHex = modificationsStringHex.substring(offset + 16, offset + 16 + keyLength*2);
-        const valueHex = modificationsStringHex.substring(offset + 16 + keyLength*2, offset + 16 + keyLength*2 + valueLength*2);
-        if (modificationSize !== 8 + keyLength + valueLength) {
-            throw new Error('MetadataModification parse error');
-        }
-        modificationArr.push(new MetadataModification(
-            modificationType,
-            decodeHexUtf8(keyHex),
-            decodeHexUtf8(valueHex)
-        ));
-        offset += modificationSize*2;
-    }
-    return modificationArr;
-}
 
 /**
  * @internal
@@ -594,7 +593,7 @@ const decodeHexUtf8 = (hex: string): string => {
 const decodeHexRaw = (hex: string): string => {
     let str = '';
     for (let i = 0; i < hex.length; i += 2) {
-        str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+        str += String.fromCharCode(parseInt(hex.substring(i, i + 2), 16));
     }
     return str;
 };
