@@ -199,4 +199,24 @@ export class Convert {
              return str;
         }
     }
+
+    public static hexToInt(hex: string) : number{
+        if (hex.length % 2 != 0) {
+            hex = "0" + hex;
+        }
+        let num = parseInt(hex, 16);
+        const maxVal = Math.pow(2, hex.length / 2 * 8);
+        if (num > maxVal / 2 - 1) {
+            num = num - maxVal
+        }
+        return num;
+    }
+
+    public static hexReverse(hex: string) : string{
+        if (hex.length % 2 != 0) {
+            hex = "0" + hex;
+        }
+        let uint8Array = Convert.hexToUint8(hex);
+        return Convert.uint8ToHex(uint8Array.reverse());
+    }
 }
