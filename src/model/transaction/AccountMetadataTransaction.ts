@@ -141,8 +141,8 @@ export class AccountMetadataTransaction extends Transaction {
             ...parent,
             transaction: {
                 ...parent.transaction,
-                scopedMetadataKey: this.scopedMetadataKey,
-                targetPublicKey: this.targetPublicKey,
+                scopedMetadataKey: this.scopedMetadataKey.toDTO(),
+                targetPublicKey: this.targetPublicKey.toDTO(),
                 valueSizeDelta: this.valueSizeDelta,
                 value: this.value,
                 oldValue: this.oldValue,

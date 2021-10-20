@@ -106,12 +106,12 @@ export class MosaicModifyLevyTransaction extends Transaction {
             ...parent,
             transaction: {
                 ...parent.transaction,
-                mosaicId: this.mosaicId.toHex(),
+                mosaicId: this.mosaicId.toDTO(),
                 mosaicLevy: {
                     type: this.mosaicLevy.type,
-                    mosaicId: this.mosaicLevy.mosaicId,
-                    recipient: this.mosaicLevy.recipient,
-                    fee: this.mosaicLevy.fee.compact(),
+                    mosaicId: this.mosaicLevy.mosaicId.toDTO(),
+                    recipient: this.mosaicLevy.recipient.toDTO(),
+                    fee: this.mosaicLevy.fee.toDTO(),
                 }
             }
         }
