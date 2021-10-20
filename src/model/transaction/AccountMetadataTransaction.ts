@@ -27,20 +27,20 @@ export class AccountMetadataTransaction extends Transaction {
     scopedMetadataKey: UInt64;
     valueSizeDelta: number;
     valueSize: number;
-    value: string;
-    oldValue: string;
+    value: string | null;
+    oldValue: string | null;
     valueDifferences: Uint8Array;
 
     public static create(
         deadline: Deadline,
         targetPublicKey: PublicAccount,
-        scopedMetadataKeyString: string,
+        scopedMetadataKeyString: string | UInt64,
         value: string,
         oldValue: string,
         networkType: NetworkType,
         maxFee?: UInt64
     ): AccountMetadataTransaction {
-        let scopedMetadataKey = KeyGenerator.generateUInt64Key(scopedMetadataKeyString);
+        let scopedMetadataKey = scopedMetadataKeyString instanceof UInt64 ? scopedMetadataKeyString : KeyGenerator.generateUInt64Key(scopedMetadataKeyString);
         let valueSizeDelta = (Convert.utf8ToHex(value).length /2) - (Convert.utf8ToHex(oldValue).length / 2);
         let valueSize = Math.max(Convert.utf8ToHex(value).length/2, Convert.utf8ToHex(oldValue).length/2, 0);
 
@@ -89,8 +89,8 @@ export class AccountMetadataTransaction extends Transaction {
         scopedMetadataKey: UInt64,
         targetPublicKey: PublicAccount,
         valueSizeDelta: number,
-        value: string,
-        oldValue: string,
+        value: string | null,
+        oldValue: string | null,
         valueSize: number,
         valueDifferences: Uint8Array,
         signature?: string,
@@ -113,19 +113,16 @@ export class AccountMetadataTransaction extends Transaction {
      * @memberof Transaction
      */
     public get size(): number {
-        return AccountMetadataTransaction.calculateSize(this.value, this.oldValue);
+        return AccountMetadataTransaction.calculateSize(this.valueSize);
     }
 
-    public static calculateSize(newValue: string, oldValue: string,): number {
-        const newValueSize = Convert.utf8ToHex(newValue).length / 2;
-        const oldValueSize = Convert.utf8ToHex(oldValue).length / 2;
-        let longerByteLength = Math.max(newValueSize, oldValueSize);
+    public static calculateSize(valueSize: number): number {
         const byteSize = Transaction.getHeaderSize()
                         + 8  // scopedMetadataKey
                         + 32 // targetPublicKey - pk
                         + 2 // valueDeltaSize 
                         + 2 // value size
-                        + longerByteLength
+                        + valueSize
         return byteSize;
     }
 
@@ -179,8 +176,8 @@ export class AccountMetadataTransactionBuilder extends TransactionBuilder {
     protected _targetPublicKey: PublicAccount;
     protected _scopedMetadataKey: UInt64;
     protected _valueSizeDelta: number;
-    protected _value: string;
-    protected _oldValue: string;
+    protected _value: string | null;
+    protected _oldValue: string | null;
     protected _valueSize: number;
     protected _valueDifferences: Uint8Array;
 
@@ -204,12 +201,12 @@ export class AccountMetadataTransactionBuilder extends TransactionBuilder {
         return this;
     }
 
-    public value(value: string){
+    public value(value: string | null){
         this._value = value;
         return this;
     }
 
-    public oldValue(oldValue: string){
+    public oldValue(oldValue: string | null){
         this._oldValue = oldValue;
         return this;
     }
@@ -229,7 +226,7 @@ export class AccountMetadataTransactionBuilder extends TransactionBuilder {
             this._networkType,
             this._version || TransactionVersion.ACCOUNT_METADATA_NEM,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._maxFee ? this._maxFee : calculateFee(AccountMetadataTransaction.calculateSize(this._value, this._oldValue), this._feeCalculationStrategy),
+            this._maxFee ? this._maxFee : calculateFee(AccountMetadataTransaction.calculateSize(this._valueSize), this._feeCalculationStrategy),
             this._scopedMetadataKey,
             this._targetPublicKey,
             this._valueSizeDelta,

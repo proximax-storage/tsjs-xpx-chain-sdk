@@ -28,8 +28,8 @@ export class Builder {
     scopedMetadataKey: number[];
     targetNamespaceId: number[];
     valueSizeDelta: number;
-    value: string;
-    oldValue: string;
+    value: string | null;
+    oldValue: string | null;
     valueSize: number;
     valueDifferences: Uint8Array;
 
@@ -83,12 +83,12 @@ export class Builder {
         return this;
     }
 
-    addValue(value: string) {
+    addValue(value: string | null) {
         this.value = value;
         return this;
     }
 
-    addOldValue(oldValue: string) {
+    addOldValue(oldValue: string | null) {
         this.oldValue = oldValue;
         return this;
     }

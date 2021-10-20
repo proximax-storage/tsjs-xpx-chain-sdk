@@ -30,21 +30,21 @@ export class MosaicMetadataTransaction extends Transaction {
     targetMosaicId: MosaicId;
     valueSizeDelta: number;
     valueSize: number;
-    value: string;
-    oldValue: string;
+    value: string | null;
+    oldValue: string | null;
     valueDifferences: Uint8Array;
 
     public static create(
         deadline: Deadline,
         targetPublicKey: PublicAccount,
         targetMosaicId: MosaicId,
-        scopedMetadataKeyString: string,
+        scopedMetadataKeyString: string | UInt64,
         value: string,
         oldValue: string,
         networkType: NetworkType,
         maxFee?: UInt64
     ): MosaicMetadataTransaction {
-        let scopedMetadataKey = KeyGenerator.generateUInt64Key(scopedMetadataKeyString);
+        let scopedMetadataKey = scopedMetadataKeyString instanceof UInt64 ? scopedMetadataKeyString : KeyGenerator.generateUInt64Key(scopedMetadataKeyString);
         let valueSizeDelta = (Convert.utf8ToHex(value).length /2) - (Convert.utf8ToHex(oldValue).length / 2);
         let valueSize = Math.max(Convert.utf8ToHex(value).length/2, Convert.utf8ToHex(oldValue).length/2, 0);
 
@@ -95,8 +95,8 @@ export class MosaicMetadataTransaction extends Transaction {
         targetPublicKey: PublicAccount,
         targetMosaicId: MosaicId,
         valueSizeDelta: number,
-        value: string,
-        oldValue: string,
+        value: string | null,
+        oldValue: string | null,
         valueSize: number,
         valueDifferences: Uint8Array,
         signature?: string,
@@ -120,20 +120,17 @@ export class MosaicMetadataTransaction extends Transaction {
      * @memberof Transaction
      */
     public get size(): number {
-        return MosaicMetadataTransaction.calculateSize(this.value, this.oldValue);
+        return MosaicMetadataTransaction.calculateSize(this.valueSize);
     }
 
-    public static calculateSize(newValue: string, oldValue: string,): number {
-        const newValueSize = Convert.utf8ToHex(newValue).length / 2;
-        const oldValueSize = Convert.utf8ToHex(oldValue).length / 2;
-        let longerByteLength = Math.max(newValueSize, oldValueSize);
+    public static calculateSize(valueSize: number): number {
         const byteSize = Transaction.getHeaderSize()
                         + 8  // scopedMetadataKey
                         + 32 // targetPublicKey - pk
                         + 8 // mosaicId
                         + 2 // valueDeltaSize 
                         + 2 // value size
-                        + longerByteLength
+                        + valueSize
         return byteSize;
     }
 
@@ -190,8 +187,8 @@ export class MosaicMetadataTransactionBuilder extends TransactionBuilder {
     protected _scopedMetadataKey: UInt64;
     protected _targetMosaicId: MosaicId;
     protected _valueSizeDelta: number;
-    protected _value: string;
-    protected _oldValue: string;
+    protected _value: string | null;
+    protected _oldValue: string | null;
     protected _valueSize: number;
     protected _valueDifferences: Uint8Array;
 
@@ -245,7 +242,7 @@ export class MosaicMetadataTransactionBuilder extends TransactionBuilder {
             this._networkType,
             this._version || TransactionVersion.MOSAIC_METADATA_NEM,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._maxFee ? this._maxFee : calculateFee(MosaicMetadataTransaction.calculateSize(this._value, this._oldValue), this._feeCalculationStrategy),
+            this._maxFee ? this._maxFee : calculateFee(MosaicMetadataTransaction.calculateSize(this._valueSize), this._feeCalculationStrategy),
             this._scopedMetadataKey,
             this._targetPublicKey,
             this._targetMosaicId,
