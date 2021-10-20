@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as requestPromise from 'request-promise-native';
+import axios from 'axios';
 import {from as observableFrom, Observable, throwError as observableThrowError} from 'rxjs';
 import {catchError, map, mergeMap} from 'rxjs/operators';
 import {PublicAccount} from '../model/account/PublicAccount';
@@ -36,7 +36,9 @@ import { AnnounceTransactionInfoDTO,
 import {Http} from './Http';
 import {CreateTransactionFromDTO} from './transaction/CreateTransactionFromDTO';
 import {TransactionRepository} from './TransactionRepository';
-
+import {TransactionGroupType} from '../model/transaction/TransactionGroupType';
+import {TransactionSearch} from '../model/transaction/TransactionSearch';
+import {TransactionQueryParams} from './TransactionQueryParams';
 /**
  * Transaction http repository.
  *
@@ -81,12 +83,12 @@ export class TransactionHttp extends Http implements TransactionRepository {
      * @param transactionIds - Array of transactions id and/or hash.
      * @returns Observable<Transaction[]>
      */
-    public getTransactions(transactionIds: string[]): Observable<Transaction[]> {
+    public getTransactions(transactionIds: string[], transactionGroupType: TransactionGroupType = TransactionGroupType.CONFIRMED): Observable<Transaction[]> {
         const transactionIdsBody = {
             transactionIds,
         };
         return observableFrom(
-            this.transactionRoutesApi.getTransactions(transactionIdsBody)).pipe(map(response => {
+            this.transactionRoutesApi.getTransactions(transactionIdsBody, transactionGroupType)).pipe(map(response => {
             return response.body.map((transactionDTO) => {
                 return CreateTransactionFromDTO(transactionDTO);
             });
@@ -183,17 +185,17 @@ export class TransactionHttp extends Http implements TransactionRepository {
         );
 
         return observableFrom(
-            requestPromise.put({url: this.url + `/transaction/sync`, body: syncAnnounce, json: true}),
+            axios.put(this.url + `/transaction/sync`, syncAnnounce)
         ).pipe(map((response) => {
-            if (response.status !== undefined) {
+            if (response.data.status !== undefined) {
                 throw new TransactionStatus(
                     'failed',
-                    response.status,
-                    response.hash,
-                    Deadline.createFromDTO(response.deadline),
+                    response.data.status,
+                    response.data.hash,
+                    Deadline.createFromDTO(response.data.deadline),
                     UInt64.fromUint(0));
             } else {
-                return CreateTransactionFromDTO(response);
+                return CreateTransactionFromDTO(response.data);
             }
         }), catchError((err) => {
             if (err.statusCode === 405) {
@@ -226,5 +228,48 @@ export class TransactionHttp extends Http implements TransactionRepository {
             }), catchError((err) => {
                 return observableThrowError(err);
             }));
+    }
+
+    /**
+     * Search transactions
+     * @param searchType - Transaction group type.
+     * @param queryParams - Transaction Query Params
+     * @returns Observable<TransactionSearch>
+     */
+    public searchTransactions(searchType: TransactionGroupType, queryParams?: TransactionQueryParams): Observable<TransactionSearch> {
+        return observableFrom(this.transactionRoutesApi.searchTransactions(searchType, queryParams)).pipe(
+            map(response => {
+                let transactions = response.body.data.map((transactionDTO) => {
+                    return CreateTransactionFromDTO(transactionDTO);
+                });
+                return new TransactionSearch(transactions, response.body.pagination)
+            })
+        )
+    }
+
+    /**
+     * Search unconfirmed transaction by transaction hash
+     * @param txnHash - Transaction hash.
+     * @returns Observable<Transaction>
+     */
+     public getUnconfirmedTransaction(txnHash: string): Observable<Transaction> {
+        return observableFrom(this.transactionRoutesApi.searchTransaction(TransactionGroupType.UNCONFIRMED, txnHash)).pipe(
+            map(response => {
+                return CreateTransactionFromDTO(response.body);
+            })
+        )
+    }
+
+    /**
+     * Search partial transaction by transaction hash
+     * @param txnHash - Transaction hash.
+     * @returns Observable<Transaction>
+     */
+     public getPartialTransaction(txnHash: string): Observable<Transaction> {
+        return observableFrom(this.transactionRoutesApi.searchTransaction(TransactionGroupType.PARTIAL, txnHash)).pipe(
+            map(response => {
+                return CreateTransactionFromDTO(response.body);
+            })
+        )
     }
 }

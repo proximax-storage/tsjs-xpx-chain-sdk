@@ -29,6 +29,7 @@ export * from './TransactionHttp';
 export * from './Listener';
 export * from './PageQueryParams';
 export * from './QueryParams';
+export * from './TransactionQueryParams';
 export * from './NetworkHttp';
 export * from './NodeHttp';
 export * from './transaction/NamespaceMosaicIdGenerator';

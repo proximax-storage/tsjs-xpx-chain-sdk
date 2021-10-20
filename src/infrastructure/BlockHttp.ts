@@ -30,6 +30,7 @@ import {BlockRepository} from './BlockRepository';
 import {Http} from './Http';
 import { NetworkHttp } from './NetworkHttp';
 import {QueryParams} from './QueryParams';
+import {TransactionQueryParams} from './TransactionQueryParams';
 import { CreateStatementFromDTO } from './receipt/CreateReceiptFromDTO';
 import {CreateTransactionFromDTO, extractBeneficiary} from './transaction/CreateTransactionFromDTO';
 
@@ -105,16 +106,12 @@ export class BlockHttp extends Http implements BlockRepository {
     /**
      * Gets array of transactions included in a block for a block height
      * @param height - Block height
-     * @param queryParams - (Optional) Query params
+     * @param txnQueryParam - (Optional) Transaction Query params
      * @returns Observable<Transaction[]>
      */
-    public getBlockTransactions(height: number,
-                                queryParams?: QueryParams): Observable<Transaction[]> {
+    public getBlockTransactions(height: number, txnQueryParam?: TransactionQueryParams): Observable<Transaction[]> {
         return observableFrom(
-            this.blockRoutesApi.getBlockTransactions(height,
-                                                     this.queryParams(queryParams).pageSize,
-                                                     this.queryParams(queryParams).id,
-                                                     this.queryParams(queryParams).order))
+            this.blockRoutesApi.getBlockTransactions(height, txnQueryParam))
                 .pipe(map(response => {
                     let transactions: Transaction[] = [];
                     if(response.body.data.length){
@@ -129,16 +126,12 @@ export class BlockHttp extends Http implements BlockRepository {
     /**
      * Gets array of transactions included in a block for a block height
      * @param height - Block height
-     * @param queryParams - (Optional) Query params
+     * @param txnQueryParam - (Optional) Transaction Query params
      * @returns Observable<TransactionSearch>
      */
-    public getBlockTransactionsWithPagination(height: number,
-                                queryParams?: QueryParams): Observable<TransactionSearch> {
+    public getBlockTransactionsWithPagination(height: number, txnQueryParam?: TransactionQueryParams): Observable<TransactionSearch> {
         return observableFrom(
-            this.blockRoutesApi.getBlockTransactions(height,
-                                                     this.queryParams(queryParams).pageSize,
-                                                     this.queryParams(queryParams).id,
-                                                     this.queryParams(queryParams).order))
+            this.blockRoutesApi.getBlockTransactions(height, txnQueryParam))
                 .pipe(map(response => {
                     let transactions: Transaction[] = [];
                     if(response.body.data.length){

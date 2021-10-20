@@ -15,7 +15,7 @@
  */
 
 import {from as observableFrom, Observable} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+import {map, mergeMap, switchMap, switchMapTo, tap, toArray, take, flatMap} from 'rxjs/operators';
 import { DtoMapping } from '../core/utils/DtoMapping';
 import {AccountInfo} from '../model/account/AccountInfo';
 import { AccountNames } from '../model/account/AccountNames';
@@ -35,12 +35,14 @@ import {UInt64} from '../model/UInt64';
 import {AccountRepository} from './AccountRepository';
 import { AccountInfoDTO,
          AccountRoutesApi,
+         TransactionRoutesApi,
          MosaicDTO } from './api';
 import {Http} from './Http';
 import {NetworkHttp} from './NetworkHttp';
 import {QueryParams} from './QueryParams';
+import {TransactionQueryParams} from './TransactionQueryParams';
 import {CreateTransactionFromDTO} from './transaction/CreateTransactionFromDTO';
-
+import {TransactionGroupType} from '../model/transaction/TransactionGroupType'
 /**
  * Account http repository.
  *
@@ -52,7 +54,7 @@ export class AccountHttp extends Http implements AccountRepository {
      * xpx chain Library account routes api
      */
     private accountRoutesApi: AccountRoutesApi;
-
+    private url: string;
     /**
      * Constructor
      * @param url
@@ -61,6 +63,7 @@ export class AccountHttp extends Http implements AccountRepository {
     constructor(url: string, networkHttp?: NetworkHttp) {
         networkHttp = networkHttp == null ? new NetworkHttp(url) : networkHttp;
         super(networkHttp);
+        this.url = url;
         this.accountRoutesApi = new AccountRoutesApi(url);
     }
 
@@ -216,16 +219,13 @@ export class AccountHttp extends Http implements AccountRepository {
     /**
      * Gets an array of confirmed transactions for which an account is signer or receiver.
      * @param publicAccount - User public account
-     * @param queryParams - (Optional) Query params
+     * @param txnQueryParams - (Optional) Transaction Query params
      * @returns Observable<Transaction[]>
      */
-    public transactions(publicAccount: PublicAccount, queryParams?: QueryParams): Observable<Transaction[]> {
+    public transactions(publicAccount: PublicAccount, txnQueryParams?: TransactionQueryParams): Observable<Transaction[]> {
         const plainAddress = publicAccount.address.plain();
         return observableFrom(
-            this.accountRoutesApi.transactions(plainAddress,
-                                               this.queryParams(queryParams).pageSize,
-                                               this.queryParams(queryParams).id,
-                                               this.queryParams(queryParams).order)).pipe(
+            this.accountRoutesApi.transactions(plainAddress, txnQueryParams)).pipe(
             map(response => {
                 let transactions : Transaction[] = [];
                 transactions = response.body.data.map((transactionDTO) => {
@@ -238,16 +238,13 @@ export class AccountHttp extends Http implements AccountRepository {
     /**
      * Gets an array of confirmed transactions for which an account is signer or receiver.
      * @param publicAccount - User public account
-     * @param queryParams - (Optional) Query params
+     * @param txnQueryParams - (Optional) Transaction Query params
      * @returns Observable<TransactionSearch>
      */
-     public transactionsWithPagination(publicAccount: PublicAccount, queryParams?: QueryParams): Observable<TransactionSearch> {
+     public transactionsWithPagination(publicAccount: PublicAccount, txnQueryParams?: TransactionQueryParams): Observable<TransactionSearch> {
         const plainAddress = publicAccount.address.plain();
         return observableFrom(
-            this.accountRoutesApi.transactions(plainAddress,
-                                               this.queryParams(queryParams).pageSize,
-                                               this.queryParams(queryParams).id,
-                                               this.queryParams(queryParams).order)).pipe(
+            this.accountRoutesApi.transactions(plainAddress, txnQueryParams)).pipe(
             map(response => {
                 let transactions : Transaction[] = [];
                 transactions = response.body.data.map((transactionDTO) => {
@@ -261,16 +258,13 @@ export class AccountHttp extends Http implements AccountRepository {
      * Gets an array of transactions for which an account is the recipient of a transaction.
      * A transaction is said to be incoming with respect to an account if the account is the recipient of a transaction.
      * @param accountId - User public account or address (you can use address if public account is not known to the network just yet)
-     * @param queryParams - (Optional) Query params
+     * @param txnQueryParams - (Optional) Transaction Query params
      * @returns Observable<Transaction[]>
      */
-    public incomingTransactions(accountId: PublicAccount | Address, queryParams?: QueryParams): Observable <Transaction[]> {
+    public incomingTransactions(accountId: PublicAccount | Address, txnQueryParams?: TransactionQueryParams): Observable <Transaction[]> {
         const plainAddress = accountId instanceof PublicAccount ? (accountId as PublicAccount).address.plain() : (accountId as Address).plain();
         return observableFrom(
-            this.accountRoutesApi.incomingTransactions(plainAddress,
-                                                       this.queryParams(queryParams).pageSize,
-                                                       this.queryParams(queryParams).id,
-                                                       this.queryParams(queryParams).order)).pipe(
+            this.accountRoutesApi.incomingTransactions(plainAddress, txnQueryParams)).pipe(
             map(response => {
                 if(response.body.data.length){
                     return response.body.data.map((transactionDTO) => {
@@ -287,16 +281,13 @@ export class AccountHttp extends Http implements AccountRepository {
      * Gets an array of transactions for which an account is the recipient of a transaction.
      * A transaction is said to be incoming with respect to an account if the account is the recipient of a transaction.
      * @param accountId - User public account or address (you can use address if public account is not known to the network just yet)
-     * @param queryParams - (Optional) Query params
+     * @param txnQueryParams - (Optional) Transaction Query params
      * @returns Observable<TransactionSearch>
      */
-     public incomingTransactionsWithPagination(accountId: PublicAccount | Address, queryParams?: QueryParams): Observable <TransactionSearch> {
+     public incomingTransactionsWithPagination(accountId: PublicAccount | Address, txnQueryParams?: TransactionQueryParams): Observable <TransactionSearch> {
         const plainAddress = accountId instanceof PublicAccount ? (accountId as PublicAccount).address.plain() : (accountId as Address).plain();
         return observableFrom(
-            this.accountRoutesApi.incomingTransactions(plainAddress,
-                                                       this.queryParams(queryParams).pageSize,
-                                                       this.queryParams(queryParams).id,
-                                                       this.queryParams(queryParams).order)).pipe(
+            this.accountRoutesApi.incomingTransactions(plainAddress, txnQueryParams)).pipe(
             map(response => {
                 let transactions : Transaction[] = [];
                 transactions = response.body.data.map((transactionDTO) => {
@@ -310,15 +301,12 @@ export class AccountHttp extends Http implements AccountRepository {
      * Gets an array of transactions for which an account is the sender a transaction.
      * A transaction is said to be outgoing with respect to an account if the account is the sender of a transaction.
      * @param publicAccount - User public account
-     * @param queryParams - (Optional) Query params
+     * @param txnQueryParams - (Optional) Transaction Query params
      * @returns Observable<Transaction[]>
      */
-    public outgoingTransactions(publicAccount: PublicAccount, queryParams?: QueryParams): Observable <Transaction[]> {
+    public outgoingTransactions(publicAccount: PublicAccount, txnQueryParams?: TransactionQueryParams): Observable <Transaction[]> {
         return observableFrom(
-            this.accountRoutesApi.outgoingTransactions(publicAccount.publicKey,
-                                                       this.queryParams(queryParams).pageSize,
-                                                       this.queryParams(queryParams).id,
-                                                       this.queryParams(queryParams).order)).pipe(
+            this.accountRoutesApi.outgoingTransactions(publicAccount.publicKey, txnQueryParams)).pipe(
             map(response => {
                 if(response.body.data.length){
                     return response.body.data.map((transactionDTO) => {
@@ -335,15 +323,12 @@ export class AccountHttp extends Http implements AccountRepository {
      * Gets an array of transactions for which an account is the sender a transaction.
      * A transaction is said to be outgoing with respect to an account if the account is the sender of a transaction.
      * @param publicAccount - User public account
-     * @param queryParams - (Optional) Query params
+     * @param txnQueryParams - (Optional) Transaction Query params
      * @returns Observable<TransactionSearch>
      */
-     public outgoingTransactionsWithPagination(publicAccount: PublicAccount, queryParams?: QueryParams): Observable <TransactionSearch> {
+     public outgoingTransactionsWithPagination(publicAccount: PublicAccount, txnQueryParams?: TransactionQueryParams): Observable <TransactionSearch> {
         return observableFrom(
-            this.accountRoutesApi.outgoingTransactions(publicAccount.publicKey,
-                                                       this.queryParams(queryParams).pageSize,
-                                                       this.queryParams(queryParams).id,
-                                                       this.queryParams(queryParams).order)).pipe(
+            this.accountRoutesApi.outgoingTransactions(publicAccount.publicKey, txnQueryParams)).pipe(
             map(response => {
                 let transactions : Transaction[] = [];
                 transactions = response.body.data.map((transactionDTO) => {
@@ -358,16 +343,13 @@ export class AccountHttp extends Http implements AccountRepository {
      * Unconfirmed transactions are those transactions that have not yet been included in a block.
      * Unconfirmed transactions are not guaranteed to be included in any block.
      * @param publicAccount - User public account
-     * @param queryParams - (Optional) Query params
+     * @param txnQueryParams - (Optional) Transaction Query params
      * @returns Observable<Transaction[]>
      */
-    public unconfirmedTransactions(publicAccount: PublicAccount, queryParams?: QueryParams): Observable <Transaction[]> {
+    public unconfirmedTransactions(publicAccount: PublicAccount, txnQueryParams?: TransactionQueryParams): Observable <Transaction[]> {
         const plainAddress = publicAccount.address.plain();
         return observableFrom(
-            this.accountRoutesApi.unconfirmedTransactions(plainAddress,
-                                                          this.queryParams(queryParams).pageSize,
-                                                          this.queryParams(queryParams).id,
-                                                          this.queryParams(queryParams).order)).pipe(
+            this.accountRoutesApi.unconfirmedTransactions(plainAddress, txnQueryParams)).pipe(
             map(response => {
                 if(response.body.data.length){
                     return response.body.data.map((transactionDTO) => {
@@ -385,16 +367,14 @@ export class AccountHttp extends Http implements AccountRepository {
      * Unconfirmed transactions are those transactions that have not yet been included in a block.
      * Unconfirmed transactions are not guaranteed to be included in any block.
      * @param publicAccount - User public account
-     * @param queryParams - (Optional) Query params
+     * @param txnQueryParams - (Optional) Transaction Query params
      * @returns Observable<TransactionSearch>
      */
-     public unconfirmedTransactionsWithPagination(publicAccount: PublicAccount, queryParams?: QueryParams): Observable <TransactionSearch> {
+     public unconfirmedTransactionsWithPagination(publicAccount: PublicAccount, txnQueryParams?: TransactionQueryParams): Observable <TransactionSearch> {
         const plainAddress = publicAccount.address.plain();
         return observableFrom(
-            this.accountRoutesApi.unconfirmedTransactions(plainAddress,
-                                                          this.queryParams(queryParams).pageSize,
-                                                          this.queryParams(queryParams).id,
-                                                          this.queryParams(queryParams).order)).pipe(
+            this.accountRoutesApi.unconfirmedTransactions(plainAddress, txnQueryParams))
+            .pipe(
             map(response => {
                 let transactions : Transaction[] = [];
                 transactions = response.body.data.map((transactionDTO) => {
@@ -408,25 +388,50 @@ export class AccountHttp extends Http implements AccountRepository {
      * Gets an array of transactions for which an account is the sender or has sign the transaction.
      * A transaction is said to be aggregate bonded with respect to an account if there are missing signatures.
      * @param publicAccount - User public account
-     * @param queryParams - (Optional) Query params
+     * @param txnQueryParams - (Optional) Transaction Query params
      * @returns Observable<AggregateTransaction[]>
      */
-    public aggregateBondedTransactions(publicAccount: PublicAccount, queryParams?: QueryParams): Observable <AggregateTransaction[]> {
+    public aggregateBondedTransactions(publicAccount: PublicAccount, txnQueryParams?: TransactionQueryParams, getCompleteTransaction: boolean = true): Observable <AggregateTransaction[]> {
         const plainAddress = publicAccount.address.plain();
-        return observableFrom(
-            this.accountRoutesApi.partialTransactions(plainAddress,
-                                                      this.queryParams(queryParams).pageSize,
-                                                      this.queryParams(queryParams).id,
-                                                      this.queryParams(queryParams).order)).pipe(
-            map(response => {
-                if(response.body.data.length){
-                    return response.body.data.map((transactionDTO) => {
-                        return CreateTransactionFromDTO(transactionDTO) as AggregateTransaction;
-                    });
-                }
-                else{
-                    return [];
-                }
-            }));
+        let transactionRoutesApi = getCompleteTransaction ? new TransactionRoutesApi(this.url) : null;
+
+        let firstObservable = observableFrom(
+            this.accountRoutesApi.partialTransactions(plainAddress, txnQueryParams))
+            .pipe(                                   
+                map(response => {
+                    if(response.body.data.length){
+                        return response.body.data.map((transactionDTO) => {
+                                return CreateTransactionFromDTO(transactionDTO) as AggregateTransaction;
+                        });
+                    }
+                    else{
+                        //return new TransactionSearch([], response.body.pagination);
+                        return [];
+                    }
+                })
+            );
+
+        if(!getCompleteTransaction){
+            return firstObservable;
+        }
+        else{
+            return firstObservable.pipe(
+                flatMap(aggTxns =>{
+                    let transactionIds = aggTxns.map(txn => txn.transactionInfo!.hash ? txn.transactionInfo!.hash : "");
+
+                    const transactionIdsBody = {
+                        transactionIds,
+                    };
+
+                    return observableFrom(transactionRoutesApi!.getTransactions(transactionIdsBody, TransactionGroupType.PARTIAL)
+                        .then(transactionHashResponse=>{
+                            return transactionHashResponse.body.map(transactionDTO=>{
+                                return CreateTransactionFromDTO(transactionDTO) as AggregateTransaction;
+                            })
+                        })
+                    )
+                })
+            )
+        }
     }
 }
