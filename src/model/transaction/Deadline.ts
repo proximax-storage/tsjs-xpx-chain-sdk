@@ -98,9 +98,6 @@ export class Deadline {
      */
     public toDTO(): number[] {
         return this.adjustedValue.toDTO();
-        // return UInt64.fromUint(
-        //      (this.value.atZone(ZoneId.SYSTEM).toInstant().toEpochMilli() - Deadline.timestampNemesisBlock * 1000),
-        // ).toDTO();
     }
 }
 

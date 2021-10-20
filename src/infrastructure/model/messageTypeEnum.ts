@@ -14,7 +14,11 @@ import { RequestFile } from '../api';
 
 /**
 * The type of the message: * 0 - Regular message. 
+* The type of the message: * 1 - Encrypted message. 
+* The type of the message: * 2 - Hexadecimal message. 
 */
 export enum MessageTypeEnum {
-    NUMBER_0 = <any> 0
+    NUMBER_0 = <any> 0,
+    NUMBER_1 = <any> 1,
+    NUMBER_2 = <any> 2
 }

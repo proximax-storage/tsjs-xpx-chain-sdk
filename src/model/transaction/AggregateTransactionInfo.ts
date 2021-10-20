@@ -28,6 +28,7 @@ export class AggregateTransactionInfo extends TransactionInfo {
      * @param id
      * @param aggregateHash
      * @param aggregateId
+     * @param uniqueAggregateHash
      */
     constructor(height: UInt64,
                 index: number,
@@ -39,7 +40,13 @@ export class AggregateTransactionInfo extends TransactionInfo {
                 /**
                  * The id of the aggregate transaction.
                  */
-                public readonly aggregateId: string) {
+                public readonly aggregateId: string, 
+                /**
+                 * The id of the aggregate transaction.
+                 */
+                 public readonly uniqueAggregateHash: string,
+                
+                ) {
 
         super(height, index, id);
     }

@@ -110,6 +110,8 @@ export class Builder {
         let bytePayload;
         if (this.message.type === MessageType.EncryptedMessage) {
             bytePayload = convert.hexToUint8(this.message.payload);
+        } else if(this.message.type === MessageType.HexadecimalMessage){
+            bytePayload = convert.hexToUint8(this.message.payload);
         } else {
             bytePayload = convert.hexToUint8(convert.utf8ToHex(this.message.payload));
         }
