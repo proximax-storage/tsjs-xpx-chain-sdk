@@ -42,6 +42,7 @@ import { TransactionBuilderFactory, MultisigCosignatoryModificationType } from '
 import { AddExchangeOffer } from '../../model/transaction/AddExchangeOffer';
 import { ExchangeOffer } from '../../model/transaction/ExchangeOffer';
 import { RemoveExchangeOffer } from '../../model/transaction/RemoveExchangeOffer';
+import { HexadecimalMessage } from '../../model/transaction/HexadecimalMessage';
 
 /**
  * @internal
@@ -610,6 +611,8 @@ const extractMessage = (messageType: MessageType, payload: string): Message => {
         return PlainMessage.createFromPayload(payload);
     } else if (messageType === MessageType.EncryptedMessage) {
         return EncryptedMessage.createFromPayload(payload);
+    } else if (messageType === MessageType.HexadecimalMessage) {
+        return HexadecimalMessage.createFromPayload(payload);
     } else {
         throw new Error('Invalid message type');
     }
