@@ -134,7 +134,7 @@ export class MosaicDefinitionTransaction extends Transaction {
             ...parent,
             transaction: {
                 ...parent.transaction,
-                mosaicNonce: this.mosaicNonce,
+                mosaicNonce: this.mosaicNonce.toNumber(),
                 mosaicId: this.mosaicId.toDTO(),
                 properties: this.mosaicProperties.toDTO(),
             }

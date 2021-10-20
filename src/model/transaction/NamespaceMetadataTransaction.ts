@@ -144,9 +144,9 @@ export class NamespaceMetadataTransaction extends Transaction {
             ...parent,
             transaction: {
                 ...parent.transaction,
-                scopedMetadataKey: this.scopedMetadataKey,
-                targetPublicKey: this.targetPublicKey,
-                targetNamespaceId: this.targetNamespaceId,
+                scopedMetadataKey: this.scopedMetadataKey.toDTO(),
+                targetPublicKey: this.targetPublicKey.publicKey,
+                targetNamespaceId: this.targetNamespaceId.toDTO(),
                 valueSizeDelta: this.valueSizeDelta,
                 value: this.value,
                 oldValue: this.oldValue,

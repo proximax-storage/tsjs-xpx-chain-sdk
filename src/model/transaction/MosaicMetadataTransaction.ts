@@ -146,9 +146,9 @@ export class MosaicMetadataTransaction extends Transaction {
             ...parent,
             transaction: {
                 ...parent.transaction,
-                scopedMetadataKey: this.scopedMetadataKey,
-                targetPublicKey: this.targetPublicKey,
-                targetMosaicId: this.targetMosaicId,
+                scopedMetadataKey: this.scopedMetadataKey.toDTO(),
+                targetPublicKey: this.targetPublicKey.publicKey,
+                targetMosaicId: this.targetMosaicId.toDTO(),
                 valueSizeDelta: this.valueSizeDelta,
                 value: this.value,
                 oldValue: this.oldValue,
