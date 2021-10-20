@@ -18,8 +18,10 @@
  * The Message type. Supported supply types are:
  * 0: PlainMessage
  * 1: EncryptedMessage.
+ * 2: HexadecimalMessage
  */
 export enum MessageType {
     PlainMessage = 0,
     EncryptedMessage = 1,
+    HexadecimalMessage = 2,
 }
