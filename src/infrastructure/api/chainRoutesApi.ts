@@ -24,15 +24,15 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-
-import localVarRequest = require('request');
 import http = require('http');
+import axios from 'axios';
+import {AxiosRequestConfig, AxiosResponse, AxiosError} from 'axios';
 
 /* tslint:disable:no-unused-locals */
 import { BlockchainScoreDTO } from '../model/blockchainScoreDTO';
 import { HeightInfoDTO } from '../model/heightInfoDTO';
 
-import { ObjectSerializer, Authentication, VoidAuth, Interceptor } from '../model/models';
+import { ObjectSerializer } from '../model/models';
 
 import { HttpError, RequestFile } from './apis';
 
@@ -49,12 +49,6 @@ export class ChainRoutesApi {
     protected _basePath = defaultBasePath;
     protected _defaultHeaders : any = {};
     protected _useQuerystring : boolean = false;
-
-    protected authentications = {
-        'default': <Authentication>new VoidAuth(),
-    }
-
-    protected interceptors: Interceptor[] = [];
 
     constructor(basePath?: string);
     constructor(basePathOrUsername: string, password?: string, basePath?: string) {
@@ -89,140 +83,71 @@ export class ChainRoutesApi {
         return this._basePath;
     }
 
-    public setDefaultAuthentication(auth: Authentication) {
-        this.authentications.default = auth;
-    }
-
-    public setApiKey(key: ChainRoutesApiApiKeys, value: string) {
-        (this.authentications as any)[ChainRoutesApiApiKeys[key]].apiKey = value;
-    }
-
-    public addInterceptor(interceptor: Interceptor) {
-        this.interceptors.push(interceptor);
-    }
-
     /**
      * Returns the current height of the blockchain.
      * @summary Get the current height of the chain
      */
-    public async getBlockchainHeight (options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: HeightInfoDTO;  }> {
-        const localVarPath = this.basePath + '/chain/height';
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
+    public async getBlockchainHeight (options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: HeightInfoDTO;  }> {
+        const localVarPath = '/chain/height';
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json'
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: HeightInfoDTO;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: HeightInfoDTO;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "HeightInfoDTO");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "HeightInfoDTO");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
     /**
      * Gets the current score of the blockchain. The higher the score, the better the chain. During synchronization, nodes try to get the best blockchain in the network.  The score for a block is derived from its difficulty and the time (in seconds) that has elapsed since the last block:      block score = difficulty − time elapsed since last block 
      * @summary Get the current score of the chain
      */
-    public async getBlockchainScore (options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: BlockchainScoreDTO;  }> {
-        const localVarPath = this.basePath + '/chain/score';
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
-
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+    public async getBlockchainScore (options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: BlockchainScoreDTO;  }> {
+        const localVarPath = '/chain/score';
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json'
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: BlockchainScoreDTO;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: BlockchainScoreDTO;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "BlockchainScoreDTO");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "BlockchainScoreDTO");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
 }

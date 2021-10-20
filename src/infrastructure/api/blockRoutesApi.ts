@@ -25,18 +25,21 @@
  * Do not edit the class manually.
  */
 
-import localVarRequest = require('request');
 import http = require('http');
+import axios from 'axios';
+import {AxiosRequestConfig, AxiosResponse, AxiosError} from 'axios';
 
 /* tslint:disable:no-unused-locals */
 import { BlockInfoDTO } from '../model/blockInfoDTO';
 import { MerkleProofInfoDTO } from '../model/merkleProofInfoDTO';
 import { StatementsDTO } from '../model/statementsDTO';
 import { TransactionInfoDTO } from '../model/transactionInfoDTO';
+import { TransactionSearchDTO } from '../model/transactionSearchDTO';
 
-import { ObjectSerializer, Authentication, VoidAuth, Interceptor } from '../model/models';
+import { ObjectSerializer} from '../model/models';
 
 import { HttpError, RequestFile } from './apis';
+import { TransactionQueryParams } from '../TransactionQueryParams';
 
 let defaultBasePath = 'http://localhost:3000';
 
@@ -51,12 +54,6 @@ export class BlockRoutesApi {
     protected _basePath = defaultBasePath;
     protected _defaultHeaders : any = {};
     protected _useQuerystring : boolean = false;
-
-    protected authentications = {
-        'default': <Authentication>new VoidAuth(),
-    }
-
-    protected interceptors: Interceptor[] = [];
 
     constructor(basePath?: string);
     constructor(basePathOrUsername: string, password?: string, basePath?: string) {
@@ -91,85 +88,46 @@ export class BlockRoutesApi {
         return this._basePath;
     }
 
-    public setDefaultAuthentication(auth: Authentication) {
-        this.authentications.default = auth;
-    }
-
-    public setApiKey(key: BlockRoutesApiApiKeys, value: string) {
-        (this.authentications as any)[BlockRoutesApiApiKeys[key]].apiKey = value;
-    }
-
-    public addInterceptor(interceptor: Interceptor) {
-        this.interceptors.push(interceptor);
-    }
-
     /**
      * Gets a block from the chain that has the given height.
      * @summary Get block information
      * @param height The height of the block.
      */
-    public async getBlockByHeight (height: number, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: BlockInfoDTO;  }> {
-        const localVarPath = this.basePath + '/block/{height}'
+    public async getBlockByHeight (height: number, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: BlockInfoDTO;  }> {
+        const localVarPath = '/block/{height}'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)));
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
 
         // verify required parameter 'height' is not null or undefined
         if (height === null || height === undefined) {
             throw new Error('Required parameter height was null or undefined when calling getBlockByHeight.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json'
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: BlockInfoDTO;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: BlockInfoDTO;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "BlockInfoDTO");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "BlockInfoDTO");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
     /**
@@ -177,147 +135,91 @@ export class BlockRoutesApi {
      * @summary Get receipts from a block
      * @param height The height of the block.
      */
-    public async getBlockReceipts (height: number, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: StatementsDTO;  }> {
-        const localVarPath = this.basePath + '/block/{height}/receipts'
+    public async getBlockReceipts (height: number, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: StatementsDTO;  }> {
+        const localVarPath = '/block/{height}/receipts'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)));
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
 
         // verify required parameter 'height' is not null or undefined
         if (height === null || height === undefined) {
             throw new Error('Required parameter height was null or undefined when calling getBlockReceipts.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json'
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: StatementsDTO;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: StatementsDTO;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "StatementsDTO");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "StatementsDTO");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
     /**
      * Returns an array of [transactions](https://nemtech.github.io/concepts/transaction.html) included in a block for a given block height.
      * @summary Get transactions from a block
-     * @param height The height of the block.
-     * @param pageSize The number of transactions to return for each request.
+     * @param transaction Query Params
      * @param id The transaction id up to which transactions are returned.
      */
-    public async getBlockTransactions (height: number, pageSize?: number, id?: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<TransactionInfoDTO>;  }> {
-        const localVarPath = this.basePath + '/block/{height}/transactions'
-            .replace('{' + 'height' + '}', encodeURIComponent(String(height)));
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
-
+    public async getBlockTransactions (height: number, transactionQueryParams?: TransactionQueryParams, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
+        const localVarPath = '/transactions/confirmed';
+        
         // verify required parameter 'height' is not null or undefined
         if (height === null || height === undefined) {
             throw new Error('Required parameter height was null or undefined when calling getBlockTransactions.');
         }
 
-        if (pageSize !== undefined) {
-            localVarQueryParameters['pageSize'] = ObjectSerializer.serialize(pageSize, "number");
+        let localVarQueryParameters: any = {};
+
+        if(transactionQueryParams){
+            localVarQueryParameters = transactionQueryParams.buildQueryParams();
         }
 
-        if (id !== undefined) {
-            localVarQueryParameters['id'] = ObjectSerializer.serialize(id, "string");
-        }
+        localVarQueryParameters['height'] = height;
+        localVarQueryParameters['embedded'] = "true";
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json',
+            params: localVarQueryParameters
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: Array<TransactionInfoDTO>;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "TransactionSearchDTO");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "Array<TransactionInfoDTO>");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
     /**
@@ -326,20 +228,11 @@ export class BlockRoutesApi {
      * @param height The height of the block. If height -1 is not a multiple of the limit provided, the inferior closest multiple + 1 is used instead.
      * @param limit The number of blocks to be returned.
      */
-    public async getBlocksByHeightWithLimit (height: number, limit: 25 | 50 | 75 | 100, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<BlockInfoDTO>;  }> {
-        const localVarPath = this.basePath + '/blocks/{height}/limit/{limit}'
+    public async getBlocksByHeightWithLimit (height: number, limit: 25 | 50 | 75 | 100, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<BlockInfoDTO>;  }> {
+        const localVarPath = '/blocks/{height}/limit/{limit}'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)))
             .replace('{' + 'limit' + '}', encodeURIComponent(String(limit)));
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
 
         // verify required parameter 'height' is not null or undefined
         if (height === null || height === undefined) {
@@ -351,49 +244,31 @@ export class BlockRoutesApi {
             throw new Error('Required parameter limit was null or undefined when calling getBlocksByHeightWithLimit.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json'
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: Array<BlockInfoDTO>;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: Array<BlockInfoDTO>;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "Array<BlockInfoDTO>");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "Array<BlockInfoDTO>");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
     /**
@@ -402,21 +277,12 @@ export class BlockRoutesApi {
      * @param height The height of the block.
      * @param hash The hash of the receipt statement or resolution.
      */
-    public async getMerkleReceipts (height: number, hash: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: MerkleProofInfoDTO;  }> {
-        const localVarPath = this.basePath + '/block/{height}/receipt/{hash}/merkle'
+    public async getMerkleReceipts (height: number, hash: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: MerkleProofInfoDTO;  }> {
+        const localVarPath = '/block/{height}/receipt/{hash}/merkle'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)))
             .replace('{' + 'hash' + '}', encodeURIComponent(String(hash)));
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
-
+        
         // verify required parameter 'height' is not null or undefined
         if (height === null || height === undefined) {
             throw new Error('Required parameter height was null or undefined when calling getMerkleReceipts.');
@@ -427,49 +293,31 @@ export class BlockRoutesApi {
             throw new Error('Required parameter hash was null or undefined when calling getMerkleReceipts.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json'
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: MerkleProofInfoDTO;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: MerkleProofInfoDTO;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "MerkleProofInfoDTO");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "MerkleProofInfoDTO");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
     /**
@@ -478,20 +326,10 @@ export class BlockRoutesApi {
      * @param height The height of the block.
      * @param hash The hash of the transaction.
      */
-    public async getMerkleTransaction (height: number, hash: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: MerkleProofInfoDTO;  }> {
-        const localVarPath = this.basePath + '/block/{height}/transaction/{hash}/merkle'
+    public async getMerkleTransaction (height: number, hash: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: MerkleProofInfoDTO;  }> {
+        const localVarPath = '/block/{height}/transaction/{hash}/merkle'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)))
             .replace('{' + 'hash' + '}', encodeURIComponent(String(hash)));
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
 
         // verify required parameter 'height' is not null or undefined
         if (height === null || height === undefined) {
@@ -503,49 +341,31 @@ export class BlockRoutesApi {
             throw new Error('Required parameter hash was null or undefined when calling getMerkleTransaction.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json'
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: MerkleProofInfoDTO;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: MerkleProofInfoDTO;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "MerkleProofInfoDTO");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "MerkleProofInfoDTO");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
 }

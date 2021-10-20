@@ -25,14 +25,15 @@
  * Do not edit the class manually.
  */
 
-import localVarRequest = require('request');
 import http = require('http');
+import axios from 'axios';
+import {AxiosRequestConfig, AxiosResponse, AxiosError} from 'axios';
 
 /* tslint:disable:no-unused-locals */
 import { NodeInfoDTO } from '../model/nodeInfoDTO';
 import { NodeTimeDTO } from '../model/nodeTimeDTO';
 
-import { ObjectSerializer, Authentication, VoidAuth, Interceptor } from '../model/models';
+import { ObjectSerializer } from '../model/models';
 
 import { HttpError, RequestFile } from './apis';
 
@@ -49,12 +50,6 @@ export class NodeRoutesApi {
     protected _basePath = defaultBasePath;
     protected _defaultHeaders : any = {};
     protected _useQuerystring : boolean = false;
-
-    protected authentications = {
-        'default': <Authentication>new VoidAuth(),
-    }
-
-    protected interceptors: Interceptor[] = [];
 
     constructor(basePath?: string);
     constructor(basePathOrUsername: string, password?: string, basePath?: string) {
@@ -89,140 +84,72 @@ export class NodeRoutesApi {
         return this._basePath;
     }
 
-    public setDefaultAuthentication(auth: Authentication) {
-        this.authentications.default = auth;
-    }
-
-    public setApiKey(key: NodeRoutesApiApiKeys, value: string) {
-        (this.authentications as any)[NodeRoutesApiApiKeys[key]].apiKey = value;
-    }
-
-    public addInterceptor(interceptor: Interceptor) {
-        this.interceptors.push(interceptor);
-    }
-
     /**
      * Supplies additional information about the application running on a node. 
      * @summary Get the node information
      */
-    public async getNodeInfo (options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: NodeInfoDTO;  }> {
-        const localVarPath = this.basePath + '/node/info';
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
+    public async getNodeInfo (options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: NodeInfoDTO;  }> {
+        const localVarPath = '/node/info';
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json'
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: NodeInfoDTO;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: NodeInfoDTO;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "NodeInfoDTO");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "NodeInfoDTO");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                            reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
     /**
      * Gets the node time at the moment the reply was sent and received.
      * @summary Get the node time
      */
-    public async getNodeTime (options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: NodeTimeDTO;  }> {
-        const localVarPath = this.basePath + '/node/time';
+    public async getNodeTime (options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: NodeTimeDTO;  }> {
+        const localVarPath = '/node/time';
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
-
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json'
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: NodeTimeDTO;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: NodeTimeDTO;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "NodeTimeDTO");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "NodeTimeDTO");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                            reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
 }

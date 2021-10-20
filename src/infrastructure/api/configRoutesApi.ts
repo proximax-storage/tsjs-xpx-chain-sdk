@@ -14,13 +14,14 @@
  * Do not edit the class manually.
  */
 
-import localVarRequest = require('request');
 import http = require('http');
+import axios from 'axios';
+import {AxiosRequestConfig, AxiosResponse, AxiosError} from 'axios';
 
 /* tslint:disable:no-unused-locals */
 import { NetworkConfigDTO } from '../model/networkConfigDTO';
 
-import { ObjectSerializer, Authentication, VoidAuth, Interceptor } from '../model/models';
+import { ObjectSerializer} from '../model/models';
 
 import { HttpError, RequestFile } from './apis';
 
@@ -37,12 +38,6 @@ export class ConfigRoutesApi {
     protected _basePath = defaultBasePath;
     protected _defaultHeaders : any = {};
     protected _useQuerystring : boolean = false;
-
-    protected authentications = {
-        'default': <Authentication>new VoidAuth(),
-    }
-
-    protected interceptors: Interceptor[] = [];
 
     constructor(basePath?: string);
     constructor(basePathOrUsername: string, password?: string, basePath?: string) {
@@ -77,85 +72,40 @@ export class ConfigRoutesApi {
         return this._basePath;
     }
 
-    public setDefaultAuthentication(auth: Authentication) {
-        this.authentications.default = auth;
-    }
-
-    public setApiKey(key: ConfigRoutesApiApiKeys, value: string) {
-        (this.authentications as any)[ConfigRoutesApiApiKeys[key]].apiKey = value;
-    }
-
-    public addInterceptor(interceptor: Interceptor) {
-        this.interceptors.push(interceptor);
-    }
-
     /**
      * Gets config of network at height.
      * @summary Get config of network
      * @param height The height of the blockchain to get config.
      */
-    public async getConfig (height: number, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: NetworkConfigDTO;  }> {
-        const localVarPath = this.basePath + '/config/{height}'
+    public async getConfig (height: number, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: NetworkConfigDTO;  }> {
+        const localVarPath = '/config/{height}'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)));
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
 
-        // verify required parameter 'height' is not null or undefined
-        if (height === null || height === undefined) {
-            throw new Error('Required parameter height was null or undefined when calling getConfig.');
-        }
-
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json'
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: NetworkConfigDTO;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: NetworkConfigDTO;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "NetworkConfigDTO");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "NetworkConfigDTO");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                            reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
 }

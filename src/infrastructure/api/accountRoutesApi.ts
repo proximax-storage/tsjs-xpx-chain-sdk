@@ -25,8 +25,9 @@
  * Do not edit the class manually.
  */
 
-import localVarRequest = require('request');
 import http = require('http');
+import axios from 'axios';
+import {AxiosRequestConfig, AxiosResponse, AxiosError} from 'axios';
 
 /* tslint:disable:no-unused-locals */
 import { AccountIds } from '../model/accountIds';
@@ -35,10 +36,10 @@ import { AccountNamesDTO } from '../model/accountNamesDTO';
 import { AccountPropertiesInfoDTO } from '../model/accountPropertiesInfoDTO';
 import { MultisigAccountGraphInfoDTO } from '../model/multisigAccountGraphInfoDTO';
 import { MultisigAccountInfoDTO } from '../model/multisigAccountInfoDTO';
-import { TransactionInfoDTO } from '../model/transactionInfoDTO';
+import { TransactionSearchDTO } from '../model/transactionSearchDTO';
 
-import { ObjectSerializer, Authentication, VoidAuth, Interceptor } from '../model/models';
-
+import { ObjectSerializer} from '../model/models';
+import {TransactionQueryParams} from '../TransactionQueryParams';
 import { HttpError, RequestFile } from './apis';
 
 let defaultBasePath = 'http://localhost:3000';
@@ -54,12 +55,6 @@ export class AccountRoutesApi {
     protected _basePath = defaultBasePath;
     protected _defaultHeaders : any = {};
     protected _useQuerystring : boolean = false;
-
-    protected authentications = {
-        'default': <Authentication>new VoidAuth(),
-    }
-
-    protected interceptors: Interceptor[] = [];
 
     constructor(basePath?: string);
     constructor(basePathOrUsername: string, password?: string, basePath?: string) {
@@ -94,85 +89,45 @@ export class AccountRoutesApi {
         return this._basePath;
     }
 
-    public setDefaultAuthentication(auth: Authentication) {
-        this.authentications.default = auth;
-    }
-
-    public setApiKey(key: AccountRoutesApiApiKeys, value: string) {
-        (this.authentications as any)[AccountRoutesApiApiKeys[key]].apiKey = value;
-    }
-
-    public addInterceptor(interceptor: Interceptor) {
-        this.interceptors.push(interceptor);
-    }
-
     /**
      * Returns the account information.
      * @summary Get account information
      * @param accountId The public key or address of the account.
      */
-    public async getAccountInfo (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: AccountInfoDTO;  }> {
-        const localVarPath = this.basePath + '/account/{accountId}'
+    public async getAccountInfo (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: AccountInfoDTO;  }> {
+        const localVarPath = '/account/{accountId}'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
 
         // verify required parameter 'accountId' is not null or undefined
         if (accountId === null || accountId === undefined) {
             throw new Error('Required parameter accountId was null or undefined when calling getAccountInfo.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json'
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: AccountInfoDTO;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: AccountInfoDTO;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "AccountInfoDTO");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "AccountInfoDTO");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
     /**
@@ -180,68 +135,40 @@ export class AccountRoutesApi {
      * @summary Get multisig account information
      * @param accountId The public key or address of the account.
      */
-    public async getAccountMultisig (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: MultisigAccountInfoDTO;  }> {
-        const localVarPath = this.basePath + '/account/{accountId}/multisig'
+    public async getAccountMultisig (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: MultisigAccountInfoDTO;  }> {
+        const localVarPath = '/account/{accountId}/multisig'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
 
         // verify required parameter 'accountId' is not null or undefined
         if (accountId === null || accountId === undefined) {
             throw new Error('Required parameter accountId was null or undefined when calling getAccountMultisig.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json'
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: MultisigAccountInfoDTO;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: MultisigAccountInfoDTO;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "MultisigAccountInfoDTO");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "MultisigAccountInfoDTO");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
     /**
@@ -249,68 +176,40 @@ export class AccountRoutesApi {
      * @summary Get multisig account graph information
      * @param accountId The public key or address of the account.
      */
-    public async getAccountMultisigGraph (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<MultisigAccountGraphInfoDTO>;  }> {
-        const localVarPath = this.basePath + '/account/{accountId}/multisig/graph'
+    public async getAccountMultisigGraph (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<MultisigAccountGraphInfoDTO>;  }> {
+        const localVarPath = '/account/{accountId}/multisig/graph'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
 
         // verify required parameter 'accountId' is not null or undefined
         if (accountId === null || accountId === undefined) {
             throw new Error('Required parameter accountId was null or undefined when calling getAccountMultisigGraph.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json'
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: Array<MultisigAccountGraphInfoDTO>;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: Array<MultisigAccountGraphInfoDTO>;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "Array<MultisigAccountGraphInfoDTO>");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "Array<MultisigAccountGraphInfoDTO>");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
     /**
@@ -318,68 +217,40 @@ export class AccountRoutesApi {
      * @summary Get account configurable properties information
      * @param accountId The public key or address of the account.
      */
-    public async getAccountProperties (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: AccountPropertiesInfoDTO;  }> {
-        const localVarPath = this.basePath + '/account/{accountId}/properties'
+    public async getAccountProperties (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: AccountPropertiesInfoDTO;  }> {
+        const localVarPath = '/account/{accountId}/properties'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
 
         // verify required parameter 'accountId' is not null or undefined
         if (accountId === null || accountId === undefined) {
             throw new Error('Required parameter accountId was null or undefined when calling getAccountProperties.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json'
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: AccountPropertiesInfoDTO;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: AccountPropertiesInfoDTO;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "AccountPropertiesInfoDTO");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "AccountPropertiesInfoDTO");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
     /**
@@ -387,68 +258,41 @@ export class AccountRoutesApi {
      * @summary Get account properties for given array of addresses
      * @param accountIds 
      */
-    public async getAccountPropertiesFromAccounts (accountIds: AccountIds, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<AccountPropertiesInfoDTO>;  }> {
-        const localVarPath = this.basePath + '/account/properties';
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
+    public async getAccountPropertiesFromAccounts (accountIds: AccountIds, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<AccountPropertiesInfoDTO>;  }> {
+        const localVarPath = '/account/properties';
 
         // verify required parameter 'accountIds' is not null or undefined
         if (accountIds === null || accountIds === undefined) {
             throw new Error('Required parameter accountIds was null or undefined when calling getAccountPropertiesFromAccounts.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'POST',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
-            body: ObjectSerializer.serialize(accountIds, "AccountIds")
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json',
+            data: ObjectSerializer.serialize(accountIds, "AccountIds")
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: Array<AccountPropertiesInfoDTO>;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: Array<AccountPropertiesInfoDTO>;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "Array<AccountPropertiesInfoDTO>");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "Array<AccountPropertiesInfoDTO>");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
+                         // reject(new HttpError(response, body, response.statusCode)); // keep as backup
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
     /**
@@ -456,68 +300,41 @@ export class AccountRoutesApi {
      * @summary Get accounts information
      * @param accountIds 
      */
-    public async getAccountsInfo (accountIds: AccountIds, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<AccountInfoDTO>;  }> {
-        const localVarPath = this.basePath + '/account';
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
+    public async getAccountsInfo (accountIds: AccountIds, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<AccountInfoDTO>;  }> {
+        const localVarPath = '/account';
 
         // verify required parameter 'accountIds' is not null or undefined
         if (accountIds === null || accountIds === undefined) {
             throw new Error('Required parameter accountIds was null or undefined when calling getAccountsInfo.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'POST',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
-            body: ObjectSerializer.serialize(accountIds, "AccountIds")
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json',
+            data: ObjectSerializer.serialize(accountIds, "AccountIds")
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: Array<AccountInfoDTO>;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: Array<AccountInfoDTO>;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "Array<AccountInfoDTO>");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "Array<AccountInfoDTO>");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
+                         // reject(new HttpError(response, body, response.statusCode)); // keep as backup
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
     /**
@@ -525,488 +342,303 @@ export class AccountRoutesApi {
      * @summary Get readable names for a set of accountIds.
      * @param accountIds 
      */
-    public async getAccountsNames (accountIds: AccountIds, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<AccountNamesDTO>;  }> {
-        const localVarPath = this.basePath + '/account/names';
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
+    public async getAccountsNames (accountIds: AccountIds, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<AccountNamesDTO>;  }> {
+        const localVarPath = '/account/names';
 
         // verify required parameter 'accountIds' is not null or undefined
         if (accountIds === null || accountIds === undefined) {
             throw new Error('Required parameter accountIds was null or undefined when calling getAccountsNames.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'POST',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
-            body: ObjectSerializer.serialize(accountIds, "AccountIds")
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json',
+            data: ObjectSerializer.serialize(accountIds, "AccountIds")
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: Array<AccountNamesDTO>;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: Array<AccountNamesDTO>;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "Array<AccountNamesDTO>");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "Array<AccountNamesDTO>");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
+                         // reject(new HttpError(response, body, response.statusCode)); // keep as backup
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
     /**
      * Gets an array of incoming transactions. A transaction is said to be incoming with respect to an account if the account is the recipient of the transaction. 
      * @summary Get incoming transactions
-     * @param publicKey The public key of the account.
-     * @param pageSize The number of transactions to return for each request.
-     * @param id The transaction id up to which transactions are returned. 
+     * @param plainAddress The public key of the account.
+     * @param Transaction Query Params
      * @param ordering The ordering criteria: * -id - Descending order by id. * id - Ascending order by id. 
      */
-    public async incomingTransactions (publicKey: string, pageSize?: number, id?: string, ordering?: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<TransactionInfoDTO>;  }> {
-        const localVarPath = this.basePath + '/account/{publicKey}/transactions/incoming'
-            .replace('{' + 'publicKey' + '}', encodeURIComponent(String(publicKey)));
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
 
-        // verify required parameter 'publicKey' is not null or undefined
-        if (publicKey === null || publicKey === undefined) {
+    public async incomingTransactions (plainAddress: string, transactionQueryParams?: TransactionQueryParams, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
+        const localVarPath = '/transactions/confirmed';
+        // verify required parameter 'plainAddress' is not null or undefined
+        if (plainAddress === null || plainAddress === undefined) {
             throw new Error('Required parameter publicKey was null or undefined when calling incomingTransactions.');
         }
 
-        if (pageSize !== undefined) {
-            localVarQueryParameters['pageSize'] = ObjectSerializer.serialize(pageSize, "number");
+        let localVarQueryParameters: any = {};
+        
+        if(transactionQueryParams){
+            localVarQueryParameters = transactionQueryParams.buildQueryParams();
         }
+        localVarQueryParameters["recipientAddress"] = plainAddress;
 
-        if (id !== undefined) {
-            localVarQueryParameters['id'] = ObjectSerializer.serialize(id, "string");
-        }
-
-        if (ordering !== undefined) {
-            localVarQueryParameters['ordering'] = ObjectSerializer.serialize(ordering, "string");
-        }
-
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json',
+            params: localVarQueryParameters
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: Array<TransactionInfoDTO>;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "TransactionSearchDTO");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "Array<TransactionInfoDTO>");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
     /**
      * Gets an array of outgoing transactions. A transaction is said to be outgoing with respect to an account if the account is the sender of the transaction.
      * @summary Get outgoing transactions
      * @param publicKey The public key of the account.
-     * @param pageSize The number of transactions to return for each request.
-     * @param id The transaction id up to which transactions are returned. 
+     * @param Transaction Query Params
      * @param ordering The ordering criteria: * -id - Descending order by id. * id - Ascending order by id. 
      */
-    public async outgoingTransactions (publicKey: string, pageSize?: number, id?: string, ordering?: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<TransactionInfoDTO>;  }> {
-        const localVarPath = this.basePath + '/account/{publicKey}/transactions/outgoing'
-            .replace('{' + 'publicKey' + '}', encodeURIComponent(String(publicKey)));
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
-
+    
+    public async outgoingTransactions (publicKey: string, transactionQueryParams?: TransactionQueryParams, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
+        const localVarPath = '/transactions/confirmed';
+        
         // verify required parameter 'publicKey' is not null or undefined
         if (publicKey === null || publicKey === undefined) {
             throw new Error('Required parameter publicKey was null or undefined when calling outgoingTransactions.');
         }
 
-        if (pageSize !== undefined) {
-            localVarQueryParameters['pageSize'] = ObjectSerializer.serialize(pageSize, "number");
+        let localVarQueryParameters: any = {};
+
+        if(transactionQueryParams){
+            localVarQueryParameters = transactionQueryParams.buildQueryParams();
         }
+        localVarQueryParameters["signerPublicKey"] = publicKey;
 
-        if (id !== undefined) {
-            localVarQueryParameters['id'] = ObjectSerializer.serialize(id, "string");
-        }
-
-        if (ordering !== undefined) {
-            localVarQueryParameters['ordering'] = ObjectSerializer.serialize(ordering, "string");
-        }
-
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json',
+            params: localVarQueryParameters
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: Array<TransactionInfoDTO>;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "TransactionSearchDTO");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "Array<TransactionInfoDTO>");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
+    
+
     /**
      * Gets an array of [aggregate bonded transactions](https://nemtech.github.io/concepts/aggregate-transaction.html) where the account is the sender or requires to cosign the transaction. 
      * @summary Get aggregate bonded transactions information
-     * @param publicKey The public key of the account.
-     * @param pageSize The number of transactions to return for each request.
-     * @param id The transaction id up to which transactions are returned. 
+     * @param plainAddress The address of the account.
+     * @param Transaction Query Params
      * @param ordering The ordering criteria. * -id - Descending order by id. * id - Ascending order by id. 
      */
-    public async partialTransactions (publicKey: string, pageSize?: number, id?: string, ordering?: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<TransactionInfoDTO>;  }> {
-        const localVarPath = this.basePath + '/account/{publicKey}/transactions/partial'
-            .replace('{' + 'publicKey' + '}', encodeURIComponent(String(publicKey)));
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
-        }
-        let localVarFormParams: any = {};
 
-        // verify required parameter 'publicKey' is not null or undefined
-        if (publicKey === null || publicKey === undefined) {
+    // toChange
+    public async partialTransactions (plainAddress: string, transactionQueryParams?: TransactionQueryParams, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
+        const localVarPath = '/transactions/partial';
+        
+        // verify required parameter 'plainAddress' is not null or undefined
+        if (plainAddress === null || plainAddress === undefined) {
             throw new Error('Required parameter publicKey was null or undefined when calling partialTransactions.');
         }
+        
+        let localVarQueryParameters: any = {};
 
-        if (pageSize !== undefined) {
-            localVarQueryParameters['pageSize'] = ObjectSerializer.serialize(pageSize, "number");
+        if(transactionQueryParams){
+            localVarQueryParameters = transactionQueryParams.buildQueryParams();
         }
+        localVarQueryParameters["address"] = plainAddress;
 
-        if (id !== undefined) {
-            localVarQueryParameters['id'] = ObjectSerializer.serialize(id, "string");
-        }
-
-        if (ordering !== undefined) {
-            localVarQueryParameters['ordering'] = ObjectSerializer.serialize(ordering, "string");
-        }
-
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json',
+            params: localVarQueryParameters
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
+        return new Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "TransactionSearchDTO");
 
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: Array<TransactionInfoDTO>;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "Array<TransactionInfoDTO>");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
+    
+
     /**
      * Gets an array of transactions for which an account is the sender or receiver.
      * @summary Get confirmed transactions
-     * @param publicKey The public key of the account.
+     * @param plainAddress The public key of the account.
      * @param pageSize The number of transactions to return for each request.
      * @param id The transaction id up to which transactions are returned. 
      * @param ordering The ordering criteria: * -id - Descending order by id. * id - Ascending order by id. 
      */
-    public async transactions (publicKey: string, pageSize?: number, id?: string, ordering?: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<TransactionInfoDTO>;  }> {
-        const localVarPath = this.basePath + '/account/{publicKey}/transactions'
-            .replace('{' + 'publicKey' + '}', encodeURIComponent(String(publicKey)));
+
+    public async transactions (plainAddress: string, transactionQueryParams?: TransactionQueryParams, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
+        const localVarPath = '/transactions/confirmed'
+
+        // verify required parameter 'plainAddress' is not null or undefined
+        if (plainAddress === null || plainAddress === undefined) {
+            throw new Error('Required parameter address was null or undefined when calling transactions.');
+        }
+
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
+        
+        if(transactionQueryParams){
+            localVarQueryParameters = transactionQueryParams.buildQueryParams();
         }
-        let localVarFormParams: any = {};
+        localVarQueryParameters["address"] = plainAddress;
 
-        // verify required parameter 'publicKey' is not null or undefined
-        if (publicKey === null || publicKey === undefined) {
-            throw new Error('Required parameter publicKey was null or undefined when calling transactions.');
-        }
-
-        if (pageSize !== undefined) {
-            localVarQueryParameters['pageSize'] = ObjectSerializer.serialize(pageSize, "number");
-        }
-
-        if (id !== undefined) {
-            localVarQueryParameters['id'] = ObjectSerializer.serialize(id, "string");
-        }
-
-        if (ordering !== undefined) {
-            localVarQueryParameters['ordering'] = ObjectSerializer.serialize(ordering, "string");
-        }
-
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json',
+            params: localVarQueryParameters
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: Array<TransactionInfoDTO>;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "TransactionSearchDTO");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "Array<TransactionInfoDTO>");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
     /**
      * Gets the array of transactions not included in a block where an account is the sender or receiver. 
      * @summary Get unconfirmed transactions
-     * @param publicKey The public key of the account.
+     * @param plainAddress The address of the account.
      * @param pageSize The number of transactions to return for each request.
      * @param id The transaction id up to which transactions are returned. 
      * @param ordering The ordering criteria. * -id - Descending order by id. * id - Ascending order by id. 
      */
-    public async unconfirmedTransactions (publicKey: string, pageSize?: number, id?: string, ordering?: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<TransactionInfoDTO>;  }> {
-        const localVarPath = this.basePath + '/account/{publicKey}/transactions/unconfirmed'
-            .replace('{' + 'publicKey' + '}', encodeURIComponent(String(publicKey)));
+
+    public async unconfirmedTransactions (plainAddress: string, transactionQueryParams?: TransactionQueryParams, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
+        const localVarPath = '/transactions/unconfirmed';
+        
+        // verify required parameter 'plainAddress' is not null or undefined
+        if (plainAddress === null || plainAddress === undefined) {
+            throw new Error('Required parameter address was null or undefined when calling unconfirmedTransactions.');
+        }
+
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
-        const produces = ['application/json'];
-        // give precedence to 'application/json'
-        if (produces.indexOf('application/json') >= 0) {
-            localVarHeaderParams.Accept = 'application/json';
-        } else {
-            localVarHeaderParams.Accept = produces.join(',');
+        
+        if(transactionQueryParams){
+            localVarQueryParameters = transactionQueryParams.buildQueryParams();
         }
-        let localVarFormParams: any = {};
+        localVarQueryParameters["address"] = plainAddress;
 
-        // verify required parameter 'publicKey' is not null or undefined
-        if (publicKey === null || publicKey === undefined) {
-            throw new Error('Required parameter publicKey was null or undefined when calling unconfirmedTransactions.');
-        }
-
-        if (pageSize !== undefined) {
-            localVarQueryParameters['pageSize'] = ObjectSerializer.serialize(pageSize, "number");
-        }
-
-        if (id !== undefined) {
-            localVarQueryParameters['id'] = ObjectSerializer.serialize(id, "string");
-        }
-
-        if (ordering !== undefined) {
-            localVarQueryParameters['ordering'] = ObjectSerializer.serialize(ordering, "string");
-        }
-
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json',
+            params: localVarQueryParameters
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-
-        let interceptorPromise = authenticationPromise;
-        for (const interceptor of this.interceptors) {
-            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
-        }
-
-        return interceptorPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
-                } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: Array<TransactionInfoDTO>;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+        return new Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "TransactionSearchDTO");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
                     } else {
-                        body = ObjectSerializer.deserialize(body, "Array<TransactionInfoDTO>");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject(new HttpError(response, body, response.statusCode));
-                        }
+                         reject(response);
                     }
-                });
-            });
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
         });
     }
 }
