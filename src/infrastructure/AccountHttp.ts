@@ -417,6 +417,10 @@ export class AccountHttp extends Http implements AccountRepository {
         else{
             return firstObservable.pipe(
                 flatMap(aggTxns =>{
+                    if(aggTxns.length === 0){
+                        return [];
+                    }
+
                     let transactionIds = aggTxns.map(txn => txn.transactionInfo!.hash ? txn.transactionInfo!.hash : "");
 
                     const transactionIdsBody = {
