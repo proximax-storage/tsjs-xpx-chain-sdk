@@ -94,6 +94,10 @@ export class MosaicNonce {
         this.nonce = nonce;
     }
 
+    toNumber(){
+        return parseInt(convert.uint8ToHex(this.nonce), 16);
+    }
+
     /**
      * @internal
      * @returns {[number,number,number,number]}
