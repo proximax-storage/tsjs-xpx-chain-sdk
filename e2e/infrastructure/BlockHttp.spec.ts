@@ -18,6 +18,7 @@ import {assert, expect} from 'chai';
 import {BlockHttp} from '../../src/infrastructure/BlockHttp';
 import { Listener, TransactionHttp } from '../../src/infrastructure/infrastructure';
 import {QueryParams} from '../../src/infrastructure/QueryParams';
+import {TransactionQueryParams} from '../../src/infrastructure/TransactionQueryParams';
 import { NetworkCurrencyMosaic } from '../../src/model/mosaic/NetworkCurrencyMosaic';
 import { Deadline } from '../../src/model/transaction/Deadline';
 import { PlainMessage } from '../../src/model/transaction/PlainMessage';
@@ -131,9 +132,11 @@ describe('BlockHttp', () => {
         });
 
         it('should return block transactions data given height with paginated transactionId', (done) => {
-            blockHttp.getBlockTransactions(1, new QueryParams(10, nextId))
+            let transactionQueryParams = new TransactionQueryParams();
+            transactionQueryParams.pageNumber = 10;
+            blockHttp.getBlockTransactions(1, transactionQueryParams)
                 .subscribe((transactions) => {
-                    expect(transactions[0].transactionInfo!.id).to.be.equal(firstId);
+                    // expect(transactions[0].transactionInfo!.id).to.be.equal(firstId); // id offset temporary removed
                     expect(transactions.length).to.be.greaterThan(0);
                     done();
                 });

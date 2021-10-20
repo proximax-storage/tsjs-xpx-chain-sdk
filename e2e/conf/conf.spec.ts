@@ -3,7 +3,7 @@ const conf = require("config");
 import { MosaicId, NamespaceId, TransactionType, RegisterNamespaceTransaction, MosaicDefinitionTransaction,
     TransferTransaction, TransactionInfo, MosaicNonce, MosaicProperties, UInt64, BlockInfo, ChainConfigTransaction, TransactionBuilderFactory, NetworkType, Account } from '../../src/model/model';
 import { ConfUtils } from './ConfUtils';
-import { AccountHttp, TransactionHttp, NamespaceHttp, MosaicHttp, BlockHttp, QueryParams } from '../../src/infrastructure/infrastructure';
+import { AccountHttp, TransactionHttp, NamespaceHttp, MosaicHttp, BlockHttp, QueryParams, TransactionQueryParams } from '../../src/infrastructure/infrastructure';
 
 // config types
 interface ConfApi {
@@ -213,7 +213,9 @@ class Configuration {
 const GetNemesisBlockDataPromise = () => {
     const blockHttp = new BlockHttp(APIUrl);
     return NemesisBlockInfo.getInstance().then((nemesisBlockInfo) => {
-        return blockHttp.getBlockTransactions(1, new QueryParams(100)).toPromise()
+        let transactionQueryParams = new TransactionQueryParams();
+        transactionQueryParams.pageSize = 100;
+        return blockHttp.getBlockTransactions(1, transactionQueryParams).toPromise()
         .then(txs => {
             const regNamespaceTxs = txs.filter(tx => tx.type === TransactionType.REGISTER_NAMESPACE) as RegisterNamespaceTransaction[];
             const currencyNamespace = regNamespaceTxs.find(tx => tx.namespaceName === "xpx");

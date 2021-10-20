@@ -54,7 +54,9 @@ import { TransferTransaction } from '../../src/model/transaction/TransferTransac
 import { UInt64 } from '../../src/model/UInt64';
 import { TestingAccount } from '../conf/conf.spec';
 import { deepStrictEqual } from 'assert';
-import { NamespaceType, ModifyMetadataTransaction, MetadataModification, MetadataModificationType, Mosaic, MetadataType, ChainUpgradeTransaction, ChainConfigTransaction } from '../../src/model/model';
+import { KeyGenerator } from '../../src/core/format/KeyGenerator'
+import { NamespaceType, MosaicMetadataTransaction, NamespaceMetadataTransaction, AccountMetadataTransaction, 
+    ChainUpgradeTransaction, ChainConfigTransaction, MosaicLevy, MosaicLevyType, MosaicModifyLevyTransaction } from '../../src/model/model';
 
 describe('SerializeTransactionToJSON', () => {
     let account: Account;
@@ -239,6 +241,25 @@ describe('SerializeTransactionToJSON', () => {
         expect(json.transaction.type).to.be.equal(TransactionType.MOSAIC_SUPPLY_CHANGE);
         expect(json.transaction.direction).to.be.equal(MosaicSupplyType.Increase);
         deepStrictEqual(json.transaction.delta, UInt64.fromUint(10).toDTO());
+    });
+
+    it('should create MosaicSupplyChangeTransaction', () => {
+        const mosaicId = new MosaicId([2262289484, 3405110546]);
+        const mosaicLevy = MosaicLevy.createWithAbsoluteFee(TestingAccount.address, mosaicId, 50);
+        const mosaicModifyLevyTransaction = MosaicModifyLevyTransaction.create(
+            Deadline.create(),
+            mosaicId,
+            mosaicLevy,
+            NetworkType.MIJIN_TEST,
+        );
+
+        const json = mosaicModifyLevyTransaction.toJSON();
+
+        expect(json.transaction.type).to.be.equal(TransactionType.MODIFY_MOSAIC_LEVY);
+        expect(json.transaction.mosaicLevy.type).to.be.equal(MosaicLevyType.LevyAbsoluteFee);
+        expect(json.transaction.mosaicLevy.mosaicId).to.be.equal(mosaicId.toDTO());
+        expect(json.transaction.mosaicLevy.recipient.address).to.be.equal(TestingAccount.address.toDTO());
+        deepStrictEqual(json.transaction.mosaicLevy.fee, UInt64.fromUint(50).toDTO());
     });
 
     it('should create TransferTransaction with an address', () => {
@@ -460,73 +481,82 @@ describe('SerializeTransactionToJSON', () => {
         expect(json.transaction.namespaceName).to.be.equal('sub-test-namespace');
     });
 
-    it('should create ModifyMetadataTransaction with address', () => {
-        const address = Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
-        const key = 'someKey';
-        const value = 'someValue';
-        const modification = new MetadataModification(MetadataModificationType.REMOVE, key, value);
-        const modifyMetadataTransaction = ModifyMetadataTransaction.createWithAddress(
-            NetworkType.MIJIN_TEST,
+    it('should create AccountMetadataTransaction', () => {
+        const newValue = 'hello';
+        const oldvalue = 'hello1';
+        const accountMetadataTransaction = AccountMetadataTransaction.create(   
             Deadline.create(),
-            address,
-            [modification]
+            account.publicAccount,
+            "name",
+            newValue,
+            oldvalue,
+            NetworkType.MIJIN_TEST,
         );
 
-        const json = modifyMetadataTransaction.toJSON();
+        const json = accountMetadataTransaction.toJSON();
 
-        expect(json.transaction.type).to.be.equal(TransactionType.MODIFY_ACCOUNT_METADATA);
-        expect(json.transaction.metadataType).to.be.equal(MetadataType.ADDRESS);
-        expect(json.transaction.metadataId).to.be.equal(address.plain());
-        expect(json.transaction.modifications.length).to.be.equal(1);
-        expect(json.transaction.modifications[0].key).to.be.equal(key);
-        expect(json.transaction.modifications[0].value).to.be.equal(value);
-        expect(json.transaction.modifications[0].type).to.be.equal(MetadataModificationType.REMOVE);
+        expect(json.transaction.type).to.be.equal(TransactionType.ACCOUNT_METADATA_NEM);
+        expect(json.transaction.targetPublicKey.publicKey).to.be.equal(account.publicKey);
+        expect(json.transaction.scopedMetadataKey).to.be.equal(KeyGenerator.generateUInt64Key("name").toDTO());
+        expect(json.transaction.oldValue).to.be.equal(oldvalue);
+        expect(json.transaction.value).to.be.equal(newValue);
+        expect(json.transaction.valueSize).to.be.equal(6);
+        expect(json.transaction.valueSizeDelta).to.be.equal(-1);
+        expect(json.transaction.valueDifferences).to.be.equal("000000000031");
     });
 
-    it('should create ModifyMetadataTransaction with mosaic', () => {
-        const mosaic = NetworkCurrencyMosaic.createRelative(10);
-        const key = 'someKey';
-        const value = 'someValue';
-        const modification = new MetadataModification(MetadataModificationType.REMOVE, key, value);
-        const modifyMetadataTransaction = ModifyMetadataTransaction.createWithMosaicId(
-            NetworkType.MIJIN_TEST,
+    it('should create MosaicMetadataTransaction', () => {
+        const newValue = 'hello';
+        const oldvalue = 'hello1';
+        const mosaicId = new MosaicId([2262289484, 3405110546]);
+        const mosaicMetadataTransaction = MosaicMetadataTransaction.create(   
             Deadline.create(),
-            mosaic.id,
-            [modification]
+            account.publicAccount,
+            mosaicId,
+            "name",
+            newValue,
+            oldvalue,
+            NetworkType.MIJIN_TEST,
         );
 
-        const json = modifyMetadataTransaction.toJSON();
+        const json = mosaicMetadataTransaction.toJSON();
 
-        expect(json.transaction.type).to.be.equal(TransactionType.MODIFY_MOSAIC_METADATA);
-        expect(json.transaction.metadataType).to.be.equal(MetadataType.MOSAIC);
-        expect(json.transaction.metadataId).to.be.equal(mosaic.id.toHex());
-        expect(json.transaction.modifications.length).to.be.equal(1);
-        expect(json.transaction.modifications[0].key).to.be.equal(key);
-        expect(json.transaction.modifications[0].value).to.be.equal(value);
-        expect(json.transaction.modifications[0].type).to.be.equal(MetadataModificationType.REMOVE);
+        expect(json.transaction.type).to.be.equal(TransactionType.MOSAIC_METADATA_NEM);
+        expect(json.transaction.targetPublicKey.publicKey).to.be.equal(account.publicKey);
+        expect(json.transaction.scopedMetadataKey).to.be.equal(KeyGenerator.generateUInt64Key("name").toDTO());
+        expect(json.transaction.targetMosaicId.toHex()).to.be.equal(mosaicId.toHex());
+        expect(json.transaction.oldValue).to.be.equal(oldvalue);
+        expect(json.transaction.value).to.be.equal(newValue);
+        expect(json.transaction.valueSize).to.be.equal(6);
+        expect(json.transaction.valueSizeDelta).to.be.equal(-1);
+        expect(json.transaction.valueDifferences).to.be.equal("000000000031");
     });
 
     it('should create ModifyMetadataTransaction with namespace', () => {
-        const namespaceId = new NamespaceId('some-namespace');
-        const key = 'someKey';
-        const value = 'someValue';
-        const modification = new MetadataModification(MetadataModificationType.REMOVE, key, value);
-        const modifyMetadataTransaction = ModifyMetadataTransaction.createWithNamespaceId(
-            NetworkType.MIJIN_TEST,
+        const newValue = 'hello';
+        const oldvalue = 'hello1';
+        const namespaceId = new NamespaceId("testing");
+        const mosaicMetadataTransaction = NamespaceMetadataTransaction.create(   
             Deadline.create(),
+            account.publicAccount,
             namespaceId,
-            [modification]
+            "name",
+            newValue,
+            oldvalue,
+            NetworkType.MIJIN_TEST,
         );
 
-        const json = modifyMetadataTransaction.toJSON();
+        const json = mosaicMetadataTransaction.toJSON();
 
-        expect(json.transaction.type).to.be.equal(TransactionType.MODIFY_NAMESPACE_METADATA);
-        expect(json.transaction.metadataType).to.be.equal(MetadataType.NAMESPACE);
-        expect(json.transaction.metadataId).to.be.equal(namespaceId.toHex());
-        expect(json.transaction.modifications.length).to.be.equal(1);
-        expect(json.transaction.modifications[0].key).to.be.equal(key);
-        expect(json.transaction.modifications[0].value).to.be.equal(value);
-        expect(json.transaction.modifications[0].type).to.be.equal(MetadataModificationType.REMOVE);
+        expect(json.transaction.type).to.be.equal(TransactionType.NAMESPACE_METADATA_NEM);
+        expect(json.transaction.targetPublicKey.publicKey).to.be.equal(account.publicKey);
+        expect(json.transaction.scopedMetadataKey).to.be.equal(KeyGenerator.generateUInt64Key("name").toDTO());
+        expect(json.transaction.targetNamespaceId.toHex()).to.be.equal(namespaceId.toHex());
+        expect(json.transaction.oldValue).to.be.equal(oldvalue);
+        expect(json.transaction.value).to.be.equal(newValue);
+        expect(json.transaction.valueSize).to.be.equal(6);
+        expect(json.transaction.valueSizeDelta).to.be.equal(-1);
+        expect(json.transaction.valueDifferences).to.be.equal("000000000031");
 
     });
 
@@ -561,5 +591,4 @@ describe('SerializeTransactionToJSON', () => {
         deepStrictEqual(json.transaction.upgradePeriod, UInt64.fromUint(1234).toDTO());
         deepStrictEqual(json.transaction.newBlockchainVersion, UInt64.fromUint(12345678901234567890).toDTO());
     });
-
 });

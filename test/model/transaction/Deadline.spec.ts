@@ -27,9 +27,9 @@ describe('Deadline', () => {
         const timestampLocal = LocalDateTime.ofInstant(Instant.ofEpochMilli(networkTimeStamp), ZoneId.SYSTEM);
         const reproducedDate = timestampLocal.plus(2, ChronoUnit.HOURS);
 
-        expect(deadline.value.dayOfMonth()).to.be.equal(reproducedDate.dayOfMonth());
-        expect(deadline.value.monthValue()).to.be.equal(reproducedDate.monthValue());
-        expect(deadline.value.year()).to.be.equal(reproducedDate.year());
+        expect(deadline.value!.dayOfMonth()).to.be.equal(reproducedDate.dayOfMonth());
+        expect(deadline.value!.monthValue()).to.be.equal(reproducedDate.monthValue());
+        expect(deadline.value!.year()).to.be.equal(reproducedDate.year());
     });
 
     it('should throw error deadline smaller than timeStamp', () => {

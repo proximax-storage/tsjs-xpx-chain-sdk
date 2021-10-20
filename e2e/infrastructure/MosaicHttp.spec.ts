@@ -17,6 +17,8 @@ import {assert, expect} from 'chai';
 import { Listener, TransactionHttp } from '../../src/infrastructure/infrastructure';
 import {MosaicHttp} from '../../src/infrastructure/MosaicHttp';
 import {MosaicId} from '../../src/model/mosaic/MosaicId';
+import {MosaicLevy} from '../../src/model/mosaic/MosaicLevy';
+import {MosaicLevyType} from '../../src/model/mosaic/MosaicLevyType';
 import {APIUrl, ConfNetworkMosaic, TestingAccount, Configuration } from '../conf/conf.spec';
 import { Deadline, UInt64, RegisterNamespaceTransaction, NamespaceId, AliasActionType, MosaicAliasTransaction, MosaicNonce, MosaicDefinitionTransaction, MosaicProperties, Address, Transaction, TransactionBuilderFactory } from '../../src/model/model';
 import { fail } from 'assert';
@@ -120,6 +122,36 @@ describe('MosaicHttp', () => {
                 .build();
 
             const signedTransaction = mosaicAliasTransaction.signWith(TestingAccount, factory.generationHash);
+
+            validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
+
+            transactionHttp.announce(signedTransaction);
+        });
+    });
+
+    describe('Setup test MosaicLevy', () => {
+        it('Announce modifyMosaicLevyTransaction', (done) => {
+            const mosaicLevy = MosaicLevy.createWithAbsoluteFee(TestingAccount.address, mosaicId, 50);
+            const modifyMosaicLevyTransaction = factory.mosaicModifyLevy()
+                .mosaicLevy(mosaicLevy)
+                .mosaicId(mosaicId)
+                .build();
+
+            const signedTransaction = modifyMosaicLevyTransaction.signWith(TestingAccount, factory.generationHash);
+
+            validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
+
+            transactionHttp.announce(signedTransaction);
+        });
+    });
+
+    describe('Remove test MosaicLevy', () => {
+        it('Announce removeMosaicLevyTransaction', (done) => {
+            const removeMosaicLevyTransaction = factory.mosaicRemoveLevy()
+                .mosaicId(mosaicId)
+                .build();
+
+            const signedTransaction = removeMosaicLevyTransaction.signWith(TestingAccount, factory.generationHash);
 
             validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
 

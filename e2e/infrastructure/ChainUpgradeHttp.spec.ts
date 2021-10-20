@@ -14,7 +14,7 @@ describe('ChainUpgradeHttp', () => {
                 .subscribe((chainUpgrade) => {
                     expect(chainUpgrade).not.to.be.undefined;
                     expect(chainUpgrade.height).not.to.be.equal(0);
-                    expect(chainUpgrade.catapultVersion.compact()).not.to.be.equal(0);
+                    expect(chainUpgrade.catapultVersion.minor).not.to.be.equal(0);
                     done();
                 });
         });
