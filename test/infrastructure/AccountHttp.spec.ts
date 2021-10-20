@@ -312,7 +312,7 @@ describe('AccountHttp', () => {
             sandbox.restore();
         });
         it('should call api client', (done) => {
-            client.aggregateBondedTransactions(publicAccount).subscribe(response => {
+            client.aggregateBondedTransactions(publicAccount, undefined, false).subscribe(response => {
                 expect(response.length).to.be.equal(1);
                 expect(response[0]).to.be.equal('deserialization called');
                 done();

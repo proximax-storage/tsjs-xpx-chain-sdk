@@ -7,7 +7,7 @@
     "test": "mocha --ui bdd --require ts-node/register './test/**/*.spec.*' --timeout 90000",
     "test:e2e": "npm run build && mocha --ui bdd --require ts-node/register './e2e/**/*.spec.*' --timeout 300000",
     "test:all": "mocha --ui bdd --require ts-node/register './test/**/*.spec.*' './e2e/**/*.spec.*' --timeout 300000",
-    "build": "tsc",
+    "build": "rm -rf dist && tsc",
     "test:covhtml": "nyc npm t && nyc report --reporter=html --reporter=text-summary",
     "test:cov": "nyc --reporter=lcov --reporter=text-lcov npm t && nyc report --reporter=text-lcov",
     "test:coveralls": "npm run test:cov | coveralls"

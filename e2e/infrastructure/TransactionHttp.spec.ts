@@ -22,7 +22,8 @@ import {
     APIUrl, ConfNetworkMosaic,
     TestingAccount, TestingRecipient, MultisigAccount, CosignatoryAccount, Cosignatory2Account, Cosignatory3Account, GetNemesisBlockDataPromise, ConfTestingMosaicId, ConfAccountHttp, ConfTransactionHttp, ConfMosaicHttp, Customer1Account, ConfNetworkMosaicDivisibility, MultilevelMultisigAccount, Cosignatory4Account, NemesisAccount, ConfTestingNamespaceId, Configuration
 } from '../conf/conf.spec';
-import { SignedTransaction, CosignatureTransaction, TransactionBuilderFactory, AccountRestrictionModification, MosaicId, Mosaic, UInt64, PlainMessage, CosignatureSignedTransaction, AggregateTransaction, MosaicNonce, MosaicProperties, MetadataModification, MetadataModificationType, AliasActionType, MosaicSupplyType, RestrictionModificationType, RestrictionType, TransactionType, HashType, LinkAction } from '../../src/model/model';
+import { SignedTransaction, CosignatureTransaction, TransactionBuilderFactory, AccountRestrictionModification, MosaicId, 
+    Mosaic, MosaicLevy, NamespaceId, UInt64, PlainMessage, CosignatureSignedTransaction, AggregateTransaction, MosaicNonce, MosaicProperties, AliasActionType, MosaicSupplyType, RestrictionModificationType, RestrictionType, TransactionType, HashType, LinkAction } from '../../src/model/model';
 import { fail } from 'assert';
 import { randomBytes } from 'crypto';
 import { validateTransactionConfirmed, validatePartialTransactionNotPartialAnyMore, validatePartialTransactionAnnouncedCorrectly } from '../utils';
@@ -313,16 +314,89 @@ describe('TransactionHttp', () => {
 
                 const signedTransaction = mosaicDefinitionTransaction.signWith(TestingAccount, factory.generationHash);
                 console.log(mosaicId.toHex());
+                validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
+                    .then(() => done()).catch((reason) => fail(reason));
+                transactionHttp.announce(signedTransaction);
+            });
+
+            it('new mosaic with metadata', (done) => {
+                const nonce = MosaicNonce.createRandom();
+                const mosaicId = MosaicId.createFromNonce(nonce, TestingAccount.publicAccount);
+                const mosaicDefinitionTransaction = factory.mosaicDefinition()
+                    .mosaicNonce(nonce)
+                    .mosaicId(mosaicId)
+                    .mosaicProperties(MosaicProperties.create({
+                        supplyMutable: true,
+                        transferable: true,
+                        divisibility: 3,
+                        duration: UInt64.fromUint(1000),
+                    }))
+                    .build();
+
+                const signedTransaction = mosaicDefinitionTransaction.signWith(TestingAccount, factory.generationHash);
+                console.log(mosaicId.toHex());
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash).then(() => {
-                    const modifyMetadataTransaction = factory.mosaicMetadata()
-                        .mosaicId(mosaicId)
-                        .modifications([new MetadataModification(MetadataModificationType.ADD, 'key2', 'some other value')])
+                    const mosaicMetadataTransaction = factory.mosaicMetadata()
+                        .targetMosaicId(mosaicId)
+                        .targetPublicKey(TestingAccount.publicAccount)
+                        .scopedMetadataKey(UInt64.fromUint(1))
+                        .valueDifferences(convert.hexToUint8(convert.utf8ToHex("hello")))
                         .build();
 
-                    const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount, factory.generationHash);
-                    validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
+                    const aggregateBondedTxn = factory.aggregateBonded()
+                        .innerTransactions([mosaicMetadataTransaction.toAggregate(TestingAccount.publicAccount)])
+                        .build();
+
+                    const signedMetadataTransaction = aggregateBondedTxn.signWith(TestingAccount, factory.generationHash);
+                    
+                    const lockhashTransaction = factory.lockFunds()
+                        .duration(UInt64.fromUint(1000))
+                        .signedTransaction(signedMetadataTransaction)
+                        .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
+                        .build();
+
+                    const signedLockhashTransaction = lockhashTransaction.signWith(TestingAccount, factory.generationHash);
+
+                    validateTransactionConfirmed(listener, TestingAccount.address, signedLockhashTransaction.hash)
+                        .then(() => {
+                            validateTransactionConfirmed(listener, TestingAccount.address, signedMetadataTransaction.hash)
+                                .then(() => done()).catch((reason) => fail(reason));
+                            transactionHttp.announce(signedMetadataTransaction);
+                        }).catch((reason) => fail(reason));
+                    transactionHttp.announce(signedLockhashTransaction);
+                    
+                }).catch((reason) => fail(reason));
+                transactionHttp.announce(signedTransaction);
+            });
+
+            it('new mosaic with mosaic levy', (done) => {
+                const nonce = MosaicNonce.createRandom();
+                const mosaicId = MosaicId.createFromNonce(nonce, TestingAccount.publicAccount);
+                const mosaicDefinitionTransaction = factory.mosaicDefinition()
+                    .mosaicNonce(nonce)
+                    .mosaicId(mosaicId)
+                    .mosaicProperties(MosaicProperties.create({
+                        supplyMutable: true,
+                        transferable: true,
+                        divisibility: 3,
+                        duration: UInt64.fromUint(1000),
+                    }))
+                    .build();
+
+                const signedTransaction = mosaicDefinitionTransaction.signWith(TestingAccount, factory.generationHash);
+                console.log(mosaicId.toHex());
+                validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash).then(() => {
+                    const mosaicModifyLevyTransaction = factory.mosaicModifyLevy()
+                        .mosaicId(mosaicId)
+                        .mosaicLevy(MosaicLevy.createWithAbsoluteFee(TestingAccount.address, mosaicId, 50))
+                        .build();
+
+                    const signedMosaicModifyLevyTransaction = mosaicModifyLevyTransaction.signWith(TestingAccount, factory.generationHash);
+
+                    validateTransactionConfirmed(listener, TestingAccount.address, signedMosaicModifyLevyTransaction.hash)
                         .then(() => done()).catch((reason) => fail(reason));
-                    transactionHttp.announce(signedTransaction);
+                    transactionHttp.announce(signedMosaicModifyLevyTransaction);
+                    
                 }).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
             });
@@ -773,7 +847,7 @@ describe('TransactionHttp', () => {
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
                         .duration(UInt64.fromUint(100))
                         .hashType(HashType.Op_Hash_160)
-                        .secret(sha3_256.create().update(randomBytes(20)).hex().substr(0, 40))
+                        .secret(sha3_256.create().update(randomBytes(20)).hex().substring(0, 40))
                         .recipient(TestingRecipient.address)
                         .build();
 
@@ -788,7 +862,7 @@ describe('TransactionHttp', () => {
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
                         .duration(UInt64.fromUint(100))
                         .hashType(HashType.Op_Hash_160)
-                        .secret(sha3_256.create().update(randomBytes(20)).hex().substr(0, 40))
+                        .secret(sha3_256.create().update(randomBytes(20)).hex().substring(0, 40))
                         .recipient(TestingRecipient.address)
                         .build();
 

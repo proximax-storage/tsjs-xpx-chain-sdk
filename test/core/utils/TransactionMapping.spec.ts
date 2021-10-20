@@ -362,7 +362,7 @@ describe('TransactionMapping - createFromPayload', () => {
 
         const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as MosaicModifyLevyTransaction;
 
-        expect(transaction.mosaicLevy.fee.compact()).to.be.equal(15);
+        expect(transaction.mosaicLevy.fee.compact()).to.be.equal(1500);
         expect(transaction.mosaicLevy.recipient.plain()).to.be.equal(account.address.plain());
         expect(transaction.mosaicLevy.type).to.be.equal(MosaicLevyType.LevyPercentileFee);
     })
@@ -591,12 +591,12 @@ describe('TransactionMapping - createFromPayload', () => {
         const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as AccountMetadataTransaction;
 
         expect(transaction.targetPublicKey.publicKey).to.be.equal(account.publicAccount.publicKey);
-        expect(transaction.scopedMetadataKey).to.be.equal(KeyGenerator.generateUInt64Key("name"));
-        expect(transaction.value).to.be.equal("hello");
-        expect(transaction.oldValue).to.be.equal("hello1");
+        deepStrictEqual(transaction.scopedMetadataKey, KeyGenerator.generateUInt64Key("name"));
+        expect(accountMetadataTransaction.value).to.be.equal("hello");
+        expect(accountMetadataTransaction.oldValue).to.be.equal("hello1");
         expect(transaction.valueSize).to.be.equal(6);
-        expect(transaction.valueSizeDelta).to.be.equal(1);
-        expect(transaction.valueDifferences).to.be.equal(new Uint8Array([0, 0, 0, 0, 0, 31]));
+        expect(transaction.valueSizeDelta).to.be.equal(-1);
+        deepStrictEqual(transaction.valueDifferences, new Uint8Array([0, 0, 0, 0, 0, 49]));
     })
     it('should create MosaicMetadataTransaction', () => {
         const mosaicId = MosaicId.createFromNonce(MosaicNonce.createFromNumber(1), account.publicAccount);
@@ -605,8 +605,8 @@ describe('TransactionMapping - createFromPayload', () => {
             account.publicAccount,
             mosaicId,
             "name",
-            "hello",
             "hello1",
+            "hello",
             NetworkType.MIJIN_TEST,
         );
 
@@ -615,13 +615,13 @@ describe('TransactionMapping - createFromPayload', () => {
         const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as MosaicMetadataTransaction;
 
         expect(transaction.targetPublicKey.publicKey).to.be.equal(account.publicAccount.publicKey);
-        expect(transaction.scopedMetadataKey).to.be.equal(KeyGenerator.generateUInt64Key("name"));
+        deepStrictEqual(transaction.scopedMetadataKey, KeyGenerator.generateUInt64Key("name"));
         expect(transaction.targetMosaicId.toHex()).to.be.equal(mosaicId.toHex());
-        expect(transaction.value).to.be.equal("hello");
-        expect(transaction.oldValue).to.be.equal("hello1");
+        expect(mosaicMetadataTransaction.value).to.be.equal("hello1");
+        expect(mosaicMetadataTransaction.oldValue).to.be.equal("hello");
         expect(transaction.valueSize).to.be.equal(6);
         expect(transaction.valueSizeDelta).to.be.equal(1);
-        expect(transaction.valueDifferences).to.be.equal(new Uint8Array([0, 0, 0, 0, 0, 31]));
+        deepStrictEqual(transaction.valueDifferences, new Uint8Array([0, 0, 0, 0, 0, 49]));
     })
     it('should create NamespaceMetadataTransaction', () => {
         const namespaceId = new NamespaceId("testing");
@@ -630,8 +630,8 @@ describe('TransactionMapping - createFromPayload', () => {
             account.publicAccount,
             namespaceId,
             "name",
-            "hello",
             "hello1",
+            "hello",
             NetworkType.MIJIN_TEST,
         );
 
@@ -640,13 +640,13 @@ describe('TransactionMapping - createFromPayload', () => {
         const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as NamespaceMetadataTransaction;
 
         expect(transaction.targetPublicKey.publicKey).to.be.equal(account.publicAccount.publicKey);
-        expect(transaction.scopedMetadataKey).to.be.equal(KeyGenerator.generateUInt64Key("name"));
+        deepStrictEqual(transaction.scopedMetadataKey, KeyGenerator.generateUInt64Key("name"));
         expect(transaction.targetNamespaceId.toHex()).to.be.equal(namespaceId.toHex());
-        expect(transaction.value).to.be.equal("hello");
-        expect(transaction.oldValue).to.be.equal("hello1");
+        expect(namespaceMetadataTransaction.value).to.be.equal("hello1");
+        expect(namespaceMetadataTransaction.oldValue).to.be.equal("hello");
         expect(transaction.valueSize).to.be.equal(6);
         expect(transaction.valueSizeDelta).to.be.equal(1);
-        expect(transaction.valueDifferences).to.be.equal(new Uint8Array([0, 0, 0, 0, 0, 31]));
+        deepStrictEqual(transaction.valueDifferences, new Uint8Array([0, 0, 0, 0, 0, 49]));
     })
     
     it('should create ChainConfigTransaction transaction', () => {

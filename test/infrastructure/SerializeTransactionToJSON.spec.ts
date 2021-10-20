@@ -200,9 +200,9 @@ describe('SerializeTransactionToJSON', () => {
 
         expect(json.transaction.type).to.be.equal(TransactionType.MOSAIC_DEFINITION);
         expect(json.transaction.properties.length).to.be.equal(3);
-        expect(json.transaction.properties[1].value).to.be.equal(3);
-        expect(json.transaction.properties[2].value).to.be.equal(1000);
-        expect(json.transaction.properties[2].value).to.be.equal(1000);
+        deepStrictEqual(json.transaction.properties[0].value, UInt64.fromUint(0).toDTO());
+        deepStrictEqual(json.transaction.properties[1].value, UInt64.fromUint(3).toDTO());
+        deepStrictEqual(json.transaction.properties[2].value, UInt64.fromUint(1000).toDTO());
 
     });
 
@@ -257,8 +257,8 @@ describe('SerializeTransactionToJSON', () => {
 
         expect(json.transaction.type).to.be.equal(TransactionType.MODIFY_MOSAIC_LEVY);
         expect(json.transaction.mosaicLevy.type).to.be.equal(MosaicLevyType.LevyAbsoluteFee);
-        expect(json.transaction.mosaicLevy.mosaicId).to.be.equal(mosaicId.toDTO());
-        expect(json.transaction.mosaicLevy.recipient.address).to.be.equal(TestingAccount.address.toDTO());
+        deepStrictEqual(json.transaction.mosaicLevy.mosaicId, mosaicId.toDTO());
+        expect(json.transaction.mosaicLevy.recipient.address).to.be.equal(TestingAccount.address.toDTO().address);
         deepStrictEqual(json.transaction.mosaicLevy.fee, UInt64.fromUint(50).toDTO());
     });
 
@@ -497,7 +497,7 @@ describe('SerializeTransactionToJSON', () => {
 
         expect(json.transaction.type).to.be.equal(TransactionType.ACCOUNT_METADATA_NEM);
         expect(json.transaction.targetPublicKey.publicKey).to.be.equal(account.publicKey);
-        expect(json.transaction.scopedMetadataKey).to.be.equal(KeyGenerator.generateUInt64Key("name").toDTO());
+        deepStrictEqual(json.transaction.scopedMetadataKey, KeyGenerator.generateUInt64Key("name").toDTO());
         expect(json.transaction.oldValue).to.be.equal(oldvalue);
         expect(json.transaction.value).to.be.equal(newValue);
         expect(json.transaction.valueSize).to.be.equal(6);
@@ -522,9 +522,9 @@ describe('SerializeTransactionToJSON', () => {
         const json = mosaicMetadataTransaction.toJSON();
 
         expect(json.transaction.type).to.be.equal(TransactionType.MOSAIC_METADATA_NEM);
-        expect(json.transaction.targetPublicKey.publicKey).to.be.equal(account.publicKey);
-        expect(json.transaction.scopedMetadataKey).to.be.equal(KeyGenerator.generateUInt64Key("name").toDTO());
-        expect(json.transaction.targetMosaicId.toHex()).to.be.equal(mosaicId.toHex());
+        expect(json.transaction.targetPublicKey).to.be.equal(account.publicKey);
+        deepStrictEqual(json.transaction.scopedMetadataKey, KeyGenerator.generateUInt64Key("name").toDTO());
+        deepStrictEqual(json.transaction.targetMosaicId, mosaicId.toDTO());
         expect(json.transaction.oldValue).to.be.equal(oldvalue);
         expect(json.transaction.value).to.be.equal(newValue);
         expect(json.transaction.valueSize).to.be.equal(6);
@@ -532,7 +532,7 @@ describe('SerializeTransactionToJSON', () => {
         expect(json.transaction.valueDifferences).to.be.equal("000000000031");
     });
 
-    it('should create ModifyMetadataTransaction with namespace', () => {
+    it('should create NamespaceMetadataTransaction', () => {
         const newValue = 'hello';
         const oldvalue = 'hello1';
         const namespaceId = new NamespaceId("testing");
@@ -549,9 +549,9 @@ describe('SerializeTransactionToJSON', () => {
         const json = mosaicMetadataTransaction.toJSON();
 
         expect(json.transaction.type).to.be.equal(TransactionType.NAMESPACE_METADATA_NEM);
-        expect(json.transaction.targetPublicKey.publicKey).to.be.equal(account.publicKey);
-        expect(json.transaction.scopedMetadataKey).to.be.equal(KeyGenerator.generateUInt64Key("name").toDTO());
-        expect(json.transaction.targetNamespaceId.toHex()).to.be.equal(namespaceId.toHex());
+        expect(json.transaction.targetPublicKey).to.be.equal(account.publicKey);
+        deepStrictEqual(json.transaction.scopedMetadataKey, KeyGenerator.generateUInt64Key("name").toDTO());
+        deepStrictEqual(json.transaction.targetNamespaceId, namespaceId.toDTO());
         expect(json.transaction.oldValue).to.be.equal(oldvalue);
         expect(json.transaction.value).to.be.equal(newValue);
         expect(json.transaction.valueSize).to.be.equal(6);

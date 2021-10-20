@@ -4,7 +4,7 @@
 
 import { UpgradeDTO } from "../../infrastructure/model/upgradeDTO";
 import { UInt64 } from "../UInt64";
-import { BlockChainVersion } from "./BlockChainVersion"
+import { BlockChainVersion } from "../blockchain/BlockChainVersion"
 
 /**
  * The upgrade structure stores a required chain version at given height as returned from http upgradeRoutesApi.
@@ -29,7 +29,8 @@ export class ChainUpgrade {
                     parseInt(blockChainVersionHex.substring(0, 4), 16)
                 )
             );
+        }else{
+            throw new Error("upgradeDTO not specified");
         }
-        throw new Error("upgradeDTO not specified");
     }
 }
