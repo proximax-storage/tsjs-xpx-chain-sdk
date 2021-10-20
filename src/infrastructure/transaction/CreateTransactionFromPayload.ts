@@ -385,31 +385,31 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
         
         case TransactionType.MOSAIC_METADATA_NEM:
             return factory.mosaicMetadata()
-                .targetPublicKey(PublicAccount.createFromPublicKey(transactionData.substring(0, 16), networkType))
-                .scopedMetadataKey(UInt64.fromHex(reverse(transactionData.substring(16, 32))))
-                .targetMosaicId(new MosaicId(UInt64.fromHex(reverse(transactionData.substring(32, 48))).toDTO()))
-                .valueSizeDelta(parseInt(reverse(transactionData.substring(48, 52)), 16))
-                .valueSize(parseInt(reverse(transactionData.substring(52, 56)), 16))
-                .valueDifferences(convert.hexToUint8(transactionData.substring(56)))
+                .targetPublicKey(PublicAccount.createFromPublicKey(transactionData.substring(0, 64), networkType))
+                .scopedMetadataKey(UInt64.fromHex(reverse(transactionData.substring(64, 80))))
+                .targetMosaicId(new MosaicId(UInt64.fromHex(reverse(transactionData.substring(80, 96))).toDTO()))
+                .valueSizeDelta(extractValueSizeDelta(transactionData.substring(96, 100)))
+                .valueSize(parseInt(reverse(transactionData.substring(100, 104)), 16))
+                .valueDifferences(convert.hexToUint8(transactionData.substring(104)))
                 .build();
             
         case TransactionType.NAMESPACE_METADATA_NEM:
             return factory.namespaceMetadata()
-                .targetPublicKey(PublicAccount.createFromPublicKey(transactionData.substring(0, 16), networkType))
-                .scopedMetadataKey(UInt64.fromHex(reverse(transactionData.substring(16, 32))))
-                .targetNamespaceId(new NamespaceId(UInt64.fromHex(reverse(transactionData.substring(32, 48))).toDTO()))
-                .valueSizeDelta(parseInt(reverse(transactionData.substring(48, 52)), 16))
-                .valueSize(parseInt(reverse(transactionData.substring(52, 56)), 16))
-                .valueDifferences(convert.hexToUint8(transactionData.substring(56)))
+                .targetPublicKey(PublicAccount.createFromPublicKey(transactionData.substring(0, 64), networkType))
+                .scopedMetadataKey(UInt64.fromHex(reverse(transactionData.substring(64, 80))))
+                .targetNamespaceId(new NamespaceId(UInt64.fromHex(reverse(transactionData.substring(80, 96))).toDTO()))
+                .valueSizeDelta(extractValueSizeDelta(transactionData.substring(96, 100)))
+                .valueSize(parseInt(reverse(transactionData.substring(100, 104)), 16))
+                .valueDifferences(convert.hexToUint8(transactionData.substring(104)))
                 .build();
 
         case TransactionType.ACCOUNT_METADATA_NEM:
             return factory.accountMetadata()
-                .targetPublicKey(PublicAccount.createFromPublicKey(transactionData.substring(0, 16), networkType))
-                .scopedMetadataKey(UInt64.fromHex(reverse(transactionData.substring(16, 32))))
-                .valueSizeDelta(parseInt(reverse(transactionData.substring(32, 36)), 16))
-                .valueSize(parseInt(reverse(transactionData.substring(36, 40)), 16))
-                .valueDifferences(convert.hexToUint8(transactionData.substring(40)))
+                .targetPublicKey(PublicAccount.createFromPublicKey(transactionData.substring(0, 64), networkType))
+                .scopedMetadataKey(UInt64.fromHex(reverse(transactionData.substring(64, 80))))
+                .valueSizeDelta(extractValueSizeDelta(transactionData.substring(80, 84)))
+                .valueSize(parseInt(reverse(transactionData.substring(84, 88)), 16))
+                .valueDifferences(convert.hexToUint8(transactionData.substring(88)))
                 .build();
             
         case TransactionType.MODIFY_MOSAIC_LEVY:
@@ -418,11 +418,11 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                 .mosaicLevy(
                     new MosaicLevy(
                         parseInt(transactionData.substring(16, 18), 16), 
-                        Address.createFromEncoded(transactionData.substring(18, 43)), 
+                        Address.createFromEncoded(transactionData.substring(18, 68)), 
                         new MosaicId(
-                            UInt64.fromHex(reverse(transactionData.substring(43, 59))).toDTO()
+                            UInt64.fromHex(reverse(transactionData.substring(68, 84))).toDTO()
                         ),
-                        UInt64.fromHex(reverse(transactionData.substring(59, 75)))
+                        UInt64.fromHex(reverse(transactionData.substring(84, 100)))
                     )
                 )    
                 .build();
@@ -512,6 +512,15 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
             throw new Error ('Transaction type not implemented yet.');
         }
 };
+
+/**
+ * @internal
+ * @param hexValue - Hex representation of the number
+ * @returns {number}
+ */
+const extractValueSizeDelta = (hexValue: string): number => {
+    return convert.hexToInt(convert.hexReverse(hexValue))
+}; 
 
 /**
  * @internal

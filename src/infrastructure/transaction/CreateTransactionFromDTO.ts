@@ -120,7 +120,7 @@ export const CreateTransactionFromDTO = (transactionDTO): Transaction | InnerTra
                 transactionDTO.meta.merkleComponentHash,
             ) : undefined,
         );
-    } else if(transactionDTO.meta.aggregateHash){
+    } else if(transactionDTO.meta && transactionDTO.meta.aggregateHash){
         const aggregateTransactionInfo = new AggregateTransactionInfo(
             new UInt64(transactionDTO.meta.height),
             transactionDTO.meta.index,
