@@ -102,7 +102,7 @@ export class MosaicMetadataTransaction extends Transaction {
         signature?: string,
         signer?: PublicAccount,
         transactionInfo?: TransactionInfo | AggregateTransactionInfo) {
-        let transactionType = TransactionType.MOSAIC_METADATA_NEM;
+        let transactionType = TransactionType.MOSAIC_METADATA_V2;
         super(transactionType, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
         this.scopedMetadataKey = scopedMetadataKey;
         this.targetPublicKey = targetPublicKey;
@@ -194,7 +194,7 @@ export class MosaicMetadataTransactionBuilder extends TransactionBuilder {
 
     constructor() {
         super();
-        this._transactionType = TransactionType.MOSAIC_METADATA_NEM;
+        this._transactionType = TransactionType.MOSAIC_METADATA_V2;
     }
 
     public targetPublicKey(targetPublicKey: PublicAccount){
@@ -240,7 +240,7 @@ export class MosaicMetadataTransactionBuilder extends TransactionBuilder {
     public build(): MosaicMetadataTransaction {
         return new MosaicMetadataTransaction(
             this._networkType,
-            this._version || TransactionVersion.MOSAIC_METADATA_NEM,
+            this._version || TransactionVersion.MOSAIC_METADATA_V2,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(MosaicMetadataTransaction.calculateSize(this._valueSize), this._feeCalculationStrategy),
             this._scopedMetadataKey,

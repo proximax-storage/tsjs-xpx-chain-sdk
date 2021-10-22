@@ -383,7 +383,7 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                 )) : [])
                 .build();
         
-        case TransactionType.MOSAIC_METADATA_NEM:
+        case TransactionType.MOSAIC_METADATA_V2:
             return factory.mosaicMetadata()
                 .targetPublicKey(PublicAccount.createFromPublicKey(transactionData.substring(0, 64), networkType))
                 .scopedMetadataKey(UInt64.fromHex(reverse(transactionData.substring(64, 80))))
@@ -393,7 +393,7 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                 .valueDifferences(convert.hexToUint8(transactionData.substring(104)))
                 .build();
             
-        case TransactionType.NAMESPACE_METADATA_NEM:
+        case TransactionType.NAMESPACE_METADATA_V2:
             return factory.namespaceMetadata()
                 .targetPublicKey(PublicAccount.createFromPublicKey(transactionData.substring(0, 64), networkType))
                 .scopedMetadataKey(UInt64.fromHex(reverse(transactionData.substring(64, 80))))
@@ -403,7 +403,7 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                 .valueDifferences(convert.hexToUint8(transactionData.substring(104)))
                 .build();
 
-        case TransactionType.ACCOUNT_METADATA_NEM:
+        case TransactionType.ACCOUNT_METADATA_V2:
             return factory.accountMetadata()
                 .targetPublicKey(PublicAccount.createFromPublicKey(transactionData.substring(0, 64), networkType))
                 .scopedMetadataKey(UInt64.fromHex(reverse(transactionData.substring(64, 80))))

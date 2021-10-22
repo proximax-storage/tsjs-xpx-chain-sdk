@@ -160,17 +160,17 @@ export class TransactionType {
     /**
      * Modify account metadata transaction type - NEM 
      */
-    public static readonly ACCOUNT_METADATA_NEM = 0x413F;
+    public static readonly ACCOUNT_METADATA_V2 = 0x413F;
 
     /**
     * Modify mosaic metadata transaction type - NEM 
     */
-    public static readonly MOSAIC_METADATA_NEM = 0x423F;
+    public static readonly MOSAIC_METADATA_V2 = 0x423F;
 
     /**
     * Modify namespace metadata transaction type - NEM
     */
-    public static readonly NAMESPACE_METADATA_NEM = 0x433F;
+    public static readonly NAMESPACE_METADATA_V2 = 0x433F;
 
     /**
     * Modify mosaic levy transaction type

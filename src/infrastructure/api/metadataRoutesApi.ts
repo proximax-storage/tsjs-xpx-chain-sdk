@@ -81,7 +81,7 @@ export class MetadataRoutesApi {
      * @param accountId The account identifier.
      */
     public async getAccountMetadata (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: AddressMetadataInfoDTO;  }> {
-        const localVarPath = '/account/{accountId}/metadata_nem'
+        const localVarPath = '/account/{accountId}/metadata_v2'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
 
         // verify required parameter 'accountId' is not null or undefined
@@ -122,7 +122,7 @@ export class MetadataRoutesApi {
      * @param metadataId The metadata identifier.
      */
     public async getMetadata (metadataId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: NamespaceMetadataInfoDTO;  }> {
-        const localVarPath = '/metadata_nem/{metadataId}'
+        const localVarPath = '/metadata_v2/{metadataId}'
             .replace('{' + 'metadataId' + '}', encodeURIComponent(String(metadataId)));
 
         // verify required parameter 'metadataId' is not null or undefined
@@ -163,7 +163,7 @@ export class MetadataRoutesApi {
      * @param metadataIds 
      */
     public async getMetadatas (metadataIds?: MetadataIds, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<AddressMetadataInfoDTO>;  }> {
-        const localVarPath = '/metadata_nem';
+        const localVarPath = '/metadata_v2';
 
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'POST',
@@ -199,7 +199,7 @@ export class MetadataRoutesApi {
      * @param mosaicId The mosaic identifier.
      */
     public async getMosaicMetadata (mosaicId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: MosaicMetadataInfoDTO;  }> {
-        const localVarPath = '/mosaic/{mosaicId}/metadata_nem'
+        const localVarPath = '/mosaic/{mosaicId}/metadata_v2'
             .replace('{' + 'mosaicId' + '}', encodeURIComponent(String(mosaicId)));
 
         // verify required parameter 'mosaicId' is not null or undefined

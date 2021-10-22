@@ -49,9 +49,9 @@ import { RequestFile } from '../api';
 * 0x465A (18010 decimal) - Drive Files Reward Transaction. 
 * 0x475A (18266 decimal) - Start Drive Verification Transaction. 
 * 0x485A (18522 decimal) - End Drive Verification Transaction. 
-* 0x413F (16703 decimal) - Account Metadata_Nem Transaction
-* 0x423F (16959 decimal) - Mosaic Metadata_Nem Transaction
-* 0x433F (17215 decimal) - Namespace Metadata_Nem Transaction
+* 0x413F (16703 decimal) - Account Metadata_V2 Transaction
+* 0x423F (16959 decimal) - Mosaic Metadata_V2 Transaction
+* 0x433F (17215 decimal) - Namespace Metadata_V2 Transaction
 * 0x434D (17229 decimal) - Mosaic Modify Levy Transaction
 * 0x444D (17485 decimal) - Mosaic Remove Levy Transaction
 */

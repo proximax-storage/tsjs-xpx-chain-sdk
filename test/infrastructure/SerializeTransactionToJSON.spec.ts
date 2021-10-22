@@ -495,7 +495,7 @@ describe('SerializeTransactionToJSON', () => {
 
         const json = accountMetadataTransaction.toJSON();
 
-        expect(json.transaction.type).to.be.equal(TransactionType.ACCOUNT_METADATA_NEM);
+        expect(json.transaction.type).to.be.equal(TransactionType.ACCOUNT_METADATA_V2);
         expect(json.transaction.targetPublicKey.publicKey).to.be.equal(account.publicKey);
         deepStrictEqual(json.transaction.scopedMetadataKey, KeyGenerator.generateUInt64Key("name").toDTO());
         expect(json.transaction.oldValue).to.be.equal(oldvalue);
@@ -521,7 +521,7 @@ describe('SerializeTransactionToJSON', () => {
 
         const json = mosaicMetadataTransaction.toJSON();
 
-        expect(json.transaction.type).to.be.equal(TransactionType.MOSAIC_METADATA_NEM);
+        expect(json.transaction.type).to.be.equal(TransactionType.MOSAIC_METADATA_V2);
         expect(json.transaction.targetPublicKey).to.be.equal(account.publicKey);
         deepStrictEqual(json.transaction.scopedMetadataKey, KeyGenerator.generateUInt64Key("name").toDTO());
         deepStrictEqual(json.transaction.targetMosaicId, mosaicId.toDTO());
@@ -548,7 +548,7 @@ describe('SerializeTransactionToJSON', () => {
 
         const json = mosaicMetadataTransaction.toJSON();
 
-        expect(json.transaction.type).to.be.equal(TransactionType.NAMESPACE_METADATA_NEM);
+        expect(json.transaction.type).to.be.equal(TransactionType.NAMESPACE_METADATA_V2);
         expect(json.transaction.targetPublicKey).to.be.equal(account.publicKey);
         deepStrictEqual(json.transaction.scopedMetadataKey, KeyGenerator.generateUInt64Key("name").toDTO());
         deepStrictEqual(json.transaction.targetNamespaceId, namespaceId.toDTO());

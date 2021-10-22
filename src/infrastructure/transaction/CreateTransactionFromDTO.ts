@@ -546,7 +546,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
             transactionInfo,
         );
         return isEmbedded ? removeExchangeOfferTxn.toAggregate(removeExchangeOfferTxn.signer!) : removeExchangeOfferTxn;
-    } else if (transactionDTO.type === TransactionType.ACCOUNT_METADATA_NEM) {
+    } else if (transactionDTO.type === TransactionType.ACCOUNT_METADATA_V2) {
         const networkType = extractNetworkType(transactionDTO.version);
         const accountMetadataTxn = new AccountMetadataTransaction(
             networkType,
@@ -566,7 +566,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
             transactionInfo,
         );
         return isEmbedded ? accountMetadataTxn.toAggregate(accountMetadataTxn.signer!) : accountMetadataTxn;
-    } else if (transactionDTO.type === TransactionType.MOSAIC_METADATA_NEM) {
+    } else if (transactionDTO.type === TransactionType.MOSAIC_METADATA_V2) {
         const networkType = extractNetworkType(transactionDTO.version);
         const mosaicMetadataTxn = new MosaicMetadataTransaction(
             networkType,
@@ -587,7 +587,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
             transactionInfo,
         );
         return isEmbedded ? mosaicMetadataTxn.toAggregate(mosaicMetadataTxn.signer!) : mosaicMetadataTxn;
-    } else if (transactionDTO.type === TransactionType.NAMESPACE_METADATA_NEM) {
+    } else if (transactionDTO.type === TransactionType.NAMESPACE_METADATA_V2) {
         const networkType = extractNetworkType(transactionDTO.version);
         const namespaceMetadataTxn = new NamespaceMetadataTransaction(
             networkType,

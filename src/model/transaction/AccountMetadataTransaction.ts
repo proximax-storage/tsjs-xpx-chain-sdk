@@ -96,7 +96,7 @@ export class AccountMetadataTransaction extends Transaction {
         signature?: string,
         signer?: PublicAccount,
         transactionInfo?: TransactionInfo | AggregateTransactionInfo) {
-        let transactionType = TransactionType.ACCOUNT_METADATA_NEM;
+        let transactionType = TransactionType.ACCOUNT_METADATA_V2;
         super(transactionType, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
         this.scopedMetadataKey = scopedMetadataKey;
         this.targetPublicKey = targetPublicKey;
@@ -183,7 +183,7 @@ export class AccountMetadataTransactionBuilder extends TransactionBuilder {
 
     constructor() {
         super();
-        this._transactionType = TransactionType.ACCOUNT_METADATA_NEM;
+        this._transactionType = TransactionType.ACCOUNT_METADATA_V2;
     }
 
     public targetPublicKey(targetPublicKey: PublicAccount){
@@ -224,7 +224,7 @@ export class AccountMetadataTransactionBuilder extends TransactionBuilder {
     public build(): AccountMetadataTransaction {
         return new AccountMetadataTransaction(
             this._networkType,
-            this._version || TransactionVersion.ACCOUNT_METADATA_NEM,
+            this._version || TransactionVersion.ACCOUNT_METADATA_V2,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(AccountMetadataTransaction.calculateSize(this._valueSize), this._feeCalculationStrategy),
             this._scopedMetadataKey,

@@ -133,20 +133,20 @@ export class TransactionVersion {
      * Modify account metadata nem transactions version
      * @type {number}
      */
-     public static readonly ACCOUNT_METADATA_NEM = 1;
+     public static readonly ACCOUNT_METADATA_V2 = 1;
 
      /**
      * Modify mosaic metadata nem transactions version
      * @type {number}
      */
-    public static readonly MOSAIC_METADATA_NEM = 1;
+    public static readonly MOSAIC_METADATA_V2 = 1;
 
     
      /**
      * Modify namespace metadata nem transactions version
      * @type {number}
      */
-    public static readonly NAMESPACE_METADATA_NEM = 1;
+    public static readonly NAMESPACE_METADATA_V2 = 1;
 
     /**
      * Modify mosaic modify levy transactions version
