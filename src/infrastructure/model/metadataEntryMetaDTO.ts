@@ -12,23 +12,20 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from '../api';
-import { AccountExchangeDTO } from './accountExchangeDTO';
-
-export class ExchangeInlineResponse200 {
-    'exchange'?: AccountExchangeDTO;
+export class MetadataEntryMetaDTO {
+    'id': string;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            "name": "exchange",
-            "baseName": "exchange",
-            "type": "AccountExchangeDTO"
+            "name": "id",
+            "baseName": "id",
+            "type": "string"
         }    ];
 
     static getAttributeTypeMap() {
-        return ExchangeInlineResponse200.attributeTypeMap;
+        return MetadataEntryMetaDTO.attributeTypeMap;
     }
 }
 

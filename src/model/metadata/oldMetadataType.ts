@@ -6,7 +6,8 @@
  * Types of metadata
  */
 export enum MetadataType {
-    ACCOUNT = 0,
-    MOSAIC = 1,
-    NAMESPACE = 2
+    NONE = 0,
+    ADDRESS = 1,
+    MOSAIC = 2,
+    NAMESPACE = 3
 }

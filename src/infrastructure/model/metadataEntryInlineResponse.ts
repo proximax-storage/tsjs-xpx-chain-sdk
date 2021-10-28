@@ -11,24 +11,30 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { MetaDataEntryDTO } from './metadataEntryDTO';
+import { MetadataEntryMetaDTO } from './MetadataEntryMetaDTO';
 
-import { RequestFile } from '../api';
-import { AccountExchangeDTO } from './accountExchangeDTO';
-
-export class ExchangeInlineResponse200 {
-    'exchange'?: AccountExchangeDTO;
+export class MetadataEntryInlineResponse {
+    'metadataEntry': MetaDataEntryDTO;
+    'meta': MetadataEntryMetaDTO;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            "name": "exchange",
-            "baseName": "exchange",
-            "type": "AccountExchangeDTO"
-        }    ];
+            "name": "metadataEntry",
+            "baseName": "metadataEntry",
+            "type": "MetaDataEntryDTO"
+        },
+        {
+            "name": "meta",
+            "baseName": "meta",
+            "type": "MetadataEntryMetaDTO"
+        }   
+    ];
 
     static getAttributeTypeMap() {
-        return ExchangeInlineResponse200.attributeTypeMap;
+        return MetadataEntryInlineResponse.attributeTypeMap;
     }
 }
 

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { Transaction } from './Transaction';
+import { MetadataEntry } from './MetadataEntry';
 import { Pagination } from '../Pagination';
 
-export class TransactionSearch {
+export class MetadataSearch {
 
-    constructor(public transactions: Transaction[], public readonly pagination: Pagination){
+    constructor(public metadataEntries: MetadataEntry[], public readonly pagination: Pagination){
 
     }
 }

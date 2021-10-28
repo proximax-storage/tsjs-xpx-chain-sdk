@@ -57,7 +57,7 @@ import {TransactionType} from '../../model/transaction/TransactionType';
 import {TransferTransaction} from '../../model/transaction/TransferTransaction';
 import {UInt64} from '../../model/UInt64';
 import { ModifyMetadataTransaction, MetadataModification } from '../../model/transaction/ModifyMetadataTransaction';
-import { MetadataType } from '../../model/metadata/MetadataType';
+import { MetadataType as oldMetadataType } from '../../model/metadata/oldMetadataType';
 import { AddExchangeOfferTransaction } from '../../model/transaction/AddExchangeOfferTransaction';
 import { AddExchangeOffer } from '../../model/transaction/AddExchangeOffer';
 import { ExchangeOfferTransaction } from '../../model/transaction/ExchangeOfferTransaction';
@@ -408,14 +408,14 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
             transactionDTO.modifications.map(m => new MetadataModification(m.modificationType, m.key, m.value)) :
             undefined
         switch(metadataType) {
-            case MetadataType.ADDRESS: {
+            case oldMetadataType.ADDRESS: {
                 return new ModifyMetadataTransaction(
                     TransactionType.MODIFY_ACCOUNT_METADATA,
                     networkType,
                     transactionVersion,
                     deadline,
                     maxFee,
-                    MetadataType.ADDRESS,
+                    oldMetadataType.ADDRESS,
                     Address.createFromEncoded(metadataId).plain(),
                     modifications,
                     transactionDTO.signature,
@@ -425,14 +425,14 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
                     )
                 //break;
             }
-            case MetadataType.MOSAIC: {
+            case oldMetadataType.MOSAIC: {
                 return new ModifyMetadataTransaction(
                     TransactionType.MODIFY_MOSAIC_METADATA,
                     networkType,
                     transactionVersion,
                     deadline,
                     maxFee,
-                    MetadataType.MOSAIC,
+                    oldMetadataType.MOSAIC,
                     new MosaicId(metadataId).toHex(),
                     modifications,
                     transactionDTO.signature,
@@ -442,14 +442,14 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
                     )
                 //break;
             }
-            case MetadataType.NAMESPACE: {
+            case oldMetadataType.NAMESPACE: {
                 return new ModifyMetadataTransaction(
                     TransactionType.MODIFY_NAMESPACE_METADATA,
                     networkType,
                     transactionVersion,
                     deadline,
                     maxFee,
-                    MetadataType.NAMESPACE,
+                    oldMetadataType.NAMESPACE,
                     new NamespaceId(metadataId).toHex(),
                     modifications,
                     transactionDTO.signature,
@@ -615,7 +615,12 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
             isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
             isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
             new MosaicId(transactionDTO.mosaicId),
-            new MosaicLevy(1, Address.createFromEncoded("VABCBC"), new MosaicId("0ABC"), new UInt64([0,0])), // To do, to be fix
+            new MosaicLevy(
+                transactionDTO.levy.type, 
+                Address.createFromEncoded(transactionDTO.levy.recipient), 
+                new MosaicId(transactionDTO.levy.mosaicId), 
+                new UInt64(transactionDTO.levy.fee)
+            ),
             isEmbedded ? undefined : transactionDTO.signature,
             transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
                             extractNetworkType(transactionDTO.version)) : undefined,

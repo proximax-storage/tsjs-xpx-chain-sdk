@@ -10,7 +10,7 @@ import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionVersion } from './TransactionVersion';
 import { AggregateTransactionInfo } from './AggregateTransactionInfo';
-import { MetadataType } from '../metadata/MetadataType';
+import { MetadataType } from '../metadata/oldMetadataType';
 import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
 import { Builder } from '../../infrastructure/builders/ModifyMetadataTransaction';
 import { TransactionType } from './TransactionType';
