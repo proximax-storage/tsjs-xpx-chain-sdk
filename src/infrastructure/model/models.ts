@@ -61,6 +61,7 @@ export * from './blockchainUpgradeBodyDTO';
 export * from './blockchainUpgradeDTO';
 export * from './blockchainUpgradeTransactionDTO';
 export * from './communicationTimestamps';
+export * from './compositeHashes';
 export * from './configDTO';
 export * from './cosignatoryModificationDTO';
 export * from './cosignature';
@@ -264,6 +265,7 @@ import { BlockchainUpgradeBodyDTO } from './blockchainUpgradeBodyDTO';
 import { BlockchainUpgradeDTO } from './blockchainUpgradeDTO';
 import { BlockchainUpgradeTransactionDTO } from './blockchainUpgradeTransactionDTO';
 import { CommunicationTimestamps } from './communicationTimestamps';
+import { CompositeHashes } from './compositeHashes';
 import { ConfigDTO } from './configDTO';
 import { CosignatoryModificationDTO } from './cosignatoryModificationDTO';
 import { Cosignature } from './cosignature';
@@ -497,6 +499,7 @@ let typeMap: {[index: string]: any} = {
     "BlockchainUpgradeDTO": BlockchainUpgradeDTO,
     "BlockchainUpgradeTransactionDTO": BlockchainUpgradeTransactionDTO,
     "CommunicationTimestamps": CommunicationTimestamps,
+    "CompositeHashes": CompositeHashes,
     "ConfigDTO": ConfigDTO,
     "CosignatoryModificationDTO": CosignatoryModificationDTO,
     "Cosignature": Cosignature,

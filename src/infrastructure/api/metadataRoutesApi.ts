@@ -24,6 +24,7 @@ import { MetadataIds } from '../model/metadataIds';
 import { MetadataEntryGetInlineResponse } from '../model/metadataEntryGetInlineResponse'
 import { MetadataEntriesDTO } from '../model/metadataEntriesDTO';
 import { MetadataQueryParams } from '../metadataQueryParams';
+import { CompositeHashes } from '../model/compositeHashes'
 
 import { ObjectSerializer } from '../model/models';
 
@@ -113,7 +114,7 @@ export class MetadataRoutesApi {
      * @summary Get metadatas(namespace/mosaic/account) for an array of compositeHashes
      * @param compositeHashes of metadata
      */
-    public async getMetadatas (compositeHashes: string[], options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<MetadataEntryGetInlineResponse>;  }> {
+    public async getMetadatas (compositeHashes: CompositeHashes, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<MetadataEntryGetInlineResponse>;  }> {
         const localVarPath = '/metadata_v2';
 
         let localVarRequestOptions: AxiosRequestConfig = {

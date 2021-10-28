@@ -12,6 +12,7 @@ import { MetadataRoutesApi } from './api/metadataRoutesApi';
 import { MetadataQueryParams } from './MetadataQueryParams';
 import { MetadataRepository } from './MetadataRepository';
 import { MetadataSearch } from '../model/metadata/MetadataSearch';
+import { CompositeHashes } from './model/compositeHashes';
 
 /**
  * Metadata http repository.
@@ -66,8 +67,13 @@ export class MetadataHttp extends Http implements MetadataRepository {
      * @returns Observable<MetadataEntry[]>
      */
      public getMetadatas(compositeHashes: string[]): Observable<MetadataEntry[]> {
+
+        let hashes: CompositeHashes = {
+            compositeHashes : compositeHashes
+        }
+
         return observableFrom(
-            this.metadataRoutesApi.getMetadatas(compositeHashes)).pipe(map(response => {
+            this.metadataRoutesApi.getMetadatas(hashes)).pipe(map(response => {
                 const metadataInlineDTOs = response.body;
 
                 return metadataInlineDTOs.map(metadataDTO =>{
