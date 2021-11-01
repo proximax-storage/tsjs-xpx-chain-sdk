@@ -34,7 +34,9 @@ import { AnnounceTransactionInfoDTO } from '../model/announceTransactionInfoDTO'
 import { Cosignature } from '../model/cosignature';
 import { TransactionHashes } from '../model/transactionHashes';
 import { TransactionIds } from '../model/transactionIds';
+import { TransactionTypes } from '../model/transactionTypes';
 import { TransactionInfoDTO } from '../model/transactionInfoDTO';
+import { TransactionCountDTO } from '../model/transactionCountDTO';
 import { TransactionPayload } from '../model/transactionPayload';
 import { TransactionStatusDTO } from '../model/transactionStatusDTO';
 
@@ -332,6 +334,48 @@ export class TransactionRoutesApi {
                         resolve({ response: response, body: body });
                     } else {
                             reject(response);
+                    }
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
+        });
+    }
+
+    /**
+     * Returns transactions count separate by type for a given array of transactionTypes.
+     * @summary Get transactionTypes count
+     * @param transactionTypes 
+     */
+     public async getTransactionsCount (transactionTypes: TransactionTypes, groupType: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<TransactionCountDTO>;  }> {
+        const localVarPath = '/transactions/count';
+
+        // verify required parameter 'transactionIds' is not null or undefined
+        if (transactionTypes === null || transactionTypes === undefined) {
+            throw new Error('Required parameter transactionTypes was null or undefined when calling getTransactionsCount.');
+        }
+
+        let localVarRequestOptions: AxiosRequestConfig = {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json',
+            data: ObjectSerializer.serialize(transactionTypes, "transactionTypes")
+        };
+
+        return new Promise<{ response: AxiosResponse; body: Array<TransactionCountDTO>;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "Array<TransactionCountDTO>");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
+                    } else {
+                        reject(response);
                     }
                 },
                 (error: AxiosError ) => {

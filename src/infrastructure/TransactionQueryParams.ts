@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { TransactionType } from "../model/transaction/TransactionType"
 import { Order } from "./QueryParams";
 
 /*
@@ -56,7 +57,7 @@ export class TransactionQueryParams{
 
     pageSize?: number;
     pageNumber?: number;
-    type?: number[];
+    type?: TransactionType[] | number[];
     embedded?: boolean;
     order?: Order;
     sortField?: TransactionSortingField;

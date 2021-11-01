@@ -27,6 +27,7 @@ import {TransactionAnnounceResponse} from '../model/transaction/TransactionAnnou
 import {TransactionInfo} from '../model/transaction/TransactionInfo';
 import {TransactionStatus} from '../model/transaction/TransactionStatus';
 import {TransactionType} from '../model/transaction/TransactionType';
+import {TransactionCount} from '../model/transaction/TransactionCount';
 import {UInt64} from '../model/UInt64';
 import { AnnounceTransactionInfoDTO,
          BlockInfoDTO, BlockRoutesApi,
@@ -91,6 +92,23 @@ export class TransactionHttp extends Http implements TransactionRepository {
             this.transactionRoutesApi.getTransactions(transactionIdsBody, transactionGroupType)).pipe(map(response => {
             return response.body.map((transactionDTO) => {
                 return CreateTransactionFromDTO(transactionDTO);
+            });
+        }));
+    }
+
+    /**
+     * Gets an array of transactions for different transaction ids
+     * @param transactionIds - Array of transactions id and/or hash.
+     * @returns Observable<Transaction[]>
+     */
+     public getTransactionsCount(transactionTypes: TransactionType[], transactionGroupType: TransactionGroupType = TransactionGroupType.CONFIRMED): Observable<TransactionCount[]> {
+        const transactionTypesBody = {
+            transactionTypes
+        };
+        return observableFrom(
+            this.transactionRoutesApi.getTransactionsCount(transactionTypesBody, transactionGroupType)).pipe(map(response => {
+            return response.body.map((transactionCountDTO) => {
+                return new TransactionCount(transactionCountDTO.type, transactionCountDTO.count);
             });
         }));
     }
