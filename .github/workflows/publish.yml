@@ -40,13 +40,13 @@ jobs:
         uses: dawidd6/action-get-tag@v1
 
       - name: Publish beta package 
-        if: contains(steps.tag.outputs.tag, beta)
+        if: contains(steps.tag.outputs.tag, 'beta')
         run: npm publish --tag beta
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       
       - name: Publish latest package 
-        if: "!contains(steps.tag.outputs.tag, beta)"
+        if: "!contains(steps.tag.outputs.tag, 'beta')"
         run: npm publish 
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
