@@ -4,7 +4,7 @@
 
 import { UpgradeDTO } from "../../infrastructure/model/upgradeDTO";
 import { UInt64 } from "../UInt64";
-import { BlockChainVersion } from "../blockchain/BlockChainVersion"
+import { BlockchainVersion } from "../blockchain/BlockchainVersion"
 
 /**
  * The upgrade structure stores a required chain version at given height as returned from http upgradeRoutesApi.
@@ -12,7 +12,7 @@ import { BlockChainVersion } from "../blockchain/BlockChainVersion"
 export class ChainUpgrade {
     constructor(
         public readonly height: UInt64,
-        public readonly catapultVersion: BlockChainVersion
+        public readonly catapultVersion: BlockchainVersion
     ) {
 
     }
@@ -22,7 +22,7 @@ export class ChainUpgrade {
             let blockChainVersionHex = new UInt64(upgradeDTO.blockChainVersion).toHex();
             return new ChainUpgrade(
                 new UInt64(upgradeDTO.height),
-                new BlockChainVersion(
+                new BlockchainVersion(
                     parseInt(blockChainVersionHex.substring(12, 16), 16),
                     parseInt(blockChainVersionHex.substring(8, 12), 16),
                     parseInt(blockChainVersionHex.substring(4, 8), 16),

@@ -23,7 +23,7 @@ import { AddressMetadataInfoDTO } from '../model/addressMetadataInfoDTO';
 import { MetadataIds } from '../model/metadataIds';
 import { MetadataEntryGetInlineResponse } from '../model/metadataEntryGetInlineResponse'
 import { MetadataEntriesDTO } from '../model/metadataEntriesDTO';
-import { MetadataQueryParams } from '../metadataQueryParams';
+import { MetadataQueryParams } from '../MetadataQueryParams';
 import { CompositeHashes } from '../model/compositeHashes'
 
 import { ObjectSerializer } from '../model/models';

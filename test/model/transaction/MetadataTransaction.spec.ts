@@ -11,7 +11,7 @@ import {MosaicId} from '../../../src/model/mosaic/MosaicId';
 import {NamespaceId} from '../../../src/model/namespace/NamespaceId';
 import {Deadline} from '../../../src/model/transaction/Deadline';
 import {UInt64} from '../../../src/model/UInt64';
-import {Convert} from '../../../src/core/format/convert';
+import {Convert} from '../../../src/core/format/Convert';
 import {TestingAccount} from '../../conf/conf.spec';
 
 import { MosaicMetadataTransaction, NamespaceMetadataTransaction, AccountMetadataTransaction } from '../../../src/model/model';

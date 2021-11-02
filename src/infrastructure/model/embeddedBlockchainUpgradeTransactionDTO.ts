@@ -28,7 +28,7 @@ export class EmbeddedBlockchainUpgradeTransactionDTO {
     'maxFee': Array<number>;
     'deadline': Array<number>;
     'upgradePeriod': Array<number>;
-    'newBlockChainVersion': Array<number>;
+    'newBlockchainVersion': Array<number>;
 
     static discriminator: string | undefined = undefined;
 
@@ -64,8 +64,8 @@ export class EmbeddedBlockchainUpgradeTransactionDTO {
             "type": "Array<number>"
         },
         {
-            "name": "newBlockChainVersion",
-            "baseName": "newBlockChainVersion",
+            "name": "newBlockchainVersion",
+            "baseName": "newBlockchainVersion",
             "type": "Array<number>"
         }    ];
 

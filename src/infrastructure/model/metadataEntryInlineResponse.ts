@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 import { MetaDataEntryDTO } from './metadataEntryDTO';
-import { MetadataEntryMetaDTO } from './MetadataEntryMetaDTO';
+import { MetadataEntryMetaDTO } from './metadataEntryMetaDTO';
 
 export class MetadataEntryInlineResponse {
     'metadataEntry': MetaDataEntryDTO;

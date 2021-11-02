@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import { ChainUpgradeHttp } from '../../src/infrastructure/infrastructure';
-import { UInt64, BlockChainVersion } from '../../src/model/model';
+import { UInt64, BlockchainVersion } from '../../src/model/model';
 
 chai.use(spies);
 const expect = chai.expect;

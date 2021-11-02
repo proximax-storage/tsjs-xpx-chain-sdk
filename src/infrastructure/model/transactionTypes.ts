@@ -26,7 +26,7 @@
  */
 
 import { RequestFile } from '../api';
-import { TransactionType } from "../../model/transaction/transactionType"
+import { TransactionType } from "../../model/transaction/TransactionType"
 
 export class TransactionTypes {
     /**
