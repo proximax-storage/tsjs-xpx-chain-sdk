@@ -53,7 +53,7 @@ describe('MetadataHttp', () => {
             client.searchMetadata().subscribe(response => {
                 expect(response.metadataEntries[0].scopedMetadataKey.compact()).to.be.equal(1);
                 expect(response.metadataEntries[0].metadataType).to.be.equal(MetadataType.MOSAIC);
-                expect(response.metadataEntries[0].value).to.be.equal("74657374");
+                expect(response.metadataEntries[0].value).to.be.equal("test");
                 expect(response.metadataEntries[0].valueSize).to.be.equal(4);
                 done();
             })
@@ -87,7 +87,7 @@ describe('MetadataHttp', () => {
             client.getMetadata(compositeHash).subscribe(response => {
                 expect(response.scopedMetadataKey.compact()).to.be.equal(1);
                 expect(response.metadataType).to.be.equal(MetadataType.NAMESPACE);
-                expect(response.value).to.be.equal("74657374");
+                expect(response.value).to.be.equal("test");
                 expect(response.valueSize).to.be.equal(4);
                 done();
             })
@@ -130,7 +130,7 @@ describe('MetadataHttp', () => {
             }
         ];
         beforeEach(() => {
-            sandbox.on((client as any).metadataRoutesApi, 'getMosaicMetadata', (number) => Promise.resolve({ body: dto }));
+            sandbox.on((client as any).metadataRoutesApi, 'getMetadatas', (number) => Promise.resolve({ body: dto }));
         });
         afterEach(() => {
             sandbox.restore();
@@ -139,12 +139,12 @@ describe('MetadataHttp', () => {
             client.getMetadatas(compositeHashes).subscribe(response => {
                 expect(response[0].scopedMetadataKey.compact()).to.be.equal(1);
                 expect(response[0].metadataType).to.be.equal(MetadataType.NAMESPACE);
-                expect(response[0].value).to.be.equal("74657374");
+                expect(response[0].value).to.be.equal("test");
                 expect(response[0].valueSize).to.be.equal(4);
 
                 expect(response[1].scopedMetadataKey.compact()).to.be.equal(1);
                 expect(response[1].metadataType).to.be.equal(MetadataType.ACCOUNT);
-                expect(response[1].value).to.be.equal("74657374");
+                expect(response[1].value).to.be.equal("test");
                 expect(response[1].valueSize).to.be.equal(4);
                 done();
             })
