@@ -15,7 +15,7 @@ describe('ChainUpgradeHttp', () => {
         const dto = {
             blockchainUpgrade: {
                 height: UInt64.fromUint(666).toDTO(),
-                blockChainVersion: [196608, 4]
+                blockchainVersion: [196608, 4]
             }
         };
         beforeEach(() => {

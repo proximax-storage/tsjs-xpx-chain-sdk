@@ -19,14 +19,14 @@ export class ChainUpgrade {
 
     public static createFromDTO(upgradeDTO: UpgradeDTO | undefined) {
         if (upgradeDTO) {
-            let blockChainVersionHex = new UInt64(upgradeDTO.blockChainVersion).toHex();
+            let blockchainVersionHex = new UInt64(upgradeDTO.blockchainVersion).toHex();
             return new ChainUpgrade(
                 new UInt64(upgradeDTO.height),
                 new BlockchainVersion(
-                    parseInt(blockChainVersionHex.substring(12, 16), 16),
-                    parseInt(blockChainVersionHex.substring(8, 12), 16),
-                    parseInt(blockChainVersionHex.substring(4, 8), 16),
-                    parseInt(blockChainVersionHex.substring(0, 4), 16)
+                    parseInt(blockchainVersionHex.substring(12, 16), 16),
+                    parseInt(blockchainVersionHex.substring(8, 12), 16),
+                    parseInt(blockchainVersionHex.substring(4, 8), 16),
+                    parseInt(blockchainVersionHex.substring(0, 4), 16)
                 )
             );
         }else{
