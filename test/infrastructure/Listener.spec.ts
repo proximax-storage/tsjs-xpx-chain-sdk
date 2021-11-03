@@ -42,7 +42,8 @@ describe('Listener', () => {
                 })
                 .catch((error) => {
                     listener.close();
-                    expect(error.message.toString()).to.contain("getaddrinfo ENOTFOUND notcorrecturl");
+                    expect(error.message.toString()).to.be.oneOf(["getaddrinfo ENOTFOUND notcorrecturl", "getaddrinfo EAI_AGAIN notcorrecturl"]);
+                    // expect(error.message.toString()).to.contain("getaddrinfo ENOTFOUND notcorrecturl");
                 });
         });
     });
