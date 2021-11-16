@@ -4,17 +4,15 @@
 
 import {from as observableFrom, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {MosaicId} from '../model/mosaic/MosaicId';
-import {NamespaceId} from '../model/namespace/NamespaceId';
 import {Http} from './Http';
 import {NetworkHttp} from './NetworkHttp';
-import { MetadataRepository } from './MetadataRepository';
-import { Field } from '../model/metadata/Field';
-import { AddressMetadata } from '../model/metadata/AddressMetadata';
-import { Address } from '../model/model';
-import { NamespaceMetadata } from '../model/metadata/NamespaceMetadata';
-import { MosaicMetadata } from '../model/metadata/MosaicMetadata';
+import { Address, UInt64 } from '../model/model';
+import { MetadataEntry } from '../model/metadata/MetadataEntry';
 import { MetadataRoutesApi } from './api/metadataRoutesApi';
+import { MetadataQueryParams } from './MetadataQueryParams';
+import { MetadataRepository } from './MetadataRepository';
+import { MetadataSearch } from '../model/metadata/MetadataSearch';
+import { CompositeHashes } from './model/compositeHashes';
 
 /**
  * Metadata http repository.
@@ -40,50 +38,85 @@ export class MetadataHttp extends Http implements MetadataRepository {
     }
 
     /**
-     * Gets the Metadata for a given accountId
-     * @param accountId - Account address/public key
-     * @returns Observable<AddressMetadata>
+     * Get the Metadata for a compositeHash
+     * @param compositeHash
+     * @returns Observable<MetadataEntry>
      */
-    public getAccountMetadata(accountId: string): Observable<AddressMetadata> {
+    public getMetadata(compositeHash: string): Observable<MetadataEntry> {
         return observableFrom(
-            this.metadataRoutesApi.getAccountMetadata(accountId)).pipe(map(response => {
-                const addressMetadataInfoDTO = response.body;
-                return new AddressMetadata(
-                    Address.createFromEncoded(addressMetadataInfoDTO.metadata.metadataId),
-                    addressMetadataInfoDTO.metadata.metadataType,
-                    addressMetadataInfoDTO.metadata.fields.map(fieldDTO => new Field(fieldDTO.key, fieldDTO.value)));
+            this.metadataRoutesApi.getMetadata(compositeHash)).pipe(map(response => {
+                const metadataInlineDTO = response.body;
+                return new MetadataEntry(
+                    metadataInlineDTO.metadataEntry.version,
+                    metadataInlineDTO.metadataEntry.compositeHash,
+                    Address.createFromEncoded(metadataInlineDTO.metadataEntry.sourceAddress),
+                    metadataInlineDTO.metadataEntry.targetKey,
+                    new UInt64(metadataInlineDTO.metadataEntry.scopedMetadataKey),
+                    new UInt64(metadataInlineDTO.metadataEntry.targetId),
+                    metadataInlineDTO.metadataEntry.metadataType,
+                    metadataInlineDTO.metadataEntry.valueSize,
+                    metadataInlineDTO.metadataEntry.value,
+                    metadataInlineDTO.id
+                );
             }));
     }
 
     /**
-     * Gets the Metadata for a given namespaceId
-     * @param namespaceId - the id of the namespace
-     * @returns Observable<NamespaceMetadata>
+     * Get the Metadatas for a set of compositeHashes
+     * @param compositeHashes
+     * @returns Observable<MetadataEntry[]>
      */
-    public getNamespaceMetadata(namespaceId: NamespaceId): Observable<NamespaceMetadata> {
+     public getMetadatas(compositeHashes: string[]): Observable<MetadataEntry[]> {
+
+        let hashes: CompositeHashes = {
+            compositeHashes : compositeHashes
+        }
+
         return observableFrom(
-            this.metadataRoutesApi.getNamespaceMetadata(namespaceId.id.toHex())).pipe(map(response => {
-                const namespaceMetadataInfoDTO = response.body;
-                return new NamespaceMetadata(
-                    new NamespaceId(namespaceMetadataInfoDTO.metadata.metadataId),
-                    namespaceMetadataInfoDTO.metadata.metadataType,
-                    namespaceMetadataInfoDTO.metadata.fields.map(fieldDTO => new Field(fieldDTO.key, fieldDTO.value)));
+            this.metadataRoutesApi.getMetadatas(hashes)).pipe(map(response => {
+                const metadataInlineDTOs = response.body;
+
+                return metadataInlineDTOs.map(metadataDTO =>{
+                    return new MetadataEntry(
+                        metadataDTO.metadataEntry.version,
+                        metadataDTO.metadataEntry.compositeHash,
+                        Address.createFromEncoded(metadataDTO.metadataEntry.sourceAddress),
+                        metadataDTO.metadataEntry.targetKey,
+                        new UInt64(metadataDTO.metadataEntry.scopedMetadataKey),
+                        new UInt64(metadataDTO.metadataEntry.targetId),
+                        metadataDTO.metadataEntry.metadataType,
+                        metadataDTO.metadataEntry.valueSize,
+                        metadataDTO.metadataEntry.value,
+                        metadataDTO.id
+                    );
+                })
             }));
     }
 
     /**
-     * Gets the Metadata for a given mosaicId
-     * @param mosaicId - the id of the mosaic
-     * @returns Observable<MosaicMetadata>
+     * Get the Metadatas for a set of compositeHashes
+     * @param metadataQueryParams
+     * @returns Observable<MetadataEntry[]>
      */
-    public getMosaicMetadata(mosaicId: MosaicId): Observable<MosaicMetadata> {
+     public searchMetadata(metadataQueryParams?: MetadataQueryParams): Observable<MetadataSearch> {
         return observableFrom(
-            this.metadataRoutesApi.getMosaicMetadata(mosaicId.id.toHex())).pipe(map(response => {
-                const mosaicMetadataInfoDTO = response.body;
-                return new MosaicMetadata(
-                    new MosaicId(mosaicMetadataInfoDTO.metadata.metadataId),
-                    mosaicMetadataInfoDTO.metadata.metadataType,
-                    mosaicMetadataInfoDTO.metadata.fields.map(fieldDTO => new Field(fieldDTO.key, fieldDTO.value)));
+            this.metadataRoutesApi.searchMetadata(metadataQueryParams)).pipe(map(response => {
+                let metadataEntries: MetadataEntry[] = response.body.data.map(metadataDTO =>{
+                    return new MetadataEntry(
+                        metadataDTO.metadataEntry.version,
+                        metadataDTO.metadataEntry.compositeHash,
+                        Address.createFromEncoded(metadataDTO.metadataEntry.sourceAddress),
+                        metadataDTO.metadataEntry.targetKey,
+                        new UInt64(metadataDTO.metadataEntry.scopedMetadataKey),
+                        new UInt64(metadataDTO.metadataEntry.targetId),
+                        metadataDTO.metadataEntry.metadataType,
+                        metadataDTO.metadataEntry.valueSize,
+                        metadataDTO.metadataEntry.value,
+                        metadataDTO.meta.id
+                    );
+                })
+
+                return new MetadataSearch(metadataEntries, response.body.pagination)
             }));
     }
 }

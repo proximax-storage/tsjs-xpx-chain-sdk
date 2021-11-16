@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {deepEqual} from 'assert';
+import {deepStrictEqual} from 'assert';
 import {expect} from 'chai';
 import {MosaicInfo} from '../../../src/model/mosaic/MosaicInfo';
 import {MosaicProperties} from '../../../src/model/mosaic/MosaicProperties';
@@ -65,14 +65,14 @@ describe('MosaicInfo', () => {
         );
 
         expect(mosaicInfo.metaId).to.be.equal(mosaicInfoDTO.meta.id);
-        deepEqual(mosaicInfo.mosaicId, mosaicInfoDTO.mosaic.mosaicId);
-        deepEqual(mosaicInfo.supply, mosaicInfoDTO.mosaic.supply);
-        deepEqual(mosaicInfo.height, mosaicInfoDTO.mosaic.height);
+        deepStrictEqual(mosaicInfo.mosaicId, mosaicInfoDTO.mosaic.mosaicId);
+        deepStrictEqual(mosaicInfo.supply, mosaicInfoDTO.mosaic.supply);
+        deepStrictEqual(mosaicInfo.height, mosaicInfoDTO.mosaic.height);
         expect(mosaicInfo.owner).to.be.equal(mosaicInfoDTO.mosaic.owner);
-        deepEqual(mosaicInfo.revision, mosaicInfoDTO.mosaic.revision);
+        deepStrictEqual(mosaicInfo.revision, mosaicInfoDTO.mosaic.revision);
 
         expect(mosaicInfo.divisibility).to.be.equal(mosaicInfoDTO.mosaic.properties[1].lower);
-        deepEqual(mosaicInfo.duration, mosaicInfoDTO.mosaic.properties[2]);
+        deepStrictEqual(mosaicInfo.duration, mosaicInfoDTO.mosaic.properties[2]);
 
     });
 
@@ -91,14 +91,14 @@ describe('MosaicInfo', () => {
         );
 
         expect(mosaicInfo.metaId).to.be.equal(mosaicInfoDTO.meta.id);
-        deepEqual(mosaicInfo.mosaicId, mosaicInfoDTO.mosaic.mosaicId);
-        deepEqual(mosaicInfo.supply, mosaicInfoDTO.mosaic.supply);
-        deepEqual(mosaicInfo.height, mosaicInfoDTO.mosaic.height);
+        deepStrictEqual(mosaicInfo.mosaicId, mosaicInfoDTO.mosaic.mosaicId);
+        deepStrictEqual(mosaicInfo.supply, mosaicInfoDTO.mosaic.supply);
+        deepStrictEqual(mosaicInfo.height, mosaicInfoDTO.mosaic.height);
         expect(mosaicInfo.owner).to.be.equal(mosaicInfoDTO.mosaic.owner);
-        deepEqual(mosaicInfo.revision, mosaicInfoDTO.mosaic.revision);
+        deepStrictEqual(mosaicInfo.revision, mosaicInfoDTO.mosaic.revision);
 
         expect(mosaicInfo.divisibility).to.be.equal(mosaicInfoDTO.mosaic.properties[1].lower);
-        deepEqual(mosaicInfo.duration, undefined);
+        deepStrictEqual(mosaicInfo.duration, undefined);
 
     });
 

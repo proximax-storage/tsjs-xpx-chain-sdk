@@ -14,7 +14,7 @@ import { RequestFile } from '../api';
 
 export class BlockchainUpgradeBodyDTO {
     'upgradePeriod': Array<number>;
-    'newBlockChainVersion': Array<number>;
+    'newBlockchainVersion': Array<number>;
 
     static discriminator: string | undefined = undefined;
 
@@ -25,8 +25,8 @@ export class BlockchainUpgradeBodyDTO {
             "type": "Array<number>"
         },
         {
-            "name": "newBlockChainVersion",
-            "baseName": "newBlockChainVersion",
+            "name": "newBlockchainVersion",
+            "baseName": "newBlockchainVersion",
             "type": "Array<number>"
         }    ];
 

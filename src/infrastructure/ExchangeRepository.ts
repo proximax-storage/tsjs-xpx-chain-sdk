@@ -27,4 +27,10 @@ export interface ExchangeRepository {
      */
     getExchangeOffers(offerType: ExchangeOfferType, mosaicId: MosaicId): Observable<MosaicExchange[]>;
 
+    /**
+     * Get offering mosaics id 
+     * @returns Observable<MosaicId[]>
+     */
+     getOfferList(): Observable<MosaicId[]>;
+
 }

@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import { AccountHttp } from '../../src/infrastructure/infrastructure';
-import { deepEqual } from 'assert';
+import { deepStrictEqual } from 'assert';
 import * as createFromDto from '../../src/infrastructure/transaction/CreateTransactionFromDTO';
 import * as dtoMapping from '../../src/core/utils/DtoMapping'
 import { Address, NetworkType, PublicAccount, UInt64, MultisigAccountInfo } from '../../src/model/model';
@@ -49,15 +49,15 @@ describe('AccountHttp', () => {
             client.getAccountInfo(address).subscribe(response => {
                 expect(response.meta).to.be.equal(dto.meta);
                 expect(response.address.plain()).to.be.equal(Address.createFromRawAddress(RawAddress.addressToString(Convert.hexToUint8(dto.account.address))).plain());
-                deepEqual(response.addressHeight.toDTO(), dto.account.addressHeight);
+                deepStrictEqual(response.addressHeight.toDTO(), dto.account.addressHeight);
                 expect(response.publicKey).to.be.equal(dto.account.publicKey);
                 expect(response.publicAccount.publicKey).to.be.equal(dto.account.publicKey);
-                deepEqual(response.publicKeyHeight.toDTO(), dto.account.publicKeyHeight);
+                deepStrictEqual(response.publicKeyHeight.toDTO(), dto.account.publicKeyHeight);
                 expect(response.accountType).to.be.equal(dto.account.accountType);
                 expect(response.linkedAccountKey).to.be.equal(dto.account.linkedAccountKey);
                 expect(response.mosaics.length).to.be.equal(dto.account.mosaics.length);
-                deepEqual(response.mosaics[0].id.toDTO().id, dto.account.mosaics[0].id);
-                deepEqual(response.mosaics[0].amount.toDTO(), dto.account.mosaics[0].amount);
+                deepStrictEqual(response.mosaics[0].id.toDTO().id, dto.account.mosaics[0].id);
+                deepStrictEqual(response.mosaics[0].amount.toDTO(), dto.account.mosaics[0].amount);
                 done();
             })
         });
@@ -93,15 +93,15 @@ describe('AccountHttp', () => {
                 responses.forEach(response => {
                     expect(response.meta).to.be.equal(dto.meta);
                     expect(response.address.plain()).to.be.equal(Address.createFromRawAddress(RawAddress.addressToString(Convert.hexToUint8(dto.account.address))).plain());
-                    deepEqual(response.addressHeight.toDTO(), dto.account.addressHeight);
+                    deepStrictEqual(response.addressHeight.toDTO(), dto.account.addressHeight);
                     expect(response.publicKey).to.be.equal(dto.account.publicKey);
                     expect(response.publicAccount.publicKey).to.be.equal(dto.account.publicKey);
-                    deepEqual(response.publicKeyHeight.toDTO(), dto.account.publicKeyHeight);
+                    deepStrictEqual(response.publicKeyHeight.toDTO(), dto.account.publicKeyHeight);
                     expect(response.accountType).to.be.equal(dto.account.accountType);
                     expect(response.linkedAccountKey).to.be.equal(dto.account.linkedAccountKey);
                     expect(response.mosaics.length).to.be.equal(dto.account.mosaics.length);
-                    deepEqual(response.mosaics[0].id.toDTO().id, dto.account.mosaics[0].id);
-                    deepEqual(response.mosaics[0].amount.toDTO(), dto.account.mosaics[0].amount);
+                    deepStrictEqual(response.mosaics[0].id.toDTO().id, dto.account.mosaics[0].id);
+                    deepStrictEqual(response.mosaics[0].amount.toDTO(), dto.account.mosaics[0].amount);
                 });
                 done();
             })
@@ -237,7 +237,7 @@ describe('AccountHttp', () => {
 
     describe('transactions', () => {
         beforeEach(() => {
-            sandbox.on((client as any).accountRoutesApi, 'transactions', (tx) => Promise.resolve({ body: ['api called'] }));
+            sandbox.on((client as any).accountRoutesApi, 'transactions', (tx) => Promise.resolve({ body: {data: ['api called'], pagination: { }} }));
             sandbox.on(createFromDto, 'CreateTransactionFromDTO', (dto) => dto === 'api called' ? 'deserialization called' : 'not ok');
         });
         afterEach(() => {
@@ -254,7 +254,7 @@ describe('AccountHttp', () => {
 
     describe('incomingTransactions', () => {
         beforeEach(() => {
-            sandbox.on((client as any).accountRoutesApi, 'incomingTransactions', (tx) => Promise.resolve({ body: ['api called'] }));
+            sandbox.on((client as any).accountRoutesApi, 'incomingTransactions', (tx) => Promise.resolve({ body: {data: ['api called'], pagination: { }}} ));
             sandbox.on(createFromDto, 'CreateTransactionFromDTO', (dto) => dto === 'api called' ? 'deserialization called' : 'not ok');
         });
         afterEach(() => {
@@ -271,7 +271,7 @@ describe('AccountHttp', () => {
 
     describe('outgoingTransactions', () => {
         beforeEach(() => {
-            sandbox.on((client as any).accountRoutesApi, 'outgoingTransactions', (tx) => Promise.resolve({ body: ['api called'] }));
+            sandbox.on((client as any).accountRoutesApi, 'outgoingTransactions', (tx) => Promise.resolve(({ body: {data: ['api called'], pagination: { }} })));
             sandbox.on(createFromDto, 'CreateTransactionFromDTO', (dto) => dto === 'api called' ? 'deserialization called' : 'not ok');
         });
         afterEach(() => {
@@ -288,7 +288,7 @@ describe('AccountHttp', () => {
 
     describe('unconfirmedTransactions', () => {
         beforeEach(() => {
-            sandbox.on((client as any).accountRoutesApi, 'unconfirmedTransactions', (tx) => Promise.resolve({ body: ['api called'] }));
+            sandbox.on((client as any).accountRoutesApi, 'unconfirmedTransactions', (tx) => Promise.resolve(({ body: {data: ['api called'], pagination: { }} })));
             sandbox.on(createFromDto, 'CreateTransactionFromDTO', (dto) => dto === 'api called' ? 'deserialization called' : 'not ok');
         });
         afterEach(() => {
@@ -305,14 +305,14 @@ describe('AccountHttp', () => {
 
     describe('aggregateBondedTransactions', () => {
         beforeEach(() => {
-            sandbox.on((client as any).accountRoutesApi, 'partialTransactions', (tx) => Promise.resolve({ body: ['api called'] }));
+            sandbox.on((client as any).accountRoutesApi, 'partialTransactions', (tx) => Promise.resolve(({ body: {data: ['api called'], pagination: { }} })));
             sandbox.on(createFromDto, 'CreateTransactionFromDTO', (dto) => dto === 'api called' ? 'deserialization called' : 'not ok');
         });
         afterEach(() => {
             sandbox.restore();
         });
         it('should call api client', (done) => {
-            client.aggregateBondedTransactions(publicAccount).subscribe(response => {
+            client.aggregateBondedTransactions(publicAccount, undefined, false).subscribe(response => {
                 expect(response.length).to.be.equal(1);
                 expect(response[0]).to.be.equal('deserialization called');
                 done();

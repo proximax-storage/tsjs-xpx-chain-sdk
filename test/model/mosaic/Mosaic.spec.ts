@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {deepEqual} from 'assert';
+import {deepStrictEqual} from 'assert';
 import {Mosaic} from '../../../src/model/mosaic/Mosaic';
 import {UInt64} from '../../../src/model/UInt64';
 import {MosaicId} from '../../../src/model/mosaic/MosaicId';
@@ -32,7 +32,7 @@ describe('Mosaic', () => {
             mosaicDTO.amount,
         );
 
-        deepEqual(mosaic.id, mosaicDTO.mosaicId);
-        deepEqual(mosaic.amount, mosaicDTO.amount);
+        deepStrictEqual(mosaic.id, mosaicDTO.mosaicId);
+        deepStrictEqual(mosaic.amount, mosaicDTO.amount);
     });
 });

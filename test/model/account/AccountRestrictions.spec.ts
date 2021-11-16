@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {deepEqual} from 'assert';
+import {deepStrictEqual} from 'assert';
 import {expect} from 'chai';
 import {Address} from '../../../src/model/account/Address';
 import { AccountRestrictions, RestrictionModificationType, RestrictionType, AccountRestriction } from '../../../src/model/model';
@@ -43,11 +43,11 @@ describe('AccountRestrictions', () => {
         );
 
         expect(accountRestrictions.address).to.be.equal(accountRestrictionsDTO.address);
-        deepEqual(accountRestrictions.restrictions.length, accountRestrictionsDTO.restrictions.length);
-        deepEqual(accountRestrictions.restrictions[0].restrictionType, accountRestrictionsDTO.restrictions[0].restrictionType);
-        deepEqual(accountRestrictions.restrictions[0].values.length, accountRestrictionsDTO.restrictions[0].values.length);
-        deepEqual((accountRestrictions.restrictions[0].values[0] as any).modificationType,
+        deepStrictEqual(accountRestrictions.restrictions.length, accountRestrictionsDTO.restrictions.length);
+        deepStrictEqual(accountRestrictions.restrictions[0].restrictionType, accountRestrictionsDTO.restrictions[0].restrictionType);
+        deepStrictEqual(accountRestrictions.restrictions[0].values.length, accountRestrictionsDTO.restrictions[0].values.length);
+        deepStrictEqual((accountRestrictions.restrictions[0].values[0] as any).modificationType,
             accountRestrictionsDTO.restrictions[0].values[0].modificationType);
-        deepEqual((accountRestrictions.restrictions[0].values[0] as any).value, accountRestrictionsDTO.restrictions[0].values[0].value);
+        deepStrictEqual((accountRestrictions.restrictions[0].values[0] as any).value, accountRestrictionsDTO.restrictions[0].values[0].value);
     });
 });

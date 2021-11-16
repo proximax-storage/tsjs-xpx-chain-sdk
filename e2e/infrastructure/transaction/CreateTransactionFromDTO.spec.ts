@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {deepEqual} from 'assert';
+import {deepStrictEqual} from 'assert';
 import {expect} from 'chai';
 import {CreateTransactionFromDTO} from '../../../src/infrastructure/transaction/CreateTransactionFromDTO';
 import { Address } from '../../../src/model/account/Address';
@@ -58,7 +58,7 @@ describe('CreateTransactionFromDTO', () => {
             };
 
             const transferTransaction = CreateTransactionFromDTO(transferTransactionDTO) as TransferTransaction;
-            deepEqual(transferTransaction.recipient, Address.createFromEncoded(transferTransactionDTO.transaction.recipient));
+            deepStrictEqual(transferTransaction.recipient, Address.createFromEncoded(transferTransactionDTO.transaction.recipient));
             expect(transferTransaction.message.payload).to.be.equal('test-message');
         });
 
@@ -93,7 +93,7 @@ describe('CreateTransactionFromDTO', () => {
             };
 
             const transferTransaction = CreateTransactionFromDTO(transferTransactionDTO) as TransferTransaction;
-            deepEqual(transferTransaction.recipient, Address.createFromEncoded(transferTransactionDTO.transaction.recipient));
+            deepStrictEqual(transferTransaction.recipient, Address.createFromEncoded(transferTransactionDTO.transaction.recipient));
             expect(transferTransaction.message.payload).to.be.equal('');
         });
 

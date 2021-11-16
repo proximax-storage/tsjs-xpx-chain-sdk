@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {deepEqual} from 'assert';
+import {deepStrictEqual, deepEqual} from 'assert';
 import { expect } from 'chai';
 import { sha3_256 } from 'js-sha3';
 import {Convert as convert} from '../../../src/core/format';
@@ -25,8 +25,12 @@ import { PublicAccount } from '../../../src/model/account/PublicAccount';
 import { RestrictionModificationType } from '../../../src/model/account/RestrictionModificationType';
 import { RestrictionType } from '../../../src/model/account/RestrictionType';
 import { NetworkType } from '../../../src/model/blockchain/NetworkType';
-import { EncryptedMessage, ModifyMetadataTransaction, MetadataType, MetadataModification, Metadata, MetadataModificationType, ChainConfigTransaction, ChainUpgradeTransaction } from '../../../src/model/model';
+import { EncryptedMessage, MosaicMetadataTransaction, AccountMetadataTransaction, NamespaceMetadataTransaction, 
+    ChainConfigTransaction, ChainUpgradeTransaction, MosaicModifyLevyTransaction, MosaicRemoveLevyTransaction } from '../../../src/model/model';
+import { KeyGenerator } from '../../../src/core/format/KeyGenerator';
 import { MosaicId } from '../../../src/model/mosaic/MosaicId';
+import { MosaicLevy } from '../../../src/model/mosaic/MosaicLevy';
+import { MosaicLevyType } from '../../../src/model/mosaic/MosaicLevyType';
 import { MosaicNonce } from '../../../src/model/mosaic/MosaicNonce';
 import { MosaicProperties } from '../../../src/model/mosaic/MosaicProperties';
 import { MosaicSupplyType } from '../../../src/model/mosaic/MosaicSupplyType';
@@ -324,6 +328,45 @@ describe('TransactionMapping - createFromPayload', () => {
 
     });
 
+    it('should create modifyMosaicLevyTransaction - absolute fee type', () => {
+        const mosaicId = new MosaicId([2262289484, 3405110546]);
+        const mosaicLevy = MosaicLevy.createWithAbsoluteFee(account.address, mosaicId, 50);
+        const mosaicModifyLevyTransaction = MosaicModifyLevyTransaction.create(
+            Deadline.create(),
+            mosaicId,
+            mosaicLevy,
+            NetworkType.MIJIN_TEST,
+        );
+
+        const signedTransaction = mosaicModifyLevyTransaction.signWith(account, generationHash);
+
+        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as MosaicModifyLevyTransaction;
+
+        expect(transaction.mosaicLevy.fee.compact()).to.be.equal(50);
+        expect(transaction.mosaicLevy.recipient.plain()).to.be.equal(account.address.plain());
+        expect(transaction.mosaicLevy.type).to.be.equal(MosaicLevyType.LevyAbsoluteFee);
+    })
+
+    it('should create modifyMosaicLevyTransaction - percentage fee type', () => {
+        const mosaicId = new MosaicId([2262289484, 3405110546]);
+        const onePercentValue = 1000;
+        const mosaicLevy = MosaicLevy.createWithPercentageFee(account.address, mosaicId, 1.5, onePercentValue);
+        const mosaicModifyLevyTransaction = MosaicModifyLevyTransaction.create(
+            Deadline.create(),
+            mosaicId,
+            mosaicLevy,
+            NetworkType.MIJIN_TEST,
+        );
+
+        const signedTransaction = mosaicModifyLevyTransaction.signWith(account, generationHash);
+
+        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as MosaicModifyLevyTransaction;
+
+        expect(transaction.mosaicLevy.fee.compact()).to.be.equal(1500);
+        expect(transaction.mosaicLevy.recipient.plain()).to.be.equal(account.address.plain());
+        expect(transaction.mosaicLevy.type).to.be.equal(MosaicLevyType.LevyPercentileFee);
+    })
+
     it('should create TransferTransaction', () => {
         const transferTransaction = TransferTransaction.create(
             Deadline.create(),
@@ -480,7 +523,7 @@ describe('TransactionMapping - createFromPayload', () => {
 
         const transaction = TransactionMapping.createFromPayload(signedLockFundTransaction.payload) as LockFundsTransaction;
 
-        deepEqual(transaction.mosaic.id.id, XpxMosaicProperties.ID.id);
+        deepStrictEqual(transaction.mosaic.id.id, XpxMosaicProperties.ID.id);
         expect(transaction.mosaic.amount.compact()).to.be.equal(10000000);
         expect(transaction.hash).to.be.equal(signedTransaction.hash);
     });
@@ -533,70 +576,79 @@ describe('TransactionMapping - createFromPayload', () => {
         expect(transaction.namespaceName).to.be.equal('root-test-namespace');
     });
 
-    it('should create ModifyMetadataTransaction - Address', () => {
-        const modifications = [];
-        const modifyAddressMetadataTransaction = ModifyMetadataTransaction.createWithAddress(
-            NetworkType.MIJIN_TEST,
+    it('should create AccountMetadataTransaction', () => {
+        const accountMetadataTransaction = AccountMetadataTransaction.create(
             Deadline.create(),
-            account.address,
-            modifications
+            account.publicAccount,
+            "name",
+            "hello",
+            "hello1",
+            NetworkType.MIJIN_TEST,
         );
 
-        const signedTransaction = modifyAddressMetadataTransaction.signWith(account, generationHash);
+        const signedTransaction = accountMetadataTransaction.signWith(account, generationHash);
 
-        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as ModifyMetadataTransaction;
+        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as AccountMetadataTransaction;
 
-        expect(transaction.metadataType).to.be.equal(MetadataType.ADDRESS);
-        expect(transaction.metadataId).to.be.equal(account.address.plain());
-        expect(transaction.modifications.length).to.be.equal(0);
+        expect(transaction.targetPublicKey.publicKey).to.be.equal(account.publicAccount.publicKey);
+        deepStrictEqual(transaction.scopedMetadataKey, KeyGenerator.generateUInt64Key("name"));
+        expect(accountMetadataTransaction.value).to.be.equal("hello");
+        expect(accountMetadataTransaction.oldValue).to.be.equal("hello1");
+        expect(transaction.valueSize).to.be.equal(6);
+        expect(transaction.valueSizeDelta).to.be.equal(-1);
+        deepStrictEqual(transaction.valueDifferences, new Uint8Array([0, 0, 0, 0, 0, 49]));
     })
-    it('should create ModifyMetadataTransaction - Mosaic', () => {
-        const modifications = [
-            new MetadataModification(MetadataModificationType.ADD, "someKey")
-        ];
-        const mosaicId = new MosaicId([0x1234, 0x5678]);
-        const modifyAddressMetadataTransaction = ModifyMetadataTransaction.createWithMosaicId(
-            NetworkType.MIJIN_TEST,
+    it('should create MosaicMetadataTransaction', () => {
+        const mosaicId = MosaicId.createFromNonce(MosaicNonce.createFromNumber(1), account.publicAccount);
+        const mosaicMetadataTransaction = MosaicMetadataTransaction.create(
             Deadline.create(),
+            account.publicAccount,
             mosaicId,
-            modifications
-        );
-
-        const signedTransaction = modifyAddressMetadataTransaction.signWith(account, generationHash);
-
-        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as ModifyMetadataTransaction;
-
-        expect(transaction.metadataType).to.be.equal(MetadataType.MOSAIC);
-        expect(transaction.metadataId).to.be.equal(mosaicId.toHex());
-        expect(transaction.modifications.length).to.be.equal(1);
-        expect(transaction.modifications[0].key).to.be.equal("someKey");
-        expect(transaction.modifications[0].value).to.be.undefined;
-    })
-    it('should create ModifyMetadataTransaction - Namespace', () => {
-        const modifications = [
-            new MetadataModification(MetadataModificationType.REMOVE, "someKey"),
-            new MetadataModification(MetadataModificationType.ADD, "someOtherKey", "someValue")
-        ];
-        const namespaceId = new NamespaceId([0x1234, 0x5678]);
-        const modifyAddressMetadataTransaction = ModifyMetadataTransaction.createWithNamespaceId(
+            "name",
+            "hello1",
+            "hello",
             NetworkType.MIJIN_TEST,
-            Deadline.create(),
-            namespaceId,
-            modifications
         );
 
-        const signedTransaction = modifyAddressMetadataTransaction.signWith(account, generationHash);
+        const signedTransaction = mosaicMetadataTransaction.signWith(account, generationHash);
 
-        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as ModifyMetadataTransaction;
+        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as MosaicMetadataTransaction;
 
-        expect(transaction.metadataType).to.be.equal(MetadataType.NAMESPACE);
-        expect(transaction.metadataId).to.be.equal(namespaceId.toHex());
-        expect(transaction.modifications.length).to.be.equal(2);
-        expect(transaction.modifications[0].key).to.be.equal("someKey");
-        expect(transaction.modifications[0].value).to.be.undefined;
-        expect(transaction.modifications[1].key).to.be.equal("someOtherKey");
-        expect(transaction.modifications[1].value).to.be.equal("someValue");
+        expect(transaction.targetPublicKey.publicKey).to.be.equal(account.publicAccount.publicKey);
+        deepStrictEqual(transaction.scopedMetadataKey, KeyGenerator.generateUInt64Key("name"));
+        expect(transaction.targetMosaicId.toHex()).to.be.equal(mosaicId.toHex());
+        expect(mosaicMetadataTransaction.value).to.be.equal("hello1");
+        expect(mosaicMetadataTransaction.oldValue).to.be.equal("hello");
+        expect(transaction.valueSize).to.be.equal(6);
+        expect(transaction.valueSizeDelta).to.be.equal(1);
+        deepStrictEqual(transaction.valueDifferences, new Uint8Array([0, 0, 0, 0, 0, 49]));
     })
+    it('should create NamespaceMetadataTransaction', () => {
+        const namespaceId = new NamespaceId("testing");
+        const namespaceMetadataTransaction = NamespaceMetadataTransaction.create(
+            Deadline.create(),
+            account.publicAccount,
+            namespaceId,
+            "name",
+            "hello1",
+            "hello",
+            NetworkType.MIJIN_TEST,
+        );
+
+        const signedTransaction = namespaceMetadataTransaction.signWith(account, generationHash);
+
+        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as NamespaceMetadataTransaction;
+
+        expect(transaction.targetPublicKey.publicKey).to.be.equal(account.publicAccount.publicKey);
+        deepStrictEqual(transaction.scopedMetadataKey, KeyGenerator.generateUInt64Key("name"));
+        expect(transaction.targetNamespaceId.toHex()).to.be.equal(namespaceId.toHex());
+        expect(namespaceMetadataTransaction.value).to.be.equal("hello1");
+        expect(namespaceMetadataTransaction.oldValue).to.be.equal("hello");
+        expect(transaction.valueSize).to.be.equal(6);
+        expect(transaction.valueSizeDelta).to.be.equal(1);
+        deepStrictEqual(transaction.valueDifferences, new Uint8Array([0, 0, 0, 0, 0, 49]));
+    })
+    
     it('should create ChainConfigTransaction transaction', () => {
         const chainConfigureTransaction = ChainConfigTransaction.create(
             Deadline.create(),
@@ -909,8 +961,6 @@ describe('TransactionMapping - createFromDTO (Transaction.toJSON() feed)', () =>
 
     });
 
-    /* this test get commented as it is not possible to pass, as the REST API return mosaicNonce as key
-    // and SDK is using nonce 
     it('should create MosaicDefinitionTransaction', () => {
         const mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
             Deadline.create(),
@@ -934,7 +984,6 @@ describe('TransactionMapping - createFromDTO (Transaction.toJSON() feed)', () =>
         expect(transaction.mosaicProperties.divisibility).to.be.equal(3);
 
     });
-    */
 
     it('should create MosaicSupplyChangeTransaction', () => {
         const mosaicId = new MosaicId([2262289484, 3405110546]);

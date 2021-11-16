@@ -39,7 +39,7 @@ export class MosaicDefinitionTransaction extends Transaction {
     /**
      * Create a mosaic creation transaction object
      * @param deadline - The deadline to include the transaction.
-     * @param nonce - The mosaic nonce ex: MosaicNonce.createRandom().
+     * @param mosaicNonce - The mosaic nonce ex: MosaicNonce.createRandom().
      * @param mosaicId - The mosaic id ex: new MosaicId([481110499, 231112638]).
      * @param mosaicProperties - The mosaic properties.
      * @param networkType - The network type.
@@ -47,7 +47,7 @@ export class MosaicDefinitionTransaction extends Transaction {
      * @returns {MosaicDefinitionTransaction}
      */
     public static create(deadline: Deadline,
-                         nonce: MosaicNonce,
+                         mosaicNonce: MosaicNonce,
                          mosaicId: MosaicId,
                          mosaicProperties: MosaicProperties,
                          networkType: NetworkType,
@@ -56,7 +56,7 @@ export class MosaicDefinitionTransaction extends Transaction {
             .networkType(networkType)
             .deadline(deadline)
             .maxFee(maxFee)
-            .mosaicNonce(nonce)
+            .mosaicNonce(mosaicNonce)
             .mosaicId(mosaicId)
             .mosaicProperties(mosaicProperties)
             .build();
@@ -81,7 +81,7 @@ export class MosaicDefinitionTransaction extends Transaction {
                 /**
                  * The mosaic nonce.
                  */
-                public readonly nonce: MosaicNonce,
+                public readonly mosaicNonce: MosaicNonce,
                 /**
                  * The mosaic id.
                  */
@@ -134,7 +134,7 @@ export class MosaicDefinitionTransaction extends Transaction {
             ...parent,
             transaction: {
                 ...parent.transaction,
-                nonce: this.nonce,
+                mosaicNonce: this.mosaicNonce.toNumber(),
                 mosaicId: this.mosaicId.toDTO(),
                 properties: this.mosaicProperties.toDTO(),
             }
@@ -153,7 +153,7 @@ export class MosaicDefinitionTransaction extends Transaction {
             .addVersion(this.versionToDTO())
             .addDivisibility(this.mosaicProperties.divisibility)
             .addDuration(this.mosaicProperties.duration ? this.mosaicProperties.duration.toDTO() : [])
-            .addNonce(this.nonce.toDTO())
+            .addNonce(this.mosaicNonce.toDTO())
             .addMosaicId(this.mosaicId.id.toDTO());
 
         if (this.mosaicProperties.supplyMutable === true) {

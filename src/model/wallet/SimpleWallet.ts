@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {LocalDateTime} from 'js-joda';
+import {LocalDateTime} from '@js-joda/core';
 import {Crypto, KeyPair, SignSchema} from '../../core/crypto';
 import { Convert as convert} from '../../core/format';
 import {Account} from '../account/Account';

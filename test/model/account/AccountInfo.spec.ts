@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {deepEqual} from 'assert';
+import {deepStrictEqual} from 'assert';
 import {expect} from 'chai';
 import {AccountInfo} from '../../../src/model/account/AccountInfo';
 import {Address} from '../../../src/model/account/Address';
@@ -58,13 +58,13 @@ describe('AccountInfo', () => {
         );
 
         expect(accountInfo.meta).to.be.equal(accountInfoDTO.meta);
-        deepEqual(accountInfo.address, accountInfoDTO.account.address);
-        deepEqual(accountInfo.addressHeight, accountInfoDTO.account.addressHeight);
+        deepStrictEqual(accountInfo.address, accountInfoDTO.account.address);
+        deepStrictEqual(accountInfo.addressHeight, accountInfoDTO.account.addressHeight);
         expect(accountInfo.publicKey).to.be.equal(accountInfoDTO.account.publicKey);
-        deepEqual(accountInfo.publicKeyHeight, accountInfoDTO.account.publicKeyHeight);
+        deepStrictEqual(accountInfo.publicKeyHeight, accountInfoDTO.account.publicKeyHeight);
         expect(accountInfo.accountType).to.be.equal(accountInfoDTO.account.accountType);
         expect(accountInfo.linkedAccountKey).to.be.equal(accountInfoDTO.account.linkedAccountKey);
-        deepEqual(accountInfo.publicAccount, PublicAccount.createFromPublicKey(accountInfoDTO.account.publicKey, NetworkType.MIJIN_TEST));
+        deepStrictEqual(accountInfo.publicAccount, PublicAccount.createFromPublicKey(accountInfoDTO.account.publicKey, NetworkType.MIJIN_TEST));
 
     });
 });

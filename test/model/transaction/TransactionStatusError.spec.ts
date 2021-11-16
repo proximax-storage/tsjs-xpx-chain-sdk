@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {deepEqual} from 'assert';
+import {deepStrictEqual} from 'assert';
 import {expect} from 'chai';
 import {TransactionStatusError} from '../../../src/model/transaction/TransactionStatusError';
 import {Deadline} from '../../../src/model/transaction/Deadline';
@@ -35,6 +35,6 @@ describe('TransactionStatusError', () => {
 
         expect(transactionStatusError.hash).to.be.equal(statusInfoErrorDTO.hash);
         expect(transactionStatusError.status).to.be.equal(statusInfoErrorDTO.status);
-        deepEqual(transactionStatusError.deadline.toDTO(), statusInfoErrorDTO.deadline);
+        deepStrictEqual(transactionStatusError.deadline.toDTO(), statusInfoErrorDTO.deadline);
     });
 });

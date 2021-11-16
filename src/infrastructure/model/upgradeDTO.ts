@@ -18,7 +18,7 @@ import { RequestFile } from '../api';
 
 export class UpgradeDTO {
     'height': Array<number>;
-    'blockChainVersion': Array<number>;
+    'blockchainVersion': Array<number>;
 
     static discriminator: string | undefined = undefined;
 
@@ -29,8 +29,8 @@ export class UpgradeDTO {
             "type": "Array<number>"
         },
         {
-            "name": "blockChainVersion",
-            "baseName": "blockChainVersion",
+            "name": "blockchainVersion",
+            "baseName": "blockchainVersion",
             "type": "Array<number>"
         }    ];
 

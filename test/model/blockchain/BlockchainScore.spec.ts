@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {deepEqual} from 'assert';
+import {deepStrictEqual} from 'assert';
 import {BlockchainScore} from '../../../src/model/blockchain/BlockchainScore';
 import {UInt64} from '../../../src/model/UInt64';
 
@@ -31,7 +31,7 @@ describe('BlockchainScore', () => {
             blockchainScoreDTO.scoreHigh,
         );
 
-        deepEqual(blockchainScore.scoreLow, blockchainScoreDTO.scoreLow);
-        deepEqual(blockchainScore.scoreHigh, blockchainScoreDTO.scoreHigh);
+        deepStrictEqual(blockchainScore.scoreLow, blockchainScoreDTO.scoreLow);
+        deepStrictEqual(blockchainScore.scoreHigh, blockchainScoreDTO.scoreHigh);
     });
 });

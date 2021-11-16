@@ -150,8 +150,8 @@ describe('Transaction', () => {
 
             const newDeadline = Deadline.create(3);
             const newTransaction = transaction.reapplyGiven(newDeadline);
-            const equal = newTransaction.deadline.value.equals(transaction.deadline.value);
-            const after = newTransaction.deadline.value.isAfter(transaction.deadline.value);
+            const equal = newTransaction.deadline.value!.equals(transaction.deadline.value);
+            const after = newTransaction.deadline.value!.isAfter(transaction.deadline.value!);
             expect(newTransaction.deadline).to.be.equal(newDeadline);
             expect(equal).to.be.equal(false);
             expect(after).to.be.equal(true);

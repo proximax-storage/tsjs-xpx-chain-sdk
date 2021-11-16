@@ -16,5 +16,5 @@ deploy:
   email: "$AUTH_EMAIL"
   api_key: "$AUTH_TOKEN"
   on:
-    branch: master
+    tags: true
     node: 12

@@ -22,7 +22,9 @@ import {MultisigAccountInfo} from '../model/account/MultisigAccountInfo';
 import {PublicAccount} from '../model/account/PublicAccount';
 import {AggregateTransaction} from '../model/transaction/AggregateTransaction';
 import {Transaction} from '../model/transaction/Transaction';
+import {TransactionSearch} from '../model/transaction/TransactionSearch';
 import {QueryParams} from './QueryParams';
+import {TransactionQueryParams} from './TransactionQueryParams';
 import {AccountRestrictionsInfo} from "../model/account/AccountRestrictionsInfo";
 import { AccountNames } from '../model/account/AccountNames';
 
@@ -86,50 +88,90 @@ export interface AccountRepository {
     /**
      * Gets an array of confirmed transactions for which an account is signer or receiver.
      * @param publicAccount - User public account
-     * @param queryParams - (Optional) Query params
+     * @param txnQueryParam - (Optional) Transaction Query Params
      * @returns Observable<Transaction[]>
      */
     transactions(publicAccount: PublicAccount,
-                 queryParams?: QueryParams): Observable<Transaction[]>;
+                 txnQueryParams?: TransactionQueryParams): Observable<Transaction[]>;
+
+    /**
+     * Gets an array of confirmed transactions for which an account is signer or receiver.
+     * @param publicAccount - User public account
+     * @param txnQueryParam - (Optional) Transaction Query Params
+     * @returns Observable<TransactionSearch>
+     */
+     transactionsWithPagination(publicAccount: PublicAccount,
+        txnQueryParam?: TransactionQueryParams): Observable<TransactionSearch>;
 
     /**
      * Gets an array of transactions for which an account is the recipient of a transaction.
      * A transaction is said to be incoming with respect to an account if the account is the recipient of a transaction.
      * @param publicAccount - User public account
-     * @param queryParams - (Optional) Query params
+     * @param txnQueryParam - (Optional) Transaction Query Params
      * @returns Observable<Transaction[]>
      */
-    incomingTransactions(publicAccount: PublicAccount,
-                         queryParams?: QueryParams): Observable<Transaction[]>;
+    incomingTransactions(accountId: Address | PublicAccount,
+                         txnQueryParam?: TransactionQueryParams): Observable<Transaction[]>;
+
+    /**
+     * Gets an array of transactions for which an account is the recipient of a transaction.
+     * A transaction is said to be incoming with respect to an account if the account is the recipient of a transaction.
+     * @param publicAccount - User public account
+     * @param txnQueryParam - (Optional) Transaction Query Params
+     * @returns Observable<TransactionSearch>
+     */
+     incomingTransactionsWithPagination(accountId: Address | PublicAccount,
+        txnQueryParam?: TransactionQueryParams): Observable<TransactionSearch>;
 
     /**
      * Gets an array of transactions for which an account is the sender a transaction.
      * A transaction is said to be outgoing with respect to an account if the account is the sender of a transaction.
      * @param publicAccount - User public account
-     * @param queryParams - (Optional) Query params
+     * @param txnQueryParam - (Optional) Transaction Query Params
      * @returns Observable<Transaction[]>
      */
     outgoingTransactions(publicAccount: PublicAccount,
-                         queryParams?: QueryParams): Observable<Transaction[]>;
+                         txnQueryParam?: TransactionQueryParams): Observable<Transaction[]>;
+
+    /**
+     * Gets an array of transactions for which an account is the sender a transaction.
+     * A transaction is said to be outgoing with respect to an account if the account is the sender of a transaction.
+     * @param publicAccount - User public account
+     * @param txnQueryParam - (Optional) Transaction Query Params
+     * @returns Observable<TransactionSearch>
+     */
+     outgoingTransactionsWithPagination(publicAccount: PublicAccount,
+        txnQueryParam?: TransactionQueryParams): Observable<TransactionSearch>;
 
     /**
      * Gets the array of transactions for which an account is the sender or receiver and which have not yet been included in a block.
      * Unconfirmed transactions are those transactions that have not yet been included in a block.
      * Unconfirmed transactions are not guaranteed to be included in any block.
      * @param publicAccount - User public account
-     * @param queryParams - (Optional) Query params
+     * @param txnQueryParam - (Optional) Transaction Query Params
      * @returns Observable<Transaction[]>
      */
     unconfirmedTransactions(publicAccount: PublicAccount,
-                            queryParams?: QueryParams): Observable<Transaction[]>;
+                            txnQueryParam?: TransactionQueryParams): Observable<Transaction[]>;
+
+    /**
+     * Gets the array of transactions for which an account is the sender or receiver and which have not yet been included in a block.
+     * Unconfirmed transactions are those transactions that have not yet been included in a block.
+     * Unconfirmed transactions are not guaranteed to be included in any block.
+     * @param publicAccount - User public account
+     * @param txnQueryParam - (Optional) Transaction Query Params
+     * @returns Observable<TransactionSearch>
+     */
+     unconfirmedTransactionsWithPagination(publicAccount: PublicAccount,
+        txnQueryParam?: TransactionQueryParams): Observable<TransactionSearch>;
 
     /**
      * Gets an array of transactions for which an account is the sender or has sign the transaction.
      * A transaction is said to be aggregate bonded with respect to an account if there are missing signatures.
      * @param publicAccount - User public account
-     * @param queryParams - (Optional) Query params
+     * @param txnQueryParam - (Optional) Transaction Query Params
      * @returns Observable<AggregateTransaction[]>
      */
     aggregateBondedTransactions(publicAccount: PublicAccount,
-                                queryParams?: QueryParams): Observable<AggregateTransaction[]>;
+                                txnQueryParam?: TransactionQueryParams): Observable<AggregateTransaction[]>;
 }

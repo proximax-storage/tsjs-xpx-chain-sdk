@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {deepEqual} from 'assert';
+import {deepStrictEqual} from 'assert';
 import {expect} from 'chai';
 import {PublicAccount} from '../../../src/model/account/PublicAccount';
 import {NetworkType} from '../../../src/model/blockchain/NetworkType';
@@ -26,12 +26,12 @@ describe('MosaicId', () => {
 
     it('should be created from id', () => {
         const id = new MosaicId([3294802500, 2243684972]);
-        deepEqual(id.id, new Id([3294802500, 2243684972]));
+        deepStrictEqual(id.id, new Id([3294802500, 2243684972]));
     });
 
     it('should be created from id', () => {
         const id = new MosaicId('85BBEA6CC462B244');
-        deepEqual(id.id, new Id([3294802500, 2243684972]));
+        deepStrictEqual(id.id, new Id([3294802500, 2243684972]));
     });
 
     it('should create id given nonce and owner', () => {
@@ -39,14 +39,14 @@ describe('MosaicId', () => {
         const bytes = new Uint8Array([0x0, 0x0, 0x0, 0x0]);
         const id = MosaicId.createFromNonce(new MosaicNonce(bytes), owner);
 
-        deepEqual(id.id, new Id([481110499, 231112638]));
+        deepStrictEqual(id.id, new Id([481110499, 231112638]));
     });
 
     it('should create id given nonce and owner, too', () => {
         const owner = PublicAccount.createFromPublicKey('4AFF7B4BA8C1C26A7917575993346627CB6C80DE62CD92F7F9AEDB7064A3DE62', NetworkType.MIJIN_TEST);
         const bytes = new Uint8Array([0x78, 0xE3, 0x6F, 0xB7]);
         const id = MosaicId.createFromNonce(new MosaicNonce(bytes), owner);
-        deepEqual(id.id, new Id([0xC0AFC518, 0x3AD842A8]));
+        deepStrictEqual(id.id, new Id([0xC0AFC518, 0x3AD842A8]));
     });
 
     it('should create id twice the same given nonce and owner', () => {
@@ -55,6 +55,6 @@ describe('MosaicId', () => {
         const id1 = MosaicId.createFromNonce(new MosaicNonce(bytes), owner);
         const id2 = MosaicId.createFromNonce(new MosaicNonce(bytes), owner);
 
-        deepEqual(id1.id, id2.id);
+        deepStrictEqual(id1.id, id2.id);
     });
 });

@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file
 
 import { Metadata } from "./Metadata";
-import { MetadataType } from "./MetadataType";
+import { MetadataType } from "./oldMetadataType";
 import { NamespaceId } from "../namespace/NamespaceId";
 import { Field } from "./Field";
 

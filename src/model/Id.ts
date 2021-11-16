@@ -21,8 +21,8 @@ import {UInt64} from './UInt64';
  */
 export class Id extends UInt64 {
     public static fromHex(hexId: string): Id {
-        const higher = parseInt(hexId.substr(0, 8), 16);
-        const lower = parseInt(hexId.substr(8, 8), 16);
+        const higher = parseInt(hexId.substring(0, 8), 16);
+        const lower = parseInt(hexId.substring(8, 16), 16);
 
         return new Id([lower, higher]);
     }

@@ -5,9 +5,12 @@
 import {expect} from 'chai';
 import { APIUrl, TestingAccount, ConfTestingNamespaceId, ConfTestingMosaicId, Configuration } from '../conf/conf.spec';
 import { MetadataHttp } from '../../src/infrastructure/MetadataHttp';
-import { Address, Transaction, TransactionBuilderFactory } from '../../src/model/model';
+import { Address, Transaction, TransactionBuilderFactory, UInt64, Mosaic, NamespaceId } from '../../src/model/model';
+import { Convert as convert } from '../../src/core/format';
 import { MetadataModification, MetadataModificationType } from '../../src/model/transaction/ModifyMetadataTransaction';
 import { TransactionHttp, Listener } from '../../src/infrastructure/infrastructure';
+import { validateTransactionConfirmed, validatePartialTransactionNotPartialAnyMore, validatePartialTransactionAnnouncedCorrectly } from '../utils';
+import { fail } from 'assert';
 
 let listener: Listener;
 let metadataHttp: MetadataHttp;
@@ -58,29 +61,40 @@ describe('MetadataHttp', () => {
 
     describe('add ,modify, get Metadata', () => {
         describe('should add metadata to an account', () => {
-            it('standalone', (done) => {
-                const modifyMetadataTransaction = factory.accountMetadata()
-                    .address(TestingAccount.address)
-                    .modifications([new MetadataModification(MetadataModificationType.ADD, "key1", "x".repeat(256))])
-                    .build();
-                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount, factory.generationHash);
-                validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
-                transactionHttp.announce(signedTransaction);
-            });
             it('aggregate', (done) => {
-                const modifyMetadataTransaction = factory.accountMetadata()
-                    .address(TestingAccount.address)
-                    .modifications([new MetadataModification(MetadataModificationType.ADD, "key2", "x".repeat(256))])
+                const accountMetadataTransaction = factory.accountMetadata()
+                    .targetPublicKey(TestingAccount.publicAccount)
+                    .scopedMetadataKey(UInt64.fromUint(1))
+                    .valueSize(5)
+                    .valueSizeDelta(5)
+                    .valueDifferences(convert.hexToUint8(convert.utf8ToHex("hello")))
                     .build();
-                const aggregateTransaction = factory.aggregateComplete()
-                    .innerTransactions([modifyMetadataTransaction.toAggregate(TestingAccount.publicAccount)])
+
+                const aggregateBondedTxn = factory.aggregateBonded()
+                    .innerTransactions([accountMetadataTransaction.toAggregate(TestingAccount.publicAccount)])
                     .build();
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
-                validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
-                transactionHttp.announce(signedTransaction);
+
+                const signedMetadataTransaction = aggregateBondedTxn.signWith(TestingAccount, factory.generationHash);
+                
+                const lockhashTransaction = factory.lockFunds()
+                    .duration(UInt64.fromUint(1000))
+                    .signedTransaction(signedMetadataTransaction)
+                    .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
+                    .build();
+
+                const signedLockhashTransaction = lockhashTransaction.signWith(TestingAccount, factory.generationHash);
+
+                validateTransactionConfirmed(listener, TestingAccount.address, signedLockhashTransaction.hash)
+                    .then(() => {
+                        validateTransactionConfirmed(listener, TestingAccount.address, signedMetadataTransaction.hash)
+                            .then(() => done()).catch((reason) => fail(reason));
+                        transactionHttp.announce(signedMetadataTransaction);
+                    }).catch((reason) => fail(reason));
+                transactionHttp.announce(signedLockhashTransaction);
             });
         });
 
+        /*
         describe('should get metadata given accountId', () => {
             it('standalone', (done) => {
                 metadataHttp.getAccountMetadata(TestingAccount.address.plain())
@@ -92,55 +106,78 @@ describe('MetadataHttp', () => {
                 });
             });
         });
+        */
 
         describe('should remove metadata from an account', () => {
-            it('standalone', (done) => {
-                const modifyMetadataTransaction = factory.accountMetadata()
-                    .address(TestingAccount.address)
-                    .modifications([new MetadataModification(MetadataModificationType.REMOVE, "key1")])
-                    .build();
-                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount, factory.generationHash);
-                validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
-                transactionHttp.announce(signedTransaction);
-            });
             it('aggregate', (done) => {
-                const modifyMetadataTransaction = factory.accountMetadata()
-                    .address(TestingAccount.address)
-                    .modifications([new MetadataModification(MetadataModificationType.REMOVE, "key2")])
+                const accountMetadataTransaction = factory.accountMetadata()
+                    .targetPublicKey(TestingAccount.publicAccount)
+                    .scopedMetadataKey(UInt64.fromUint(1))
+                    .valueSize(5)
+                    .valueSizeDelta(-5)
+                    .valueDifferences(convert.hexToUint8(convert.utf8ToHex("hello")))
                     .build();
-                const aggregateTransaction = factory.aggregateComplete()
-                    .innerTransactions([modifyMetadataTransaction.toAggregate(TestingAccount.publicAccount)])
+
+                const aggregateBondedTxn = factory.aggregateBonded()
+                    .innerTransactions([accountMetadataTransaction.toAggregate(TestingAccount.publicAccount)])
                     .build();
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
-                validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
-                transactionHttp.announce(signedTransaction);
+
+                const signedMetadataTransaction = aggregateBondedTxn.signWith(TestingAccount, factory.generationHash);
+                
+                const lockhashTransaction = factory.lockFunds()
+                    .duration(UInt64.fromUint(1000))
+                    .signedTransaction(signedMetadataTransaction)
+                    .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
+                    .build();
+
+                const signedLockhashTransaction = lockhashTransaction.signWith(TestingAccount, factory.generationHash);
+
+                validateTransactionConfirmed(listener, TestingAccount.address, signedLockhashTransaction.hash)
+                    .then(() => {
+                        validateTransactionConfirmed(listener, TestingAccount.address, signedMetadataTransaction.hash)
+                            .then(() => done()).catch((reason) => fail(reason));
+                        transactionHttp.announce(signedMetadataTransaction);
+                    }).catch((reason) => fail(reason));
+                transactionHttp.announce(signedLockhashTransaction);
             });
         });
 
         describe('should add metadata to a namespace', () => {
-            it('standalone', (done) => {
-                const modifyMetadataTransaction = factory.namespaceMetadata()
-                    .namespaceId(ConfTestingNamespaceId)
-                    .modifications([new MetadataModification(MetadataModificationType.ADD, "key1", "some value")])
-                    .build();
-                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount, factory.generationHash);
-                validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
-                transactionHttp.announce(signedTransaction);
-            });
             it('aggregate', (done) => {
-                const modifyMetadataTransaction = factory.namespaceMetadata()
-                    .namespaceId(ConfTestingNamespaceId)
-                    .modifications([new MetadataModification(MetadataModificationType.ADD, "key2", "some value")])
+                const namespaceMetadataTransaction = factory.namespaceMetadata()
+                    .targetNamespaceId(ConfTestingNamespaceId)
+                    .targetPublicKey(TestingAccount.publicAccount)
+                    .scopedMetadataKey(UInt64.fromUint(1))
+                    .valueSize(5)
+                    .valueSizeDelta(5)
+                    .valueDifferences(convert.hexToUint8(convert.utf8ToHex("hello")))
                     .build();
-                const aggregateTransaction = factory.aggregateComplete()
-                    .innerTransactions([modifyMetadataTransaction.toAggregate(TestingAccount.publicAccount)])
+
+                const aggregateBondedTxn = factory.aggregateBonded()
+                    .innerTransactions([namespaceMetadataTransaction.toAggregate(TestingAccount.publicAccount)])
                     .build();
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
-                validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
-                transactionHttp.announce(signedTransaction);
+
+                const signedMetadataTransaction = aggregateBondedTxn.signWith(TestingAccount, factory.generationHash);
+                
+                const lockhashTransaction = factory.lockFunds()
+                    .duration(UInt64.fromUint(1000))
+                    .signedTransaction(signedMetadataTransaction)
+                    .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
+                    .build();
+
+                const signedLockhashTransaction = lockhashTransaction.signWith(TestingAccount, factory.generationHash);
+
+                validateTransactionConfirmed(listener, TestingAccount.address, signedLockhashTransaction.hash)
+                    .then(() => {
+                        validateTransactionConfirmed(listener, TestingAccount.address, signedMetadataTransaction.hash)
+                            .then(() => done()).catch((reason) => fail(reason));
+                        transactionHttp.announce(signedMetadataTransaction);
+                    }).catch((reason) => fail(reason));
+                transactionHttp.announce(signedLockhashTransaction);
             });
         });
 
+        /*
         describe('should get metadata given namespaceId', () => {
             it('standalone', (done) => {
                 metadataHttp.getNamespaceMetadata(ConfTestingNamespaceId)
@@ -148,59 +185,82 @@ describe('MetadataHttp', () => {
                     expect(metadataInfo).not.to.be.equal(undefined);
                     done();
                 });
+                
             });
         });
+        */
 
         describe('should remove metadata from a namespace', () => {
-            it('standalone', (done) => {
-                const modifyMetadataTransaction = factory.namespaceMetadata()
-                    .namespaceId(ConfTestingNamespaceId)
-                    .modifications([new MetadataModification(MetadataModificationType.REMOVE, "key1")])
-                    .build();
-                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount, factory.generationHash);
-                validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
-                transactionHttp.announce(signedTransaction);
-            });
             it('aggregate', (done) => {
-                const modifyMetadataTransaction = factory.namespaceMetadata()
-                    .namespaceId(ConfTestingNamespaceId)
-                    .modifications([new MetadataModification(MetadataModificationType.REMOVE, "key2")])
-                    .build();
-                const aggregateTransaction = factory.aggregateComplete()
-                    .innerTransactions([modifyMetadataTransaction.toAggregate(TestingAccount.publicAccount)])
+                const namespaceMetadataTransaction = factory.namespaceMetadata()
+                    .targetNamespaceId(ConfTestingNamespaceId)
+                    .targetPublicKey(TestingAccount.publicAccount)
+                    .scopedMetadataKey(UInt64.fromUint(1))
+                    .valueSize(5)
+                    .valueSizeDelta(-5)
+                    .valueDifferences(convert.hexToUint8(convert.utf8ToHex("hello")))
                     .build();
 
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
-                validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
-                transactionHttp.announce(signedTransaction);
+                const aggregateBondedTxn = factory.aggregateBonded()
+                    .innerTransactions([namespaceMetadataTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .build();
+
+                const signedMetadataTransaction = aggregateBondedTxn.signWith(TestingAccount, factory.generationHash);
+                
+                const lockhashTransaction = factory.lockFunds()
+                    .duration(UInt64.fromUint(1000))
+                    .signedTransaction(signedMetadataTransaction)
+                    .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
+                    .build();
+
+                const signedLockhashTransaction = lockhashTransaction.signWith(TestingAccount, factory.generationHash);
+
+                validateTransactionConfirmed(listener, TestingAccount.address, signedLockhashTransaction.hash)
+                    .then(() => {
+                        validateTransactionConfirmed(listener, TestingAccount.address, signedMetadataTransaction.hash)
+                            .then(() => done()).catch((reason) => fail(reason));
+                        transactionHttp.announce(signedMetadataTransaction);
+                    }).catch((reason) => fail(reason));
+                transactionHttp.announce(signedLockhashTransaction);
             });
         });
 
         describe('should add metadata to a mosaic', () => {
-            it('standalone', (done) => {
-                const modifyMetadataTransaction = factory.mosaicMetadata()
-                    .mosaicId(ConfTestingMosaicId)
-                    .modifications([new MetadataModification(MetadataModificationType.ADD, "key1", "some value")])
-                    .build();
-                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount, factory.generationHash);
-                validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
-                transactionHttp.announce(signedTransaction);
-            });
             it('aggregate', (done) => {
-                const modifyMetadataTransaction = factory.mosaicMetadata()
-                    .mosaicId(ConfTestingMosaicId)
-                    .modifications([new MetadataModification(MetadataModificationType.ADD, "key2", "some value")])
-                    .build();
-                const aggregateTransaction = factory.aggregateComplete()
-                    .innerTransactions([modifyMetadataTransaction.toAggregate(TestingAccount.publicAccount)])
+                const mosaicMetadataTransaction = factory.mosaicMetadata()
+                    .targetMosaicId(ConfTestingMosaicId)
+                    .targetPublicKey(TestingAccount.publicAccount)
+                    .scopedMetadataKey(UInt64.fromUint(1))
+                    .valueSize(5)
+                    .valueSizeDelta(5)
+                    .valueDifferences(convert.hexToUint8(convert.utf8ToHex("hello")))
                     .build();
 
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
-                validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
-                transactionHttp.announce(signedTransaction);
+                const aggregateBondedTxn = factory.aggregateBonded()
+                    .innerTransactions([mosaicMetadataTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .build();
+
+                const signedMetadataTransaction = aggregateBondedTxn.signWith(TestingAccount, factory.generationHash);
+                
+                const lockhashTransaction = factory.lockFunds()
+                    .duration(UInt64.fromUint(1000))
+                    .signedTransaction(signedMetadataTransaction)
+                    .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
+                    .build();
+
+                const signedLockhashTransaction = lockhashTransaction.signWith(TestingAccount, factory.generationHash);
+
+                validateTransactionConfirmed(listener, TestingAccount.address, signedLockhashTransaction.hash)
+                    .then(() => {
+                        validateTransactionConfirmed(listener, TestingAccount.address, signedMetadataTransaction.hash)
+                            .then(() => done()).catch((reason) => fail(reason));
+                        transactionHttp.announce(signedMetadataTransaction);
+                    }).catch((reason) => fail(reason));
+                transactionHttp.announce(signedLockhashTransaction);
             });
         });
 
+        /*
         describe('should get metadata given mosaicId', () => {
             it('standalone', (done) => {
                 metadataHttp.getMosaicMetadata(ConfTestingMosaicId)
@@ -210,29 +270,40 @@ describe('MetadataHttp', () => {
                 });
             });
         });
+        */
 
         describe('should remove metadata from a mosaic', () => {
-            it('standalone', (done) => {
-                const modifyMetadataTransaction = factory.mosaicMetadata()
-                    .mosaicId(ConfTestingMosaicId)
-                    .modifications([new MetadataModification(MetadataModificationType.REMOVE, "key1")])
-                    .build();
-                const signedTransaction = modifyMetadataTransaction.signWith(TestingAccount, factory.generationHash);
-                validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
-                transactionHttp.announce(signedTransaction);
-            });
             it('aggregate', (done) => {
-                const modifyMetadataTransaction = factory.mosaicMetadata()
-                    .mosaicId(ConfTestingMosaicId)
-                    .modifications([new MetadataModification(MetadataModificationType.REMOVE, "key2")])
+                const mosaicMetadataTransaction = factory.mosaicMetadata()
+                    .targetMosaicId(ConfTestingMosaicId)
+                    .targetPublicKey(TestingAccount.publicAccount)
+                    .scopedMetadataKey(UInt64.fromUint(1))
+                    .valueSize(5)
+                    .valueSizeDelta(-5)
+                    .valueDifferences(convert.hexToUint8(convert.utf8ToHex("hello")))
                     .build();
-                const aggregateTransaction = factory.aggregateComplete()
-                    .innerTransactions([modifyMetadataTransaction.toAggregate(TestingAccount.publicAccount)])
-                    .build()
 
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
-                validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
-                transactionHttp.announce(signedTransaction);
+                const aggregateBondedTxn = factory.aggregateBonded()
+                    .innerTransactions([mosaicMetadataTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .build();
+
+                const signedMetadataTransaction = aggregateBondedTxn.signWith(TestingAccount, factory.generationHash);
+                
+                const lockhashTransaction = factory.lockFunds()
+                    .duration(UInt64.fromUint(1000))
+                    .signedTransaction(signedMetadataTransaction)
+                    .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
+                    .build();
+
+                const signedLockhashTransaction = lockhashTransaction.signWith(TestingAccount, factory.generationHash);
+
+                validateTransactionConfirmed(listener, TestingAccount.address, signedLockhashTransaction.hash)
+                    .then(() => {
+                        validateTransactionConfirmed(listener, TestingAccount.address, signedMetadataTransaction.hash)
+                            .then(() => done()).catch((reason) => fail(reason));
+                        transactionHttp.announce(signedMetadataTransaction);
+                    }).catch((reason) => fail(reason));
+                transactionHttp.announce(signedLockhashTransaction);
             });
         });
     });

@@ -61,12 +61,13 @@ export class TransactionVersion {
      * Aggregate complete transaction version.
      * @type {number}
      */
-    public static readonly AGGREGATE_COMPLETE = 2;
+    public static readonly AGGREGATE_COMPLETE = 3;
 
     /**
      * Aggregate bonded transaction version
+     * @type {number}
      */
-    public static readonly AGGREGATE_BONDED = 2;
+    public static readonly AGGREGATE_BONDED = 3;
 
     /**
      * Lock transaction version
@@ -129,6 +130,37 @@ export class TransactionVersion {
     public static readonly MODIFY_METADATA = 1;
 
     /**
+     * Modify account metadata nem transactions version
+     * @type {number}
+     */
+     public static readonly ACCOUNT_METADATA_V2 = 1;
+
+     /**
+     * Modify mosaic metadata nem transactions version
+     * @type {number}
+     */
+    public static readonly MOSAIC_METADATA_V2 = 1;
+
+    
+     /**
+     * Modify namespace metadata nem transactions version
+     * @type {number}
+     */
+    public static readonly NAMESPACE_METADATA_V2 = 1;
+
+    /**
+     * Modify mosaic modify levy transactions version
+     * @type {number}
+     */
+    public static readonly MOSAIC_MODIFY_LEVY = 1;
+
+    /**
+     * Modify remove mosaic levy transactions version
+     * @type {number}
+     */
+     public static readonly MOSAIC_REMOVE_LEVY = 1;
+
+    /**
      * Chain configuration transaction version
      * @type {number}
      */
@@ -144,18 +176,18 @@ export class TransactionVersion {
      * Add exchange transaction version
      * @type {number}
      */
-    public static readonly ADD_EXCHANGE_OFFER = 2;
+    public static readonly ADD_EXCHANGE_OFFER = 4;
 
     /**
      * Exchange transaction version
      * @type {number}
      */
-    public static readonly EXCHANGE_OFFER = 1;
+    public static readonly EXCHANGE_OFFER = 2;
 
     /**
      * Remove exchange transaction version
      * @type {number}
      */
-    public static readonly REMOVE_EXCHANGE_OFFER = 1;
+    public static readonly REMOVE_EXCHANGE_OFFER = 2;
 
 }

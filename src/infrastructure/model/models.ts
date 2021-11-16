@@ -61,6 +61,7 @@ export * from './blockchainUpgradeBodyDTO';
 export * from './blockchainUpgradeDTO';
 export * from './blockchainUpgradeTransactionDTO';
 export * from './communicationTimestamps';
+export * from './compositeHashes';
 export * from './configDTO';
 export * from './cosignatoryModificationDTO';
 export * from './cosignature';
@@ -112,7 +113,7 @@ export * from './hashLockWithMeta';
 export * from './heightInfoDTO';
 export * from './inflationReceiptDTO';
 export * from './inflationReceiptDTOAllOf';
-export * from './inlineResponse200';
+export * from './exchangeInlineResponse200';
 export * from './inlineResponse2001';
 export * from './joinToDriveTransactionDTO';
 export * from './linkActionEnum';
@@ -216,8 +217,6 @@ export * from './upgradeDTO';
 export * from './uploadInfoDTO';
 export * from './verifiableEntityDTO';
 
-import localVarRequest = require('request');
-
 import { AccountDTO } from './accountDTO';
 import { AccountExchangeDTO } from './accountExchangeDTO';
 import { AccountIds } from './accountIds';
@@ -266,6 +265,7 @@ import { BlockchainUpgradeBodyDTO } from './blockchainUpgradeBodyDTO';
 import { BlockchainUpgradeDTO } from './blockchainUpgradeDTO';
 import { BlockchainUpgradeTransactionDTO } from './blockchainUpgradeTransactionDTO';
 import { CommunicationTimestamps } from './communicationTimestamps';
+import { CompositeHashes } from './compositeHashes';
 import { ConfigDTO } from './configDTO';
 import { CosignatoryModificationDTO } from './cosignatoryModificationDTO';
 import { Cosignature } from './cosignature';
@@ -317,7 +317,7 @@ import { HashLockWithMeta } from './hashLockWithMeta';
 import { HeightInfoDTO } from './heightInfoDTO';
 import { InflationReceiptDTO } from './inflationReceiptDTO';
 import { InflationReceiptDTOAllOf } from './inflationReceiptDTOAllOf';
-import { InlineResponse200 } from './inlineResponse200';
+import { ExchangeInlineResponse200 } from './exchangeInlineResponse200';
 import { InlineResponse2001 } from './inlineResponse2001';
 import { JoinToDriveTransactionDTO } from './joinToDriveTransactionDTO';
 import { LinkActionEnum } from './linkActionEnum';
@@ -499,6 +499,7 @@ let typeMap: {[index: string]: any} = {
     "BlockchainUpgradeDTO": BlockchainUpgradeDTO,
     "BlockchainUpgradeTransactionDTO": BlockchainUpgradeTransactionDTO,
     "CommunicationTimestamps": CommunicationTimestamps,
+    "CompositeHashes": CompositeHashes,
     "ConfigDTO": ConfigDTO,
     "CosignatoryModificationDTO": CosignatoryModificationDTO,
     "Cosignature": Cosignature,
@@ -548,7 +549,7 @@ let typeMap: {[index: string]: any} = {
     "HeightInfoDTO": HeightInfoDTO,
     "InflationReceiptDTO": InflationReceiptDTO,
     "InflationReceiptDTOAllOf": InflationReceiptDTOAllOf,
-    "InlineResponse200": InlineResponse200,
+    "ExchangeInlineResponse200": ExchangeInlineResponse200,
     "InlineResponse2001": InlineResponse2001,
     "JoinToDriveTransactionDTO": JoinToDriveTransactionDTO,
     "MerklePathItem": MerklePathItem,
@@ -752,76 +753,3 @@ export class ObjectSerializer {
     }
 }
 
-export interface Authentication {
-    /**
-    * Apply authentication settings to header and query params.
-    */
-    applyToRequest(requestOptions: localVarRequest.Options): Promise<void> | void;
-}
-
-export class HttpBasicAuth implements Authentication {
-    public username: string = '';
-    public password: string = '';
-
-    applyToRequest(requestOptions: localVarRequest.Options): void {
-        requestOptions.auth = {
-            username: this.username, password: this.password
-        }
-    }
-}
-
-export class HttpBearerAuth implements Authentication {
-    public accessToken: string | (() => string) = '';
-
-    applyToRequest(requestOptions: localVarRequest.Options): void {
-        if (requestOptions && requestOptions.headers) {
-            const accessToken = typeof this.accessToken === 'function'
-                            ? this.accessToken()
-                            : this.accessToken;
-            requestOptions.headers["Authorization"] = "Bearer " + accessToken;
-        }
-    }
-}
-
-export class ApiKeyAuth implements Authentication {
-    public apiKey: string = '';
-
-    constructor(private location: string, private paramName: string) {
-    }
-
-    applyToRequest(requestOptions: localVarRequest.Options): void {
-        if (this.location == "query") {
-            (<any>requestOptions.qs)[this.paramName] = this.apiKey;
-        } else if (this.location == "header" && requestOptions && requestOptions.headers) {
-            requestOptions.headers[this.paramName] = this.apiKey;
-        } else if (this.location == 'cookie' && requestOptions && requestOptions.headers) {
-            if (requestOptions.headers['Cookie']) {
-                requestOptions.headers['Cookie'] += '; ' + this.paramName + '=' + encodeURIComponent(this.apiKey);
-            }
-            else {
-                requestOptions.headers['Cookie'] = this.paramName + '=' + encodeURIComponent(this.apiKey);
-            }
-        }
-    }
-}
-
-export class OAuth implements Authentication {
-    public accessToken: string = '';
-
-    applyToRequest(requestOptions: localVarRequest.Options): void {
-        if (requestOptions && requestOptions.headers) {
-            requestOptions.headers["Authorization"] = "Bearer " + this.accessToken;
-        }
-    }
-}
-
-export class VoidAuth implements Authentication {
-    public username: string = '';
-    public password: string = '';
-
-    applyToRequest(_: localVarRequest.Options): void {
-        // Do nothing
-    }
-}
-
-export type Interceptor = (requestOptions: localVarRequest.Options) => (Promise<void> | void);

@@ -31,6 +31,7 @@ import {MosaicRepository} from './MosaicRepository';
 import {NetworkHttp} from './NetworkHttp';
 import { RichlistEntry, Address } from '../model/model';
 import { PageQueryParams } from './PageQueryParams';
+import { MosaicLevy } from "../model/mosaic/MosaicLevy"
 
 /**
  * Mosaic http repository.
@@ -179,6 +180,25 @@ export class MosaicHttp extends Http implements MosaicRepository {
                     new UInt64(richlistEntryDTO.amount));
             });
         }));
+    }
+
+    /**
+     * Gets mosaic levy
+     * @param mosaicId - Mosaic id
+     * @returns Observable<MosaicLevy>
+     */
+     getMosaicLevy(mosaicId: MosaicId): Observable<MosaicLevy> {
+        return observableFrom(
+            this.mosaicRoutesApi.getMosaicLevy(
+                mosaicId.toHex()
+            )).pipe(map(mosaicLevyDTO => {
+                return new MosaicLevy(
+                    mosaicLevyDTO.body.type, 
+                    Address.createFromEncoded(mosaicLevyDTO.body.recipient), 
+                    new MosaicId(mosaicLevyDTO.body.mosaicId), 
+                    new UInt64(mosaicLevyDTO.body.fee)
+                );
+            }))            
     }
 
 }

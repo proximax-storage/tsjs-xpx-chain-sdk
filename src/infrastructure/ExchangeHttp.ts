@@ -67,4 +67,16 @@ export class ExchangeHttp extends Http implements ExchangeRepository {
                 )))
         );
     }
+
+    /**
+     * Get offering mosaic id list
+     * @returns Observable<MosaicId[]>
+     */
+     public getOfferList(): Observable<MosaicId[]> {
+        return observableFrom(this.exchangeRoutesApi.getOfferList()).pipe(
+                map(response =>{
+                    return response.body.map(exchangeMosaicDTO => new MosaicId(exchangeMosaicDTO.mosaicId));
+                })
+            );
+    }
 }

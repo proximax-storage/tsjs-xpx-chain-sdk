@@ -15,7 +15,7 @@
  */
 
 import {expect} from 'chai';
-import {ChronoUnit} from 'js-joda';
+import {ChronoUnit} from '@js-joda/core';
 import { TransactionMapping } from '../../../src/core/utils/TransactionMapping';
 import {CreateTransactionFromDTO} from '../../../src/infrastructure/transaction/CreateTransactionFromDTO';
 import {Account} from '../../../src/model/account/Account';

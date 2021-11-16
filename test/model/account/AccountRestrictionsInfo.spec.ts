@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {deepEqual} from 'assert';
+import {deepStrictEqual} from 'assert';
 import { AccountRestriction } from '../../../src/model/account/AccountRestriction';
 import { AccountRestrictions } from '../../../src/model/account/AccountRestrictions';
 import { AccountRestrictionsInfo } from '../../../src/model/account/AccountRestrictionsInfo';
@@ -46,12 +46,12 @@ describe('AccountRestrictionsInfo', () => {
                                             new AccountRestriction(prop.restrictionType, prop.values))),
         );
 
-        deepEqual(accountRestrictionsInfo.meta.id, accountRestrictionsInfoDTO.meta.id);
-        deepEqual(accountRestrictionsInfo.accountRestrictions.address,
+        deepStrictEqual(accountRestrictionsInfo.meta.id, accountRestrictionsInfoDTO.meta.id);
+        deepStrictEqual(accountRestrictionsInfo.accountRestrictions.address,
                     Address.createFromEncoded(accountRestrictionsInfoDTO.accountRestrictions.address));
-        deepEqual(accountRestrictionsInfo.accountRestrictions.restrictions.length,
+        deepStrictEqual(accountRestrictionsInfo.accountRestrictions.restrictions.length,
             accountRestrictionsInfoDTO.accountRestrictions.restrictions.length);
-        deepEqual(accountRestrictionsInfo.accountRestrictions.restrictions[0].values[0],
+        deepStrictEqual(accountRestrictionsInfo.accountRestrictions.restrictions[0].values[0],
             accountRestrictionsInfoDTO.accountRestrictions.restrictions[0].values[0]);
     });
 });

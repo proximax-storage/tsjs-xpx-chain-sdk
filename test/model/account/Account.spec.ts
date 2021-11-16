@@ -59,14 +59,14 @@ describe('Account', () => {
     });
 
     it('should create a new account from random mnemonic', () => {
-        const mnemonic = Crypto.randomMnemonic();
-        const account = Account.createFromMnemonic(mnemonic,NetworkType.MIJIN_TEST);
+        const mnemonic = Crypto.randomMnemonic(256);
+        const account = Account.createFromMnemonic(mnemonic, NetworkType.MIJIN_TEST);
         expect(account.publicKey).to.not.be.equal(undefined);
         expect(account.privateKey).to.not.be.equal(undefined);
         expect(account.address).to.not.be.equal(undefined);
     });
 
-
+/* not possible, need HD wallet implementation to get the seed, refer to bip32 and bip39
     it('should create a new account from mnemonic with 12 words', () => {
         const mnemonic = 'fish palm fall kick undo fine match welcome early three once unfair';
         const account = Account.createFromMnemonic(mnemonic,NetworkType.MIJIN_TEST);
@@ -75,14 +75,14 @@ describe('Account', () => {
         expect(account.privateKey).equal('524694E81B43FB4AA46313A73A39DA0929C8F98D1C5BD73B20806C1F5485C249');
         expect(account.address.plain()).equal('SAWLSZ5VWGPENUEZ6PY6DLSM7O4GEVM4MP2KQGNN');
     });
-
+*/
     it('should create a new account from mnemonic with 24 words', () => {
         const mnemonic = 'forest pole smooth device derive party ribbon hedgehog spring tent frown mask alter tape describe such anchor goddess example screen pistol guilt close twin';
         const account = Account.createFromMnemonic(mnemonic,NetworkType.MIJIN_TEST);
-        console.log(account.address.plain());
-        expect(account.publicKey).equal('2D704BE5512CA4C0C73132F86F3D7E8CCE81E43E30404BD4BC70A01667FA4906');
-        expect(account.privateKey).equal('2E8BC60687339B50D5EB501D025EBE177D302CDB1A661BE14D22FFF76D788F30');
-        expect(account.address.plain()).equal('SAAOBNQSY47CIOYF6HLEPOOFHM7WLCEHLUB5J64M');
+
+        expect(account.publicKey).equal('797B5E711FDBA4BEA0467717CF7FA4A6BD42390B251AF3DF9400A5DE7A24599F');
+        expect(account.privateKey).equal('5B34F3339E53B7412E4354D33BE976443077BB8EE6C3086C8539E0CA56CF4AEF');
+        expect(account.address.plain()).equal('SAGNWV5RA4CAAPJ7ZN5M2KIVCESEQCITMVTXX7LY');
     });
 
     it('should generate a new account using NIS1 schema', () => {

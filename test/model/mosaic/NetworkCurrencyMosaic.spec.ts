@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {deepEqual} from 'assert';
+import {deepStrictEqual} from 'assert';
 import {expect} from 'chai';
 import {NetworkCurrencyMosaic} from '../../../src/model/mosaic/NetworkCurrencyMosaic';
 import {NamespaceId} from '../../../src/model/namespace/NamespaceId';
@@ -25,7 +25,7 @@ describe('NetworkCurrencyMosaic', () => {
 
         const currency = NetworkCurrencyMosaic.createRelative(1000);
 
-        deepEqual(currency.id.id.toHex(), 'bffb42a19116bdf6'); // holds NAMESPACE_ID
+        deepStrictEqual(currency.id.id.toHex(), 'bffb42a19116bdf6'); // holds NAMESPACE_ID
         expect(currency.amount.compact()).to.be.equal(1000 * 1000000);
     });
 
@@ -37,7 +37,7 @@ describe('NetworkCurrencyMosaic', () => {
 
     it('should have valid hardcoded default properties', () => {
         const m = NetworkCurrencyMosaic.createAbsolute(0);
-        deepEqual(m.ID.id, new NamespaceId([2434186742, 3220914849]).id);
+        deepStrictEqual(m.ID.id, new NamespaceId([2434186742, 3220914849]).id);
         expect(m.DIVISIBILITY).to.be.equal(6);
         expect(m.TRANSFERABLE).to.be.equal(true);
         expect(m.SUPPLY_MUTABLE).to.be.equal(false);

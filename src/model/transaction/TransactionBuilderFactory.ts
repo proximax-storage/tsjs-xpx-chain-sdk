@@ -16,9 +16,13 @@ import { ChainConfigTransactionBuilder } from "./ChainConfigTransaction";
 import { ChainUpgradeTransactionBuilder } from "./ChainUpgradeTransaction";
 import { LockFundsTransactionBuilder } from "./LockFundsTransaction";
 import { HashLockTransactionBuilder } from "./HashLockTransaction";
-import { ModifyAccountMetadataTransactionBuilder, ModifyMosaicMetadataTransactionBuilder, ModifyNamespaceMetadataTransactionBuilder } from "./ModifyMetadataTransaction";
+import { AccountMetadataTransactionBuilder } from "./AccountMetadataTransaction";
+import { MosaicMetadataTransactionBuilder } from "./MosaicMetadataTransaction";
+import { NamespaceMetadataTransactionBuilder } from "./NamespaceMetadataTransaction";
 import { ModifyMultisigAccountTransactionBuilder } from "./ModifyMultisigAccountTransaction";
 import { MosaicAliasTransactionBuilder } from "./MosaicAliasTransaction";
+import { MosaicModifyLevyTransactionBuilder } from "./MosaicModifyLevyTransaction";
+import { MosaicRemoveLevyTransactionBuilder } from "./MosaicRemoveLevyTransaction";
 import { MosaicSupplyChangeTransactionBuilder } from "./MosaicSupplyChangeTransaction";
 import { RegisterRootNamespaceTransactionBuilder, RegisterSubNamespaceTransactionBuilder } from "./RegisterNamespaceTransaction";
 import { SecretLockTransactionBuilder } from "./SecretLockTransaction";
@@ -164,20 +168,20 @@ export class TransactionBuilderFactory {
         return builder;
     }
 
-    public accountMetadata(): ModifyAccountMetadataTransactionBuilder {
-        const builder = new ModifyAccountMetadataTransactionBuilder();
+    public accountMetadata(): AccountMetadataTransactionBuilder {
+        const builder = new AccountMetadataTransactionBuilder();
         this.configureBuilder(builder);
         return builder;
     }
 
-    public mosaicMetadata(): ModifyMosaicMetadataTransactionBuilder {
-        const builder = new ModifyMosaicMetadataTransactionBuilder();
+    public mosaicMetadata(): MosaicMetadataTransactionBuilder {
+        const builder = new MosaicMetadataTransactionBuilder();
         this.configureBuilder(builder);
         return builder;
     }
 
-    public namespaceMetadata(): ModifyNamespaceMetadataTransactionBuilder {
-        const builder = new ModifyNamespaceMetadataTransactionBuilder();
+    public namespaceMetadata(): NamespaceMetadataTransactionBuilder {
+        const builder = new NamespaceMetadataTransactionBuilder();
         this.configureBuilder(builder);
         return builder;
     }
@@ -190,6 +194,18 @@ export class TransactionBuilderFactory {
 
     public mosaicAlias(): MosaicAliasTransactionBuilder {
         const builder = new MosaicAliasTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public mosaicModifyLevy(): MosaicModifyLevyTransactionBuilder {
+        const builder = new MosaicModifyLevyTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public mosaicRemoveLevy(): MosaicRemoveLevyTransactionBuilder {
+        const builder = new MosaicRemoveLevyTransactionBuilder();
         this.configureBuilder(builder);
         return builder;
     }

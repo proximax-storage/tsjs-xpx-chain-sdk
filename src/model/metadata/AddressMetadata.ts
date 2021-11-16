@@ -4,7 +4,7 @@
 
 import { Metadata } from "./Metadata";
 import { Address } from "../account/Address";
-import { MetadataType } from "./MetadataType";
+import { MetadataType } from "./oldMetadataType";
 import { Field } from "./Field";
 
 /* Metadata specialization for address/account */

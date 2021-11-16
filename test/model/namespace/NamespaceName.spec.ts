@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {deepEqual} from 'assert';
+import {deepStrictEqual} from 'assert';
 import {expect} from 'chai';
 import {NamespaceName} from '../../../src/model/namespace/NamespaceName';
 import {NamespaceId} from '../../../src/model/namespace/NamespaceId';
@@ -34,8 +34,8 @@ describe('NamespaceName', () => {
             namespaceNameDTO.parentId,
         );
 
-        deepEqual(namespaceName.namespaceId, namespaceNameDTO.namespaceId);
-        deepEqual(namespaceName.parentId, namespaceNameDTO.parentId);
+        deepStrictEqual(namespaceName.namespaceId, namespaceNameDTO.namespaceId);
+        deepStrictEqual(namespaceName.parentId, namespaceNameDTO.parentId);
         expect(namespaceName.name).to.be.equal(namespaceNameDTO.name);
     });
 });

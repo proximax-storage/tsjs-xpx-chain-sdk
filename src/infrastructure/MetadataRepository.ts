@@ -3,7 +3,9 @@
 // license that can be found in the LICENSE file
 
 import {Observable} from 'rxjs';
-import { AddressMetadata, NamespaceMetadata, MosaicMetadata, MosaicId, NamespaceId } from '../model/model';
+import { MetadataEntry } from '../model/metadata/MetadataEntry';
+import { MetadataQueryParams } from './MetadataQueryParams';
+import { MetadataSearch } from '../model/metadata/MetadataSearch';
 
 /**
  * Metadata interface repository.
@@ -16,18 +18,19 @@ export interface MetadataRepository {
      * @param accountId - Account address/public key
      * @returns Observable<AddressMetadata>
      */
-    getAccountMetadata(accountId: string): Observable<AddressMetadata>;
+    getMetadata(compositeHash: string): Observable<MetadataEntry>;
 
     /**
      * Gets the Metadata for a given namespaceId
      * @param namespaceId - the id of the namespace
      * @returns Observable<NamespaceMetadata>
      */
-    getNamespaceMetadata(namespaceId: NamespaceId): Observable<NamespaceMetadata>;
+    getMetadatas(compositeHashes: string[]): Observable<MetadataEntry[]>;
     /**
-     * Gets the Metadata for a given mosaicId
-     * @param mosaicId - the id of the mosaic
+     * Get the Metadatas for given filter
+     * @param metadataQueryParams - filter for metadata search
      * @returns Observable<MosaicMetadata>
      */
-    getMosaicMetadata(mosaicId: MosaicId): Observable<MosaicMetadata>;
+    searchMetadata(queryParams: MetadataQueryParams): Observable<MetadataSearch>;
+    
 }

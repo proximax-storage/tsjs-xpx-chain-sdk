@@ -2,7 +2,7 @@ import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import { NodeHttp } from '../../src/infrastructure/infrastructure';
 import { NetworkType, PublicAccount } from '../../src/model/model';
-import { deepEqual } from 'assert';
+import { deepStrictEqual, deepEqual } from 'assert';
 
 chai.use(spies);
 const expect = chai.expect;
@@ -57,8 +57,8 @@ describe('NodeHttp', () => {
 
         it('should call api client', (done) => {
             client.getNodeTime().subscribe(result => {
-                deepEqual(result.sendTimeStamp, dto.communicationTimestamps.sendTimestamp);
-                deepEqual(result.receiveTimeStamp, dto.communicationTimestamps.receiveTimestamp);
+                deepStrictEqual(result.sendTimeStamp, dto.communicationTimestamps.sendTimestamp);
+                deepStrictEqual(result.receiveTimeStamp, dto.communicationTimestamps.receiveTimestamp);
                 done();
             });
         });

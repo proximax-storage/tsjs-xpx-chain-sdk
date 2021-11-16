@@ -15,7 +15,7 @@
  */
 
 import { expect } from 'chai';
-import { ChronoUnit } from 'js-joda';
+import { ChronoUnit } from '@js-joda/core';
 import {of as observableOf} from 'rxjs';
 import {deepEqual, instance, mock, when} from 'ts-mockito';
 import { AccountHttp } from '../../src/infrastructure/AccountHttp';

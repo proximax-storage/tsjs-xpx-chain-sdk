@@ -5,7 +5,6 @@
 import { MosaicId } from "../mosaic/MosaicId";
 import { PublicAccount } from "../account/PublicAccount";
 import { UInt64 } from "../UInt64";
-import { Deadline } from "../transaction/Deadline";
 import { ExchangesDTO } from "../../infrastructure/api";
 import { NetworkType } from "../blockchain/NetworkType";
 
@@ -17,7 +16,7 @@ export class MosaicExchange {
         readonly price: number,
         readonly initialAmount: UInt64,
         readonly initialCost: UInt64,
-        readonly deadline: Deadline,
+        readonly deadline: UInt64,
     ) {
 
     }
@@ -31,7 +30,7 @@ export class MosaicExchange {
             exchangesDTO.price,
             new UInt64(exchangesDTO.initialAmount),
             new UInt64(exchangesDTO.initialCost),
-            Deadline.createFromDTO(exchangesDTO.deadline)
+            new UInt64(exchangesDTO.deadline)
         );
     }
 }

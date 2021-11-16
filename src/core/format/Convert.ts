@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import * as utilities from './Utilities';
+import {decode} from 'utf8';
 
 export class Convert {
 
@@ -177,13 +178,45 @@ export class Convert {
      * Convert a UInt64 array to a uint8 array.
      */
     public static UInt64ToUint8Array = (input): number[] => [
-            (input[0] & 0xff)        >> 0,
-            (input[0] & 0xff00)      >> 8,
-            (input[0] & 0xff0000)    >> 16,
-            (input[0] & 0xff000000)  >> 24,
-            (input[1] & 0xff)        >> 0,
-            (input[1] & 0xff00)      >> 8,
-            (input[1] & 0xff0000)    >> 16,
-            (input[1] & 0xff000000)  >> 24,
+            (input[0] & 0xff)        >>> 0,
+            (input[0] & 0xff00)      >>> 8,
+            (input[0] & 0xff0000)    >>> 16,
+            (input[0] & 0xff000000)  >>> 24,
+            (input[1] & 0xff)        >>> 0,
+            (input[1] & 0xff00)      >>> 8,
+            (input[1] & 0xff0000)    >>> 16,
+            (input[1] & 0xff000000)  >>> 24,
         ];
+
+    public static decodeHexToUtf8(hex: string): string {
+        let str = '';
+        for (let i = 0; i < hex.length; i += 2) {
+            str += String.fromCharCode(parseInt(hex.substring(i, i + 2), 16));
+        }
+        try {
+            return decode(str);
+        } catch (e) {
+             return str;
+        }
+    }
+
+    public static hexToInt(hex: string) : number{
+        if (hex.length % 2 != 0) {
+            hex = "0" + hex;
+        }
+        let num = parseInt(hex, 16);
+        const maxVal = Math.pow(2, hex.length / 2 * 8);
+        if (num > maxVal / 2 - 1) {
+            num = num - maxVal
+        }
+        return num;
+    }
+
+    public static hexReverse(hex: string) : string{
+        if (hex.length % 2 != 0) {
+            hex = "0" + hex;
+        }
+        let uint8Array = Convert.hexToUint8(hex);
+        return Convert.uint8ToHex(uint8Array.reverse());
+    }
 }

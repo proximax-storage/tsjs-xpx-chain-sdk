@@ -55,6 +55,33 @@ export class MosaicNonce {
     }
 
     /**
+     * Create a MosaicNonce from a number.
+     *
+     * @param   nonce     {number}
+     * @return  {MosaicNonce}
+     */
+     public static createFromNumber(nonce: number): MosaicNonce {
+
+        if(nonce > 0xFFFFFFFF){
+            throw new Error('Number exceed more than 4 bytes of number representation.');
+        }
+
+        let hexNumber = nonce.toString(16);
+
+        if(hexNumber.length % 2 === 1){
+            hexNumber = "0" + hexNumber;
+        }
+
+        let missingPaddingNum = 8 - hexNumber.length; 
+
+        if(missingPaddingNum){
+            hexNumber = "0".repeat(missingPaddingNum) + hexNumber;
+        }
+
+        return MosaicNonce.createFromHex(hexNumber);
+    }
+
+    /**
      * Create MosaicNonce from Uint8Array
      *
      * @param id
@@ -65,6 +92,10 @@ export class MosaicNonce {
         }
 
         this.nonce = nonce;
+    }
+
+    toNumber(){
+        return parseInt(convert.uint8ToHex(this.nonce), 16);
     }
 
     /**

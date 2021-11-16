@@ -173,6 +173,10 @@ export abstract class Transaction {
         return this.transactionInfo == null;
     }
 
+    public isEmbedded(): boolean {
+        return this.transactionInfo instanceof AggregateTransactionInfo;
+    }
+
     /**
      * @internal
      */

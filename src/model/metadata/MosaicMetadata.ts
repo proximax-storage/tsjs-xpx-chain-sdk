@@ -4,7 +4,7 @@
 
 import { Metadata } from "./Metadata";
 import { MosaicId } from "../mosaic/MosaicId";
-import { MetadataType } from "./MetadataType";
+import { MetadataType } from "./oldMetadataType";
 import { Field } from "./Field";
 
 /**

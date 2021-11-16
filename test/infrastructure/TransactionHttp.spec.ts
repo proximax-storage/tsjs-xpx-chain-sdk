@@ -2,7 +2,7 @@ import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import { TransactionHttp } from '../../src/infrastructure/infrastructure';
 import { SignedTransaction, TransactionType, CosignatureSignedTransaction, UInt64 } from '../../src/model/model';
-import { deepEqual } from 'assert';
+import { deepStrictEqual, deepEqual } from 'assert';
 import * as createFromDto from '../../src/infrastructure/transaction/CreateTransactionFromDTO';
 chai.use(spies);
 const expect = chai.expect;
@@ -40,7 +40,7 @@ describe('TransactionHttp', () => {
         it('should call api client', (done) => {
             const txId = 'some-txid';
             client.getTransactions([txId]).subscribe(response => {
-                deepEqual(response, ['deserialization called']);
+                deepStrictEqual(response, ['deserialization called']);
                 done();
             })
         });
