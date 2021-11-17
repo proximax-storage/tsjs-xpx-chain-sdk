@@ -25,7 +25,7 @@ describe('SimpleWallet', () => {
         const simpleWallet = SimpleWallet.create('wallet-name', new Password('password'), NetworkType.MIJIN_TEST);
         expect(simpleWallet.name).to.be.equal('wallet-name');
         expect(simpleWallet.network).to.be.equal(NetworkType.MIJIN_TEST);
-        expect(simpleWallet.schema).to.be.equal('simple_v1');
+        expect(simpleWallet.schema).to.be.equal('simple_v2');
     });
 
     it('should createComplete a new wallet with privateKey', () => {
@@ -34,19 +34,19 @@ describe('SimpleWallet', () => {
         const simpleWallet = SimpleWallet.createFromPrivateKey('wallet-name', new Password('password'), privateKey, NetworkType.MIJIN_TEST);
         expect(simpleWallet.name).to.be.equal('wallet-name');
         expect(simpleWallet.network).to.be.equal(NetworkType.MIJIN_TEST);
-        expect(simpleWallet.address.plain()).to.be.equal(account.address.plain());
+        expect(simpleWallet.publicAccount.address.plain()).to.be.equal(account.address.plain());
     });
 
     it('should open a new simple wallet', () => {
         const simpleWallet = SimpleWallet.create('wallet-name', new Password('password'), NetworkType.MIJIN_TEST);
         const account = simpleWallet.open(new Password('password'));
-        expect(account.address.plain()).to.be.equal(simpleWallet.address.plain());
+        expect(account.address.plain()).to.be.equal(simpleWallet.publicAccount.address.plain());
     });
 
     it('should open a new simple wallet created from private key', () => {
         const privateKey = '5149a02ca2b2610138376717daaff8477f1639796aa108b7eee83e99e585b250';
         const simpleWallet = SimpleWallet.createFromPrivateKey('wallet-name', new Password('password'), privateKey, NetworkType.MIJIN_TEST);
         const account = simpleWallet.open(new Password('password'));
-        expect(simpleWallet.address.plain()).to.be.equal(account.address.plain());
+        expect(simpleWallet.publicAccount.address.plain()).to.be.equal(account.address.plain());
     });
 });

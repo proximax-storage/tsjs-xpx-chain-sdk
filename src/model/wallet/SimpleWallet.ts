@@ -18,6 +18,7 @@ import {LocalDateTime} from '@js-joda/core';
 import {Crypto, KeyPair, SignSchema} from '../../core/crypto';
 import { Convert as convert} from '../../core/format';
 import {Account} from '../account/Account';
+import {PublicAccount} from '../account/PublicAccount';
 import {Address} from '../account/Address';
 import {NetworkType} from '../blockchain/NetworkType';
 import {EncryptedPrivateKey} from './EncryptedPrivateKey';
@@ -39,13 +40,13 @@ export class SimpleWallet extends Wallet {
      */
     constructor(name: string,
                 network: NetworkType,
-                address: Address,
+                publicAccount: PublicAccount,
                 creationDate: LocalDateTime,
                 /**
                  * The encrypted private key and information to decrypt it
                  */
                 public readonly encryptedPrivateKey: EncryptedPrivateKey) {
-        super(name, network, address, creationDate, 'simple_v1');
+        super(name, network, publicAccount, creationDate, 'simple_v2');
     }
 
     /**
@@ -69,15 +70,15 @@ export class SimpleWallet extends Wallet {
         // Create KeyPair from hash key
         const keyPair = KeyPair.createKeyPairFromPrivateKeyString(hashKey, signSchema);
 
-        // Create address from public key
-        const address = Address.createFromPublicKey(convert.uint8ToHex(keyPair.publicKey), network);
+        // Create publicAccount from public key
+        const publicAccount = PublicAccount.createFromPublicKey(convert.uint8ToHex(keyPair.publicKey), network, signSchema);
 
         // Encrypt private key using password
         const encrypted = Crypto.encodePrivateKey(hashKey, password.value);
 
         const encryptedPrivateKey = new EncryptedPrivateKey(encrypted.ciphertext, encrypted.iv);
 
-        return new SimpleWallet(name, network, address, LocalDateTime.now(), encryptedPrivateKey);
+        return new SimpleWallet(name, network, publicAccount, LocalDateTime.now(), encryptedPrivateKey);
     }
 
     /**
@@ -97,15 +98,39 @@ export class SimpleWallet extends Wallet {
         // Create KeyPair from hash key
         const keyPair = KeyPair.createKeyPairFromPrivateKeyString(privateKey, signSchema);
 
-        // Create address from public key
-        const address = Address.createFromPublicKey(convert.uint8ToHex(keyPair.publicKey), network, signSchema);
+        // Create publicAccount from public key
+        const publicAccount = PublicAccount.createFromPublicKey(convert.uint8ToHex(keyPair.publicKey), network, signSchema);
 
         // Encrypt private key using password
         const encrypted = Crypto.encodePrivateKey(privateKey, password.value);
 
         const encryptedPrivateKey = new EncryptedPrivateKey(encrypted.ciphertext, encrypted.iv);
 
-        return new SimpleWallet(name, network, address, LocalDateTime.now(), encryptedPrivateKey);
+        return new SimpleWallet(name, network, publicAccount, LocalDateTime.now(), encryptedPrivateKey);
+    }
+
+    /**
+     * Create a SimpleWallet from private key
+     * @param name - Wallet name
+     * @param encryptedPrivateKey - EncryptedPrivateKey
+     * @param publicKey - Public Key
+     * @param network - Network id
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @returns {SimpleWallet}
+     */
+     static createFromEncryptedKey(name: string,
+        encryptedKey: string,
+        iv: string,
+        publicKey: string,
+        network: NetworkType,
+        signSchema: SignSchema = SignSchema.SHA3): SimpleWallet {
+
+        // Create publicAccount from public key
+        const publicAccount = PublicAccount.createFromPublicKey(publicKey, network, signSchema);
+
+        const encryptedPrivateKey = new EncryptedPrivateKey(encryptedKey, iv);
+
+        return new SimpleWallet(name, network, publicAccount, LocalDateTime.now(), encryptedPrivateKey);
     }
 
     /**
