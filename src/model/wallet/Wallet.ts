@@ -16,7 +16,7 @@
 
 import {LocalDateTime} from '@js-joda/core';
 import {Account} from '../account/Account';
-import {Address} from '../account/Address';
+import {PublicAccount} from '../account/PublicAccount';
 import {NetworkType} from '../blockchain/NetworkType';
 import {Password} from './Password';
 
@@ -28,7 +28,7 @@ export abstract class Wallet {
      * @internal
      * @param name
      * @param network
-     * @param address
+     * @param publicAccount
      * @param creationDate
      * @param schema
      */
@@ -42,9 +42,9 @@ export abstract class Wallet {
                  */
                 public readonly network: NetworkType,
                 /**
-                 * The wallet's address
+                 * The wallet's publicAccount
                  */
-                public readonly address: Address,
+                public readonly publicAccount: PublicAccount,
                 /**
                  * The wallet's creation date
                  */
