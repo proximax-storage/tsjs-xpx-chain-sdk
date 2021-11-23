@@ -109,7 +109,7 @@ describe('TransactionHttp', () => {
                 const hashLockTransaction = factory.hashLock()
                     .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10000000)))
                     .duration(UInt64.fromUint(1000))
-                    .signedTransaction(signedAggregateBondedTransaction)
+                    .transactionHash(signedAggregateBondedTransaction)
                     .build();
 
                 const signedHashLockTransaction = hashLockTransaction.signWith(CosignatoryAccount, factory.generationHash);
@@ -162,7 +162,7 @@ describe('TransactionHttp', () => {
                 const hashLockTransaction = factory.hashLock()
                     .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10000000)))
                     .duration(UInt64.fromUint(1000))
-                    .signedTransaction(signedAggregateBondedTransaction)
+                    .transactionHash(signedAggregateBondedTransaction)
                     .build();
 
                 const signedHashLockTransaction = hashLockTransaction.signWith(Cosignatory4Account, factory.generationHash);
@@ -351,7 +351,7 @@ describe('TransactionHttp', () => {
                     
                     const lockhashTransaction = factory.lockFunds()
                         .duration(UInt64.fromUint(1000))
-                        .signedTransaction(signedMetadataTransaction)
+                        .transactionHash(signedMetadataTransaction)
                         .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
                         .build();
 
@@ -721,7 +721,7 @@ describe('TransactionHttp', () => {
                 const lockFundsTransaction = factory.lockFunds()
                     .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * Math.pow(10, ConfNetworkMosaicDivisibility))))
                     .duration(UInt64.fromUint(10000))
-                    .signedTransaction(signedTransaction)
+                    .transactionHash(signedTransaction)
                     .build();
 
                 const signedLockFundsTransaction = lockFundsTransaction.signWith(TestingAccount, factory.generationHash);
@@ -737,7 +737,7 @@ describe('TransactionHttp', () => {
                 const lockFundsTransaction = factory.lockFunds()
                     .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * Math.pow(10, ConfNetworkMosaicDivisibility))))
                     .duration(UInt64.fromUint(10))
-                    .signedTransaction(signedTransaction)
+                    .transactionHash(signedTransaction)
                     .build();
 
                 const aggregateLockFundsTransaction = factory.aggregateComplete()
@@ -1560,7 +1560,7 @@ describe('TransactionHttp', () => {
             const lockFundsTransaction = factory.lockFunds()
                 .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(0)))
                 .duration(UInt64.fromUint(10000))
-                .signedTransaction(signedTransaction)
+                .transactionHash(signedTransaction)
                 .build();
 
             const signedLockFundsTransactions = lockFundsTransaction.signWith(TestingAccount, factory.generationHash);

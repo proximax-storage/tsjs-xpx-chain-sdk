@@ -173,6 +173,7 @@ export * from './transaction/TransactionAnnounceResponse';
 export * from './transaction/TransactionBuilderFactory';
 export * from './transaction/TransactionCount';
 export * from './transaction/TransactionGroupType';
+export * from './transaction/TransactionHash';
 export * from './transaction/TransactionInfo';
 export * from './transaction/TransactionStatus';
 export * from './transaction/TransactionStatusError';

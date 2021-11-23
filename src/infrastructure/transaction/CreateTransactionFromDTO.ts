@@ -49,7 +49,7 @@ import {EmptyMessage, PlainMessage} from '../../model/transaction/PlainMessage';
 import {RegisterNamespaceTransaction} from '../../model/transaction/RegisterNamespaceTransaction';
 import {SecretLockTransaction} from '../../model/transaction/SecretLockTransaction';
 import {SecretProofTransaction} from '../../model/transaction/SecretProofTransaction';
-import {SignedTransaction} from '../../model/transaction/SignedTransaction';
+import {TransactionHash} from '../../model/transaction/TransactionHash';
 import {Transaction} from '../../model/transaction/Transaction';
 import {InnerTransaction} from '../../model/transaction/InnerTransaction';
 import {TransactionInfo} from '../../model/transaction/TransactionInfo';
@@ -258,7 +258,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
             isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
             new Mosaic(new MosaicId(transactionDTO.mosaicId), new UInt64(transactionDTO.amount)),
             new UInt64(transactionDTO.duration),
-            new SignedTransaction('', transactionDTO.hash, '', TransactionType.AGGREGATE_BONDED, networkType),
+            new TransactionHash(transactionDTO.hash, TransactionType.AGGREGATE_BONDED),
             isEmbedded ? undefined : transactionDTO.signature,
             transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer, networkType) : undefined,
             transactionInfo,

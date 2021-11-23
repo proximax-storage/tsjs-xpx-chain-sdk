@@ -78,7 +78,7 @@ describe('MetadataHttp', () => {
                 
                 const lockhashTransaction = factory.lockFunds()
                     .duration(UInt64.fromUint(1000))
-                    .signedTransaction(signedMetadataTransaction)
+                    .transactionHash(signedMetadataTransaction)
                     .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
                     .build();
 
@@ -126,7 +126,7 @@ describe('MetadataHttp', () => {
                 
                 const lockhashTransaction = factory.lockFunds()
                     .duration(UInt64.fromUint(1000))
-                    .signedTransaction(signedMetadataTransaction)
+                    .transactionHash(signedMetadataTransaction)
                     .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
                     .build();
 
@@ -161,7 +161,7 @@ describe('MetadataHttp', () => {
                 
                 const lockhashTransaction = factory.lockFunds()
                     .duration(UInt64.fromUint(1000))
-                    .signedTransaction(signedMetadataTransaction)
+                    .transactionHash(signedMetadataTransaction)
                     .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
                     .build();
 
@@ -209,7 +209,7 @@ describe('MetadataHttp', () => {
                 
                 const lockhashTransaction = factory.lockFunds()
                     .duration(UInt64.fromUint(1000))
-                    .signedTransaction(signedMetadataTransaction)
+                    .transactionHash(signedMetadataTransaction)
                     .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
                     .build();
 
@@ -244,7 +244,7 @@ describe('MetadataHttp', () => {
                 
                 const lockhashTransaction = factory.lockFunds()
                     .duration(UInt64.fromUint(1000))
-                    .signedTransaction(signedMetadataTransaction)
+                    .transactionHash(signedMetadataTransaction)
                     .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
                     .build();
 
@@ -291,7 +291,7 @@ describe('MetadataHttp', () => {
                 
                 const lockhashTransaction = factory.lockFunds()
                     .duration(UInt64.fromUint(1000))
-                    .signedTransaction(signedMetadataTransaction)
+                    .transactionHash(signedMetadataTransaction)
                     .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
                     .build();
 
