@@ -189,7 +189,7 @@ export class ConfUtils {
                     const lockFunds = factory.lockFunds()
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
                         .duration(UInt64.fromUint(50))
-                        .signedTransaction(signedAggregateBonded)
+                        .transactionHash(signedAggregateBonded)
                         .build();
 
                     const signedLockFunds = lockFunds.signWith(ta.acc, factory.generationHash);

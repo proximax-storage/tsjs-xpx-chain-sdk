@@ -22,6 +22,7 @@ import { Mosaic } from '../mosaic/Mosaic';
 import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
 import { SignedTransaction } from './SignedTransaction';
+import { TransactionHash } from './TransactionHash';
 import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
@@ -54,16 +55,20 @@ export class LockFundsTransaction extends Transaction {
     public static create(deadline: Deadline,
                          mosaic: Mosaic,
                          duration: UInt64,
-                         signedTransaction: SignedTransaction,
+                         transactionHash: TransactionHash | SignedTransaction,
                          networkType: NetworkType,
                          maxFee?: UInt64): LockFundsTransaction {
+
+        let txnHashToLock = transactionHash instanceof TransactionHash ? 
+            transactionHash : new TransactionHash(transactionHash.hash, transactionHash.type);
+        
         return new LockFundsTransactionBuilder()
             .networkType(networkType)
             .deadline(deadline)
             .maxFee(maxFee)
             .mosaic(mosaic)
             .duration(duration)
-            .signedTransaction(signedTransaction)
+            .transactionHash(txnHashToLock)
             .build();
     }
 
@@ -91,13 +96,13 @@ export class LockFundsTransaction extends Transaction {
                  * The funds lock duration.
                  */
                 public readonly duration: UInt64,
-                signedTransaction: SignedTransaction,
+                transactionHash: TransactionHash, 
                 signature?: string,
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
         super(TransactionType.LOCK, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
-        this.hash = signedTransaction.hash;
-        if (signedTransaction.type !== TransactionType.AGGREGATE_BONDED) {
+        this.hash = transactionHash.hash;
+        if (transactionHash.type !== TransactionType.AGGREGATE_BONDED) {
             throw new Error('Signed transaction must be Aggregate Bonded Transaction');
         }
     }
@@ -165,7 +170,7 @@ export class LockFundsTransaction extends Transaction {
 export class LockFundsTransactionBuilder extends TransactionBuilder {
     private _mosaic: Mosaic;
     private _duration: UInt64;
-    private _signedTransaction: SignedTransaction;
+    private _transactionHash: TransactionHash;
 
     public mosaic(mosaic: Mosaic) {
         this._mosaic = mosaic;
@@ -177,8 +182,11 @@ export class LockFundsTransactionBuilder extends TransactionBuilder {
         return this;
     }
 
-    public signedTransaction(signedTransaction: SignedTransaction) {
-        this._signedTransaction = signedTransaction;
+    public transactionHash(transactionHash: TransactionHash | SignedTransaction) {
+
+        this._transactionHash = transactionHash instanceof TransactionHash ? 
+            transactionHash : new TransactionHash(transactionHash.hash, transactionHash.type);
+
         return this;
     }
 
@@ -190,7 +198,7 @@ export class LockFundsTransactionBuilder extends TransactionBuilder {
             this._maxFee ? this._maxFee : calculateFee(LockFundsTransaction.calculateSize(), this._feeCalculationStrategy),
             this._mosaic,
             this._duration,
-            this._signedTransaction,
+            this._transactionHash,
             this._signature,
             this._signer,
             this._transactionInfo

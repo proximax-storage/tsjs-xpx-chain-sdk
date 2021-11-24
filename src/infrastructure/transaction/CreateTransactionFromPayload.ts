@@ -34,7 +34,6 @@ import { Message } from '../../model/transaction/Message';
 import { MessageType } from '../../model/transaction/MessageType';
 import { MultisigCosignatoryModification } from '../../model/transaction/MultisigCosignatoryModification';
 import { PlainMessage } from '../../model/transaction/PlainMessage';
-import { SignedTransaction } from '../../model/transaction/SignedTransaction';
 import { Transaction } from '../../model/transaction/Transaction';
 import { TransactionType } from '../../model/transaction/TransactionType';
 import { UInt64 } from '../../model/UInt64';
@@ -43,6 +42,7 @@ import { AddExchangeOffer } from '../../model/transaction/AddExchangeOffer';
 import { ExchangeOffer } from '../../model/transaction/ExchangeOffer';
 import { RemoveExchangeOffer } from '../../model/transaction/RemoveExchangeOffer';
 import { HexadecimalMessage } from '../../model/transaction/HexadecimalMessage';
+import { TransactionHash } from '../../model/transaction/TransactionHash';
 
 /**
  * @internal
@@ -331,7 +331,7 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                     UInt64.fromHex(reverse(hashLockMosaic.substring(16))),
                 ))
                 .duration(UInt64.fromHex(reverse(hashLockDuration)))
-                .signedTransaction(new SignedTransaction('', hashLockHash, '', TransactionType.AGGREGATE_BONDED, networkType))
+                .transactionHash(new TransactionHash(hashLockHash, TransactionType.AGGREGATE_BONDED))
                 .build();
 
         case TransactionType.AGGREGATE_COMPLETE:

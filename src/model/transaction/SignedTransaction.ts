@@ -15,6 +15,8 @@
  */
 
 import {NetworkType} from '../blockchain/NetworkType';
+import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
+import { Convert as convert } from '../../core/format/Convert';
 
 /**
  * SignedTransaction object is used to transfer the transaction data and the signature to the server
@@ -55,6 +57,30 @@ export class SignedTransaction {
     }
 
     /**
+     * @param transactionPayload
+     * @param generationHash
+     */
+    static createFromPayload(transactionPayload: string, generationHash: string): SignedTransaction{
+        const transactionHash = VerifiableTransaction.createTransactionHash(transactionPayload, Array.from(convert.hexToUint8(generationHash)));
+
+        const sizeLength        = 8;
+        const signatureLength   = 128;
+        const publicKeyLength   = 64;
+        const versionLength     = 8;
+        const typeLength        = 4;
+        const signature = transactionPayload.substring(8, 136);
+        const signer = transactionPayload.substring(136, 200);
+        const networkType = extractNetwork(transactionPayload.substring(200, 208));
+        const type = parseInt(convert.uint8ToHex(convert.hexToUint8(transactionPayload.substring(208, 212)).reverse()), 16);
+
+        if(signature === "0".repeat(128) || signer === "0".repeat(64) ){
+            throw new Error('No signature found in payload');
+        }
+
+        return new SignedTransaction(transactionPayload, transactionHash, signer, type, networkType);
+    }
+
+    /**
      * Create DTO object
      */
     toDTO() {
@@ -67,3 +93,27 @@ export class SignedTransaction {
         };
     }
 }
+
+
+/**
+ * @internal
+ * @param versionHex - Transaction version in hex
+ * @returns {NetworkType}
+ */
+ const extractNetwork = (versionHex: string): NetworkType => {
+    const networkType = convert.hexToUint8(versionHex)[3];
+    if (networkType === NetworkType.MAIN_NET) {
+        return NetworkType.MAIN_NET;
+    } else if (networkType === NetworkType.TEST_NET) {
+        return NetworkType.TEST_NET;
+    } else if (networkType === NetworkType.MIJIN) {
+        return NetworkType.MIJIN;
+    } else if (networkType === NetworkType.MIJIN_TEST) {
+        return NetworkType.MIJIN_TEST;
+    } else if (networkType === NetworkType.PRIVATE) {
+        return NetworkType.PRIVATE;
+    } else if (networkType === NetworkType.PRIVATE_TEST) {
+        return (NetworkType.PRIVATE_TEST)
+    }
+    throw new Error('Unimplemented network type');
+};

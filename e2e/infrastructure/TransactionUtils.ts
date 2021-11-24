@@ -84,7 +84,7 @@ export class TransactionUtils {
             const lockFundTransaction = factory.lockFunds()
                 .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10000000)))
                 .duration(UInt64.fromUint(120))
-                .signedTransaction(signedAggregateTransaction)
+                .transactionHash(signedAggregateTransaction)
                 .build();
 
             const signedLockFundTransaction = CosignatoryAccount.sign(lockFundTransaction, factory.generationHash);

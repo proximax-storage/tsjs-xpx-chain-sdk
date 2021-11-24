@@ -54,13 +54,15 @@ export * from './exchange/MosaicExchange';
 export * from './exchange/OfferInfo';
 
 // Metadata
-export * from './metadata/AddressMetadata';
-export * from './metadata/Field';
-export * from './metadata/Metadata';
-export * from './metadata/MetadataInfo';
+// export * from './metadata/AddressMetadata';
+// export * from './metadata/Field';
+// export * from './metadata/Metadata';
+// export * from './metadata/MetadataInfo';
 export * from './metadata/MetadataType';
-export * from './metadata/MosaicMetadata';
-export * from './metadata/NamespaceMetadata';
+// export * from './metadata/MosaicMetadata';
+// export * from './metadata/NamespaceMetadata';
+export * from './metadata/MetadataEntry';
+export * from './metadata/MetadataSearch';
 
 // Mosaic
 export * from './mosaic/Mosaic';
@@ -169,13 +171,16 @@ export * from './transaction/SyncAnnounce';
 export * from './transaction/Transaction';
 export * from './transaction/TransactionAnnounceResponse';
 export * from './transaction/TransactionBuilderFactory';
+export * from './transaction/TransactionCount';
 export * from './transaction/TransactionGroupType';
+export * from './transaction/TransactionHash';
 export * from './transaction/TransactionInfo';
 export * from './transaction/TransactionStatus';
 export * from './transaction/TransactionStatusError';
 export * from './transaction/TransactionType';
 export * from './transaction/TransactionVersion';
 export * from './transaction/TransferTransaction';
+export * from './transaction/TransactionSearch';
 
 // Upgrade
 export * from './upgrade/ChainUpgrade';

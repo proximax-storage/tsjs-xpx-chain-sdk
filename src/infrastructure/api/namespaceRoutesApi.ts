@@ -257,7 +257,7 @@ export class NamespaceRoutesApi {
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
-            data: ObjectSerializer.serialize(namespaceIds, "AccountIds")
+            data: ObjectSerializer.serialize(namespaceIds, "NamespaceIds")
         };
 
         return new Promise<{ response: AxiosResponse; body: Array<NamespaceNameDTO>;  }>((resolve, reject) => {
