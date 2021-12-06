@@ -17,7 +17,6 @@
 import {deepStrictEqual} from 'assert';
 import {assert, expect} from 'chai';
 import {AccountHttp} from '../../src/infrastructure/AccountHttp';
-import {QueryParams} from '../../src/infrastructure/QueryParams';
 import {TransactionQueryParams} from '../../src/infrastructure/TransactionQueryParams';
 
 import { TestingAccount, MultisigAccount, APIUrl, CosignatoryAccount, Cosignatory2Account, Cosignatory3Account, TestingRecipient, SeedAccount } from '../conf/conf.spec';

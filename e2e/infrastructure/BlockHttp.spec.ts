@@ -17,7 +17,6 @@
 import {assert, expect} from 'chai';
 import {BlockHttp} from '../../src/infrastructure/BlockHttp';
 import { Listener, TransactionHttp } from '../../src/infrastructure/infrastructure';
-import {QueryParams} from '../../src/infrastructure/QueryParams';
 import {TransactionQueryParams} from '../../src/infrastructure/TransactionQueryParams';
 import { NetworkCurrencyMosaic } from '../../src/model/mosaic/NetworkCurrencyMosaic';
 import { Deadline } from '../../src/model/transaction/Deadline';

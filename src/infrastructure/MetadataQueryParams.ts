@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Order } from "./QueryParams";
+import { Order_v2 } from "./QueryParams";
 import { Address } from "../model/account/Address"
 import { MetadataType } from "../model/metadata/MetadataType"
 import { NamespaceId } from "../model/namespace/NamespaceId"
@@ -30,15 +30,15 @@ export enum MetadataSortingField{
 
 export class MetadataFieldOrder{
 
-    constructor(public order: Order, public sortingField: MetadataSortingField){
+    constructor(public order: Order_v2, public sortingField: MetadataSortingField){
     }
 
     static setAscending(sortingField: MetadataSortingField){
-        return new MetadataFieldOrder(Order.ASC, sortingField);
+        return new MetadataFieldOrder(Order_v2.ASC, sortingField);
     }
 
     static setDescending(sortingField: MetadataSortingField){
-        return new MetadataFieldOrder(Order.DESC, sortingField);
+        return new MetadataFieldOrder(Order_v2.DESC, sortingField);
     }
 }
 
@@ -47,7 +47,7 @@ export class MetadataQueryParams{
     pageSize?: number;
     pageNumber?: number;
     metadataType?: MetadataType;
-    order?: Order;
+    order?: Order_v2;
     sortField?: MetadataSortingField;
     sourceAddress?: Address | string;
     targetId?: NamespaceId | MosaicId | string; // mosaic/ namespace hex string

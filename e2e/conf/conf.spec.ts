@@ -3,7 +3,7 @@ const conf = require("config");
 import { MosaicId, NamespaceId, TransactionType, RegisterNamespaceTransaction, MosaicDefinitionTransaction,
     TransferTransaction, TransactionInfo, MosaicNonce, MosaicProperties, UInt64, BlockInfo, ChainConfigTransaction, TransactionBuilderFactory, NetworkType, Account } from '../../src/model/model';
 import { ConfUtils } from './ConfUtils';
-import { AccountHttp, TransactionHttp, NamespaceHttp, MosaicHttp, BlockHttp, QueryParams, TransactionQueryParams } from '../../src/infrastructure/infrastructure';
+import { AccountHttp, TransactionHttp, NamespaceHttp, MosaicHttp, BlockHttp, TransactionQueryParams } from '../../src/infrastructure/infrastructure';
 
 // config types
 interface ConfApi {

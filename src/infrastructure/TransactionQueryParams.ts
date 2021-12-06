@@ -15,7 +15,7 @@
  */
 
 import { TransactionType } from "../model/transaction/TransactionType"
-import { Order } from "./QueryParams";
+import { Order_v2 } from "./QueryParams";
 
 /*
 export class TransactionSearchMosaic{
@@ -41,15 +41,15 @@ export enum TransactionSortingField{
 
 export class TransactionFieldOrder{
 
-    constructor(public order: Order, public sortingField: TransactionSortingField){
+    constructor(public order: Order_v2, public sortingField: TransactionSortingField){
     }
 
     static setAscending(sortingField: TransactionSortingField){
-        return new TransactionFieldOrder(Order.ASC, sortingField);
+        return new TransactionFieldOrder(Order_v2.ASC, sortingField);
     }
 
     static setDescending(sortingField: TransactionSortingField){
-        return new TransactionFieldOrder(Order.DESC, sortingField);
+        return new TransactionFieldOrder(Order_v2.DESC, sortingField);
     }
 }
 
@@ -59,7 +59,7 @@ export class TransactionQueryParams{
     pageNumber?: number;
     type?: TransactionType[] | number[];
     embedded?: boolean;
-    order?: Order;
+    order?: Order_v2;
     sortField?: TransactionSortingField;
     toHeight?: number;
     fromHeight?: number;

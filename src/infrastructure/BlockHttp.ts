@@ -29,7 +29,6 @@ import { BlockRoutesApi } from './api';
 import {BlockRepository} from './BlockRepository';
 import {Http} from './Http';
 import { NetworkHttp } from './NetworkHttp';
-import {QueryParams} from './QueryParams';
 import {TransactionQueryParams} from './TransactionQueryParams';
 import { CreateStatementFromDTO } from './receipt/CreateReceiptFromDTO';
 import {CreateTransactionFromDTO, extractBeneficiary} from './transaction/CreateTransactionFromDTO';

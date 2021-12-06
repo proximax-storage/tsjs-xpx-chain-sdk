@@ -39,7 +39,6 @@ import { AccountInfoDTO,
          MosaicDTO } from './api';
 import {Http} from './Http';
 import {NetworkHttp} from './NetworkHttp';
-import {QueryParams} from './QueryParams';
 import {TransactionQueryParams} from './TransactionQueryParams';
 import {CreateTransactionFromDTO} from './transaction/CreateTransactionFromDTO';
 import {TransactionGroupType} from '../model/transaction/TransactionGroupType'
