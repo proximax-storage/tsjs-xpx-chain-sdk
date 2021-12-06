@@ -22,6 +22,10 @@ export enum Order {
     DESC = '-id',
 }
 
+export enum Order_v2 {
+    ASC = 'asc',
+    DESC = 'desc',
+}
 
 /**
  * The query params structure describes pagination params for requests.

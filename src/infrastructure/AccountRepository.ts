@@ -23,7 +23,6 @@ import {PublicAccount} from '../model/account/PublicAccount';
 import {AggregateTransaction} from '../model/transaction/AggregateTransaction';
 import {Transaction} from '../model/transaction/Transaction';
 import {TransactionSearch} from '../model/transaction/TransactionSearch';
-import {QueryParams} from './QueryParams';
 import {TransactionQueryParams} from './TransactionQueryParams';
 import {AccountRestrictionsInfo} from "../model/account/AccountRestrictionsInfo";
 import { AccountNames } from '../model/account/AccountNames';

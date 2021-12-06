@@ -20,7 +20,6 @@ import { MerkleProofInfo } from '../model/blockchain/MerkleProofInfo';
 import { Statement } from '../model/receipt/Statement';
 import { TransactionSearch } from '../model/transaction/TransactionSearch';
 import { Transaction } from '../model/transaction/Transaction';
-import {QueryParams} from './QueryParams';
 import {TransactionQueryParams} from './TransactionQueryParams';
 
 /**
