@@ -27,6 +27,8 @@ import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
 import { TransactionVersion } from './TransactionVersion';
 import { calculateFee } from './FeeCalculationStrategy';
+import { Base32 } from '../../core/format/Base32';
+import { Convert } from '../../core/format/Convert';
 
 export class SecretProofTransaction extends Transaction {
 
@@ -130,6 +132,26 @@ export class SecretProofTransaction extends Transaction {
                 hashAlgorithm: this.hashType,
                 secret: this.secret,
                 recipient: this.recipient.toDTO(),
+                proof: this.proof,
+            }
+        }
+    }
+
+    /**
+     * @override Transaction.toDTO()
+     * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
+     * @return {Object}
+     * @memberof SecretProofTransaction
+     */
+     public toDTO(){
+         const parent = super.toJSON();
+        return {
+            ...parent,
+            transaction: {
+                ...parent.transaction,
+                hashAlgorithm: this.hashType,
+                secret: this.secret,
+                recipient: Convert.uint8ToHex(Base32.Base32Decode(this.recipient.plain())),
                 proof: this.proof,
             }
         }

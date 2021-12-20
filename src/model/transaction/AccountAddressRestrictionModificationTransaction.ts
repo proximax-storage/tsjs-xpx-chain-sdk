@@ -114,7 +114,7 @@ export class AccountAddressRestrictionModificationTransaction extends Transactio
             ...parent,
             transaction: {
                 ...parent.transaction,
-                restrictionType: this.restrictionType,
+                propertyType: this.restrictionType,
                 modifications: this.modifications.map((modification) => {
                     return modification.toDTO();
                 }),

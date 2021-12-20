@@ -72,6 +72,7 @@ import { ExchangeOfferType } from '../../../src/model/transaction/ExchangeOfferT
 import { ExchangeOfferTransaction } from '../../../src/model/transaction/ExchangeOfferTransaction';
 import { RemoveExchangeOfferTransaction } from '../../../src/model/transaction/RemoveExchangeOfferTransaction';
 import { RemoveExchangeOffer } from '../../../src/model/transaction/RemoveExchangeOffer';
+import { Base32 } from '../../../src/core/format/Base32';
 
 describe('TransactionMapping - createFromPayload', () => {
     let account: Account;
@@ -875,8 +876,15 @@ describe('TransactionMapping - createFromDTO (Transaction.toJSON() feed)', () =>
             NetworkType.MIJIN_TEST,
         );
 
+        let data = addressRestrictionTransaction.toJSON();
+
+        for(let i =0; i < data.transaction.modifications.length; ++i){
+            let value = data.transaction.modifications[i].value;
+            data.transaction.modifications[i].value = convert.uint8ToHex(Base32.Base32Decode(value));
+        }
+
         const transaction =
-            TransactionMapping.createFromDTO(addressRestrictionTransaction.toJSON()) as AccountAddressRestrictionModificationTransaction;
+            TransactionMapping.createFromDTO(data) as AccountAddressRestrictionModificationTransaction;
 
         expect(transaction.modifications[0].value).to.be.equal('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
         expect(transaction.restrictionType).to.be.equal(RestrictionType.AllowAddress);
@@ -1035,8 +1043,10 @@ describe('TransactionMapping - createFromDTO (Transaction.toJSON() feed)', () =>
             NetworkType.MIJIN_TEST,
         );
 
+        let data = secretProofTransaction.toDTO();
+
         const transaction =
-            TransactionMapping.createFromDTO(secretProofTransaction.toJSON()) as SecretProofTransaction;
+            TransactionMapping.createFromDTO(data) as SecretProofTransaction;
 
         expect(transaction.type).to.be.equal(TransactionType.SECRET_PROOF);
         expect(transaction.hashType).to.be.equal(HashType.Op_Sha3_256);
