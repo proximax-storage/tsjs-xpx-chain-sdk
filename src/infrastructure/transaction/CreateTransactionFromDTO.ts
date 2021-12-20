@@ -291,7 +291,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
             isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
             transactionDTO.hashAlgorithm,
             (transactionDTO.hashAlgorithm === 2 ? transactionDTO.secret.substring(0, 40) : transactionDTO.secret),
-            transactionDTO.recipient,
+            Address.createFromEncoded(transactionDTO.recipient),
             transactionDTO.proof,
             isEmbedded ? undefined : transactionDTO.signature,
             transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
@@ -335,10 +335,10 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
             extractTransactionVersion(transactionDTO.version),
             isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
             isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            transactionDTO.restrictionType,
-            transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountRestrictionModification(
+            transactionDTO.propertyType,
+            transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountRestrictionModification<string>(
                 modificationDTO.type,
-                modificationDTO.value,
+                Address.createFromEncoded(modificationDTO.value).plain(),
             )) : [],
             isEmbedded ? undefined : transactionDTO.signature,
             transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
@@ -352,8 +352,8 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
             extractTransactionVersion(transactionDTO.version),
             isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
             isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            transactionDTO.restrictionType,
-            transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountRestrictionModification(
+            transactionDTO.propertyType,
+            transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountRestrictionModification<number[]>(
                 modificationDTO.type,
                 modificationDTO.value,
             )) : [],
@@ -369,8 +369,8 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
             extractTransactionVersion(transactionDTO.version),
             isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
             isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            transactionDTO.restrictionType,
-            transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountRestrictionModification(
+            transactionDTO.propertyType,
+            transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountRestrictionModification<TransactionType>(
                 modificationDTO.type,
                 modificationDTO.value,
             )) : [],
