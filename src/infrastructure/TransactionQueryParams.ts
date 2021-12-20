@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { PublicAccount } from "../model/account/PublicAccount";
+import { Address } from "../model/account/Address";
 import { TransactionType } from "../model/transaction/TransactionType"
 import { Order_v2 } from "./QueryParams";
 
@@ -64,9 +66,10 @@ export class TransactionQueryParams{
     toHeight?: number;
     fromHeight?: number;
     height?: number;
-    signerPublicKey?: string;
-    recipientAddress?: string;
-    address?: string;
+    signerPublicKey?: string | PublicAccount;
+    recipientAddress?: string | Address;
+    address?: string | Address;
+    account?: string | PublicAccount;
     
     /* non-applicable for now
     transferMosaicId?: TransactionSearchMosaic;
@@ -88,6 +91,57 @@ export class TransactionQueryParams{
     buildQueryParams(): object{
         let queryParams = Object.assign({}, this);
 
+        TransactionQueryParams.adjustNonComplianceParams(queryParams);
+        TransactionQueryParams.convertToPrimitiveType(queryParams);
+
+        return queryParams;
+    }
+
+    buildQueryParamsString(): string{
+        let queryParams = this.buildQueryParams();
+
+        const entries = Object.entries(queryParams);
+
+        let queryParamsArray = entries.map(data=>{
+
+            if(data[1] instanceof Array){
+                return data[1].map(arrayData=>{
+                    return data[0] + "[]" + "=" + arrayData
+                }).join("&");
+            }
+            return data[0] + "=" + data[1]
+        })
+
+        return queryParamsArray.join("&")
+    }
+
+    static convertToPrimitiveType(queryParams: TransactionQueryParams){
+        if(queryParams.recipientAddress){
+            if(queryParams.recipientAddress instanceof Address){
+                queryParams.recipientAddress = queryParams.recipientAddress.plain();
+            }
+        }
+
+        if(queryParams.signerPublicKey){
+            if(queryParams.signerPublicKey instanceof PublicAccount){
+                queryParams.signerPublicKey = queryParams.signerPublicKey.publicKey;
+            }
+        }
+
+        if(queryParams.account){
+            if(queryParams.account instanceof PublicAccount){
+                queryParams.account = queryParams.account.publicKey;
+            }
+        }
+
+        if(queryParams.address){
+            if(queryParams.address instanceof Address){
+                queryParams.address = queryParams.address.plain();
+            }
+        }
+    }
+
+    static adjustNonComplianceParams(queryParams: TransactionQueryParams){
         if(queryParams.height){
             if(queryParams.toHeight){
                 delete queryParams.toHeight;
@@ -114,6 +168,15 @@ export class TransactionQueryParams{
             }
         }
 
+        if(queryParams.order === undefined || queryParams.sortField === undefined){
+            if(queryParams.order){
+                delete queryParams.order;
+            }
+            if(queryParams.sortField){
+                delete queryParams.sortField;
+            }
+        }
+
         if(queryParams.address){
             if(queryParams.signerPublicKey){
                 delete queryParams.signerPublicKey;
@@ -124,33 +187,27 @@ export class TransactionQueryParams{
             }
         }
 
-        if(queryParams.order === undefined || queryParams.sortField === undefined){
-            if(queryParams.order){
-                delete queryParams.order;
+        if(queryParams.account){
+            if(queryParams.address){
+                delete queryParams.address;
             }
-            if(queryParams.sortField){
-                delete queryParams.sortField;
+
+            if(queryParams.signerPublicKey){
+                delete queryParams.signerPublicKey;
+            }
+
+            if(queryParams.recipientAddress){
+                delete queryParams.recipientAddress;
             }
         }
-
-        return queryParams;
-    }
-
-    buildQueryParamsString(): string{
-        let queryParams = this.buildQueryParams();
-
-        const entries = Object.entries(queryParams);
-
-        let queryParamsArray = entries.map(data=>{
-
-            if(data[1] instanceof Array){
-                return data[1].map(arrayData=>{
-                    return data[0] + "[]" + "=" + arrayData
-                }).join("&");
+        else if(queryParams.address){
+            if(queryParams.signerPublicKey){
+                delete queryParams.signerPublicKey;
             }
-            return data[0] + "=" + data[1]
-        })
 
-        return queryParamsArray.join("&")
+            if(queryParams.recipientAddress){
+                delete queryParams.recipientAddress;
+            }
+        }
     }
 }

@@ -69,22 +69,31 @@ export class MetadataQueryParams{
     buildQueryParams(): object{
         let queryParams = Object.assign({}, this);
 
-        if(queryParams.pageSize){
-            if(queryParams.pageSize < 0){
-                delete queryParams.pageSize; // default to 20
-            } else if(queryParams.pageSize < 10){
-                queryParams.pageSize = 10;
-            } else if(queryParams.pageSize > 100){
-                queryParams.pageSize = 100;
-            }
-        }
+        MetadataQueryParams.adjustNonComplianceParams(queryParams);
+        MetadataQueryParams.convertToPrimitiveType(queryParams);
 
-        if(queryParams.pageNumber){
-            if(queryParams.pageNumber <= 0){
-                queryParams.pageNumber = 1;
-            }
-        }
+        return queryParams;
+    }
 
+    buildQueryParamsString(): string{
+        let queryParams = this.buildQueryParams();
+
+        const entries = Object.entries(queryParams);
+
+        let queryParamsArray = entries.map(data=>{
+
+            if(data[1] instanceof Array){
+                return data[1].map(arrayData=>{
+                    return data[0] + "[]" + "=" + arrayData
+                }).join("&");
+            }
+            return data[0] + "=" + data[1]
+        })
+
+        return queryParamsArray.join("&")
+    }
+
+    static convertToPrimitiveType(queryParams: MetadataQueryParams){
         if(queryParams.sourceAddress){
             if(queryParams.sourceAddress instanceof Address){
                 queryParams.sourceAddress = queryParams.sourceAddress.plain();
@@ -111,6 +120,24 @@ export class MetadataQueryParams{
                 queryParams.scopedMetadataKey = queryParams.scopedMetadataKey.toHex();
             }
         }
+    }
+
+    static adjustNonComplianceParams(queryParams: MetadataQueryParams){
+        if(queryParams.pageSize){
+            if(queryParams.pageSize < 0){
+                delete queryParams.pageSize; // default to 20
+            } else if(queryParams.pageSize < 10){
+                queryParams.pageSize = 10;
+            } else if(queryParams.pageSize > 100){
+                queryParams.pageSize = 100;
+            }
+        }
+
+        if(queryParams.pageNumber){
+            if(queryParams.pageNumber <= 0){
+                queryParams.pageNumber = 1;
+            }
+        }
 
         if(queryParams.order === undefined || queryParams.sortField === undefined){
             if(queryParams.order){
@@ -120,25 +147,5 @@ export class MetadataQueryParams{
                 delete queryParams.sortField;
             }
         }
-
-        return queryParams;
-    }
-
-    buildQueryParamsString(): string{
-        let queryParams = this.buildQueryParams();
-
-        const entries = Object.entries(queryParams);
-
-        let queryParamsArray = entries.map(data=>{
-
-            if(data[1] instanceof Array){
-                return data[1].map(arrayData=>{
-                    return data[0] + "[]" + "=" + arrayData
-                }).join("&");
-            }
-            return data[0] + "=" + data[1]
-        })
-
-        return queryParamsArray.join("&")
     }
 }
