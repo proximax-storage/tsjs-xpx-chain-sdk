@@ -95,7 +95,7 @@ describe('SerializeTransactionToJSON', () => {
         const json = addressRestrictionTransaction.toJSON();
 
         expect(json.transaction.type).to.be.equal(TransactionType.MODIFY_ACCOUNT_RESTRICTION_ADDRESS);
-        expect(json.transaction.restrictionType).to.be.equal(RestrictionType.AllowAddress);
+        expect(json.transaction.propertyType).to.be.equal(RestrictionType.AllowAddress);
         expect(json.transaction.modifications.length).to.be.equal(1);
         expect(json.transaction.modifications[0].type).to.be.equal(RestrictionModificationType.Add);
         expect(json.transaction.modifications[0].value).to.be.equal(address.plain());
@@ -117,7 +117,7 @@ describe('SerializeTransactionToJSON', () => {
         const json = mosaicRestrictionTransaction.toJSON();
 
         expect(json.transaction.type).to.be.equal(TransactionType.MODIFY_ACCOUNT_RESTRICTION_MOSAIC);
-        expect(json.transaction.restrictionType).to.be.equal(RestrictionType.AllowMosaic);
+        expect(json.transaction.propertyType).to.be.equal(RestrictionType.AllowMosaic);
         expect(json.transaction.modifications.length).to.be.equal(1);
         expect(json.transaction.modifications[0].type).to.be.equal(RestrictionModificationType.Add);
         deepStrictEqual(json.transaction.modifications[0].value, mosaicId.id.toDTO());
@@ -139,7 +139,7 @@ describe('SerializeTransactionToJSON', () => {
         const json = operationRestrictionTransaction.toJSON();
 
         expect(json.transaction.type).to.be.equal(TransactionType.MODIFY_ACCOUNT_RESTRICTION_OPERATION);
-        expect(json.transaction.restrictionType).to.be.equal(RestrictionType.AllowTransaction);
+        expect(json.transaction.propertyType).to.be.equal(RestrictionType.AllowTransaction);
         expect(json.transaction.modifications.length).to.be.equal(1);
         expect(json.transaction.modifications[0].type).to.be.equal(RestrictionModificationType.Add);
         expect(json.transaction.modifications[0].value).to.be.equal(operation);
