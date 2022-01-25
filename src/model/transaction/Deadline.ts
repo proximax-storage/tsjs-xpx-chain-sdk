@@ -60,6 +60,28 @@ export class Deadline {
         );
 
         return new Deadline(deadlineDateTime, adjustedValue);
+    }
+
+    /**
+     * Create unrestricted deadline model
+     * @param deadline
+     * @param chronoUnit
+     * @returns {Deadline}
+     */
+     public static createForBonded(deadline: number = 2, chronoUnit: ChronoUnit = ChronoUnit.HOURS): Deadline {
+        const networkTimeStamp = (new Date()).getTime();
+        const timeStampDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(networkTimeStamp), ZoneId.SYSTEM);
+        const deadlineDateTime = timeStampDateTime.plus(deadline, chronoUnit);
+
+        if (deadline <= 0) {
+            throw new Error('deadline should be greater than 0');
+        }
+
+        const adjustedValue = UInt64.fromUint(
+            (deadlineDateTime.atZone(ZoneId.SYSTEM).toInstant().toEpochMilli() - Deadline.timestampNemesisBlock * 1000),
+        );
+
+        return new Deadline(deadlineDateTime, adjustedValue);
     } 
 
     /**
