@@ -69,7 +69,7 @@ export class TransactionQueryParams{
     signerPublicKey?: string | PublicAccount;
     recipientAddress?: string | Address;
     address?: string | Address;
-    account?: string | PublicAccount;
+    publicKey?: string | PublicAccount;
     
     /* non-applicable for now
     transferMosaicId?: TransactionSearchMosaic;
@@ -128,9 +128,9 @@ export class TransactionQueryParams{
             }
         }
 
-        if(queryParams.account){
-            if(queryParams.account instanceof PublicAccount){
-                queryParams.account = queryParams.account.publicKey;
+        if(queryParams.publicKey){
+            if(queryParams.publicKey instanceof PublicAccount){
+                queryParams.publicKey = queryParams.publicKey.publicKey;
             }
         }
 
@@ -177,17 +177,7 @@ export class TransactionQueryParams{
             }
         }
 
-        if(queryParams.address){
-            if(queryParams.signerPublicKey){
-                delete queryParams.signerPublicKey;
-            }
-
-            if(queryParams.recipientAddress){
-                delete queryParams.recipientAddress;
-            }
-        }
-
-        if(queryParams.account){
+        if(queryParams.publicKey){
             if(queryParams.address){
                 delete queryParams.address;
             }
@@ -205,6 +195,11 @@ export class TransactionQueryParams{
                 delete queryParams.signerPublicKey;
             }
 
+            if(queryParams.recipientAddress){
+                delete queryParams.recipientAddress;
+            }
+        }
+        else if(queryParams.signerPublicKey){
             if(queryParams.recipientAddress){
                 delete queryParams.recipientAddress;
             }
