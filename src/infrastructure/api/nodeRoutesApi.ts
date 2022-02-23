@@ -32,6 +32,7 @@ import {AxiosRequestConfig, AxiosResponse, AxiosError} from 'axios';
 /* tslint:disable:no-unused-locals */
 import { NodeInfoDTO } from '../model/nodeInfoDTO';
 import { NodeTimeDTO } from '../model/nodeTimeDTO';
+import { RequestOptions } from '../RequestOptions';
 
 import { ObjectSerializer } from '../model/models';
 
@@ -48,7 +49,10 @@ export enum NodeRoutesApiApiKeys {
 
 export class NodeRoutesApi {
     protected _basePath = defaultBasePath;
-    protected _defaultHeaders : any = {};
+    protected _defaultHeaders : { [name: string]: string; } = { 
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    };
     protected _useQuerystring : boolean = false;
 
     constructor(basePath?: string);
@@ -84,19 +88,22 @@ export class NodeRoutesApi {
         return this._basePath;
     }
 
+    combineHeaders(reqOptions?:RequestOptions){
+        return reqOptions ? {...this._defaultHeaders, ...reqOptions.headers} : this._defaultHeaders;
+    }
+
     /**
      * Supplies additional information about the application running on a node. 
      * @summary Get the node information
      */
-    public async getNodeInfo (options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: NodeInfoDTO;  }> {
+    public async getNodeInfo (reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: NodeInfoDTO;  }> {
         const localVarPath = '/node/info';
+
+        let requestHeaders = this.combineHeaders(reqOptions);
 
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -122,15 +129,14 @@ export class NodeRoutesApi {
      * Gets the node time at the moment the reply was sent and received.
      * @summary Get the node time
      */
-    public async getNodeTime (options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: NodeTimeDTO;  }> {
+    public async getNodeTime (reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: NodeTimeDTO;  }> {
         const localVarPath = '/node/time';
         let localVarQueryParameters: any = {};
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'

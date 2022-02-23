@@ -36,6 +36,7 @@ import { NamespaceInfoDTO } from '../model/namespaceInfoDTO';
 import { NamespaceNameDTO } from '../model/namespaceNameDTO';
 
 import { ObjectSerializer } from '../model/models';
+import { RequestOptions } from '../RequestOptions';
 
 import { HttpError, RequestFile } from './apis';
 
@@ -50,7 +51,10 @@ export enum NamespaceRoutesApiApiKeys {
 
 export class NamespaceRoutesApi {
     protected _basePath = defaultBasePath;
-    protected _defaultHeaders : any = {};
+    protected _defaultHeaders : { [name: string]: string; } = { 
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    };
     protected _useQuerystring : boolean = false;
 
     constructor(basePath?: string);
@@ -86,12 +90,16 @@ export class NamespaceRoutesApi {
         return this._basePath;
     }
 
+    combineHeaders(reqOptions?:RequestOptions){
+        return reqOptions ? {...this._defaultHeaders, ...reqOptions.headers} : this._defaultHeaders;
+    }
+
     /**
      * Gets the namespace for a given namespaceId.
      * @summary Get namespace information
      * @param namespaceId The namespace identifier.
      */
-    public async getNamespace (namespaceId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: NamespaceInfoDTO;  }> {
+    public async getNamespace (namespaceId: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: NamespaceInfoDTO;  }> {
         const localVarPath = '/namespace/{namespaceId}'
             .replace('{' + 'namespaceId' + '}', encodeURIComponent(String(namespaceId)));
         let localVarQueryParameters: any = {};
@@ -101,12 +109,11 @@ export class NamespaceRoutesApi {
             throw new Error('Required parameter namespaceId was null or undefined when calling getNamespace.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -135,7 +142,7 @@ export class NamespaceRoutesApi {
      * @param pageSize The number of namespaces to return.
      * @param id The namespace id up to which namespace objects are returned.
      */
-    public async getNamespacesFromAccount (accountId: string, pageSize?: number, id?: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<NamespaceInfoDTO>;  }> {
+    public async getNamespacesFromAccount (accountId: string, pageSize?: number, id?: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<NamespaceInfoDTO>;  }> {
         const localVarPath = '/account/{accountId}/namespaces'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
         let localVarQueryParameters: any = {};
@@ -153,12 +160,11 @@ export class NamespaceRoutesApi {
             localVarQueryParameters['id'] = ObjectSerializer.serialize(id, "string");
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -188,7 +194,7 @@ export class NamespaceRoutesApi {
      * @param pageSize The number of namespaces to return.
      * @param id The namespace id up to which namespace objects are returned.
      */
-    public async getNamespacesFromAccounts (accountIds: AccountIds, pageSize?: number, id?: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<NamespaceInfoDTO>;  }> {
+    public async getNamespacesFromAccounts (accountIds: AccountIds, pageSize?: number, id?: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<NamespaceInfoDTO>;  }> {
         const localVarPath = '/account/namespaces';
         let localVarQueryParameters: any = {};
 
@@ -205,12 +211,11 @@ export class NamespaceRoutesApi {
             localVarQueryParameters['id'] = ObjectSerializer.serialize(id, "string");
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -239,7 +244,7 @@ export class NamespaceRoutesApi {
      * @summary Get readable names for a set of namespaces
      * @param namespaceIds 
      */
-    public async getNamespacesNames (namespaceIds: NamespaceIds, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<NamespaceNameDTO>;  }> {
+    public async getNamespacesNames (namespaceIds: NamespaceIds, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<NamespaceNameDTO>;  }> {
         const localVarPath = '/namespace/names';
         let localVarQueryParameters: any = {};
 
@@ -248,12 +253,11 @@ export class NamespaceRoutesApi {
             throw new Error('Required parameter namespaceIds was null or undefined when calling getNamespacesNames.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',

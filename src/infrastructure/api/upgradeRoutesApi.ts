@@ -22,6 +22,7 @@ import {AxiosRequestConfig, AxiosResponse, AxiosError} from 'axios';
 import { BlockchainUpgradeDTO } from '../model/blockchainUpgradeDTO';
 
 import { ObjectSerializer } from '../model/models';
+import { RequestOptions } from '../RequestOptions';
 
 import { HttpError, RequestFile } from './apis';
 
@@ -36,7 +37,10 @@ export enum UpgradeRoutesApiApiKeys {
 
 export class UpgradeRoutesApi {
     protected _basePath = defaultBasePath;
-    protected _defaultHeaders : any = {};
+    protected _defaultHeaders : { [name: string]: string; } = { 
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    };
     protected _useQuerystring : boolean = false;
 
     constructor(basePath?: string);
@@ -72,12 +76,16 @@ export class UpgradeRoutesApi {
         return this._basePath;
     }
 
+    combineHeaders(reqOptions?:RequestOptions){
+        return reqOptions ? {...this._defaultHeaders, ...reqOptions.headers} : this._defaultHeaders;
+    }
+
     /**
      * Get software info of network at height.
      * @summary Get software info of network
      * @param height The height of the blockchain to get software info.
      */
-    public async getUpgrade (height: number, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: BlockchainUpgradeDTO;  }> {
+    public async getUpgrade (height: number, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: BlockchainUpgradeDTO;  }> {
         const localVarPath = this.basePath + '/upgrade/{height}'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)));
 
@@ -86,12 +94,11 @@ export class UpgradeRoutesApi {
             throw new Error('Required parameter height was null or undefined when calling getUpgrade.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'

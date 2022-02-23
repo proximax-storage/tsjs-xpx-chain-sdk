@@ -17,6 +17,7 @@
 import {Observable} from 'rxjs';
 import {BlockchainStorageInfo} from '../model/blockchain/BlockchainStorageInfo';
 import { ServerInfo } from '../model/diagnostic/ServerInfo';
+import { RequestOptions } from './RequestOptions';
 
 /**
  * Diagnostic interface repository.
@@ -29,11 +30,11 @@ export interface DiagnosticRepository {
      * Gets blockchain storage info.
      * @returns Observable<BlockchainStorageInfo>
      */
-    getDiagnosticStorage(): Observable<BlockchainStorageInfo>;
+    getDiagnosticStorage(requestOptions?: RequestOptions): Observable<BlockchainStorageInfo>;
 
     /**
      * Gets blockchain server info.
      * @returns Observable<ServerInfo>
      */
-    getServerInfo(): Observable<ServerInfo>;
+    getServerInfo(requestOptions?: RequestOptions): Observable<ServerInfo>;
 }

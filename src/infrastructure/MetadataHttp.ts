@@ -13,6 +13,7 @@ import { MetadataQueryParams } from './MetadataQueryParams';
 import { MetadataRepository } from './MetadataRepository';
 import { MetadataSearch } from '../model/metadata/MetadataSearch';
 import { CompositeHashes } from './model/compositeHashes';
+import { RequestOptions } from './RequestOptions';
 
 /**
  * Metadata http repository.
@@ -42,9 +43,9 @@ export class MetadataHttp extends Http implements MetadataRepository {
      * @param compositeHash
      * @returns Observable<MetadataEntry>
      */
-    public getMetadata(compositeHash: string): Observable<MetadataEntry> {
+    public getMetadata(compositeHash: string, requestOptions?: RequestOptions): Observable<MetadataEntry> {
         return observableFrom(
-            this.metadataRoutesApi.getMetadata(compositeHash)).pipe(map(response => {
+            this.metadataRoutesApi.getMetadata(compositeHash, requestOptions)).pipe(map(response => {
                 const metadataInlineDTO = response.body;
                 return new MetadataEntry(
                     metadataInlineDTO.metadataEntry.version,
@@ -66,14 +67,14 @@ export class MetadataHttp extends Http implements MetadataRepository {
      * @param compositeHashes
      * @returns Observable<MetadataEntry[]>
      */
-     public getMetadatas(compositeHashes: string[]): Observable<MetadataEntry[]> {
+     public getMetadatas(compositeHashes: string[], requestOptions?: RequestOptions): Observable<MetadataEntry[]> {
 
         let hashes: CompositeHashes = {
             compositeHashes : compositeHashes
         }
 
         return observableFrom(
-            this.metadataRoutesApi.getMetadatas(hashes)).pipe(map(response => {
+            this.metadataRoutesApi.getMetadatas(hashes, requestOptions)).pipe(map(response => {
                 const metadataInlineDTOs = response.body;
 
                 return metadataInlineDTOs.map(metadataDTO =>{
@@ -98,9 +99,9 @@ export class MetadataHttp extends Http implements MetadataRepository {
      * @param metadataQueryParams
      * @returns Observable<MetadataEntry[]>
      */
-     public searchMetadata(metadataQueryParams?: MetadataQueryParams): Observable<MetadataSearch> {
+     public searchMetadata(metadataQueryParams?: MetadataQueryParams, requestOptions?: RequestOptions): Observable<MetadataSearch> {
         return observableFrom(
-            this.metadataRoutesApi.searchMetadata(metadataQueryParams)).pipe(map(response => {
+            this.metadataRoutesApi.searchMetadata(metadataQueryParams, requestOptions)).pipe(map(response => {
                 let metadataEntries: MetadataEntry[] = response.body.data.map(metadataDTO =>{
                     return new MetadataEntry(
                         metadataDTO.metadataEntry.version,

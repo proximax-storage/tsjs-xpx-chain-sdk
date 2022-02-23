@@ -21,6 +21,7 @@ import { Statement } from '../model/receipt/Statement';
 import { TransactionSearch } from '../model/transaction/TransactionSearch';
 import { Transaction } from '../model/transaction/Transaction';
 import {TransactionQueryParams} from './TransactionQueryParams';
+import { RequestOptions } from './RequestOptions';
 
 /**
  * Blockchain interface repository.
@@ -34,7 +35,7 @@ export interface BlockRepository {
      * @param height - Block height
      * @returns Observable<BlockInfo>
      */
-    getBlockByHeight(height: number): Observable<BlockInfo>;
+    getBlockByHeight(height: number, requestOptions?: RequestOptions): Observable<BlockInfo>;
 
     /**
      * Gets array of transactions included in a block for a block height
@@ -43,7 +44,7 @@ export interface BlockRepository {
      * @returns Observable<Transaction[]>
      */
     getBlockTransactions(height: number,
-                         queryParams?: TransactionQueryParams): Observable<Transaction[]>;
+                         queryParams?: TransactionQueryParams, requestOptions?: RequestOptions): Observable<Transaction[]>;
 
     /**
      * Gets array of transactions included in a block for a block height
@@ -52,7 +53,7 @@ export interface BlockRepository {
      * @returns Observable<TransactionSearch>
      */
      getBlockTransactionsWithPagination(height: number,
-        queryParams?: TransactionQueryParams): Observable<TransactionSearch>;
+        queryParams?: TransactionQueryParams, requestOptions?: RequestOptions): Observable<TransactionSearch>;
 
     /**
      * Gets array of BlockInfo for a block height with limit
@@ -61,7 +62,7 @@ export interface BlockRepository {
      * @returns Observable<BlockInfo[]>
      */
 
-    getBlocksByHeightWithLimit(height: number, limit: number): Observable<BlockInfo[]>;
+    getBlocksByHeightWithLimit(height: number, limit: number, requestOptions?: RequestOptions): Observable<BlockInfo[]>;
 
     /**
      * Get the merkle path for a given a receipt statement hash and block
@@ -73,7 +74,7 @@ export interface BlockRepository {
      * @param hash The hash of the receipt statement or resolution.
      * @return Observable<MerkleProofInfo>
      */
-    getMerkleReceipts(height: number, hash: string): Observable<MerkleProofInfo>;
+    getMerkleReceipts(height: number, hash: string, requestOptions?: RequestOptions): Observable<MerkleProofInfo>;
 
     /**
      * Get the merkle path for a given a transaction and block
@@ -85,7 +86,7 @@ export interface BlockRepository {
      * @param hash The hash of the transaction.
      * @return Observable<MerkleProofInfo>
      */
-    getMerkleTransaction(height: number, hash: string): Observable<MerkleProofInfo>;
+    getMerkleTransaction(height: number, hash: string, requestOptions?: RequestOptions): Observable<MerkleProofInfo>;
 
     /**
      * Get receipts from a block
@@ -93,5 +94,5 @@ export interface BlockRepository {
      * @param {Number} height The height of the block.
      * @return Observable<Statement>
      */
-    getBlockReceipts(height: number): Observable<Statement>;
+    getBlockReceipts(height: number, requestOptions?: RequestOptions): Observable<Statement>;
 }

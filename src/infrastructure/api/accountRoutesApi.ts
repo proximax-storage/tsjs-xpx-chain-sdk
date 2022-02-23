@@ -40,6 +40,7 @@ import { TransactionSearchDTO } from '../model/transactionSearchDTO';
 
 import { ObjectSerializer} from '../model/models';
 import {TransactionQueryParams} from '../TransactionQueryParams';
+import { RequestOptions } from '../RequestOptions';
 import { HttpError, RequestFile } from './apis';
 
 let defaultBasePath = 'http://localhost:3000';
@@ -53,7 +54,10 @@ export enum AccountRoutesApiApiKeys {
 
 export class AccountRoutesApi {
     protected _basePath = defaultBasePath;
-    protected _defaultHeaders : any = {};
+    protected _defaultHeaders : { [name: string]: string; } = { 
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    };
     protected _useQuerystring : boolean = false;
 
     constructor(basePath?: string);
@@ -89,12 +93,16 @@ export class AccountRoutesApi {
         return this._basePath;
     }
 
+    combineHeaders(reqOptions?:RequestOptions){
+        return reqOptions ? {...this._defaultHeaders, ...reqOptions.headers} : this._defaultHeaders;
+    }
+
     /**
      * Returns the account information.
      * @summary Get account information
      * @param accountId The public key or address of the account.
      */
-    public async getAccountInfo (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: AccountInfoDTO;  }> {
+    public async getAccountInfo (accountId: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: AccountInfoDTO;  }> {
         const localVarPath = '/account/{accountId}'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
 
@@ -103,12 +111,11 @@ export class AccountRoutesApi {
             throw new Error('Required parameter accountId was null or undefined when calling getAccountInfo.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -135,7 +142,7 @@ export class AccountRoutesApi {
      * @summary Get multisig account information
      * @param accountId The public key or address of the account.
      */
-    public async getAccountMultisig (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: MultisigAccountInfoDTO;  }> {
+    public async getAccountMultisig (accountId: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: MultisigAccountInfoDTO;  }> {
         const localVarPath = '/account/{accountId}/multisig'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
 
@@ -144,12 +151,11 @@ export class AccountRoutesApi {
             throw new Error('Required parameter accountId was null or undefined when calling getAccountMultisig.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -176,7 +182,7 @@ export class AccountRoutesApi {
      * @summary Get multisig account graph information
      * @param accountId The public key or address of the account.
      */
-    public async getAccountMultisigGraph (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<MultisigAccountGraphInfoDTO>;  }> {
+    public async getAccountMultisigGraph (accountId: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<MultisigAccountGraphInfoDTO>;  }> {
         const localVarPath = '/account/{accountId}/multisig/graph'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
 
@@ -185,12 +191,11 @@ export class AccountRoutesApi {
             throw new Error('Required parameter accountId was null or undefined when calling getAccountMultisigGraph.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -217,7 +222,7 @@ export class AccountRoutesApi {
      * @summary Get account configurable properties information
      * @param accountId The public key or address of the account.
      */
-    public async getAccountProperties (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: AccountPropertiesInfoDTO;  }> {
+    public async getAccountProperties (accountId: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: AccountPropertiesInfoDTO;  }> {
         const localVarPath = '/account/{accountId}/properties'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
 
@@ -226,12 +231,11 @@ export class AccountRoutesApi {
             throw new Error('Required parameter accountId was null or undefined when calling getAccountProperties.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -258,7 +262,7 @@ export class AccountRoutesApi {
      * @summary Get account properties for given array of addresses
      * @param accountIds 
      */
-    public async getAccountPropertiesFromAccounts (accountIds: AccountIds, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<AccountPropertiesInfoDTO>;  }> {
+    public async getAccountPropertiesFromAccounts (accountIds: AccountIds, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<AccountPropertiesInfoDTO>;  }> {
         const localVarPath = '/account/properties';
 
         // verify required parameter 'accountIds' is not null or undefined
@@ -266,12 +270,11 @@ export class AccountRoutesApi {
             throw new Error('Required parameter accountIds was null or undefined when calling getAccountPropertiesFromAccounts.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -300,7 +303,7 @@ export class AccountRoutesApi {
      * @summary Get accounts information
      * @param accountIds 
      */
-    public async getAccountsInfo (accountIds: AccountIds, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<AccountInfoDTO>;  }> {
+    public async getAccountsInfo (accountIds: AccountIds, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<AccountInfoDTO>;  }> {
         const localVarPath = '/account';
 
         // verify required parameter 'accountIds' is not null or undefined
@@ -308,12 +311,11 @@ export class AccountRoutesApi {
             throw new Error('Required parameter accountIds was null or undefined when calling getAccountsInfo.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -342,7 +344,7 @@ export class AccountRoutesApi {
      * @summary Get readable names for a set of accountIds.
      * @param accountIds 
      */
-    public async getAccountsNames (accountIds: AccountIds, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<AccountNamesDTO>;  }> {
+    public async getAccountsNames (accountIds: AccountIds, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<AccountNamesDTO>;  }> {
         const localVarPath = '/account/names';
 
         // verify required parameter 'accountIds' is not null or undefined
@@ -350,12 +352,11 @@ export class AccountRoutesApi {
             throw new Error('Required parameter accountIds was null or undefined when calling getAccountsNames.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -387,7 +388,7 @@ export class AccountRoutesApi {
      * @param ordering The ordering criteria: * -id - Descending order by id. * id - Ascending order by id. 
      */
 
-    public async incomingTransactions (plainAddress: string, transactionQueryParams?: TransactionQueryParams, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
+    public async incomingTransactions (plainAddress: string, transactionQueryParams?: TransactionQueryParams, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
         const localVarPath = '/transactions/confirmed';
         // verify required parameter 'plainAddress' is not null or undefined
         if (plainAddress === null || plainAddress === undefined) {
@@ -401,12 +402,11 @@ export class AccountRoutesApi {
         }
         localVarQueryParameters["recipientAddress"] = plainAddress;
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -437,7 +437,7 @@ export class AccountRoutesApi {
      * @param ordering The ordering criteria: * -id - Descending order by id. * id - Ascending order by id. 
      */
     
-    public async outgoingTransactions (publicKey: string, transactionQueryParams?: TransactionQueryParams, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
+    public async outgoingTransactions (publicKey: string, transactionQueryParams?: TransactionQueryParams, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
         const localVarPath = '/transactions/confirmed';
         
         // verify required parameter 'publicKey' is not null or undefined
@@ -452,12 +452,11 @@ export class AccountRoutesApi {
         }
         localVarQueryParameters["signerPublicKey"] = publicKey;
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -491,7 +490,7 @@ export class AccountRoutesApi {
      */
 
     // toChange
-    public async partialTransactions (plainAddress: string, transactionQueryParams?: TransactionQueryParams, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
+    public async partialTransactions (plainAddress: string, transactionQueryParams?: TransactionQueryParams, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
         const localVarPath = '/transactions/partial';
         
         // verify required parameter 'plainAddress' is not null or undefined
@@ -506,12 +505,11 @@ export class AccountRoutesApi {
         }
         localVarQueryParameters["address"] = plainAddress;
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -546,7 +544,7 @@ export class AccountRoutesApi {
      * @param ordering The ordering criteria: * -id - Descending order by id. * id - Ascending order by id. 
      */
 
-    public async transactions (plainAddress: string, transactionQueryParams?: TransactionQueryParams, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
+    public async transactions (plainAddress: string, transactionQueryParams?: TransactionQueryParams, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
         const localVarPath = '/transactions/confirmed'
 
         // verify required parameter 'plainAddress' is not null or undefined
@@ -561,12 +559,11 @@ export class AccountRoutesApi {
         }
         localVarQueryParameters["address"] = plainAddress;
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -598,7 +595,7 @@ export class AccountRoutesApi {
      * @param ordering The ordering criteria. * -id - Descending order by id. * id - Ascending order by id. 
      */
 
-    public async unconfirmedTransactions (plainAddress: string, transactionQueryParams?: TransactionQueryParams, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
+    public async unconfirmedTransactions (plainAddress: string, transactionQueryParams?: TransactionQueryParams, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
         const localVarPath = '/transactions/unconfirmed';
         
         // verify required parameter 'plainAddress' is not null or undefined
@@ -613,12 +610,11 @@ export class AccountRoutesApi {
         }
         localVarQueryParameters["address"] = plainAddress;
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',

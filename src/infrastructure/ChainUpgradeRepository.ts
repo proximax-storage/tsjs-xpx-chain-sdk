@@ -4,6 +4,7 @@
 
 import {Observable} from 'rxjs';
 import { ChainUpgrade } from '../model/model';
+import { RequestOptions } from './RequestOptions';
 
 /**
  * Chain interface repository.
@@ -15,6 +16,6 @@ export interface ChainUpgradeRepository {
      * Gets required version at given height
      * @returns Observable<ChainUpgrade>
      */
-    getChainUpgrade(height: number): Observable<ChainUpgrade>;
+    getChainUpgrade(height: number, requestOptions?: RequestOptions): Observable<ChainUpgrade>;
 
 }

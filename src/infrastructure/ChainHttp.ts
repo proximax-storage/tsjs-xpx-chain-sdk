@@ -21,6 +21,7 @@ import {UInt64} from '../model/UInt64';
 import { ChainRoutesApi } from './api';
 import { ChainRepository } from './ChainRepository';
 import {Http} from './Http';
+import { RequestOptions } from './RequestOptions';
 
 /**
  * Chain http repository.
@@ -47,8 +48,8 @@ export class ChainHttp extends Http implements ChainRepository {
      * Gets current blockchain height
      * @returns Observable<UInt64>
      */
-    public getBlockchainHeight(): Observable<UInt64> {
-        return observableFrom(this.chainRoutesApi.getBlockchainHeight()).pipe(map(response => {
+    public getBlockchainHeight(requestOptions?: RequestOptions): Observable<UInt64> {
+        return observableFrom(this.chainRoutesApi.getBlockchainHeight(requestOptions)).pipe(map(response => {
             return new UInt64(response.body.height);
         }));
     }
@@ -57,8 +58,8 @@ export class ChainHttp extends Http implements ChainRepository {
      * Gets current blockchain score
      * @returns Observable<BlockchainScore>
      */
-    public getBlockchainScore(): Observable<BlockchainScore> {
-        return observableFrom(this.chainRoutesApi.getBlockchainScore()).pipe(map(response => {
+    public getBlockchainScore(requestOptions?: RequestOptions): Observable<BlockchainScore> {
+        return observableFrom(this.chainRoutesApi.getBlockchainScore(requestOptions)).pipe(map(response => {
             const blockchainScoreDTO = response.body;
             return new BlockchainScore(
                 new UInt64(blockchainScoreDTO.scoreLow),

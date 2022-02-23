@@ -20,6 +20,7 @@ import {NetworkType} from '../model/blockchain/NetworkType';
 import { NetworkRoutesApi } from './api';
 import {Http} from './Http';
 import {NetworkRepository} from './NetworkRepository';
+import { RequestOptions } from './RequestOptions';
 
 /**
  * Network http repository.
@@ -48,8 +49,8 @@ export class NetworkHttp extends Http implements NetworkRepository {
      *
      * @return network type enum.
      */
-    public getNetworkType(): Observable<NetworkType> {
-        return observableFrom(this.networkRoutesApi.getNetworkType()).pipe(map(response => {
+    public getNetworkType(requestOptions?: RequestOptions): Observable<NetworkType> {
+        return observableFrom(this.networkRoutesApi.getNetworkType(requestOptions)).pipe(map(response => {
           const networkTypeDTO = response.body;
             if (networkTypeDTO.name === 'mijinTest') {
               return NetworkType.MIJIN_TEST;

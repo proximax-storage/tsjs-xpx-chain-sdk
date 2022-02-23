@@ -22,6 +22,7 @@ import {AxiosRequestConfig, AxiosResponse, AxiosError} from 'axios';
 import { NetworkConfigDTO } from '../model/networkConfigDTO';
 
 import { ObjectSerializer} from '../model/models';
+import { RequestOptions } from '../RequestOptions';
 
 import { HttpError, RequestFile } from './apis';
 
@@ -36,7 +37,10 @@ export enum ConfigRoutesApiApiKeys {
 
 export class ConfigRoutesApi {
     protected _basePath = defaultBasePath;
-    protected _defaultHeaders : any = {};
+    protected _defaultHeaders : { [name: string]: string; } = { 
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    };
     protected _useQuerystring : boolean = false;
 
     constructor(basePath?: string);
@@ -72,21 +76,24 @@ export class ConfigRoutesApi {
         return this._basePath;
     }
 
+    combineHeaders(reqOptions?:RequestOptions){
+        return reqOptions ? {...this._defaultHeaders, ...reqOptions.headers} : this._defaultHeaders;
+    }
+
     /**
      * Gets config of network at height.
      * @summary Get config of network
      * @param height The height of the blockchain to get config.
      */
-    public async getConfig (height: number, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: NetworkConfigDTO;  }> {
+    public async getConfig (height: number, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: NetworkConfigDTO;  }> {
         const localVarPath = '/config/{height}'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)));
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'

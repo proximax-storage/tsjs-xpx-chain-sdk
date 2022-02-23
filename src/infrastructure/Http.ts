@@ -20,6 +20,7 @@ import {NetworkType} from '../model/blockchain/NetworkType';
 import {NetworkHttp} from './NetworkHttp';
 import {PageQueryParams} from './PageQueryParams';
 import { QueryParams } from './QueryParams';
+import { RequestOptions } from './RequestOptions';
 /**
  * Http extended by all http services
  */
@@ -38,10 +39,10 @@ export abstract class Http {
         }
     }
 
-    getNetworkTypeObservable(): Observable<NetworkType> {
+    getNetworkTypeObservable(requestOptions?: RequestOptions): Observable<NetworkType> {
         let networkTypeResolve;
         if (this.networkType == null) {
-            networkTypeResolve = this.networkHttp.getNetworkType().pipe(map((networkType) => {
+            networkTypeResolve = this.networkHttp.getNetworkType(requestOptions).pipe(map((networkType) => {
                 this.networkType = networkType;
                 return networkType;
             }));

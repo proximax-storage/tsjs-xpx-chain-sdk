@@ -19,6 +19,7 @@ import { HashLockWithMeta } from '../model/hashLockWithMeta';
 import { SecretLockWithMeta } from '../model/secretLockWithMeta';
 
 import { ObjectSerializer } from '../model/models';
+import { RequestOptions } from '../RequestOptions';
 
 import { HttpError, RequestFile } from './apis';
 
@@ -33,7 +34,10 @@ export enum LockRoutesApiApiKeys {
 
 export class LockRoutesApi {
     protected _basePath = defaultBasePath;
-    protected _defaultHeaders : any = {};
+    protected _defaultHeaders : { [name: string]: string; } = { 
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    };
     protected _useQuerystring : boolean = false;
 
     constructor(basePath?: string);
@@ -69,12 +73,16 @@ export class LockRoutesApi {
         return this._basePath;
     }
 
+    combineHeaders(reqOptions?:RequestOptions){
+        return reqOptions ? {...this._defaultHeaders, ...reqOptions.headers} : this._defaultHeaders;
+    }
+
     /**
      * Get account lock hash.
      * @summary Get account lock hash
      * @param accountId The public key or address of the account.
      */
-    public async getAccountLockHash (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<HashLockWithMeta>;  }> {
+    public async getAccountLockHash (accountId: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<HashLockWithMeta>;  }> {
         const localVarPath = '/account/{accountId}/lock/hash'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
 
@@ -83,12 +91,11 @@ export class LockRoutesApi {
             throw new Error('Required parameter accountId was null or undefined when calling getAccountLockHash.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -115,7 +122,7 @@ export class LockRoutesApi {
      * @summary Get account lock secret
      * @param accountId The public key or address of the account.
      */
-    public async getAccountLocksecret (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<SecretLockWithMeta>;  }> {
+    public async getAccountLocksecret (accountId: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<SecretLockWithMeta>;  }> {
         const localVarPath = '/account/{accountId}/lock/secret'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
 
@@ -124,12 +131,11 @@ export class LockRoutesApi {
             throw new Error('Required parameter accountId was null or undefined when calling getAccountLocksecret.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -156,7 +162,7 @@ export class LockRoutesApi {
      * @summary Get composite hash
      * @param compositeHash The composite hash of account addres and secret.
      */
-    public async getCompositeHash (compositeHash: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: SecretLockWithMeta;  }> {
+    public async getCompositeHash (compositeHash: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: SecretLockWithMeta;  }> {
         const localVarPath = '/lock/compositeHash/{compositeHash}'
             .replace('{' + 'compositeHash' + '}', encodeURIComponent(String(compositeHash)));
 
@@ -165,12 +171,11 @@ export class LockRoutesApi {
             throw new Error('Required parameter compositeHash was null or undefined when calling getCompositeHash.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -197,7 +202,7 @@ export class LockRoutesApi {
      * @summary Get lock hash
      * @param hash The hash.
      */
-    public async getLockHash (hash: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: HashLockWithMeta;  }> {
+    public async getLockHash (hash: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: HashLockWithMeta;  }> {
         const localVarPath = '/lock/hash/{hash}'
             .replace('{' + 'hash' + '}', encodeURIComponent(String(hash)));
 
@@ -206,12 +211,11 @@ export class LockRoutesApi {
             throw new Error('Required parameter hash was null or undefined when calling getLockHash.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -238,7 +242,7 @@ export class LockRoutesApi {
      * @summary Get secret hash
      * @param secret The proof hashed.
      */
-    public async getSecretHash (secret: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: SecretLockWithMeta;  }> {
+    public async getSecretHash (secret: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: SecretLockWithMeta;  }> {
         const localVarPath = '/lock/secret/{secret}'
             .replace('{' + 'secret' + '}', encodeURIComponent(String(secret)));
 
@@ -247,12 +251,11 @@ export class LockRoutesApi {
             throw new Error('Required parameter secret was null or undefined when calling getSecretHash.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'

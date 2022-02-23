@@ -4,6 +4,7 @@
 
 import {Observable} from 'rxjs';
 import { ChainConfig } from '../model/model';
+import { RequestOptions } from './RequestOptions';
 
 /**
  * Chain interface repository.
@@ -15,6 +16,6 @@ export interface ChainConfigRepository {
      * Gets config at given height
      * @returns Observable<ChainConfig>
      */
-    getChainConfig(height: number): Observable<ChainConfig>;
+    getChainConfig(height: number, requestOptions?: RequestOptions): Observable<ChainConfig>;
 
 }

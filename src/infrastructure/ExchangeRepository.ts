@@ -4,6 +4,7 @@
 
 import {Observable} from 'rxjs';
 import { MosaicExchange, AccountExchanges, MosaicId, Address, PublicAccount, ExchangeOfferType } from '../model/model';
+import { RequestOptions } from './RequestOptions';
 
 /**
  * ExchangeRepository interface repository.
@@ -17,7 +18,7 @@ export interface ExchangeRepository {
      * @param accountId - Account public key or address
      * @returns Observable<AccountExchanges | undefined>
      */
-    getAccountExchanges(accountId: Address | PublicAccount): Observable<AccountExchanges | undefined>;
+    getAccountExchanges(accountId: Address | PublicAccount, requestOptions?: RequestOptions): Observable<AccountExchanges | undefined>;
 
     /**
      * Gets exchanges for a given mosaic id
@@ -25,12 +26,12 @@ export interface ExchangeRepository {
      * @param mosaicId
      * @returns Observable<MosaicExchanges[]>
      */
-    getExchangeOffers(offerType: ExchangeOfferType, mosaicId: MosaicId): Observable<MosaicExchange[]>;
+    getExchangeOffers(offerType: ExchangeOfferType, mosaicId: MosaicId, requestOptions?: RequestOptions): Observable<MosaicExchange[]>;
 
     /**
      * Get offering mosaics id 
      * @returns Observable<MosaicId[]>
      */
-     getOfferList(): Observable<MosaicId[]>;
+     getOfferList(requestOptions?: RequestOptions): Observable<MosaicId[]>;
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 NEM
+ * Copyright 2021 ProximaX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,8 @@
  * limitations under the License.
  */
 
-import {Observable} from 'rxjs';
-import {NetworkType} from '../model/blockchain/NetworkType';
-import { RequestOptions } from './RequestOptions';
+export class RequestOptions{
 
-/**
- * Network interface repository.
- *
- * @since 1.0
- */
-export interface NetworkRepository {
-
-    /**
-     * Get current network type.
-     * @return network type enum.
-     */
-    getNetworkType(requestOptions?: RequestOptions): Observable<NetworkType>;
+    constructor(public readonly headers: { [name: string]: string; } = {}){
+    }
 }

@@ -35,6 +35,7 @@ import { MosaicInfoDTO } from '../model/mosaicInfoDTO';
 import { MosaicNamesDTO } from '../model/mosaicNamesDTO';
 import { MosaicRichListDTO } from '../model/mosaicRichListDTO';
 import { MosaicLevyDTO } from '../model/mosaicLevyDTO';
+import { RequestOptions } from '../RequestOptions';
 
 import { ObjectSerializer } from '../model/models';
 
@@ -51,7 +52,10 @@ export enum MosaicRoutesApiApiKeys {
 
 export class MosaicRoutesApi {
     protected _basePath = defaultBasePath;
-    protected _defaultHeaders : any = {};
+    protected _defaultHeaders : { [name: string]: string; } = { 
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    };
     protected _useQuerystring : boolean = false;
 
     constructor(basePath?: string);
@@ -87,12 +91,16 @@ export class MosaicRoutesApi {
         return this._basePath;
     }
 
+    combineHeaders(reqOptions?:RequestOptions){
+        return reqOptions ? {...this._defaultHeaders, ...reqOptions.headers} : this._defaultHeaders;
+    }
+
     /**
      * Gets the mosaic definition for a given mosaicId.
      * @summary Get mosaic information
      * @param mosaicId The mosaic identifier.
      */
-    public async getMosaic (mosaicId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: MosaicInfoDTO;  }> {
+    public async getMosaic (mosaicId: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: MosaicInfoDTO;  }> {
         const localVarPath = '/mosaic/{mosaicId}'
             .replace('{' + 'mosaicId' + '}', encodeURIComponent(String(mosaicId)));
 
@@ -101,12 +109,11 @@ export class MosaicRoutesApi {
             throw new Error('Required parameter mosaicId was null or undefined when calling getMosaic.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -135,7 +142,7 @@ export class MosaicRoutesApi {
      * @param page The page of list (starts at 0).
      * @param pageSize The count of items on a page (max 100, default 25).
      */
-    public async getMosaicRichList (mosaicId: string, page?: number, pageSize?: number, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<MosaicRichListDTO>;  }> {
+    public async getMosaicRichList (mosaicId: string, page?: number, pageSize?: number, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<MosaicRichListDTO>;  }> {
         const localVarPath = '/mosaic/{mosaicId}/richlist'
             .replace('{' + 'mosaicId' + '}', encodeURIComponent(String(mosaicId)));
         let localVarQueryParameters: any = {};
@@ -153,12 +160,11 @@ export class MosaicRoutesApi {
             localVarQueryParameters['pageSize'] = ObjectSerializer.serialize(pageSize, "number");
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -185,7 +191,7 @@ export class MosaicRoutesApi {
      * @summary Get mosaics information for an array of mosaics
      * @param mosaicIds 
      */
-    public async getMosaics (mosaicIds: MosaicIds, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<MosaicInfoDTO>;  }> {
+    public async getMosaics (mosaicIds: MosaicIds, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<MosaicInfoDTO>;  }> {
         const localVarPath = '/mosaic';
 
         // verify required parameter 'mosaicIds' is not null or undefined
@@ -193,12 +199,11 @@ export class MosaicRoutesApi {
             throw new Error('Required parameter mosaicIds was null or undefined when calling getMosaics.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -226,7 +231,7 @@ export class MosaicRoutesApi {
      * @summary Get readable names for a set of mosaics
      * @param mosaicIds 
      */
-    public async getMosaicsNames (mosaicIds: MosaicIds, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<MosaicNamesDTO>;  }> {
+    public async getMosaicsNames (mosaicIds: MosaicIds, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<MosaicNamesDTO>;  }> {
         const localVarPath = '/mosaic/names';
         let localVarQueryParameters: any = {};
 
@@ -235,12 +240,11 @@ export class MosaicRoutesApi {
             throw new Error('Required parameter mosaicIds was null or undefined when calling getMosaicsNames.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -269,7 +273,7 @@ export class MosaicRoutesApi {
      * @summary Get mosaic levy information for a mosaic
      * @param mosaicId 
      */
-     public async getMosaicLevy (mosaicId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: MosaicLevyDTO;  }> {
+     public async getMosaicLevy (mosaicId: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: MosaicLevyDTO;  }> {
         const localVarPath = '/mosaic/{mosaicId}/levy'
             .replace('{' + 'mosaicId' + '}', encodeURIComponent(String(mosaicId)));;
 
@@ -278,12 +282,11 @@ export class MosaicRoutesApi {
             throw new Error('Required parameter mosaicId was null or undefined when calling getMosaicLevy.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
