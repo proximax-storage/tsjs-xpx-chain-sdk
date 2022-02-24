@@ -37,6 +37,7 @@ import { TransactionInfoDTO } from '../model/transactionInfoDTO';
 import { TransactionSearchDTO } from '../model/transactionSearchDTO';
 
 import { ObjectSerializer} from '../model/models';
+import { RequestOptions } from '../RequestOptions';
 
 import { HttpError, RequestFile } from './apis';
 import { TransactionQueryParams } from '../TransactionQueryParams';
@@ -52,7 +53,10 @@ export enum BlockRoutesApiApiKeys {
 
 export class BlockRoutesApi {
     protected _basePath = defaultBasePath;
-    protected _defaultHeaders : any = {};
+    protected _defaultHeaders : { [name: string]: string; } = { 
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    };
     protected _useQuerystring : boolean = false;
 
     constructor(basePath?: string);
@@ -88,12 +92,16 @@ export class BlockRoutesApi {
         return this._basePath;
     }
 
+    combineHeaders(reqOptions?:RequestOptions){
+        return reqOptions ? {...this._defaultHeaders, ...reqOptions.headers} : this._defaultHeaders;
+    }
+
     /**
      * Gets a block from the chain that has the given height.
      * @summary Get block information
      * @param height The height of the block.
      */
-    public async getBlockByHeight (height: number, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: BlockInfoDTO;  }> {
+    public async getBlockByHeight (height: number, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: BlockInfoDTO;  }> {
         const localVarPath = '/block/{height}'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)));
         let localVarQueryParameters: any = {};
@@ -103,12 +111,11 @@ export class BlockRoutesApi {
             throw new Error('Required parameter height was null or undefined when calling getBlockByHeight.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -135,7 +142,7 @@ export class BlockRoutesApi {
      * @summary Get receipts from a block
      * @param height The height of the block.
      */
-    public async getBlockReceipts (height: number, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: StatementsDTO;  }> {
+    public async getBlockReceipts (height: number, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: StatementsDTO;  }> {
         const localVarPath = '/block/{height}/receipts'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)));
 
@@ -144,12 +151,11 @@ export class BlockRoutesApi {
             throw new Error('Required parameter height was null or undefined when calling getBlockReceipts.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -177,7 +183,7 @@ export class BlockRoutesApi {
      * @param transaction Query Params
      * @param id The transaction id up to which transactions are returned.
      */
-    public async getBlockTransactions (height: number, transactionQueryParams?: TransactionQueryParams, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
+    public async getBlockTransactions (height: number, transactionQueryParams?: TransactionQueryParams, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
         const localVarPath = '/transactions/confirmed';
         
         // verify required parameter 'height' is not null or undefined
@@ -194,12 +200,11 @@ export class BlockRoutesApi {
         localVarQueryParameters['height'] = height;
         localVarQueryParameters['embedded'] = "true";
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -228,7 +233,7 @@ export class BlockRoutesApi {
      * @param height The height of the block. If height -1 is not a multiple of the limit provided, the inferior closest multiple + 1 is used instead.
      * @param limit The number of blocks to be returned.
      */
-    public async getBlocksByHeightWithLimit (height: number, limit: 25 | 50 | 75 | 100, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<BlockInfoDTO>;  }> {
+    public async getBlocksByHeightWithLimit (height: number, limit: 25 | 50 | 75 | 100, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<BlockInfoDTO>;  }> {
         const localVarPath = '/blocks/{height}/limit/{limit}'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)))
             .replace('{' + 'limit' + '}', encodeURIComponent(String(limit)));
@@ -244,12 +249,11 @@ export class BlockRoutesApi {
             throw new Error('Required parameter limit was null or undefined when calling getBlocksByHeightWithLimit.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -277,7 +281,7 @@ export class BlockRoutesApi {
      * @param height The height of the block.
      * @param hash The hash of the receipt statement or resolution.
      */
-    public async getMerkleReceipts (height: number, hash: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: MerkleProofInfoDTO;  }> {
+    public async getMerkleReceipts (height: number, hash: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: MerkleProofInfoDTO;  }> {
         const localVarPath = '/block/{height}/receipt/{hash}/merkle'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)))
             .replace('{' + 'hash' + '}', encodeURIComponent(String(hash)));
@@ -293,12 +297,11 @@ export class BlockRoutesApi {
             throw new Error('Required parameter hash was null or undefined when calling getMerkleReceipts.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -326,7 +329,7 @@ export class BlockRoutesApi {
      * @param height The height of the block.
      * @param hash The hash of the transaction.
      */
-    public async getMerkleTransaction (height: number, hash: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: MerkleProofInfoDTO;  }> {
+    public async getMerkleTransaction (height: number, hash: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: MerkleProofInfoDTO;  }> {
         const localVarPath = '/block/{height}/transaction/{hash}/merkle'
             .replace('{' + 'height' + '}', encodeURIComponent(String(height)))
             .replace('{' + 'hash' + '}', encodeURIComponent(String(hash)));
@@ -341,12 +344,11 @@ export class BlockRoutesApi {
             throw new Error('Required parameter hash was null or undefined when calling getMerkleTransaction.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'

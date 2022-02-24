@@ -17,6 +17,7 @@ import {AxiosRequestConfig, AxiosResponse, AxiosError} from 'axios';
 /* tslint:disable:no-unused-locals */
 import { InlineResponse2001 } from '../model/inlineResponse2001';
 import { RolesTypeEnum } from '../model/rolesTypeEnum';
+import { RequestOptions } from '../RequestOptions';
 
 import { ObjectSerializer } from '../model/models';
 
@@ -33,7 +34,10 @@ export enum ServiceRoutesApiApiKeys {
 
 export class ServiceRoutesApi {
     protected _basePath = defaultBasePath;
-    protected _defaultHeaders : any = {};
+    protected _defaultHeaders : { [name: string]: string; } = { 
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    };
     protected _useQuerystring : boolean = false;
 
     constructor(basePath?: string);
@@ -68,13 +72,17 @@ export class ServiceRoutesApi {
     get basePath() {
         return this._basePath;
     }
+    
+    combineHeaders(reqOptions?:RequestOptions){
+        return reqOptions ? {...this._defaultHeaders, ...reqOptions.headers} : this._defaultHeaders;
+    }
 
     /**
      * Get drive by accountId.
      * @summary Get drive by accountId
      * @param accountId ID of a drive.
      */
-    public async getAccountDrives (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: InlineResponse2001;  }> {
+    public async getAccountDrives (accountId: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: InlineResponse2001;  }> {
         const localVarPath = '/drive/{accountId}'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
         let localVarQueryParameters: any = {};
@@ -84,12 +92,11 @@ export class ServiceRoutesApi {
             throw new Error('Required parameter accountId was null or undefined when calling getAccountDrives.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -116,7 +123,7 @@ export class ServiceRoutesApi {
      * @summary Get drive by id
      * @param accountId ID of a drive.
      */
-    public async getDrive (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<object>;  }> {
+    public async getDrive (accountId: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<object>;  }> {
         const localVarPath = '/account/{accountId}/drive'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
         let localVarQueryParameters: any = {};
@@ -126,12 +133,11 @@ export class ServiceRoutesApi {
             throw new Error('Required parameter accountId was null or undefined when calling getDrive.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -159,7 +165,7 @@ export class ServiceRoutesApi {
      * @param accountId ID of a drive.
      * @param role Role in drive (owner or replicator).
      */
-    public async getDriveByRole (accountId: string, role: RolesTypeEnum, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<object>;  }> {
+    public async getDriveByRole (accountId: string, role: RolesTypeEnum, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<object>;  }> {
         const localVarPath = '/account/{accountId}/drive/{role}'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)))
             .replace('{' + 'role' + '}', encodeURIComponent(String(role)));
@@ -175,12 +181,11 @@ export class ServiceRoutesApi {
             throw new Error('Required parameter role was null or undefined when calling getDriveByRole.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'

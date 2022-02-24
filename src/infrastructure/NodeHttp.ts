@@ -21,6 +21,7 @@ import { NodeTime } from '../model/node/NodeTime';
 import { NodeRoutesApi } from './api';
 import {Http} from './Http';
 import {NodeRepository} from './NodeRepository';
+import { RequestOptions } from './RequestOptions';
 
 /**
  * Node http repository.
@@ -48,8 +49,8 @@ export class NodeHttp extends Http implements NodeRepository {
      * Supplies additional information about the application running on a node.
      * @summary Get the node information
      */
-    public getNodeInfo(): Observable<NodeInfo> {
-        return observableFrom(this.nodeRoutesApi.getNodeInfo()).pipe(map(response => {
+    public getNodeInfo(requestOptions?: RequestOptions): Observable<NodeInfo> {
+        return observableFrom(this.nodeRoutesApi.getNodeInfo(requestOptions)).pipe(map(response => {
             const nodeInfoDTO = response.body;
             return new NodeInfo(
                 nodeInfoDTO.publicKey,
@@ -67,8 +68,8 @@ export class NodeHttp extends Http implements NodeRepository {
      * Gets the node time at the moment the reply was sent and received.
      * @summary Get the node time
      */
-    public getNodeTime(): Observable<NodeTime> {
-        return observableFrom(this.nodeRoutesApi.getNodeTime()).pipe(map(response => {
+    public getNodeTime(requestOptions?: RequestOptions): Observable<NodeTime> {
+        return observableFrom(this.nodeRoutesApi.getNodeTime(requestOptions)).pipe(map(response => {
             const nodeTimeDTO = response.body;
             return new NodeTime(nodeTimeDTO.communicationTimestamps.sendTimestamp, nodeTimeDTO.communicationTimestamps.receiveTimestamp);
         }));

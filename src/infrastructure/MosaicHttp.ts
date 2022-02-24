@@ -31,7 +31,8 @@ import {MosaicRepository} from './MosaicRepository';
 import {NetworkHttp} from './NetworkHttp';
 import { RichlistEntry, Address } from '../model/model';
 import { PageQueryParams } from './PageQueryParams';
-import { MosaicLevy } from "../model/mosaic/MosaicLevy"
+import { MosaicLevy } from "../model/mosaic/MosaicLevy";
+import { RequestOptions } from './RequestOptions';
 
 /**
  * Mosaic http repository.
@@ -61,10 +62,10 @@ export class MosaicHttp extends Http implements MosaicRepository {
      * @param mosaicId - Mosaic id
      * @returns Observable<MosaicInfo>
      */
-    public getMosaic(mosaicId: MosaicId): Observable<MosaicInfo> {
-        return this.getNetworkTypeObservable().pipe(
+    public getMosaic(mosaicId: MosaicId, requestOptions?: RequestOptions): Observable<MosaicInfo> {
+        return this.getNetworkTypeObservable(requestOptions).pipe(
             mergeMap((networkType) => observableFrom(
-                this.mosaicRoutesApi.getMosaic(mosaicId.toHex())).pipe(map(response => {
+                this.mosaicRoutesApi.getMosaic(mosaicId.toHex(), requestOptions)).pipe(map(response => {
                     const mosaicInfoDTO = response.body;
                     let mosaicFlag;
                     let divisibility;
@@ -99,13 +100,13 @@ export class MosaicHttp extends Http implements MosaicRepository {
      * @param mosaicIds - Array of mosaic ids
      * @returns Observable<MosaicInfo[]>
      */
-    public getMosaics(mosaicIds: MosaicId[]): Observable<MosaicInfo[]> {
+    public getMosaics(mosaicIds: MosaicId[], requestOptions?: RequestOptions): Observable<MosaicInfo[]> {
         const mosaicIdsBody = {
             mosaicIds: mosaicIds.map((id) => id.toHex()),
         };
-        return this.getNetworkTypeObservable().pipe(
+        return this.getNetworkTypeObservable(requestOptions).pipe(
             mergeMap((networkType) => observableFrom(
-                this.mosaicRoutesApi.getMosaics(mosaicIdsBody)).pipe(map(response => {
+                this.mosaicRoutesApi.getMosaics(mosaicIdsBody, requestOptions)).pipe(map(response => {
                 return response.body.map((mosaicInfoDTO) => {
                     let mosaicFlag;
                     let divisibility;
@@ -142,12 +143,12 @@ export class MosaicHttp extends Http implements MosaicRepository {
      * @param mosaicIds - Array of mosaic ids
      * @return Observable<MosaicNames[]>
      */
-    public getMosaicsNames(mosaicIds: MosaicId[]): Observable<MosaicNames[]> {
+    public getMosaicsNames(mosaicIds: MosaicId[], requestOptions?: RequestOptions): Observable<MosaicNames[]> {
         const mosaicIdsBody = {
             mosaicIds: mosaicIds.map((id) => id.toHex()),
         };
         return observableFrom(
-            this.mosaicRoutesApi.getMosaicsNames(mosaicIdsBody)).pipe(map(response => {
+            this.mosaicRoutesApi.getMosaicsNames(mosaicIdsBody, requestOptions)).pipe(map(response => {
             return response.body.map((mosaic) => {
                 return new MosaicNames(
                     new MosaicId(mosaic.mosaicId),
@@ -165,12 +166,13 @@ export class MosaicHttp extends Http implements MosaicRepository {
      * @param queryParams - (Optional) Page query params
      * @returns Observable<RichlistEntry[]>
      */
-    getMosaicRichlist(mosaicId: MosaicId, queryParams?: PageQueryParams): Observable<RichlistEntry[]> {
+    getMosaicRichlist(mosaicId: MosaicId, queryParams?: PageQueryParams, requestOptions?: RequestOptions): Observable<RichlistEntry[]> {
         return observableFrom(
             this.mosaicRoutesApi.getMosaicRichList(
                 mosaicId.toHex(),
                 this.pageQueryParams(queryParams).page,
                 this.pageQueryParams(queryParams).pageSize,
+                requestOptions
             )).pipe(map(response => {
             return response.body.map((richlistEntryDTO) => {
                 return RichlistEntry.create(
@@ -187,10 +189,11 @@ export class MosaicHttp extends Http implements MosaicRepository {
      * @param mosaicId - Mosaic id
      * @returns Observable<MosaicLevy>
      */
-     getMosaicLevy(mosaicId: MosaicId): Observable<MosaicLevy> {
+     getMosaicLevy(mosaicId: MosaicId, requestOptions?: RequestOptions): Observable<MosaicLevy> {
         return observableFrom(
             this.mosaicRoutesApi.getMosaicLevy(
-                mosaicId.toHex()
+                mosaicId.toHex(),
+                requestOptions
             )).pipe(map(mosaicLevyDTO => {
                 return new MosaicLevy(
                     mosaicLevyDTO.body.type, 

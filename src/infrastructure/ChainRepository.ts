@@ -17,6 +17,7 @@
 import {Observable} from 'rxjs';
 import {BlockchainScore} from '../model/blockchain/BlockchainScore';
 import { UInt64 } from '../model/UInt64';
+import { RequestOptions } from './RequestOptions';
 
 /**
  * Chain interface repository.
@@ -28,11 +29,11 @@ export interface ChainRepository {
      * Gets current blockchain height
      * @returns Observable<UInt64>
      */
-    getBlockchainHeight(): Observable<UInt64>;
+    getBlockchainHeight(requestOptions?: RequestOptions): Observable<UInt64>;
 
     /**
      * Gets current blockchain score
      * @returns Observable<BlockchainScore>
      */
-    getBlockchainScore(): Observable<BlockchainScore>;
+    getBlockchainScore(requestOptions?: RequestOptions): Observable<BlockchainScore>;
 }

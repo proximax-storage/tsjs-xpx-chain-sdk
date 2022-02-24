@@ -39,6 +39,7 @@ import { TransactionInfoDTO } from '../model/transactionInfoDTO';
 import { TransactionCountDTO } from '../model/transactionCountDTO';
 import { TransactionPayload } from '../model/transactionPayload';
 import { TransactionStatusDTO } from '../model/transactionStatusDTO';
+import { RequestOptions } from '../RequestOptions';
 
 import { ObjectSerializer} from '../model/models';
 
@@ -57,7 +58,10 @@ export enum TransactionRoutesApiApiKeys {
 
 export class TransactionRoutesApi {
     protected _basePath = defaultBasePath;
-    protected _defaultHeaders : any = {};
+    protected _defaultHeaders : { [name: string]: string; } = { 
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    };
     protected _useQuerystring : boolean = false;
 
     constructor(basePath?: string);
@@ -93,12 +97,16 @@ export class TransactionRoutesApi {
         return this._basePath;
     }
 
+    combineHeaders(reqOptions?:RequestOptions){
+        return reqOptions ? {...this._defaultHeaders, ...reqOptions.headers} : this._defaultHeaders;
+    }
+
     /**
      * Announces a [cosignature transaction](https://nemtech.github.io/concepts/aggregate-transaction.html#cosignature-transaction) to the network.
      * @summary Announce a cosignature transaction
      * @param cosignature 
      */
-    public async announceCosignatureTransaction (cosignature: Cosignature, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: AnnounceTransactionInfoDTO;  }> {
+    public async announceCosignatureTransaction (cosignature: Cosignature, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: AnnounceTransactionInfoDTO;  }> {
         const localVarPath = '/transactions/cosignature';
 
         // verify required parameter 'cosignature' is not null or undefined
@@ -106,12 +114,11 @@ export class TransactionRoutesApi {
             throw new Error('Required parameter cosignature was null or undefined when calling announceCosignatureTransaction.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'PUT',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -139,7 +146,7 @@ export class TransactionRoutesApi {
      * @summary Announce an aggregate bonded transaction
      * @param transactionPayload 
      */
-    public async announcePartialTransaction (transactionPayload: TransactionPayload, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: AnnounceTransactionInfoDTO;  }> {
+    public async announcePartialTransaction (transactionPayload: TransactionPayload, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: AnnounceTransactionInfoDTO;  }> {
         const localVarPath = '/transactions/partial';
 
         // verify required parameter 'transactionPayload' is not null or undefined
@@ -147,12 +154,11 @@ export class TransactionRoutesApi {
             throw new Error('Required parameter transactionPayload was null or undefined when calling announcePartialTransaction.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'PUT',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -180,7 +186,7 @@ export class TransactionRoutesApi {
      * @summary Announce a new transaction
      * @param transactionPayload 
      */
-    public async announceTransaction (transactionPayload: TransactionPayload, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: AnnounceTransactionInfoDTO;  }> {
+    public async announceTransaction (transactionPayload: TransactionPayload, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: AnnounceTransactionInfoDTO;  }> {
         const localVarPath = '/transactions';
 
         // verify required parameter 'transactionPayload' is not null or undefined
@@ -188,12 +194,11 @@ export class TransactionRoutesApi {
             throw new Error('Required parameter transactionPayload was null or undefined when calling announceTransaction.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'PUT',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -221,7 +226,7 @@ export class TransactionRoutesApi {
      * @summary Get transaction information
      * @param transactionId The transaction id or hash.
      */
-    public async getTransaction (transactionId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: TransactionInfoDTO;  }> {
+    public async getTransaction (transactionId: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: TransactionInfoDTO;  }> {
         const localVarPath = '/transactions/confirmed/{transactionId}'
             .replace('{' + 'transactionId' + '}', encodeURIComponent(String(transactionId)));
         let localVarQueryParameters: any = {};
@@ -231,12 +236,11 @@ export class TransactionRoutesApi {
             throw new Error('Required parameter transactionId was null or undefined when calling getTransaction.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -264,7 +268,7 @@ export class TransactionRoutesApi {
      * @summary Get transaction status
      * @param hash The transaction hash.
      */
-    public async getTransactionStatus (hash: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: TransactionStatusDTO;  }> {
+    public async getTransactionStatus (hash: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: TransactionStatusDTO;  }> {
         const localVarPath = '/transactionStatus/{hash}'
             .replace('{' + 'hash' + '}', encodeURIComponent(String(hash)));
 
@@ -273,12 +277,11 @@ export class TransactionRoutesApi {
             throw new Error('Required parameter hash was null or undefined when calling getTransactionStatus.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -305,7 +308,7 @@ export class TransactionRoutesApi {
      * @summary Get transactions information
      * @param transactionIds 
      */
-    public async getTransactions (transactionIds: TransactionIds, groupType: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<TransactionInfoDTO>;  }> {
+    public async getTransactions (transactionIds: TransactionIds, groupType: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<TransactionInfoDTO>;  }> {
         const localVarPath = '/transactions/{group}'
             .replace('{' + 'group' + '}', encodeURIComponent(String(groupType)));
 
@@ -314,12 +317,11 @@ export class TransactionRoutesApi {
             throw new Error('Required parameter transactionIds was null or undefined when calling getTransactions.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers:requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -348,7 +350,7 @@ export class TransactionRoutesApi {
      * @summary Get transactionTypes count
      * @param transactionTypes 
      */
-     public async getTransactionsCount (transactionTypes: TransactionTypes, groupType: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<TransactionCountDTO>;  }> {
+     public async getTransactionsCount (transactionTypes: TransactionTypes, groupType: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<TransactionCountDTO>;  }> {
         const localVarPath = '/transactions/count';
 
         // verify required parameter 'transactionIds' is not null or undefined
@@ -356,12 +358,11 @@ export class TransactionRoutesApi {
             throw new Error('Required parameter transactionTypes was null or undefined when calling getTransactionsCount.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -389,7 +390,7 @@ export class TransactionRoutesApi {
      * @summary Get transactions status.
      * @param transactionHashes 
      */
-    public async getTransactionsStatuses (transactionHashes: TransactionHashes, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<TransactionStatusDTO>;  }> {
+    public async getTransactionsStatuses (transactionHashes: TransactionHashes, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<TransactionStatusDTO>;  }> {
         const localVarPath = '/transactionStatus';
 
         // verify required parameter 'transactionHashes' is not null or undefined
@@ -397,12 +398,11 @@ export class TransactionRoutesApi {
             throw new Error('Required parameter transactionHashes was null or undefined when calling getTransactionsStatuses.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -431,7 +431,7 @@ export class TransactionRoutesApi {
      * @summary Get transactions information
      * @param transactionId
      */
-     public async searchTransaction(searchType: string, txnHash: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
+     public async searchTransaction(searchType: string, txnHash: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
         const localVarPath = '/transactions/{searchType}/{txnHash}'
                 .replace('{' + 'searchType' + '}', encodeURIComponent(String(searchType)))
                 .replace('{' + 'txnHash' + '}', encodeURIComponent(String(txnHash)))
@@ -442,12 +442,11 @@ export class TransactionRoutesApi {
             throw new Error('Required parameter searchType was null or undefined when calling searchTransaction.');
         }
         
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',
@@ -477,7 +476,7 @@ export class TransactionRoutesApi {
      * @param searchType - transaction gtoup type
      * @param queryParams - transaction query params 
      */
-     public async searchTransactions (searchType: string, queryParams?: TransactionQueryParams, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
+     public async searchTransactions (searchType: string, queryParams?: TransactionQueryParams, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
         const localVarPath = '/transactions/{searchType}'
                 .replace('{' + 'searchType' + '}', encodeURIComponent(String(searchType)));
         
@@ -491,13 +490,12 @@ export class TransactionRoutesApi {
         if(queryParams){
             localVarQueryParameters = queryParams.buildQueryParams();
         }
+
+        let requestHeaders = this.combineHeaders(reqOptions);
         
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json',

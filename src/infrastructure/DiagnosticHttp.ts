@@ -21,6 +21,7 @@ import { ServerInfo } from '../model/diagnostic/ServerInfo';
 import { DiagnosticRoutesApi } from './api';
 import {DiagnosticRepository} from './DiagnosticRepository';
 import {Http} from './Http';
+import { RequestOptions } from './RequestOptions';
 
 /**
  * Diagnostic http repository.
@@ -47,9 +48,9 @@ export class DiagnosticHttp extends Http implements DiagnosticRepository {
      * Gets blockchain storage info.
      * @returns Observable<BlockchainStorageInfo>
      */
-    public getDiagnosticStorage(): Observable<BlockchainStorageInfo> {
+    public getDiagnosticStorage(requestOptions?: RequestOptions): Observable<BlockchainStorageInfo> {
         return observableFrom(
-            this.diagnosticRoutesApi.getDiagnosticStorage()).pipe(map(response => {
+            this.diagnosticRoutesApi.getDiagnosticStorage(requestOptions)).pipe(map(response => {
                 const blockchainStorageInfoDTO = response.body;
             return new BlockchainStorageInfo(
                 blockchainStorageInfoDTO.numBlocks,
@@ -63,9 +64,9 @@ export class DiagnosticHttp extends Http implements DiagnosticRepository {
      * Gets blockchain server info.
      * @returns Observable<Server>
      */
-    public getServerInfo(): Observable<ServerInfo> {
+    public getServerInfo(requestOptions?: RequestOptions): Observable<ServerInfo> {
         return observableFrom(
-            this.diagnosticRoutesApi.getServerInfo()).pipe(map(response => {
+            this.diagnosticRoutesApi.getServerInfo(requestOptions)).pipe(map(response => {
                 const serverDTO = response.body;
             return new ServerInfo(serverDTO.serverInfo.restVersion,
                 serverDTO.serverInfo.sdkVersion);

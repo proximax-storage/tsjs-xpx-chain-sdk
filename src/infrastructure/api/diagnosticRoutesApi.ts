@@ -33,6 +33,7 @@ import {AxiosRequestConfig, AxiosResponse, AxiosError} from 'axios';
 import { ServerDTO } from '../model/serverDTO';
 import { StorageInfoDTO } from '../model/storageInfoDTO';
 
+import { RequestOptions } from '../RequestOptions';
 import { ObjectSerializer } from '../model/models';
 
 import { HttpError, RequestFile } from './apis';
@@ -48,7 +49,10 @@ export enum DiagnosticRoutesApiApiKeys {
 
 export class DiagnosticRoutesApi {
     protected _basePath = defaultBasePath;
-    protected _defaultHeaders : any = {};
+    protected _defaultHeaders : { [name: string]: string; } = { 
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    };
     protected _useQuerystring : boolean = false;
 
     constructor(basePath?: string);
@@ -84,18 +88,20 @@ export class DiagnosticRoutesApi {
         return this._basePath;
     }
 
+    combineHeaders(reqOptions?:RequestOptions){
+        return reqOptions ? {...this._defaultHeaders, ...reqOptions.headers} : this._defaultHeaders;
+    }
+
     /**
      * Returns diagnostic information about the node storage.
      * @summary Get the storage information of the node
      */
-    public async getDiagnosticStorage (options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: StorageInfoDTO;  }> {
+    public async getDiagnosticStorage (reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: StorageInfoDTO;  }> {
         const localVarPath = '/diagnostic/storage';
+        let requestHeaders = this.combineHeaders(reqOptions);
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -121,14 +127,12 @@ export class DiagnosticRoutesApi {
      * Returns the version of the running rest component.
      * @summary Get the version of the running rest component
      */
-    public async getServerInfo (options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: ServerDTO;  }> {
+    public async getServerInfo (reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: ServerDTO;  }> {
         const localVarPath = '/diagnostic/server';
+        let requestHeaders = this.combineHeaders(reqOptions);
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'

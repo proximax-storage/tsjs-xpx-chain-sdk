@@ -33,6 +33,7 @@
 import { NetworkTypeDTO } from '../model/networkTypeDTO';
 
 import { ObjectSerializer } from '../model/models';
+import { RequestOptions } from '../RequestOptions';
 
 import { HttpError, RequestFile } from './apis';
 
@@ -47,7 +48,10 @@ export enum NetworkRoutesApiApiKeys {
 
 export class NetworkRoutesApi {
     protected _basePath = defaultBasePath;
-    protected _defaultHeaders : any = {};
+    protected _defaultHeaders : { [name: string]: string; } = { 
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    };
     protected _useQuerystring : boolean = false;
 
     constructor(basePath?: string);
@@ -83,20 +87,22 @@ export class NetworkRoutesApi {
         return this._basePath;
     }
 
+    combineHeaders(reqOptions?:RequestOptions){
+        return reqOptions ? {...this._defaultHeaders, ...reqOptions.headers} : this._defaultHeaders;
+    }
+
     /**
      * Returns the current network type.
      * @summary Get the current network type of the chain
      */
-    public async getNetworkType (options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: NetworkTypeDTO;  }> {
+    public async getNetworkType (reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: NetworkTypeDTO;  }> {
         const localVarPath = '/network';
         let localVarQueryParameters: any = {};
+        let requestHeaders = this.combineHeaders(reqOptions);
 
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'

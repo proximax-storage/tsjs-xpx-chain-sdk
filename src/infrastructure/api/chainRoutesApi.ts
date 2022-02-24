@@ -33,6 +33,7 @@ import { BlockchainScoreDTO } from '../model/blockchainScoreDTO';
 import { HeightInfoDTO } from '../model/heightInfoDTO';
 
 import { ObjectSerializer } from '../model/models';
+import { RequestOptions } from '../RequestOptions';
 
 import { HttpError, RequestFile } from './apis';
 
@@ -47,7 +48,10 @@ export enum ChainRoutesApiApiKeys {
 
 export class ChainRoutesApi {
     protected _basePath = defaultBasePath;
-    protected _defaultHeaders : any = {};
+    protected _defaultHeaders : { [name: string]: string; } = { 
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    };
     protected _useQuerystring : boolean = false;
 
     constructor(basePath?: string);
@@ -83,19 +87,22 @@ export class ChainRoutesApi {
         return this._basePath;
     }
 
+    combineHeaders(reqOptions?:RequestOptions){
+        return reqOptions ? {...this._defaultHeaders, ...reqOptions.headers} : this._defaultHeaders;
+    }
+
     /**
      * Returns the current height of the blockchain.
      * @summary Get the current height of the chain
      */
-    public async getBlockchainHeight (options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: HeightInfoDTO;  }> {
+    public async getBlockchainHeight (reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: HeightInfoDTO;  }> {
         const localVarPath = '/chain/height';
+
+        let requestHeaders = this.combineHeaders(reqOptions);
 
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -121,14 +128,12 @@ export class ChainRoutesApi {
      * Gets the current score of the blockchain. The higher the score, the better the chain. During synchronization, nodes try to get the best blockchain in the network.  The score for a block is derived from its difficulty and the time (in seconds) that has elapsed since the last block:      block score = difficulty − time elapsed since last block 
      * @summary Get the current score of the chain
      */
-    public async getBlockchainScore (options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: BlockchainScoreDTO;  }> {
+    public async getBlockchainScore (reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: BlockchainScoreDTO;  }> {
         const localVarPath = '/chain/score';
+        let requestHeaders = this.combineHeaders(reqOptions);
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'

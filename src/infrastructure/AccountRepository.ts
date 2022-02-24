@@ -26,6 +26,7 @@ import {TransactionSearch} from '../model/transaction/TransactionSearch';
 import {TransactionQueryParams} from './TransactionQueryParams';
 import {AccountRestrictionsInfo} from "../model/account/AccountRestrictionsInfo";
 import { AccountNames } from '../model/account/AccountNames';
+import { RequestOptions } from './RequestOptions';
 
 /**
  * Account interface repository.
@@ -39,14 +40,14 @@ export interface AccountRepository {
      * @param address Address
      * @returns Observable<AccountInfo>
      */
-    getAccountInfo(address: Address): Observable<AccountInfo>;
+    getAccountInfo(address: Address, requestOptions?: RequestOptions): Observable<AccountInfo>;
 
     /**
      * Gets AccountsInfo for different accounts.
      * @param addresses List of Address
      * @returns Observable<AccountInfo[]>
      */
-    getAccountsInfo(addresses: Address[]): Observable<AccountInfo[]>;
+    getAccountsInfo(addresses: Address[], requestOptions?: RequestOptions): Observable<AccountInfo[]>;
 
     /**
      * Get readable names for a set of accountIds.
@@ -54,35 +55,35 @@ export interface AccountRepository {
      * @param accountIds List of Address
      * @return Observable<AccountNames>
      */
-    getAccountsNames(accountIds: Address[]): Observable<AccountNames[]>;
+    getAccountsNames(accountIds: Address[], requestOptions?: RequestOptions): Observable<AccountNames[]>;
 
     /**
      * Gets Account restrictions.
      * @param publicAccount public account
      * @returns Observable<AccountRestrictionsInfo>
      */
-    getAccountRestrictions(address: Address): Observable<AccountRestrictionsInfo>;
+    getAccountRestrictions(address: Address, requestOptions?: RequestOptions): Observable<AccountRestrictionsInfo>;
 
     /**
      * Gets Account restrictions.
      * @param address list of addresses
      * @returns Observable<AccountRestrictionsInfo[]>
      */
-    getAccountRestrictionsFromAccounts(addresses: Address[]): Observable<AccountRestrictionsInfo[]>;
+    getAccountRestrictionsFromAccounts(addresses: Address[], requestOptions?: RequestOptions): Observable<AccountRestrictionsInfo[]>;
 
     /**
      * Gets a MultisigAccountInfo for an account.
      * @param address - User address
      * @returns Observable<MultisigAccountInfo>
      */
-    getMultisigAccountInfo(address: Address): Observable<MultisigAccountInfo>;
+    getMultisigAccountInfo(address: Address, requestOptions?: RequestOptions): Observable<MultisigAccountInfo>;
 
     /**
      * Gets a MultisigAccountGraphInfo for an account.
      * @param address - User address
      * @returns Observable<MultisigAccountGraphInfo>
      */
-    getMultisigAccountGraphInfo(address: Address): Observable<MultisigAccountGraphInfo>;
+    getMultisigAccountGraphInfo(address: Address, requestOptions?: RequestOptions): Observable<MultisigAccountGraphInfo>;
 
     /**
      * Gets an array of confirmed transactions for which an account is signer or receiver.
@@ -91,7 +92,7 @@ export interface AccountRepository {
      * @returns Observable<Transaction[]>
      */
     transactions(publicAccount: PublicAccount,
-                 txnQueryParams?: TransactionQueryParams): Observable<Transaction[]>;
+                 txnQueryParams?: TransactionQueryParams, requestOptions?: RequestOptions): Observable<Transaction[]>;
 
     /**
      * Gets an array of confirmed transactions for which an account is signer or receiver.
@@ -100,7 +101,7 @@ export interface AccountRepository {
      * @returns Observable<TransactionSearch>
      */
      transactionsWithPagination(publicAccount: PublicAccount,
-        txnQueryParam?: TransactionQueryParams): Observable<TransactionSearch>;
+        txnQueryParam?: TransactionQueryParams, requestOptions?: RequestOptions): Observable<TransactionSearch>;
 
     /**
      * Gets an array of transactions for which an account is the recipient of a transaction.
@@ -110,7 +111,7 @@ export interface AccountRepository {
      * @returns Observable<Transaction[]>
      */
     incomingTransactions(accountId: Address | PublicAccount,
-                         txnQueryParam?: TransactionQueryParams): Observable<Transaction[]>;
+                         txnQueryParam?: TransactionQueryParams, requestOptions?: RequestOptions): Observable<Transaction[]>;
 
     /**
      * Gets an array of transactions for which an account is the recipient of a transaction.
@@ -120,7 +121,7 @@ export interface AccountRepository {
      * @returns Observable<TransactionSearch>
      */
      incomingTransactionsWithPagination(accountId: Address | PublicAccount,
-        txnQueryParam?: TransactionQueryParams): Observable<TransactionSearch>;
+        txnQueryParam?: TransactionQueryParams, requestOptions?: RequestOptions): Observable<TransactionSearch>;
 
     /**
      * Gets an array of transactions for which an account is the sender a transaction.
@@ -130,7 +131,7 @@ export interface AccountRepository {
      * @returns Observable<Transaction[]>
      */
     outgoingTransactions(publicAccount: PublicAccount,
-                         txnQueryParam?: TransactionQueryParams): Observable<Transaction[]>;
+                         txnQueryParam?: TransactionQueryParams, requestOptions?: RequestOptions): Observable<Transaction[]>;
 
     /**
      * Gets an array of transactions for which an account is the sender a transaction.
@@ -140,7 +141,7 @@ export interface AccountRepository {
      * @returns Observable<TransactionSearch>
      */
      outgoingTransactionsWithPagination(publicAccount: PublicAccount,
-        txnQueryParam?: TransactionQueryParams): Observable<TransactionSearch>;
+        txnQueryParam?: TransactionQueryParams, requestOptions?: RequestOptions): Observable<TransactionSearch>;
 
     /**
      * Gets the array of transactions for which an account is the sender or receiver and which have not yet been included in a block.
@@ -151,7 +152,7 @@ export interface AccountRepository {
      * @returns Observable<Transaction[]>
      */
     unconfirmedTransactions(publicAccount: PublicAccount,
-                            txnQueryParam?: TransactionQueryParams): Observable<Transaction[]>;
+                            txnQueryParam?: TransactionQueryParams, requestOptions?: RequestOptions): Observable<Transaction[]>;
 
     /**
      * Gets the array of transactions for which an account is the sender or receiver and which have not yet been included in a block.
@@ -162,7 +163,7 @@ export interface AccountRepository {
      * @returns Observable<TransactionSearch>
      */
      unconfirmedTransactionsWithPagination(publicAccount: PublicAccount,
-        txnQueryParam?: TransactionQueryParams): Observable<TransactionSearch>;
+        txnQueryParam?: TransactionQueryParams, requestOptions?: RequestOptions): Observable<TransactionSearch>;
 
     /**
      * Gets an array of transactions for which an account is the sender or has sign the transaction.
@@ -171,6 +172,6 @@ export interface AccountRepository {
      * @param txnQueryParam - (Optional) Transaction Query Params
      * @returns Observable<AggregateTransaction[]>
      */
-    aggregateBondedTransactions(publicAccount: PublicAccount,
-                                txnQueryParam?: TransactionQueryParams): Observable<AggregateTransaction[]>;
+    aggregateBondedTransactions(publicAccount: PublicAccount, getCompleteTransaction: boolean, 
+                                txnQueryParam?: TransactionQueryParams, requestOptions?: RequestOptions): Observable<AggregateTransaction[]>;
 }

@@ -1513,6 +1513,7 @@ describe('TransactionHttp', () => {
         });
     });
 
+    /* deprecated endpoint
     describe('announceSync', () => {
         it('should return insufficient balance error', (done) => {
             const signerAccount = TestingAccount;
@@ -1536,6 +1537,7 @@ describe('TransactionHttp', () => {
                 });
         });
     });
+    */
 
     describe('getTransactionEffectiveFee', () => {
         it('should return effective paid fee given transactionHash', (done) => {
@@ -1550,8 +1552,8 @@ describe('TransactionHttp', () => {
         });
     });
 
-    describe('announceSync', () => {
-        it('should return insufficient balance error', (done) => {
+    describe('Send 0 amount Lock Funds Txn', () => {
+        it('should return invalid amount error', (done) => {
             const aggregateTransaction = factory.aggregateBonded()
                 .build();
 

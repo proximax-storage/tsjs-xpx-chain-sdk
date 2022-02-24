@@ -22,6 +22,7 @@ import {NamespaceId} from '../model/namespace/NamespaceId';
 import {NamespaceInfo} from '../model/namespace/NamespaceInfo';
 import {NamespaceName} from '../model/namespace/NamespaceName';
 import {QueryParams} from './QueryParams';
+import { RequestOptions } from './RequestOptions';
 
 /**
  * Namespace interface repository.
@@ -35,7 +36,7 @@ export interface NamespaceRepository {
      * @param namespaceId - Namespace id
      * @returns Observable<NamespaceInfo>
      */
-    getNamespace(namespaceId: NamespaceId): Observable<NamespaceInfo>;
+    getNamespace(namespaceId: NamespaceId, requestOptions?: RequestOptions): Observable<NamespaceInfo>;
 
     /**
      * Gets array of NamespaceInfo for an account
@@ -44,7 +45,7 @@ export interface NamespaceRepository {
      * @returns Observable<NamespaceInfo[]>
      */
     getNamespacesFromAccount(address: Address,
-                             queryParams?: QueryParams): Observable<NamespaceInfo[]>;
+                             queryParams?: QueryParams, requestOptions?: RequestOptions): Observable<NamespaceInfo[]>;
 
     /**
      * Gets array of NamespaceInfo for different account
@@ -53,26 +54,26 @@ export interface NamespaceRepository {
      * @returns Observable<NamespaceInfo[]>
      */
     getNamespacesFromAccounts(addresses: Address[],
-                              queryParams?: QueryParams): Observable<NamespaceInfo[]>;
+                              queryParams?: QueryParams, requestOptions?: RequestOptions): Observable<NamespaceInfo[]>;
 
     /**
      * Gets array of NamespaceName for different namespaceIds
      * @param namespaceIds - Array of namespace ids
      * @returns Observable<NamespaceName[]>
      */
-    getNamespacesName(namespaceIds: NamespaceId[]): Observable<NamespaceName[]>;
+    getNamespacesName(namespaceIds: NamespaceId[], requestOptions?: RequestOptions): Observable<NamespaceName[]>;
 
     /**
      * Gets the MosaicId from a MosaicAlias
      * @param namespaceId - the namespaceId of the namespace
      * @returns Observable<MosaicId | null>
      */
-    getLinkedMosaicId(namespaceId: NamespaceId): Observable<MosaicId | null>;
+    getLinkedMosaicId(namespaceId: NamespaceId, requestOptions?: RequestOptions): Observable<MosaicId | null>;
 
     /**
      * Gets the Address from a AddressAlias
      * @param namespaceId - the namespaceId of the namespace
      * @returnsObservable<Address | null>
      */
-    getLinkedAddress(namespaceId: NamespaceId): Observable<Address | null>;
+    getLinkedAddress(namespaceId: NamespaceId, requestOptions?: RequestOptions): Observable<Address | null>;
 }

@@ -18,6 +18,7 @@ import {AxiosRequestConfig, AxiosResponse, AxiosError} from 'axios';
 import { ExchangesDTO } from '../model/exchangesDTO';
 import { ExchangeInlineResponse200 } from '../model/exchangeInlineResponse200';
 
+import { RequestOptions } from '../RequestOptions';
 import { ObjectSerializer } from '../model/models';
 
 import { HttpError, RequestFile } from './apis';
@@ -34,7 +35,10 @@ export enum ExchangeRoutesApiApiKeys {
 
 export class ExchangeRoutesApi {
     protected _basePath = defaultBasePath;
-    protected _defaultHeaders : any = {};
+    protected _defaultHeaders : { [name: string]: string; } = { 
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    };
     protected _useQuerystring : boolean = false;
 
     constructor(basePath?: string);
@@ -70,12 +74,16 @@ export class ExchangeRoutesApi {
         return this._basePath;
     }
 
+    combineHeaders(reqOptions?:RequestOptions){
+        return reqOptions ? {...this._defaultHeaders, ...reqOptions.headers} : this._defaultHeaders;
+    }
+
     /**
      * Return exchange offer by account id.
      * @summary Get exchange offers by account id
      * @param accountId The public key or address of an account.
      */
-    public async getAccountExchangeOffers (accountId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: ExchangeInlineResponse200;  }> {
+    public async getAccountExchangeOffers (accountId: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: ExchangeInlineResponse200;  }> {
         const localVarPath = '/account/{accountId}/exchange'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
 
@@ -84,12 +92,11 @@ export class ExchangeRoutesApi {
             throw new Error('Required parameter accountId was null or undefined when calling getAccountExchangeOffers.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -117,7 +124,7 @@ export class ExchangeRoutesApi {
      * @param offerType The type of exchange offer.
      * @param mosaicId The mosaic identifier.
      */
-    public async getExchangeOffers (offerType: string, mosaicId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<ExchangesDTO>;  }> {
+    public async getExchangeOffers (offerType: string, mosaicId: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<ExchangesDTO>;  }> {
         const localVarPath = '/exchange/{offerType}/{mosaicId}'
             .replace('{' + 'offerType' + '}', encodeURIComponent(String(offerType)))
             .replace('{' + 'mosaicId' + '}', encodeURIComponent(String(mosaicId)));
@@ -132,12 +139,11 @@ export class ExchangeRoutesApi {
             throw new Error('Required parameter mosaicId was null or undefined when calling getExchangeOffers.');
         }
 
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'
@@ -165,14 +171,14 @@ export class ExchangeRoutesApi {
      * @summary Get exchange offer list
      * @param offerType The type of exchange offer.
      */
-     public async getOfferList (options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: AxiosResponse; body: Array<ExchangeMosaicDTO>;  }> {
+     public async getOfferList (reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<ExchangeMosaicDTO>;  }> {
         const localVarPath = '/exchange/mosaics';
+
+        let requestHeaders = this.combineHeaders(reqOptions);
+
         let localVarRequestOptions: AxiosRequestConfig = {
             method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
+            headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
             responseType: 'json'

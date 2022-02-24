@@ -20,6 +20,7 @@ import {MosaicInfo} from '../model/mosaic/MosaicInfo';
 import { MosaicNames } from '../model/mosaic/MosaicNames';
 import { PageQueryParams } from './PageQueryParams';
 import { RichlistEntry } from '../model/model';
+import { RequestOptions } from './RequestOptions';
 
 /**
  * Mosaic interface repository.
@@ -33,14 +34,14 @@ export interface MosaicRepository {
      * @param mosaicId - Mosaic id
      * @returns Observable<MosaicInfo>
      */
-    getMosaic(mosaicId: MosaicId): Observable<MosaicInfo>;
+    getMosaic(mosaicId: MosaicId, requestOptions?: RequestOptions): Observable<MosaicInfo>;
 
     /**
      * Gets MosaicInfo for different mosaicIds.
      * @param mosaicIds - Array of mosaic ids
      * @returns Observable<MosaicInfo[]>
      */
-    getMosaics(mosaicIds: MosaicId[]): Observable<MosaicInfo[]>;
+    getMosaics(mosaicIds: MosaicId[], requestOptions?: RequestOptions): Observable<MosaicInfo[]>;
 
     /**
      * Get readable names for a set of mosaics
@@ -48,12 +49,12 @@ export interface MosaicRepository {
      * @param mosaicIds - Array of mosaic ids
      * @return Observable<MosaicNames[]>
      */
-    getMosaicsNames(mosaicIds: MosaicId[]): Observable<MosaicNames[]>;
+    getMosaicsNames(mosaicIds: MosaicId[], requestOptions?: RequestOptions): Observable<MosaicNames[]>;
 
     /**
      * Get mosaic richlist
      * @returns Observable<RichlistEntry[]>
      */
-    getMosaicRichlist(mosaicId: MosaicId, queryParams?: PageQueryParams): Observable<RichlistEntry[]>;
+    getMosaicRichlist(mosaicId: MosaicId, queryParams?: PageQueryParams, requestOptions?: RequestOptions): Observable<RichlistEntry[]>;
 
 }

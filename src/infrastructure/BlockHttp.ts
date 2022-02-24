@@ -32,6 +32,7 @@ import { NetworkHttp } from './NetworkHttp';
 import {TransactionQueryParams} from './TransactionQueryParams';
 import { CreateStatementFromDTO } from './receipt/CreateReceiptFromDTO';
 import {CreateTransactionFromDTO, extractBeneficiary} from './transaction/CreateTransactionFromDTO';
+import { RequestOptions } from './RequestOptions';
 
 /**
  * Blocks returned limits:
@@ -75,8 +76,8 @@ export class BlockHttp extends Http implements BlockRepository {
      * @param height - Block height
      * @returns Observable<BlockInfo>
      */
-    public getBlockByHeight(height: number): Observable<BlockInfo> {
-        return observableFrom(this.blockRoutesApi.getBlockByHeight(height)).pipe(map(response => {
+    public getBlockByHeight(height: number, requestOptions?: RequestOptions): Observable<BlockInfo> {
+        return observableFrom(this.blockRoutesApi.getBlockByHeight(height, requestOptions)).pipe(map(response => {
             const blockDTO = response.body;
             const networkType = parseInt((blockDTO.block.version >>> 0).toString(16).substring(0, 2), 16); // ">>> 0" hack makes it effectively an Uint32
             return new BlockInfo(
@@ -108,9 +109,9 @@ export class BlockHttp extends Http implements BlockRepository {
      * @param txnQueryParam - (Optional) Transaction Query params
      * @returns Observable<Transaction[]>
      */
-    public getBlockTransactions(height: number, txnQueryParam?: TransactionQueryParams): Observable<Transaction[]> {
+    public getBlockTransactions(height: number, txnQueryParam?: TransactionQueryParams, requestOptions?: RequestOptions): Observable<Transaction[]> {
         return observableFrom(
-            this.blockRoutesApi.getBlockTransactions(height, txnQueryParam))
+            this.blockRoutesApi.getBlockTransactions(height, txnQueryParam, requestOptions))
                 .pipe(map(response => {
                     let transactions: Transaction[] = [];
                     if(response.body.data.length){
@@ -128,9 +129,9 @@ export class BlockHttp extends Http implements BlockRepository {
      * @param txnQueryParam - (Optional) Transaction Query params
      * @returns Observable<TransactionSearch>
      */
-    public getBlockTransactionsWithPagination(height: number, txnQueryParam?: TransactionQueryParams): Observable<TransactionSearch> {
+    public getBlockTransactionsWithPagination(height: number, txnQueryParam?: TransactionQueryParams, requestOptions?: RequestOptions): Observable<TransactionSearch> {
         return observableFrom(
-            this.blockRoutesApi.getBlockTransactions(height, txnQueryParam))
+            this.blockRoutesApi.getBlockTransactions(height, txnQueryParam, requestOptions))
                 .pipe(map(response => {
                     let transactions: Transaction[] = [];
                     if(response.body.data.length){
@@ -148,9 +149,9 @@ export class BlockHttp extends Http implements BlockRepository {
      * @param limit - Number of blocks returned. Limit value only available in 25, 50. 75 and 100. (default 25)
      * @returns Observable<BlockInfo[]>
      */
-    public getBlocksByHeightWithLimit(height: number, limit: LimitType = LimitType.N_25): Observable<BlockInfo[]> {
+    public getBlocksByHeightWithLimit(height: number, limit: LimitType = LimitType.N_25, requestOptions?: RequestOptions): Observable<BlockInfo[]> {
         return observableFrom(
-            this.blockRoutesApi.getBlocksByHeightWithLimit(height, limit)).pipe(map(response => {
+            this.blockRoutesApi.getBlocksByHeightWithLimit(height, limit, requestOptions)).pipe(map(response => {
             return response.body.map((blockDTO) => {
                 const networkType = parseInt((blockDTO.block.version >>> 0).toString(16).substring(0, 2), 16);
                 return new BlockInfo(
@@ -187,9 +188,9 @@ export class BlockHttp extends Http implements BlockRepository {
      * @param hash The hash of the receipt statement or resolution.
      * @return Observable<MerkleProofInfo>
      */
-    public getMerkleReceipts(height: number, hash: string): Observable<MerkleProofInfo> {
+    public getMerkleReceipts(height: number, hash: string, requestOptions?: RequestOptions): Observable<MerkleProofInfo> {
         return observableFrom(
-            this.blockRoutesApi.getMerkleReceipts(height, hash)).pipe(map(response => {
+            this.blockRoutesApi.getMerkleReceipts(height, hash, requestOptions)).pipe(map(response => {
                 const merkleProofReceipt = response.body;
                 return new MerkleProofInfo(
                     new MerkleProofInfoPayload(
@@ -210,9 +211,9 @@ export class BlockHttp extends Http implements BlockRepository {
      * @param hash The hash of the transaction.
      * @return Observable<MerkleProofInfo>
      */
-    public getMerkleTransaction(height: number, hash: string): Observable<MerkleProofInfo> {
+    public getMerkleTransaction(height: number, hash: string, requestOptions?: RequestOptions): Observable<MerkleProofInfo> {
         return observableFrom(
-            this.blockRoutesApi.getMerkleReceipts(height, hash)).pipe(map(response => {
+            this.blockRoutesApi.getMerkleReceipts(height, hash, requestOptions)).pipe(map(response => {
                 const merkleProofTransaction = response.body;
                 return new MerkleProofInfo(
                     new MerkleProofInfoPayload(
@@ -228,10 +229,10 @@ export class BlockHttp extends Http implements BlockRepository {
      * @param queryParams - (Optional) Query params
      * @returns Observable<Statement>
      */
-    public getBlockReceipts(height: number): Observable<Statement> {
-        return this.getNetworkTypeObservable().pipe(
+    public getBlockReceipts(height: number, requestOptions?: RequestOptions): Observable<Statement> {
+        return this.getNetworkTypeObservable(requestOptions).pipe(
             mergeMap((networkType) => observableFrom(
-                this.blockRoutesApi.getBlockReceipts(height)).pipe(
+                this.blockRoutesApi.getBlockReceipts(height, requestOptions)).pipe(
                     map(response => {
                         return CreateStatementFromDTO(response.body, networkType);
                     }),
