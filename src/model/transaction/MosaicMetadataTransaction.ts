@@ -237,6 +237,26 @@ export class MosaicMetadataTransactionBuilder extends TransactionBuilder {
         return this;
     }
 
+    public calculateDifferences(){
+        if(this._value !== undefined && this._value !== null && this._oldValue !== undefined && this._oldValue !== null){
+            this._valueSizeDelta = (Convert.utf8ToHex(this._value).length /2) - (Convert.utf8ToHex(this._oldValue).length / 2);
+            this._valueSize = Math.max(Convert.utf8ToHex(this._value).length/2, Convert.utf8ToHex(this._oldValue).length/2, 0);
+
+            let valueUint8Array = new Uint8Array(this._valueSize);
+            valueUint8Array.set(Convert.hexToUint8(Convert.utf8ToHex(this._value)), 0);
+            let oldValueUint8Array = new Uint8Array(this._valueSize);
+            oldValueUint8Array.set(Convert.hexToUint8(Convert.utf8ToHex(this._oldValue)), 0);
+            let valueDifferenceBytes = new Uint8Array(this._valueSize);
+
+            for(let i =0; i < this._valueSize; ++i){
+                valueDifferenceBytes[i] = valueUint8Array[i] ^ oldValueUint8Array[i];
+            }
+
+            this._valueDifferences = valueDifferenceBytes;
+        }
+        return this;
+    }
+
     public build(): MosaicMetadataTransaction {
         return new MosaicMetadataTransaction(
             this._networkType,
