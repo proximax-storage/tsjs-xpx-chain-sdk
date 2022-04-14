@@ -8,6 +8,7 @@ import { ConfigRoutesApi } from './api';
 import { ChainConfigRepository } from './ChainConfigRepository';
 import {Http} from './Http';
 import { ChainConfig } from '../model/model';
+import { RequestOptions } from './RequestOptions';
 
 /**
  * Chian http repository.
@@ -35,9 +36,9 @@ export class ChainConfigHttp extends Http implements ChainConfigRepository {
      * @param height
      * @returns Observable<ChainConfig>
      */
-    public getChainConfig(height: number): Observable<ChainConfig> {
+    public getChainConfig(height: number, requestOptions?: RequestOptions): Observable<ChainConfig> {
         return observableFrom(
-            this.configRoutesApi.getConfig(height)).pipe(map(response => {
+            this.configRoutesApi.getConfig(height, requestOptions)).pipe(map(response => {
                 return ChainConfig.createFromDTO(response.body.networkConfig);
         }));
     }
