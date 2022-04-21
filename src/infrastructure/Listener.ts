@@ -34,6 +34,7 @@ import {TransactionStatusError} from '../model/transaction/TransactionStatusErro
 import {TransferTransaction} from '../model/transaction/TransferTransaction';
 import {UInt64} from '../model/UInt64';
 import {CreateTransactionFromDTO, extractBeneficiary} from './transaction/CreateTransactionFromDTO';
+import {RequestOptions} from './RequestOptions';
 
 enum ListenerChannelName {
     block = 'block',
@@ -95,13 +96,15 @@ export class Listener {
      * Open web socket connection.
      * @returns Promise<Void>
      */
-    public open(): Promise<void> {
+    public open(requestOptions?: RequestOptions): Promise<void> {
         return new Promise((resolve, reject) => {
             if (this.webSocket === undefined || this.webSocket.readyState === WebSocket.CLOSED) {
                 if (this.websocketInjected) {
-                    this.webSocket = new this.websocketInjected(this.url);
+                    this.webSocket = requestOptions && requestOptions.headers ? 
+                        new this.websocketInjected(this.url, {headers: requestOptions.headers}) : new this.websocketInjected(this.url);
                 } else {
-                    this.webSocket = new WebSocket(this.url);
+                    this.webSocket = requestOptions && requestOptions.headers ? 
+                        new WebSocket(this.url, {headers: requestOptions.headers}) : new WebSocket(this.url);
                 }
                 this.webSocket.onopen = () => {
                     console.log('connection open');
