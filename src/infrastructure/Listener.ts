@@ -86,9 +86,11 @@ export class Listener {
                 /**
                  * WebSocket injected when using listeners in client.
                  */
-                    private websocketInjected?: any) {
+                    private websocketInjected?: any, 
+                    
+                    queryParams?: string) {
         this.config = config.replace(/\/$/, '');
-        this.url = `${this.config}/ws`;
+        this.url = `${this.config}/ws${queryParams ? "?" + queryParams : ""}`;
         this.messageSubject = new Subject();
     }
 
