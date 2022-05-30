@@ -46,7 +46,6 @@ import { SdaExchangeOffer } from '../../model/transaction/SdaExchangeOffer';
 import { RemoveSdaExchangeOffer } from '../../model/transaction/RemoveSdaExchangeOffer';
 import { HexadecimalMessage } from '../../model/transaction/HexadecimalMessage';
 import { TransactionHash } from '../../model/transaction/TransactionHash';
-import { subscribeToResult } from 'rxjs/internal-compatibility';
 
 /**
  * @internal
@@ -542,7 +541,6 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                         UInt64.fromHex(reverse(giveAmount)),
                         new MosaicId(UInt64.fromHex(reverse(getMosaicId)).toDTO()),
                         UInt64.fromHex(reverse(getAmount)),
-                        // ownerPublicKey,
                         UInt64.fromHex(reverse(duration))
                     )})
                 )
