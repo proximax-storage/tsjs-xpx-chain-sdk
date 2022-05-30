@@ -62,6 +62,8 @@ import { AddExchangeOfferTransaction } from '../../model/transaction/AddExchange
 import { AddExchangeOffer } from '../../model/transaction/AddExchangeOffer';
 import { ExchangeOfferTransaction } from '../../model/transaction/ExchangeOfferTransaction';
 import { ExchangeOffer } from '../../model/transaction/ExchangeOffer';
+import { SdaExchangeOffer } from '../../model/transaction/SdaExchangeOffer';
+import { RemoveSdaExchangeOffer } from '../../model/transaction/RemoveSdaExchangeOffer';
 import { RemoveExchangeOfferTransaction } from '../../model/transaction/RemoveExchangeOfferTransaction';
 import { RemoveExchangeOffer } from '../../model/transaction/RemoveExchangeOffer';
 import { AccountMetadataTransaction } from '../../model/transaction/AccountMetadataTransaction';
@@ -69,6 +71,8 @@ import { MosaicMetadataTransaction } from '../../model/transaction/MosaicMetadat
 import { NamespaceMetadataTransaction } from '../../model/transaction/NamespaceMetadataTransaction';
 import { MosaicModifyLevyTransaction } from '../../model/transaction/MosaicModifyLevyTransaction';
 import { MosaicRemoveLevyTransaction } from '../../model/transaction/MosaicRemoveLevyTransaction';
+import { PlaceSdaExchangeOfferTransaction } from '../../model/transaction/PlaceSdaExchangeOfferTransaction';
+import { RemoveSdaExchangeOfferTransaction } from '../../model/transaction/RemoveSdaExchangeOfferTransaction';
 import { MosaicNonce } from '../../model/mosaic/MosaicNonce';
 import { MosaicLevy } from '../../model/mosaic/MosaicLevy';
 
@@ -640,6 +644,42 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
             transactionInfo,
         );
         return isEmbedded ? mosaicRemoveLevyTxn.toAggregate(mosaicRemoveLevyTxn.signer!) : mosaicRemoveLevyTxn;
+    } else if (transactionDTO.type === TransactionType.PLACE_SDA_EXCHANGE_OFFER) {
+        const placeSdaExchangeOfferTxn = new PlaceSdaExchangeOfferTransaction(
+            extractNetworkType(transactionDTO.version),
+            extractTransactionVersion(transactionDTO.version),
+            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+            transactionDTO.sdaOffers.map(o => new SdaExchangeOffer(
+                new MosaicId(o.mosaicIdGive),
+                new UInt64(o.mosaicGiveAmount),
+                new MosaicId(o.mosaicIdGet),
+                new UInt64(o.mosaicGetAmount),
+                PublicAccount.createFromPublicKey(o.owner, extractNetworkType(transactionDTO.version)),
+                new UInt64(o.duration)
+            )),
+            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+            isEmbedded ? undefined : transactionDTO.signature,
+            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                            extractNetworkType(transactionDTO.version)) : undefined,
+            transactionInfo,
+        );
+        return isEmbedded ? placeSdaExchangeOfferTxn.toAggregate(placeSdaExchangeOfferTxn.signer!) : placeSdaExchangeOfferTxn;
+    } else if (transactionDTO.type === TransactionType.REMOVE_SDA_EXCHANGE_OFFER) {
+        const removeSdaExchangeOfferTxn = new RemoveSdaExchangeOfferTransaction(
+            extractNetworkType(transactionDTO.version),
+            extractTransactionVersion(transactionDTO.version),
+            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+            transactionDTO.sdaOffers.map(o => new RemoveSdaExchangeOffer(
+                new MosaicId(o.mosaicIdGive),
+                new MosaicId(o.mosaicIdGet)
+            )),
+            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+            isEmbedded ? undefined : transactionDTO.signature,
+            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                            extractNetworkType(transactionDTO.version)) : undefined,
+            transactionInfo,
+        );
+        return isEmbedded ? removeSdaExchangeOfferTxn.toAggregate(removeSdaExchangeOfferTxn.signer!) : removeSdaExchangeOfferTxn;
     }
     
 
