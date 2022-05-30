@@ -42,8 +42,11 @@ import { TransactionBuilderFactory, MultisigCosignatoryModificationType } from '
 import { AddExchangeOffer } from '../../model/transaction/AddExchangeOffer';
 import { ExchangeOffer } from '../../model/transaction/ExchangeOffer';
 import { RemoveExchangeOffer } from '../../model/transaction/RemoveExchangeOffer';
+import { SdaExchangeOffer } from '../../model/transaction/SdaExchangeOffer';
+import { RemoveSdaExchangeOffer } from '../../model/transaction/RemoveSdaExchangeOffer';
 import { HexadecimalMessage } from '../../model/transaction/HexadecimalMessage';
 import { TransactionHash } from '../../model/transaction/TransactionHash';
+import { subscribeToResult } from 'rxjs/internal-compatibility';
 
 /**
  * @internal
@@ -523,6 +526,42 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                 .harvesterKey(harvesterAcc)
                 .build();
         }
+
+        case TransactionType.PLACE_SDA_EXCHANGE_OFFER:
+            const placeSdaOffersArray =  transactionData.substring(2).match(/.{144}/g) || [];
+            return factory.placeSdaExchangeOffer()
+                .sdaExchangeOffers(placeSdaOffersArray.map(o => {
+                    const giveMosaicId = o.substring(0, 16);
+                    const giveAmount = o.substring(16, 32);
+                    const getMosaicId = o.substring(32, 48);
+                    const getAmount = o.substring(48, 64);
+                    const ownerPublicKey = PublicAccount.createFromPublicKey(o.substring(64, 128), networkType);
+                    const duration = o.substring(128, 144);
+
+                    return new SdaExchangeOffer(
+                        new MosaicId(UInt64.fromHex(reverse(giveMosaicId)).toDTO()),
+                        UInt64.fromHex(reverse(giveAmount)),
+                        new MosaicId(UInt64.fromHex(reverse(getMosaicId)).toDTO()),
+                        UInt64.fromHex(reverse(getAmount)),
+                        ownerPublicKey,
+                        UInt64.fromHex(reverse(duration))
+                    )})
+                )
+                .build();
+
+        case TransactionType.REMOVE_SDA_EXCHANGE_OFFER:
+            const removeSdaOffersArray =  transactionData.substring(2).match(/.{32}/g) || [];
+            return factory.removeSdaExchangeOffer()
+                .sdaExchangeOffers(removeSdaOffersArray.map(o => {
+                    const giveMosaicId = o.substring(0, 16);
+                    const getMosaicId = o.substring(16, 32);
+
+                    return new RemoveSdaExchangeOffer(
+                        new MosaicId(UInt64.fromHex(reverse(giveMosaicId)).toDTO()),
+                        new MosaicId(UInt64.fromHex(reverse(getMosaicId)).toDTO())
+                    )})
+                )
+                .build();
 
         default:
             throw new Error ('Transaction type not implemented yet.');

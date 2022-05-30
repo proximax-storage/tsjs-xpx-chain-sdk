@@ -54,6 +54,8 @@ import { RequestFile } from '../api';
 * 0x433F (17215 decimal) - Namespace Metadata_V2 Transaction
 * 0x434D (17229 decimal) - Mosaic Modify Levy Transaction
 * 0x444D (17485 decimal) - Mosaic Remove Levy Transaction
+* 0x4161 (16737 decimal) - Place Sda Exchange Offer Transaction
+* 0x4261 (16993 decimal) - Remove Sda Exchange Offer Transaction
 */
 export enum EntityTypeEnum {
     NUMBER_16728 = <any> 16728,
@@ -83,4 +85,6 @@ export enum EntityTypeEnum {
     NUMBER_17215 = <any> 17215,
     NUMBER_17229 = <any> 17229,
     NUMBER_17485 = <any> 17485,
+    NUMBER_16737 = <any> 16737,
+    NUMBER_16993 = <any> 16993,
 }
