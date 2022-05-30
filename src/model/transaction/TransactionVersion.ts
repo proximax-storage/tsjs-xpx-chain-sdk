@@ -200,4 +200,16 @@ export class TransactionVersion {
      * @type {number}
      */
      public static readonly REMOVE_HARVESTER = 1;
+
+     /**
+     * Place SDA exchange transaction version
+     * @type {number}
+     */
+     public static readonly PLACE_SDA_EXCHANGE_OFFER = 1;
+
+     /**
+     * Remove SDA exchange transaction version
+     * @type {number}
+     */
+    public static readonly REMOVE_SDA_EXCHANGE_OFFER = 1;
 }
