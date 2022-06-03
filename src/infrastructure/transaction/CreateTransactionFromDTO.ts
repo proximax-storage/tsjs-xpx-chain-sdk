@@ -399,17 +399,18 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
                 transactionDTO.type === TransactionType.MODIFY_NAMESPACE_METADATA) {
         const networkType = extractNetworkType(transactionDTO.version);
         const transactionVersion = extractTransactionVersion(transactionDTO.version);
-        const deadline = Deadline.createFromDTO(transactionDTO.deadline);
-        const maxFee = new UInt64(transactionDTO.maxFee || [0, 0]);
-        const metadataType = transactionDTO.metadataType;
+        const deadline = isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline);
+        const maxFee = isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]);
+        const signature = isEmbedded ? undefined : transactionDTO.signature;
+        // const metadataType = transactionDTO.metadataType;
         const metadataId = transactionDTO.metadataId;
         const modifications =
             transactionDTO.modifications ?
-            transactionDTO.modifications.map(m => new MetadataModification(m.modificationType, m.key, m.value)) :
+            transactionDTO.modifications.map(m => new MetadataModification(m.key, m.value)) :
             undefined
-        switch(metadataType) {
-            case oldMetadataType.ADDRESS: {
-                return new ModifyMetadataTransaction(
+        switch(transactionDTO.type) {
+            case TransactionType.MODIFY_ACCOUNT_METADATA: {
+                let modifyMetadataTxn = new ModifyMetadataTransaction(
                     TransactionType.MODIFY_ACCOUNT_METADATA,
                     networkType,
                     transactionVersion,
@@ -418,15 +419,16 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
                     oldMetadataType.ADDRESS,
                     Address.createFromEncoded(metadataId).plain(),
                     modifications,
-                    transactionDTO.signature,
+                    signature,
                     transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
                             extractNetworkType(transactionDTO.version)) : undefined,
                     transactionInfo,
                     )
-                //break;
+                return isEmbedded ? modifyMetadataTxn.toAggregate(modifyMetadataTxn.signer!) : modifyMetadataTxn;
+                // break;
             }
-            case oldMetadataType.MOSAIC: {
-                return new ModifyMetadataTransaction(
+            case TransactionType.MODIFY_MOSAIC_METADATA: {
+                let modifyMetadataTxn = new ModifyMetadataTransaction(
                     TransactionType.MODIFY_MOSAIC_METADATA,
                     networkType,
                     transactionVersion,
@@ -435,15 +437,16 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
                     oldMetadataType.MOSAIC,
                     new MosaicId(metadataId).toHex(),
                     modifications,
-                    transactionDTO.signature,
+                    signature,
                     transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
                             extractNetworkType(transactionDTO.version)) : undefined,
                     transactionInfo,
                     )
-                //break;
+                return isEmbedded ? modifyMetadataTxn.toAggregate(modifyMetadataTxn.signer!) : modifyMetadataTxn;
+                // break;
             }
-            case oldMetadataType.NAMESPACE: {
-                return new ModifyMetadataTransaction(
+            case TransactionType.MODIFY_NAMESPACE_METADATA: {
+                let modifyMetadataTxn = new ModifyMetadataTransaction(
                     TransactionType.MODIFY_NAMESPACE_METADATA,
                     networkType,
                     transactionVersion,
@@ -452,16 +455,17 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
                     oldMetadataType.NAMESPACE,
                     new NamespaceId(metadataId).toHex(),
                     modifications,
-                    transactionDTO.signature,
+                    signature,
                     transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
                             extractNetworkType(transactionDTO.version)) : undefined,
                     transactionInfo,
                     )
-                //break;
+                return isEmbedded ? modifyMetadataTxn.toAggregate(modifyMetadataTxn.signer!) : modifyMetadataTxn;
+                // break;
             }
-            default: {
-                throw new Error('Unimplemented modify metadata transaction with type ' + metadataType);
-            }
+            // default: {
+            //     throw new Error('Unimplemented modify metadata transaction with type ' + metadataType);
+            // }
         }
     } else if (transactionDTO.type === TransactionType.CHAIN_UPGRADE) {
         const chainUpgradeTxn = new ChainUpgradeTransaction(
