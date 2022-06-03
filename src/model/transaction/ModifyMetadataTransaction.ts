@@ -32,18 +32,18 @@ export enum MetadataModificationType {
  * @param value
  */
 export class MetadataModification {
-    public type: MetadataModificationType;
+    // public type: MetadataModificationType;
     public key: string;
     public value: string | undefined;
-    constructor(type: MetadataModificationType, key: string, value?: string) {
-        this.type = type;
+    constructor(key: string, value?: string) {
+        // this.type = type;
         this.key = key;
-        this.value = value ? value : undefined;
+        this.value = value !== undefined ? value : undefined;
     }
 
     public toDTO() {
         return {
-            type: this.type,
+            // type: this.type,
             key: this.key,
             value: this.value
         }
