@@ -7,7 +7,6 @@ import { UInt64 } from "../UInt64";
 import { MosaicId } from "../mosaic/MosaicId";
 
 export class SdaOfferInfo {
-
     constructor(
         readonly mosaicIdGive: MosaicId,
         readonly mosaicIdGet: MosaicId,
