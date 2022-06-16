@@ -16,8 +16,8 @@
 
 /**
  * The supply type. Supported supply types are:
- * 0: Increase in supply.
- * 1: Decrease in supply.
+ * 0: Decrease in supply.
+ * 1: Increase in supply.
  */
 export enum MosaicSupplyType {
     Decrease = 0,

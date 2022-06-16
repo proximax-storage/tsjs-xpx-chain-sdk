@@ -654,7 +654,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
                 new UInt64(o.mosaicGiveAmount),
                 new MosaicId(o.mosaicIdGet),
                 new UInt64(o.mosaicGetAmount),
-                PublicAccount.createFromPublicKey(o.owner, extractNetworkType(transactionDTO.version)),
+                // PublicAccount.createFromPublicKey(o.owner, extractNetworkType(transactionDTO.version)),
                 new UInt64(o.duration)
             )),
             isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),

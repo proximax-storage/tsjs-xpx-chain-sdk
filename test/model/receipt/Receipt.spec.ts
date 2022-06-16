@@ -235,7 +235,7 @@ describe('Receipt', () => {
         deepStrictEqual(receipt.version, ReceiptVersion.BALANCE_CHANGE);
     });
 
-    it('should createComplete an artifact expiry receipt - address', () => {
+    it('should createComplete an artifact expiry receipt - namespace', () => {
         const receiptDTO = {
             version: 1,
             type: 16718,

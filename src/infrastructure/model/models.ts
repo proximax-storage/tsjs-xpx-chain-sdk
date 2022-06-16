@@ -15,6 +15,7 @@
  */
 export * from './accountDTO';
 export * from './accountExchangeDTO';
+export * from './accountSdaExchangeDTO';
 export * from './accountIds';
 export * from './accountInfoDTO';
 export * from './accountLinkTransactionBodyDTO';
@@ -174,6 +175,7 @@ export * from './nodeInfoDTO';
 export * from './nodeTimeDTO';
 export * from './offerDTO';
 export * from './offerInfoDTO';
+export * from './sdaOfferInfoDTO';
 export * from './offerTypeEnum';
 export * from './paymentsDTO';
 export * from './prepareDriveTransactionBodyDTO';

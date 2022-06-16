@@ -80,8 +80,8 @@ export class Builder {
                 .createMosaicIdGetVector(builder, offer.mosaicIdGet.id.toDTO());
             const mosaicAmountGetVector = PlaceSdaExchangeOfferBuffer
                 .createMosaicAmountGetVector(builder, offer.mosaicAmountGet.toDTO());
-            const ownerVector = PlaceSdaExchangeOfferBuffer
-                .createOwnerVector(builder, convert.hexToUint8(offer.owner.publicKey));
+            // const ownerVector = PlaceSdaExchangeOfferBuffer
+                // .createOwnerVector(builder, convert.hexToUint8(offer.owner.publicKey));
             const durationVector = PlaceSdaExchangeOfferBuffer
                 .createDurationVector(builder, offer.duration.toDTO());
             PlaceSdaExchangeOfferBuffer.startPlaceSdaExchangeOfferBuffer(builder);
@@ -89,7 +89,7 @@ export class Builder {
             PlaceSdaExchangeOfferBuffer.addMosaicAmountGive(builder, mosaicAmountGiveVector);
             PlaceSdaExchangeOfferBuffer.addMosaicIdGet(builder, mosaicIdGetVector);
             PlaceSdaExchangeOfferBuffer.addMosaicAmountGet(builder, mosaicAmountGetVector);
-            PlaceSdaExchangeOfferBuffer.addOwner(builder, ownerVector);
+            // PlaceSdaExchangeOfferBuffer.addOwner(builder, ownerVector);
             PlaceSdaExchangeOfferBuffer.addDuration(builder, durationVector);
             offersArray.push(PlaceSdaExchangeOfferBuffer.endPlaceSdaExchangeOfferBuffer(builder));
         });
