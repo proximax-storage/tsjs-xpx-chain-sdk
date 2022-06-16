@@ -26,6 +26,8 @@ export * from './diagnosticRoutesApi';
 import { DiagnosticRoutesApi } from './diagnosticRoutesApi';
 export * from './exchangeRoutesApi';
 import { ExchangeRoutesApi } from './exchangeRoutesApi';
+export * from './exchangeSdaRoutesApi';
+import { ExchangeSdaRoutesApi } from './exchangeSdaRoutesApi';
 export * from './lockRoutesApi';
 import { LockRoutesApi } from './lockRoutesApi';
 export * from './metadataRoutesApi';
@@ -65,4 +67,21 @@ export interface RequestDetailedFile {
 
 export type RequestFile = string | Buffer | fs.ReadStream | RequestDetailedFile;
 
-export const APIS = [AccountRoutesApi, BlockRoutesApi, ChainRoutesApi, ConfigRoutesApi, DiagnosticRoutesApi, ExchangeRoutesApi, LockRoutesApi, MetadataRoutesApi, MosaicRoutesApi, NamespaceRoutesApi, NetworkRoutesApi, NodeRoutesApi, ServiceRoutesApi, TransactionRoutesApi, UpgradeRoutesApi];
+export const APIS = [
+    AccountRoutesApi, 
+    BlockRoutesApi, 
+    ChainRoutesApi, 
+    ConfigRoutesApi, 
+    DiagnosticRoutesApi, 
+    ExchangeRoutesApi, 
+    ExchangeSdaRoutesApi, 
+    LockRoutesApi, 
+    MetadataRoutesApi, 
+    MosaicRoutesApi, 
+    NamespaceRoutesApi, 
+    NetworkRoutesApi, 
+    NodeRoutesApi, 
+    ServiceRoutesApi, 
+    TransactionRoutesApi, 
+    UpgradeRoutesApi
+];

@@ -16,15 +16,15 @@ import { RequestFile } from '../api';
 import { AccountExchangeDTO } from './accountExchangeDTO';
 
 export class ExchangeInlineResponse200 {
-    'exchange'?: AccountExchangeDTO;
+    'exchangesda'?: AccountExchangeDTO;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            "name": "exchange",
-            "baseName": "exchange",
-            "type": "AccountExchangeDTO"
+            "name": "exchangesda",
+            "baseName": "exchangesda",
+            "type": "AccountSdaExchangeDTO"
         }    ];
 
     static getAttributeTypeMap() {

@@ -80,38 +80,23 @@ export class PlaceSdaExchangeOfferBuffer {
     return offset ? new Uint32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
   }
 
-  owner(index: number): number | null {
-    const offset = this.bb!.__offset(this.bb_pos, 12);
-    return offset ? this.bb!.readUint8(this.bb!.__vector(this.bb_pos + offset) + index) : 0;
-  }
-
-  ownerLength(): number {
-    const offset = this.bb!.__offset(this.bb_pos, 12);
-    return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
-  }
-
-  ownerArray(): Uint8Array | null {
-    const offset = this.bb!.__offset(this.bb_pos, 12);
-    return offset ? new Uint8Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
-  }
-
   duration(index: number): number | null {
-    const offset = this.bb!.__offset(this.bb_pos, 14);
+    const offset = this.bb!.__offset(this.bb_pos, 12);
     return offset ? this.bb!.readUint32(this.bb!.__vector(this.bb_pos + offset) + index * 4) : 0;
   }
 
   durationLength(): number {
-    const offset = this.bb!.__offset(this.bb_pos, 14);
+    const offset = this.bb!.__offset(this.bb_pos, 12);
     return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
   }
 
   durationArray(): Uint32Array | null {
-    const offset = this.bb!.__offset(this.bb_pos, 14);
+    const offset = this.bb!.__offset(this.bb_pos, 12);
     return offset ? new Uint32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
   }
 
   static startPlaceSdaExchangeOfferBuffer(builder: flatbuffers.Builder) {
-    builder.startObject(6);
+    builder.startObject(5);
   }
 
   static addMosaicIdGive(builder: flatbuffers.Builder, mosaicIdGiveOffset: flatbuffers.Offset) {
@@ -198,24 +183,8 @@ export class PlaceSdaExchangeOfferBuffer {
     builder.startVector(4, numElems, 4);
   }
 
-  static addOwner(builder: flatbuffers.Builder, ownerOffset: flatbuffers.Offset) {
-    builder.addFieldOffset(4, ownerOffset, 0);
-  }
-
-  static createOwnerVector(builder: flatbuffers.Builder, data: number[] | Uint8Array): flatbuffers.Offset {
-    builder.startVector(1, data.length, 1);
-    for (let i = data.length - 1; i >= 0; i--) {
-      builder.addInt8(data[i]!);
-    }
-    return builder.endVector();
-  }
-
-  static startOwnerVector(builder: flatbuffers.Builder, numElems: number) {
-    builder.startVector(1, numElems, 1);
-  }
-
   static addDuration(builder: flatbuffers.Builder, durationOffset: flatbuffers.Offset) {
-    builder.addFieldOffset(5, durationOffset, 0);
+    builder.addFieldOffset(4, durationOffset, 0);
   }
 
   static createDurationVector(builder: flatbuffers.Builder, data: number[] | Uint32Array): flatbuffers.Offset;
@@ -240,13 +209,12 @@ export class PlaceSdaExchangeOfferBuffer {
     return offset;
   }
 
-  static createPlaceSdaExchangeOfferBuffer(builder: flatbuffers.Builder, mosaicIdGiveOffset: flatbuffers.Offset, mosaicAmountGiveOffset: flatbuffers.Offset, mosaicIdGetOffset: flatbuffers.Offset, mosaicAmountGetOffset: flatbuffers.Offset, ownerOffset: flatbuffers.Offset, durationOffset: flatbuffers.Offset): flatbuffers.Offset {
+  static createPlaceSdaExchangeOfferBuffer(builder: flatbuffers.Builder, mosaicIdGiveOffset: flatbuffers.Offset, mosaicAmountGiveOffset: flatbuffers.Offset, mosaicIdGetOffset: flatbuffers.Offset, mosaicAmountGetOffset: flatbuffers.Offset, durationOffset: flatbuffers.Offset): flatbuffers.Offset {
     PlaceSdaExchangeOfferBuffer.startPlaceSdaExchangeOfferBuffer(builder);
     PlaceSdaExchangeOfferBuffer.addMosaicIdGive(builder, mosaicIdGiveOffset);
     PlaceSdaExchangeOfferBuffer.addMosaicAmountGive(builder, mosaicAmountGiveOffset);
     PlaceSdaExchangeOfferBuffer.addMosaicIdGet(builder, mosaicIdGetOffset);
     PlaceSdaExchangeOfferBuffer.addMosaicAmountGet(builder, mosaicAmountGetOffset);
-    PlaceSdaExchangeOfferBuffer.addOwner(builder, ownerOffset);
     PlaceSdaExchangeOfferBuffer.addDuration(builder, durationOffset);
     return PlaceSdaExchangeOfferBuffer.endPlaceSdaExchangeOfferBuffer(builder);
   }

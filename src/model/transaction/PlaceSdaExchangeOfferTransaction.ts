@@ -63,12 +63,12 @@ export class PlaceSdaExchangeOfferTransaction extends Transaction {
     public static calculateSize(offersCount: number): number {
         const byteSize = Transaction.getHeaderSize()
             + 1
-            + ( offersCount * (8 + 8 + 8 + 8 + 32 + 8 ));
+            + ( offersCount * (8 + 8 + 8 + 8 + 8 ));
             // mosaicId give -8
             // mosaicId give amount -8
             // mosaicId get - 8
             // mosaicId get amount - 8
-            // owner public key - 32
+            // owner public key - 32 - removed
             // duration - 8
 
         return byteSize;
