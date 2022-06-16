@@ -34,7 +34,7 @@ export default new Schema([
         array('mosaicIdGiveAmount', TypeSize.INT),
         array('mosaicIdGet', TypeSize.INT),
         array('mosaicIdGetAmount', TypeSize.INT),
-        array('owner'),
+        // array('owner'),
         array('duration', TypeSize.INT)
     ])
 ]);

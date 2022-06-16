@@ -535,15 +535,16 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                     const giveAmount = o.substring(16, 32);
                     const getMosaicId = o.substring(32, 48);
                     const getAmount = o.substring(48, 64);
-                    const ownerPublicKey = PublicAccount.createFromPublicKey(o.substring(64, 128), networkType);
-                    const duration = o.substring(128, 144);
+                    // const ownerPublicKey = PublicAccount.createFromPublicKey(o.substring(64, 128), networkType);
+                    // const duration = o.substring(128, 144);
+                    const duration = o.substring(64, 80);
 
                     return new SdaExchangeOffer(
                         new MosaicId(UInt64.fromHex(reverse(giveMosaicId)).toDTO()),
                         UInt64.fromHex(reverse(giveAmount)),
                         new MosaicId(UInt64.fromHex(reverse(getMosaicId)).toDTO()),
                         UInt64.fromHex(reverse(getAmount)),
-                        ownerPublicKey,
+                        // ownerPublicKey,
                         UInt64.fromHex(reverse(duration))
                     )})
                 )
