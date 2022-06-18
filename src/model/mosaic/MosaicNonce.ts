@@ -45,7 +45,7 @@ export class MosaicNonce {
      * @return  {MosaicNonce}
      */
     public static createFromHex(hex: string): MosaicNonce {
-        const uint8 = convert.hexToUint8(hex);
+        const uint8 = convert.hexToUint8Reverse(hex);
 
         if (uint8.length !== 4) {
             throw new Error('Expected 4 bytes for Nonce and got ' + uint8.length + ' instead.');
@@ -95,7 +95,8 @@ export class MosaicNonce {
     }
 
     toNumber(){
-        return parseInt(convert.uint8ToHex(this.nonce), 16);
+        const hex = convert.uint8ToHex(this.nonce);
+        return parseInt(convert.hexReverse(hex), 16);
     }
 
     /**

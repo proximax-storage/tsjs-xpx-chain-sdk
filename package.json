@@ -1,6 +1,6 @@
 {
   "name": "tsjs-xpx-chain-sdk",
-  "version": "0.9.11",
+  "version": "0.9.12",
   "description": "Proximax Blockchain sdk for typescript and javascript",
   "scripts": {
     "pretest": "npm run build",
@@ -14,7 +14,8 @@
   },
   "contributors": [
     "Thomas Tran <tldinteractive@gmail.com>",
-    "Yaaccount <tnuoccaay@gmail.com>"
+    "Yaaccount <tnuoccaay@gmail.com>",
+    "Chun Lam <chunlam.sees@gmail.com>"
   ],
   "bugs": {
     "url": "https://github.com/proximax-storage/tsjs-xpx-chain-sdk/issues"
