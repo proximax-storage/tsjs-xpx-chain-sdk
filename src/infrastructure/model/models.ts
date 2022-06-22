@@ -411,6 +411,7 @@ import { TransactionHashes } from './transactionHashes';
 import { TransactionIds } from './transactionIds';
 import { TransactionInfoDTO } from './transactionInfoDTO';
 import { TransactionMetaDTO } from './transactionMetaDTO';
+import { TransactionEmbeddedMetaDTO } from './transactionEmbeddedMetaDTO';
 import { TransactionPayload } from './transactionPayload';
 import { TransactionStatementDTO } from './transactionStatementDTO';
 import { TransactionStatusDTO } from './transactionStatusDTO';
@@ -420,6 +421,10 @@ import { TransferTransactionDTO } from './transferTransactionDTO';
 import { UpgradeDTO } from './upgradeDTO';
 import { UploadInfoDTO } from './uploadInfoDTO';
 import { VerifiableEntityDTO } from './verifiableEntityDTO';
+import { PaginationDTO } from './paginationDTO';
+import { TransactionSearchDTO } from './transactionSearchDTO';
+import { MosaicSearchDTO } from './mosaicSearchDTO';
+import { MetadataSearchDTO } from './metadataSearchDTO';
 
 /* tslint:disable:no-unused-variable */
 let primitives = [
@@ -560,6 +565,7 @@ let typeMap: {[index: string]: any} = {
     "MetadataDTO": MetadataDTO,
     "MetadataIds": MetadataIds,
     "MetadataModificationDTO": MetadataModificationDTO,
+    "MetadataSearchDTO": MetadataSearchDTO,
     "ModifyMultisigAccountTransactionBodyDTO": ModifyMultisigAccountTransactionBodyDTO,
     "ModifyMultisigAccountTransactionDTO": ModifyMultisigAccountTransactionDTO,
     "MosaicAliasTransactionBodyDTO": MosaicAliasTransactionBodyDTO,
@@ -579,6 +585,7 @@ let typeMap: {[index: string]: any} = {
     "MosaicNamesDTO": MosaicNamesDTO,
     "MosaicPropertyDTO": MosaicPropertyDTO,
     "MosaicRichListDTO": MosaicRichListDTO,
+    "MosaicSearchDTO": MosaicSearchDTO,
     "MosaicSupplyChangeTransactionBodyDTO": MosaicSupplyChangeTransactionBodyDTO,
     "MosaicSupplyChangeTransactionDTO": MosaicSupplyChangeTransactionDTO,
     "MultisigAccountGraphInfoDTO": MultisigAccountGraphInfoDTO,
@@ -602,6 +609,7 @@ let typeMap: {[index: string]: any} = {
     "NodeTimeDTO": NodeTimeDTO,
     "OfferDTO": OfferDTO,
     "OfferInfoDTO": OfferInfoDTO,
+    "PaginationDTO": PaginationDTO,
     "PaymentsDTO": PaymentsDTO,
     "PrepareDriveTransactionBodyDTO": PrepareDriveTransactionBodyDTO,
     "PrepareDriveTransactionDTO": PrepareDriveTransactionDTO,
@@ -632,7 +640,9 @@ let typeMap: {[index: string]: any} = {
     "TransactionIds": TransactionIds,
     "TransactionInfoDTO": TransactionInfoDTO,
     "TransactionMetaDTO": TransactionMetaDTO,
+    "TransactionEmbeddedMetaDTO": TransactionEmbeddedMetaDTO,
     "TransactionPayload": TransactionPayload,
+    "TransactionSearchDTO": TransactionSearchDTO,
     "TransactionStatementDTO": TransactionStatementDTO,
     "TransactionStatusDTO": TransactionStatusDTO,
     "TransferTransactionBodyDTO": TransferTransactionBodyDTO,
