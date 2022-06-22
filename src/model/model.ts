@@ -75,6 +75,7 @@ export * from './mosaic/MosaicNonce';
 export * from './mosaic/MosaicProperties';
 export * from './mosaic/MosaicPropertyType';
 export * from './mosaic/MosaicSupplyType';
+export * from './mosaic/MosaicSearch';
 export * from './mosaic/NetworkCurrencyMosaic';
 export * from './mosaic/NetworkHarvestMosaic';
 export * from './mosaic/NetworkMosaic';

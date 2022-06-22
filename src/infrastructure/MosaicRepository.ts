@@ -19,7 +19,8 @@ import {MosaicId} from '../model/mosaic/MosaicId';
 import {MosaicInfo} from '../model/mosaic/MosaicInfo';
 import { MosaicNames } from '../model/mosaic/MosaicNames';
 import { PageQueryParams } from './PageQueryParams';
-import { RichlistEntry } from '../model/model';
+import { MosaicQueryParams } from './MosaicQueryParams';
+import { RichlistEntry, MosaicSearch } from '../model/model';
 import { RequestOptions } from './RequestOptions';
 
 /**
@@ -57,4 +58,9 @@ export interface MosaicRepository {
      */
     getMosaicRichlist(mosaicId: MosaicId, queryParams?: PageQueryParams, requestOptions?: RequestOptions): Observable<RichlistEntry[]>;
 
+    /**
+     * search mosaics
+     * @return Observable<MosaicSearch>
+     */
+     searchMosaics(mosaicQueryParams: MosaicQueryParams, requestOptions?: RequestOptions): Observable<MosaicSearch>;
 }
