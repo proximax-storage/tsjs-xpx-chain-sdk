@@ -79,66 +79,71 @@ import { MosaicLevy } from '../../model/mosaic/MosaicLevy';
  * @constructor
  */
 export const CreateTransactionFromDTO = (transactionDTO): Transaction | InnerTransaction => {
-    if (transactionDTO.transaction.type === TransactionType.AGGREGATE_COMPLETE ||
-        transactionDTO.transaction.type === TransactionType.AGGREGATE_BONDED) {
-        const innerTransactions = transactionDTO.transaction.transactions === undefined ? [] : transactionDTO.transaction.transactions.map((innerTransactionDTO) => {
-            const aggregateTransactionInfo = innerTransactionDTO.meta ? new AggregateTransactionInfo(
-                new UInt64(innerTransactionDTO.meta.height),
-                innerTransactionDTO.meta.index,
-                innerTransactionDTO.meta.id,
-                innerTransactionDTO.meta.aggregateHash,
-                innerTransactionDTO.meta.aggregateId,
-                innerTransactionDTO.meta.uniqueAggregateHash
-            ) : undefined;
-            innerTransactionDTO.transaction.maxFee = transactionDTO.transaction.maxFee;
-            innerTransactionDTO.transaction.deadline = transactionDTO.transaction.deadline;
-            innerTransactionDTO.transaction.signature = transactionDTO.transaction.signature;
-            return CreateStandaloneTransactionFromDTO(innerTransactionDTO.transaction, aggregateTransactionInfo);
-        });
-        return new AggregateTransaction(
-            extractNetworkType(transactionDTO.transaction.version),
-            transactionDTO.transaction.type,
-            extractTransactionVersion(transactionDTO.transaction.version),
-            Deadline.createFromDTO(transactionDTO.transaction.deadline),
-            new UInt64(transactionDTO.transaction.maxFee || [0, 0]),
-            innerTransactions,
-            transactionDTO.transaction.cosignatures ? transactionDTO.transaction.cosignatures
-                .map((aggregateCosignatureDTO) => {
-                    return new AggregateTransactionCosignature(
-                        aggregateCosignatureDTO.signature,
-                        PublicAccount.createFromPublicKey(aggregateCosignatureDTO.signer,
-                            extractNetworkType(transactionDTO.transaction.version)));
-                }) : [],
-            transactionDTO.transaction.signature,
-            transactionDTO.transaction.signer ? PublicAccount.createFromPublicKey(transactionDTO.transaction.signer,
-                            extractNetworkType(transactionDTO.transaction.version)) : undefined,
-            transactionDTO.meta ? new TransactionInfo(
+    try {
+        if (transactionDTO.transaction.type === TransactionType.AGGREGATE_COMPLETE ||
+            transactionDTO.transaction.type === TransactionType.AGGREGATE_BONDED) {
+            const innerTransactions = transactionDTO.transaction.transactions === undefined ? [] : transactionDTO.transaction.transactions.map((innerTransactionDTO) => {
+                const aggregateTransactionInfo = innerTransactionDTO.meta ? new AggregateTransactionInfo(
+                    new UInt64(innerTransactionDTO.meta.height),
+                    innerTransactionDTO.meta.index,
+                    innerTransactionDTO.meta.id,
+                    innerTransactionDTO.meta.aggregateHash,
+                    innerTransactionDTO.meta.aggregateId,
+                    innerTransactionDTO.meta.uniqueAggregateHash
+                ) : undefined;
+                innerTransactionDTO.transaction.maxFee = transactionDTO.transaction.maxFee;
+                innerTransactionDTO.transaction.deadline = transactionDTO.transaction.deadline;
+                innerTransactionDTO.transaction.signature = transactionDTO.transaction.signature;
+                return CreateStandaloneTransactionFromDTO(innerTransactionDTO.transaction, aggregateTransactionInfo);
+            });
+            return new AggregateTransaction(
+                extractNetworkType(transactionDTO.transaction.version),
+                transactionDTO.transaction.type,
+                extractTransactionVersion(transactionDTO.transaction.version),
+                Deadline.createFromDTO(transactionDTO.transaction.deadline),
+                new UInt64(transactionDTO.transaction.maxFee || [0, 0]),
+                innerTransactions,
+                transactionDTO.transaction.cosignatures ? transactionDTO.transaction.cosignatures
+                    .map((aggregateCosignatureDTO) => {
+                        return new AggregateTransactionCosignature(
+                            aggregateCosignatureDTO.signature,
+                            PublicAccount.createFromPublicKey(aggregateCosignatureDTO.signer,
+                                extractNetworkType(transactionDTO.transaction.version)));
+                    }) : [],
+                transactionDTO.transaction.signature,
+                transactionDTO.transaction.signer ? PublicAccount.createFromPublicKey(transactionDTO.transaction.signer,
+                                extractNetworkType(transactionDTO.transaction.version)) : undefined,
+                transactionDTO.meta ? new TransactionInfo(
+                    new UInt64(transactionDTO.meta.height),
+                    transactionDTO.meta.index,
+                    transactionDTO.meta.id,
+                    transactionDTO.meta.hash,
+                    transactionDTO.meta.merkleComponentHash,
+                ) : undefined,
+            );
+        } else if(transactionDTO.meta && transactionDTO.meta.aggregateHash){
+            const aggregateTransactionInfo = new AggregateTransactionInfo(
+                new UInt64(transactionDTO.meta.height),
+                transactionDTO.meta.index,
+                transactionDTO.meta.id,
+                transactionDTO.meta.aggregateHash,
+                transactionDTO.meta.aggregateId,
+                transactionDTO.meta.uniqueAggregateHash
+            );
+            return CreateStandaloneTransactionFromDTO(transactionDTO.transaction, aggregateTransactionInfo, true);
+        } else {
+            const transactionInfo = transactionDTO.meta ? new TransactionInfo(
                 new UInt64(transactionDTO.meta.height),
                 transactionDTO.meta.index,
                 transactionDTO.meta.id,
                 transactionDTO.meta.hash,
                 transactionDTO.meta.merkleComponentHash,
-            ) : undefined,
-        );
-    } else if(transactionDTO.meta && transactionDTO.meta.aggregateHash){
-        const aggregateTransactionInfo = new AggregateTransactionInfo(
-            new UInt64(transactionDTO.meta.height),
-            transactionDTO.meta.index,
-            transactionDTO.meta.id,
-            transactionDTO.meta.aggregateHash,
-            transactionDTO.meta.aggregateId,
-            transactionDTO.meta.uniqueAggregateHash
-        );
-        return CreateStandaloneTransactionFromDTO(transactionDTO.transaction, aggregateTransactionInfo, true);
-    } else {
-        const transactionInfo = transactionDTO.meta ? new TransactionInfo(
-            new UInt64(transactionDTO.meta.height),
-            transactionDTO.meta.index,
-            transactionDTO.meta.id,
-            transactionDTO.meta.hash,
-            transactionDTO.meta.merkleComponentHash,
-        ) : undefined;
-        return CreateStandaloneTransactionFromDTO(transactionDTO.transaction, transactionInfo);
+            ) : undefined;
+            return CreateStandaloneTransactionFromDTO(transactionDTO.transaction, transactionInfo);
+        }
+    } catch (error) {
+        console.log(error);
+        return transactionDTO;       
     }
 };
 

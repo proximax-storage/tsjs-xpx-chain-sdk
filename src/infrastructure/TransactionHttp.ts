@@ -41,6 +41,7 @@ import {TransactionGroupType} from '../model/transaction/TransactionGroupType';
 import {TransactionSearch} from '../model/transaction/TransactionSearch';
 import {TransactionQueryParams} from './TransactionQueryParams';
 import { RequestOptions } from './RequestOptions';
+import { Pagination } from '../model/Pagination';
 /**
  * Transaction http repository.
  *
@@ -263,7 +264,13 @@ export class TransactionHttp extends Http implements TransactionRepository {
                 let transactions = response.body.data.map((transactionDTO) => {
                     return CreateTransactionFromDTO(transactionDTO);
                 });
-                return new TransactionSearch(transactions, response.body.pagination)
+                let paginationData = new Pagination(
+                    response.body.pagination.totalEntries, 
+                    response.body.pagination.pageNumber,
+                    response.body.pagination.pageSize,
+                    response.body.pagination.totalPages
+                );
+                return new TransactionSearch(transactions, paginationData)
             })
         )
     }

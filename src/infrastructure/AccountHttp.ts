@@ -43,6 +43,7 @@ import {TransactionQueryParams} from './TransactionQueryParams';
 import {CreateTransactionFromDTO} from './transaction/CreateTransactionFromDTO';
 import {TransactionGroupType} from '../model/transaction/TransactionGroupType'
 import { RequestOptions } from './RequestOptions';
+import { Pagination } from '../model/Pagination';
 
 /**
  * Account http repository.
@@ -251,7 +252,13 @@ export class AccountHttp extends Http implements AccountRepository {
                 transactions = response.body.data.map((transactionDTO) => {
                     return CreateTransactionFromDTO(transactionDTO);
                 });
-                return new TransactionSearch(transactions, response.body.pagination);
+                let paginationData = new Pagination(
+                    response.body.pagination.totalEntries, 
+                    response.body.pagination.pageNumber,
+                    response.body.pagination.pageSize,
+                    response.body.pagination.totalPages
+                );
+                return new TransactionSearch(transactions, paginationData);
             }));
     }
 
@@ -294,7 +301,13 @@ export class AccountHttp extends Http implements AccountRepository {
                 transactions = response.body.data.map((transactionDTO) => {
                     return CreateTransactionFromDTO(transactionDTO);
                 });
-                return new TransactionSearch(transactions, response.body.pagination);
+                let paginationData = new Pagination(
+                    response.body.pagination.totalEntries, 
+                    response.body.pagination.pageNumber,
+                    response.body.pagination.pageSize,
+                    response.body.pagination.totalPages
+                );
+                return new TransactionSearch(transactions, paginationData);
             }));
     }
 
@@ -335,7 +348,13 @@ export class AccountHttp extends Http implements AccountRepository {
                 transactions = response.body.data.map((transactionDTO) => {
                     return CreateTransactionFromDTO(transactionDTO);
                 });
-                return new TransactionSearch(transactions, response.body.pagination);
+                let paginationData = new Pagination(
+                    response.body.pagination.totalEntries, 
+                    response.body.pagination.pageNumber,
+                    response.body.pagination.pageSize,
+                    response.body.pagination.totalPages
+                );
+                return new TransactionSearch(transactions, paginationData);
             }));
     }
 
@@ -381,7 +400,13 @@ export class AccountHttp extends Http implements AccountRepository {
                 transactions = response.body.data.map((transactionDTO) => {
                     return CreateTransactionFromDTO(transactionDTO);
                 });
-                return new TransactionSearch(transactions, response.body.pagination);
+                let paginationData = new Pagination(
+                    response.body.pagination.totalEntries, 
+                    response.body.pagination.pageNumber,
+                    response.body.pagination.pageSize,
+                    response.body.pagination.totalPages
+                );
+                return new TransactionSearch(transactions, paginationData);
             }));
     }
 
@@ -392,9 +417,9 @@ export class AccountHttp extends Http implements AccountRepository {
      * @param txnQueryParams - (Optional) Transaction Query params
      * @returns Observable<AggregateTransaction[]>
      */
-    public aggregateBondedTransactions(publicAccount: PublicAccount, getCompleteTransaction: boolean = true, txnQueryParams?: TransactionQueryParams, requestOptions?: RequestOptions): Observable <AggregateTransaction[]> {
+    public aggregateBondedTransactions(publicAccount: PublicAccount, txnQueryParams?: TransactionQueryParams, requestOptions?: RequestOptions): Observable <AggregateTransaction[]> {
         const plainAddress = publicAccount.address.plain();
-        let transactionRoutesApi = getCompleteTransaction ? new TransactionRoutesApi(this.url) : null;
+        // let transactionRoutesApi = getCompleteTransaction ? new TransactionRoutesApi(this.url) : null;
 
         let firstObservable = observableFrom(
             this.accountRoutesApi.partialTransactions(plainAddress, txnQueryParams, requestOptions))
@@ -412,31 +437,6 @@ export class AccountHttp extends Http implements AccountRepository {
                 })
             );
 
-        if(!getCompleteTransaction){
-            return firstObservable;
-        }
-        else{
-            return firstObservable.pipe(
-                flatMap(aggTxns =>{
-                    if(aggTxns.length === 0){
-                        return [];
-                    }
-
-                    let transactionIds = aggTxns.map(txn => txn.transactionInfo!.hash ? txn.transactionInfo!.hash : "");
-
-                    const transactionIdsBody = {
-                        transactionIds,
-                    };
-
-                    return observableFrom(transactionRoutesApi!.getTransactions(transactionIdsBody, TransactionGroupType.PARTIAL, requestOptions)
-                        .then(transactionHashResponse=>{
-                            return transactionHashResponse.body.map(transactionDTO=>{
-                                return CreateTransactionFromDTO(transactionDTO) as AggregateTransaction;
-                            })
-                        })
-                    )
-                })
-            )
-        }
+        return firstObservable;
     }
 }

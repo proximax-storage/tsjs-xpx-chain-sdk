@@ -33,6 +33,7 @@ import {TransactionQueryParams} from './TransactionQueryParams';
 import { CreateStatementFromDTO } from './receipt/CreateReceiptFromDTO';
 import {CreateTransactionFromDTO, extractBeneficiary} from './transaction/CreateTransactionFromDTO';
 import { RequestOptions } from './RequestOptions';
+import { Pagination } from '../model/Pagination';
 
 /**
  * Blocks returned limits:
@@ -139,7 +140,15 @@ export class BlockHttp extends Http implements BlockRepository {
                             return CreateTransactionFromDTO(transactionDTO);
                         });
                     }
-                    return new TransactionSearch(transactions, response.body.pagination);
+
+                    let paginationData = new Pagination(
+                        response.body.pagination.totalEntries, 
+                        response.body.pagination.pageNumber,
+                        response.body.pagination.pageSize,
+                        response.body.pagination.totalPages
+                    );
+                    
+                    return new TransactionSearch(transactions, paginationData);
         }));
     }
 

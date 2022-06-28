@@ -43,15 +43,15 @@ export enum TransactionSortingField{
 
 export class TransactionFieldOrder{
 
-    constructor(public order: Order_v2, public sortingField: TransactionSortingField){
+    constructor(public sortingField: TransactionSortingField, public order: Order_v2){
     }
 
     static setAscending(sortingField: TransactionSortingField){
-        return new TransactionFieldOrder(Order_v2.ASC, sortingField);
+        return new TransactionFieldOrder(sortingField, Order_v2.ASC);
     }
 
     static setDescending(sortingField: TransactionSortingField){
-        return new TransactionFieldOrder(Order_v2.DESC, sortingField);
+        return new TransactionFieldOrder(sortingField, Order_v2.DESC);
     }
 }
 
@@ -59,7 +59,13 @@ export class TransactionQueryParams{
 
     pageSize?: number;
     pageNumber?: number;
+    /**
+    * filter by transaction types
+    */
     type?: TransactionType[] | number[];
+    /**
+    * include innerTransactions as single transaction into the search result, default to false
+    */
     embedded?: boolean;
     order?: Order_v2;
     sortField?: TransactionSortingField;
@@ -70,6 +76,11 @@ export class TransactionQueryParams{
     recipientAddress?: string | Address;
     address?: string | Address;
     publicKey?: string | PublicAccount;
+    /**
+    * include only first level of Aggregate transactions (exclude innerTransactions), default to true
+    * set to false to get the complete aggregate transactions
+    */
+    firstLevel?: boolean;
     
     /* non-applicable for now
     transferMosaicId?: TransactionSearchMosaic;

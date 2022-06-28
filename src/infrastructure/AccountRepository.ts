@@ -172,6 +172,5 @@ export interface AccountRepository {
      * @param txnQueryParam - (Optional) Transaction Query Params
      * @returns Observable<AggregateTransaction[]>
      */
-    aggregateBondedTransactions(publicAccount: PublicAccount, getCompleteTransaction: boolean, 
-                                txnQueryParam?: TransactionQueryParams, requestOptions?: RequestOptions): Observable<AggregateTransaction[]>;
+    aggregateBondedTransactions(publicAccount: PublicAccount, txnQueryParam?: TransactionQueryParams, requestOptions?: RequestOptions): Observable<AggregateTransaction[]>;
 }
