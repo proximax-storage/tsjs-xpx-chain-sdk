@@ -431,7 +431,7 @@ export class TransactionRoutesApi {
      * @summary Get transactions information
      * @param transactionId
      */
-     public async searchTransaction(searchType: string, txnHash: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }> {
+     public async searchTransaction(searchType: string, txnHash: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: TransactionInfoDTO;  }> {
         const localVarPath = '/transactions/{searchType}/{txnHash}'
                 .replace('{' + 'searchType' + '}', encodeURIComponent(String(searchType)))
                 .replace('{' + 'txnHash' + '}', encodeURIComponent(String(txnHash)))
@@ -453,10 +453,10 @@ export class TransactionRoutesApi {
             params: localVarQueryParameters
         };
 
-        return new Promise<{ response: AxiosResponse; body: TransactionSearchDTO;  }>((resolve, reject) => {
+        return new Promise<{ response: AxiosResponse; body: TransactionInfoDTO;  }>((resolve, reject) => {
             axios(localVarRequestOptions).then(
                 (response)=>{
-                    let body = ObjectSerializer.deserialize(response.data, "TransactionSearchDTO");
+                    let body = ObjectSerializer.deserialize(response.data, "TransactionInfoDTO");
                     if (response.status && response.status >= 200 && response.status <= 299) {
                         resolve({ response: response, body: body });
                     } else {
