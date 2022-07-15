@@ -180,7 +180,6 @@ export * from './transaction/RemoveExchangeOfferTransaction';
 export * from './transaction/RemoveSdaExchangeOffer';
 export * from './transaction/RemoveSdaExchangeOfferTransaction';
 export * from './transaction/SdaExchangeOffer';
-export * from './transaction/SdaExchangeOfferType';
 export * from './transaction/SecretLockTransaction';
 export * from './transaction/SecretProofTransaction';
 export * from './transaction/SignedTransaction';
