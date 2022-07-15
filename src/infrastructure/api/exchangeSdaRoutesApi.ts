@@ -15,14 +15,13 @@ import axios from 'axios';
 import {AxiosRequestConfig, AxiosResponse, AxiosError} from 'axios';
 
 /* tslint:disable:no-unused-locals */
-import { ExchangesDTO } from '../model/exchangesDTO';
+import { SdaOfferInfoWithOwnerDTO } from '../model/sdaOfferInfoWithOwnerDTO';
 import { ExchangeSdaInlineResponse200 } from '../model/exchangeSdaInlineResponse200';
 
 import { RequestOptions } from '../RequestOptions';
 import { ObjectSerializer } from '../model/models';
 
 import { HttpError, RequestFile } from './apis';
-import { ExchangeMosaicDTO } from '../model/exchangeMosaicDTO';
 
 let defaultBasePath = 'http://localhost:3000';
 
@@ -84,7 +83,7 @@ export class ExchangeSdaRoutesApi {
      * @param accountId The public key or address of an account.
      */
     public async getAccountSdaExchangeOffers (accountId: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: ExchangeSdaInlineResponse200;  }> {
-        const localVarPath = '/account/{accountId}/exchangeSda'
+        const localVarPath = '/account/{accountId}/exchangesda'
             .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
 
         // verify required parameter 'accountId' is not null or undefined
@@ -124,19 +123,19 @@ export class ExchangeSdaRoutesApi {
      * @param offerType The type of exchange offer.
      * @param mosaicId The mosaic identifier.
      */
-    public async getExchangeSdaOffers (offerType: string, mosaicId: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<ExchangesDTO>;  }> {
-        const localVarPath = '/exchangeSda/{offerType}/{mosaicId}'
+    public async getExchangeSdaOffers (offerType: string, mosaicId: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<SdaOfferInfoWithOwnerDTO>;  }> {
+        const localVarPath = '/exchangesda/{offerType}/{mosaicId}'
             .replace('{' + 'offerType' + '}', encodeURIComponent(String(offerType)))
             .replace('{' + 'mosaicId' + '}', encodeURIComponent(String(mosaicId)));
 
         // verify required parameter 'offerType' is not null or undefined
         if (offerType === null || offerType === undefined) {
-            throw new Error('Required parameter offerType was null or undefined when calling getExchangeOffers.');
+            throw new Error('Required parameter offerType was null or undefined when calling getExchangeSdaOffers.');
         }
 
         // verify required parameter 'mosaicId' is not null or undefined
         if (mosaicId === null || mosaicId === undefined) {
-            throw new Error('Required parameter mosaicId was null or undefined when calling getExchangeOffers.');
+            throw new Error('Required parameter mosaicId was null or undefined when calling getExchangeSdaOffers.');
         }
 
         let requestHeaders = this.combineHeaders(reqOptions);
@@ -149,14 +148,14 @@ export class ExchangeSdaRoutesApi {
             responseType: 'json'
         };
 
-        return new Promise<{ response: AxiosResponse; body: Array<ExchangesDTO>;  }>((resolve, reject) => {
+        return new Promise<{ response: AxiosResponse; body: Array<SdaOfferInfoWithOwnerDTO>;  }>((resolve, reject) => {
             axios(localVarRequestOptions).then(
                 (response)=>{
-                    let body = ObjectSerializer.deserialize(response.data, "Array<ExchangesDTO>");
+                    let body = ObjectSerializer.deserialize(response.data, "Array<SdaOfferInfoWithOwnerDTO>");
                     if (response.status && response.status >= 200 && response.status <= 299) {
                         resolve({ response: response, body: body });
                     } else {
-                            reject(response);
+                        reject(response);
                     }
                 },
                 (error: AxiosError ) => {
