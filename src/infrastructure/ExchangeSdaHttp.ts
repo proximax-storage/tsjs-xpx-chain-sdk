@@ -8,9 +8,9 @@ import { ExchangeSdaRoutesApi } from './api/apis';
 import { NetworkHttp } from './NetworkHttp';
 import { Http } from './Http';
 import { ExchangeSdaRepository } from './ExchangeSdaRepository';
-import { PublicAccount, NetworkType, ExchangeOfferType, MosaicId, UInt64, Deadline, Address, ExchangeSdaOfferType } from '../model/model';
+import { PublicAccount, NetworkType, ExchangeOfferType, MosaicId, UInt64, Deadline, Address, SdaExchangeOfferType } from '../model/model';
 import { AccountSdaExchanges } from '../model/exchangeSda/AccountSdaExchanges';
-import { MosaicExchange } from '../model/exchange/MosaicExchange';
+import { SdaOfferInfoWithOwner } from '../model/exchangeSda/SdaOfferInfoWithOwner';
 import { RequestOptions } from './RequestOptions';
 
 /**
@@ -21,7 +21,7 @@ import { RequestOptions } from './RequestOptions';
 export class ExchangeSdaHttp extends Http implements ExchangeSdaRepository {
     /**
      * @internal
-     * xpx chain Library exchange routes api
+     * xpx chain Library SDA Exchange routes api
      */
     private exchangeSdaRoutesApi: ExchangeSdaRoutesApi;
 
@@ -53,17 +53,17 @@ export class ExchangeSdaHttp extends Http implements ExchangeSdaRepository {
     }
 
     /**
-     * Gets exchanges for a given mosaic id
+     * Get SDA exchanges for a given mosaic id
      * @param offerType
      * @param mosaicId
      * @returns Observable<MosaicExchanges[]>
      */
-    public getExchangeSdaOffers(offerType: ExchangeSdaOfferType, mosaicId: MosaicId, requestOptions?: RequestOptions): Observable<MosaicExchange[]> {
+    public getExchangeSdaOffers(offerType: SdaExchangeOfferType, mosaicId: MosaicId, requestOptions?: RequestOptions): Observable<SdaOfferInfoWithOwner[]> {
         const mosaicIdArg = mosaicId.toHex();
         return this.getNetworkTypeObservable(requestOptions).pipe(
             mergeMap(networkType => observableFrom(
                 this.exchangeSdaRoutesApi.getExchangeSdaOffers(offerType, mosaicIdArg, requestOptions)).pipe(map(response =>
-                    response.body.map(exchangesDTO => MosaicExchange.createFromDTO(exchangesDTO, networkType))
+                    response.body.map(sdaOfferWithOwnerDTO => SdaOfferInfoWithOwner.createFromDTO(sdaOfferWithOwnerDTO, networkType))
                 )))
         );
     }

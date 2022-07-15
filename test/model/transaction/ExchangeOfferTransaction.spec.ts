@@ -63,7 +63,7 @@ describe('ExchangeOfferTransaction', () => {
 
         expect(signedTransaction.payload.substring(
             244,
-            signedTransaction.payload.length,
+            signedTransaction.payload.length,            
         )).to.be.equal('01EFCDAB907856341215160500000000002A2C0A000000000001' + 'B'.repeat(64));
     });
 

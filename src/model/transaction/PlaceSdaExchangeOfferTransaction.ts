@@ -68,7 +68,6 @@ export class PlaceSdaExchangeOfferTransaction extends Transaction {
             // mosaicId give amount -8
             // mosaicId get - 8
             // mosaicId get amount - 8
-            // owner public key - 32 - removed
             // duration - 8
 
         return byteSize;
