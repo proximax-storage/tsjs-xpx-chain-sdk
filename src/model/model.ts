@@ -55,8 +55,9 @@ export * from './exchange/OfferInfo';
 
 // ExchangeSda
 export * from './exchangeSda/AccountSdaExchanges';
-// export * from './exchangeSda/MosaicExchange';
+export * from './exchangeSda/SdaOfferInfoWithOwner';
 export * from './exchangeSda/SdaOfferInfo';
+export * from './exchangeSda/SdaExchangeOfferType';
 
 // Metadata
 // export * from './metadata/AddressMetadata';
@@ -173,7 +174,6 @@ export * from './transaction/RemoveExchangeOfferTransaction';
 export * from './transaction/RemoveSdaExchangeOffer';
 export * from './transaction/RemoveSdaExchangeOfferTransaction';
 export * from './transaction/SdaExchangeOffer';
-export * from './transaction/SdaExchangeOfferType';
 export * from './transaction/SecretLockTransaction';
 export * from './transaction/SecretProofTransaction';
 export * from './transaction/SignedTransaction';

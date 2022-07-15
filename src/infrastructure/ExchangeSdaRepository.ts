@@ -3,8 +3,9 @@
 // license that can be found in the LICENSE file
 
 import {Observable} from 'rxjs';
-import { MosaicExchange, AccountSdaExchanges, MosaicId, Address, PublicAccount, ExchangeSdaOfferType } from '../model/model';
+import { MosaicExchange, AccountSdaExchanges, MosaicId, Address, PublicAccount, SdaExchangeOfferType } from '../model/model';
 import { RequestOptions } from './RequestOptions';
+import { SdaOfferInfoWithOwner } from '../model/exchangeSda/SdaOfferInfoWithOwner';
 /**
  * ExchangeRepository interface repository.
  *
@@ -25,6 +26,6 @@ export interface ExchangeSdaRepository {
      * @param mosaicId
      * @returns Observable<MosaicExchanges[]>
      */
-     getExchangeSdaOffers(offerType: ExchangeSdaOfferType, mosaicId: MosaicId, requestOptions?: RequestOptions): Observable<MosaicExchange[]>;
+     getExchangeSdaOffers(offerType: SdaExchangeOfferType, mosaicId: MosaicId, requestOptions?: RequestOptions): Observable<SdaOfferInfoWithOwner[]>;
 
 }

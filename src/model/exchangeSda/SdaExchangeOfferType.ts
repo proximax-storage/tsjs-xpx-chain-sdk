@@ -7,7 +7,7 @@
  * GIVE: give offer.
  * GET: get offer.
  */
-export enum ExchangeSdaOfferType {
+export enum SdaExchangeOfferType {
     GIVE = "give",
     GET = "get"
 }

@@ -24,7 +24,7 @@ export class AccountSdaExchangeDTO {
     'ownerAddress': string;
     'version': number;
     'sdaOfferBalances': Array<SdaOfferInfoDTO>;
-    'expiredSdaOfferBalances': Array<SdaOfferInfoDTO>;
+    'expiredSdaOfferBalances': Array<any>;
 
     static discriminator: string | undefined = undefined;
 
@@ -52,7 +52,7 @@ export class AccountSdaExchangeDTO {
         {
             "name": "expiredSdaOfferBalances",
             "baseName": "expiredSdaOfferBalances",
-            "type": "Array<SdaOfferInfoDTO>"
+            "type": "Array<any>"
         }    ];
 
     static getAttributeTypeMap() {

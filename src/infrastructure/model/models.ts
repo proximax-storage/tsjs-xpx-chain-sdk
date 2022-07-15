@@ -176,6 +176,7 @@ export * from './nodeTimeDTO';
 export * from './offerDTO';
 export * from './offerInfoDTO';
 export * from './sdaOfferInfoDTO';
+export * from './sdaOfferInfoWithOwnerDTO';
 export * from './offerTypeEnum';
 export * from './paymentsDTO';
 export * from './prepareDriveTransactionBodyDTO';
