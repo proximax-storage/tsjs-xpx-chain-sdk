@@ -7,6 +7,7 @@ import { UInt64 } from "../UInt64";
 import { MosaicId } from "../mosaic/MosaicId";
 
 export class SdaOfferInfo {
+
     constructor(
         readonly mosaicIdGive: MosaicId,
         readonly mosaicIdGet: MosaicId,
@@ -14,9 +15,11 @@ export class SdaOfferInfo {
         readonly currentMosaicGetAmount: UInt64,
         readonly initialMosaicGiveAmount: UInt64,
         readonly initialMosaicGetAmount: UInt64,
+        /**
+        *  block height deadline
+        */
         readonly deadline: UInt64,
     ) {
-
     }
 
     static createFromDTO(offerInfoDTO: SdaOfferInfoDTO) {
