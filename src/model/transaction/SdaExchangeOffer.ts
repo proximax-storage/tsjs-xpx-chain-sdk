@@ -34,11 +34,6 @@ export class SdaExchangeOffer {
                  public readonly mosaicAmountGet: UInt64,
 
                 /**
-                 * Owner of the offer we want to accept.
-                 */
-                //  public readonly owner: PublicAccount,
-
-                /**
                  * duration of block the offer valid 
                  */
                 public readonly duration: UInt64,
@@ -55,7 +50,6 @@ export class SdaExchangeOffer {
             mosaicIdGiveAmount: this.mosaicAmountGive.toDTO(),
             mosaicIdGet: this.mosaicIdGet.id.toDTO(),
             mosaicIdGetAmount: this.mosaicAmountGet.toDTO(),
-            // owner: this.owner.publicKey,
             duration: this.duration.toDTO()
         };
     }

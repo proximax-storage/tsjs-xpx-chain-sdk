@@ -649,12 +649,11 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
             extractNetworkType(transactionDTO.version),
             extractTransactionVersion(transactionDTO.version),
             isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            transactionDTO.sdaOffers.map(o => new SdaExchangeOffer(
+            transactionDTO.offers.map(o => new SdaExchangeOffer(
                 new MosaicId(o.mosaicIdGive),
-                new UInt64(o.mosaicGiveAmount),
+                new UInt64(o.mosaicAmountGive),
                 new MosaicId(o.mosaicIdGet),
-                new UInt64(o.mosaicGetAmount),
-                // PublicAccount.createFromPublicKey(o.owner, extractNetworkType(transactionDTO.version)),
+                new UInt64(o.mosaicAmountGet),
                 new UInt64(o.duration)
             )),
             isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
@@ -669,7 +668,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
             extractNetworkType(transactionDTO.version),
             extractTransactionVersion(transactionDTO.version),
             isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            transactionDTO.sdaOffers.map(o => new RemoveSdaExchangeOffer(
+            transactionDTO.offers.map(o => new RemoveSdaExchangeOffer(
                 new MosaicId(o.mosaicIdGive),
                 new MosaicId(o.mosaicIdGet)
             )),
