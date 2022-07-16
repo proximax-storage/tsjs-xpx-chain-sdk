@@ -683,8 +683,8 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
             return isEmbedded ? removeHarvesterTxn.toAggregate(removeHarvesterTxn.signer!) : removeHarvesterTxn;
         }else if (transactionDTO.type === TransactionType.PLACE_SDA_EXCHANGE_OFFER) {
             const placeSdaExchangeOfferTxn = new PlaceSdaExchangeOfferTransaction(
-                extractNetworkType(transactionDTO.version),
-                extractTransactionVersion(transactionDTO.version),
+                networkType,
+                transactionVersion,
                 isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
                 transactionDTO.sdaOffers.map(o => new SdaExchangeOffer(
                     new MosaicId(o.mosaicIdGive),
@@ -696,14 +696,14 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
                 isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
                 isEmbedded ? undefined : transactionDTO.signature,
                 transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                                extractNetworkType(transactionDTO.version)) : undefined,
+                                networkType) : undefined,
                 transactionInfo,
             );
             return isEmbedded ? placeSdaExchangeOfferTxn.toAggregate(placeSdaExchangeOfferTxn.signer!) : placeSdaExchangeOfferTxn;
         } else if (transactionDTO.type === TransactionType.REMOVE_SDA_EXCHANGE_OFFER) {
             const removeSdaExchangeOfferTxn = new RemoveSdaExchangeOfferTransaction(
-                extractNetworkType(transactionDTO.version),
-                extractTransactionVersion(transactionDTO.version),
+                networkType,
+                transactionVersion,
                 isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
                 transactionDTO.sdaOffers.map(o => new RemoveSdaExchangeOffer(
                     new MosaicId(o.mosaicIdGive),
@@ -712,12 +712,12 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
                 isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
                 isEmbedded ? undefined : transactionDTO.signature,
                 transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                                extractNetworkType(transactionDTO.version)) : undefined,
+                                networkType) : undefined,
                 transactionInfo,
             );
             return isEmbedded ? removeSdaExchangeOfferTxn.toAggregate(removeSdaExchangeOfferTxn.signer!) : removeSdaExchangeOfferTxn;
-        }
-
+        } 
+        
         throw new Error('Unimplemented transaction with type ' + transactionDTO.type);
     } catch (error) {
 
