@@ -16,6 +16,9 @@ export class SdaOfferInfoWithOwner{
         readonly currentMosaicGetAmount: UInt64,
         readonly initialMosaicGiveAmount: UInt64,
         readonly initialMosaicGetAmount: UInt64,
+        /**
+        *  block height deadline
+        */
         readonly deadline: UInt64,
         readonly owner: PublicAccount
     ) {

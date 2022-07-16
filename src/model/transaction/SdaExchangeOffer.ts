@@ -8,28 +8,24 @@ import { MosaicId } from '../mosaic/MosaicId';
 
 export class SdaExchangeOffer {
 
-    /**
-     * Constructor
-     * @param type
-     */
     constructor(
                 /**
-                 * Id of the mosaic for which the offer should be given
+                 * Id of the mosaic for which the offer should give
                  */
                 public readonly mosaicIdGive: MosaicId,
 
                 /**
-                 * Amount of mosaic that should be given
+                 * Amount of mosaic that should be given, in smallest unit
                  */
                 public readonly mosaicAmountGive: UInt64,
 
                 /**
-                 * Id of the mosaic for which the offer should be received
+                 * Id of the mosaic for which the offer should receive
                  */
                  public readonly mosaicIdGet: MosaicId,
 
                  /**
-                  *  Amount of mosaic should be received
+                  *  Amount of mosaic should be receive, in smallest unit
                   */
                  public readonly mosaicAmountGet: UInt64,
 
