@@ -53,6 +53,11 @@ export * from './exchange/AccountExchanges';
 export * from './exchange/MosaicExchange';
 export * from './exchange/OfferInfo';
 
+// Harvester
+export * from './harvester/HarvesterInfo';
+export * from './harvester/HarvesterSearch';
+export * from './harvester/HarvesterMetaInfo';
+
 // Metadata
 // export * from './metadata/AddressMetadata';
 // export * from './metadata/Field';
@@ -182,6 +187,7 @@ export * from './transaction/TransactionType';
 export * from './transaction/TransactionVersion';
 export * from './transaction/TransferTransaction';
 export * from './transaction/TransactionSearch';
+export * from './transaction/HarvesterTransaction';
 
 // Upgrade
 export * from './upgrade/ChainUpgrade';
