@@ -69,6 +69,7 @@ import { MosaicMetadataTransaction } from '../../model/transaction/MosaicMetadat
 import { NamespaceMetadataTransaction } from '../../model/transaction/NamespaceMetadataTransaction';
 import { MosaicModifyLevyTransaction } from '../../model/transaction/MosaicModifyLevyTransaction';
 import { MosaicRemoveLevyTransaction } from '../../model/transaction/MosaicRemoveLevyTransaction';
+import { HarvesterTransaction } from '../../model/transaction/HarvesterTransaction';
 import { MosaicNonce } from '../../model/mosaic/MosaicNonce';
 import { MosaicLevy } from '../../model/mosaic/MosaicLevy';
 
@@ -649,8 +650,35 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
             transactionInfo,
         );
         return isEmbedded ? mosaicRemoveLevyTxn.toAggregate(mosaicRemoveLevyTxn.signer!) : mosaicRemoveLevyTxn;
+    } else if (transactionDTO.type === TransactionType.ADD_HARVESTER) {
+        let networkType = extractNetworkType(transactionDTO.version);
+        const addHarvesterTxn = new HarvesterTransaction(
+            networkType,
+            TransactionType.ADD_HARVESTER,
+            extractTransactionVersion(transactionDTO.version),
+            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+            PublicAccount.createFromPublicKey(transactionDTO.harvesterKey, networkType),
+            isEmbedded ? undefined : transactionDTO.signature,
+            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer, networkType) : undefined,
+            transactionInfo,
+        );
+        return isEmbedded ? addHarvesterTxn.toAggregate(addHarvesterTxn.signer!) : addHarvesterTxn;
+    } else if (transactionDTO.type === TransactionType.REMOVE_HARVESTER) {
+        let networkType = extractNetworkType(transactionDTO.version);
+        const removeHarvesterTxn = new HarvesterTransaction(
+            networkType,
+            TransactionType.REMOVE_HARVESTER,
+            extractTransactionVersion(transactionDTO.version),
+            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+            PublicAccount.createFromPublicKey(transactionDTO.harvesterKey, networkType),
+            isEmbedded ? undefined : transactionDTO.signature,
+            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer, networkType) : undefined,
+            transactionInfo,
+        );
+        return isEmbedded ? removeHarvesterTxn.toAggregate(removeHarvesterTxn.signer!) : removeHarvesterTxn;
     }
-    
 
     throw new Error('Unimplemented transaction with type ' + transactionDTO.type);
 };

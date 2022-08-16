@@ -77,7 +77,7 @@ export class MetadataRoutesApi {
     }
 
     /**
-     * Gets the metadata(AccountMetadataIndo, MosaicMetadataInfo or NamespaceMetadataInfo) for a given metadataId.
+     * Get the metadata from a compositeHash.
      * @summary Get metadata of namespace/mosaic/account
      * @param compositeHash The metadata compositeHash identifier.
      */
@@ -152,7 +152,7 @@ export class MetadataRoutesApi {
         });
     }
     /**
-     * Gets the metadata for a given mosaicId.
+     * Search metadatas based on the metadata query params
      * @summary Search metadata
      * @param metadataQueryParams search filter
      */

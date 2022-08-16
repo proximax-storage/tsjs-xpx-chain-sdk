@@ -425,6 +425,10 @@ import { PaginationDTO } from './paginationDTO';
 import { TransactionSearchDTO } from './transactionSearchDTO';
 import { MosaicSearchDTO } from './mosaicSearchDTO';
 import { MetadataSearchDTO } from './metadataSearchDTO';
+import { HarvesterInfoDTO } from './harvesterInfoDTO';
+import { HarvesterInfoWithMetaDTO } from './harvesterInfoWithMetaDTO';
+import { HarvesterSearchDTO } from './harvesterSearchDTO';
+import { InlineHarvesterInfoDTO } from './InlineHarvesterInfoDTO';
 
 /* tslint:disable:no-unused-variable */
 let primitives = [
@@ -650,6 +654,10 @@ let typeMap: {[index: string]: any} = {
     "UpgradeDTO": UpgradeDTO,
     "UploadInfoDTO": UploadInfoDTO,
     "VerifiableEntityDTO": VerifiableEntityDTO,
+    "InlineHarvesterInfoDTO": InlineHarvesterInfoDTO,
+    "HarvesterInfoDTO": HarvesterInfoDTO,
+    "HarvesterInfoWithMetaDTO": HarvesterInfoWithMetaDTO,
+    "HarvesterSearchDTO": HarvesterSearchDTO
 }
 
 export class ObjectSerializer {

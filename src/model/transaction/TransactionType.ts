@@ -182,4 +182,13 @@ export class TransactionType {
     */
     public static readonly REMOVE_MOSAIC_LEVY = 0x444D;
 
+    /**
+    * Add harvester transaction type
+    */
+    public static readonly ADD_HARVESTER = 0x4161;
+
+    /**
+    * Remove harvester transaction type
+    */
+    public static readonly REMOVE_HARVESTER = 0x4261;
 }

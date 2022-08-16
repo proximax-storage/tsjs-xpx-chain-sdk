@@ -32,6 +32,7 @@ import { FeeCalculationStrategy, DefaultFeeCalculationStrategy } from "./FeeCalc
 import { ExchangeOfferTransactionBuilder } from "./ExchangeOfferTransaction";
 import { AddExchangeOfferTransactionBuilder } from "./AddExchangeOfferTransaction";
 import { RemoveExchangeOfferTransactionBuilder } from "./RemoveExchangeOfferTransaction";
+import { AddHarvesterTransactionBuilder, RemoveHarvesterTransactionBuilder } from "./HarvesterTransaction";
 
 
 export class TransactionBuilderFactory {
@@ -254,6 +255,18 @@ export class TransactionBuilderFactory {
 
     public removeExchangeOffer(): RemoveExchangeOfferTransactionBuilder {
         const builder = new RemoveExchangeOfferTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public addHarvester(): AddHarvesterTransactionBuilder {
+        const builder = new AddHarvesterTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public removeHarvester(): RemoveHarvesterTransactionBuilder {
+        const builder = new RemoveHarvesterTransactionBuilder();
         this.configureBuilder(builder);
         return builder;
     }
