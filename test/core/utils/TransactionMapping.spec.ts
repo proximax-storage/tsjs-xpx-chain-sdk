@@ -350,8 +350,7 @@ describe('TransactionMapping - createFromPayload', () => {
 
     it('should create modifyMosaicLevyTransaction - percentage fee type', () => {
         const mosaicId = new MosaicId([2262289484, 3405110546]);
-        const onePercentValue = 1000;
-        const mosaicLevy = MosaicLevy.createWithPercentageFee(account.address, mosaicId, 1.5, onePercentValue);
+        const mosaicLevy = MosaicLevy.createWithPercentageFee(account.address, mosaicId, 1.5);
         const mosaicModifyLevyTransaction = MosaicModifyLevyTransaction.create(
             Deadline.create(),
             mosaicId,
@@ -363,7 +362,7 @@ describe('TransactionMapping - createFromPayload', () => {
 
         const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as MosaicModifyLevyTransaction;
 
-        expect(transaction.mosaicLevy.fee.compact()).to.be.equal(1500);
+        expect(transaction.mosaicLevy.fee.compact()).to.be.equal(150000);
         expect(transaction.mosaicLevy.recipient.plain()).to.be.equal(account.address.plain());
         expect(transaction.mosaicLevy.type).to.be.equal(MosaicLevyType.LevyPercentileFee);
     })

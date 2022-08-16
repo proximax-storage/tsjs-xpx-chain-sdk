@@ -3,9 +3,12 @@ import { UInt64 } from "../UInt64"
 import { MosaicId } from "./MosaicId"
 import { MosaicLevyType } from "./MosaicLevyType"
 
-const defaultMosaicLevyOnePercentValue: number = 100000; // default amount that represent 1% of native currency
-
 export class MosaicLevy{
+
+    /**
+     * default amount that Levy fee will be effective, represent 1%
+     */
+    public static DefaultMosaicLevyEffectiveValue: number = 100000;
 
     constructor(
         public readonly type: MosaicLevyType,
@@ -16,12 +19,20 @@ export class MosaicLevy{
         
     }
 
-    static createWithPercentageFee(recipient: Address, mosaicId: MosaicId, percentage: number, mosaicOnePercentValue?: number){
+    static createWithPercentageFee(recipient: Address, mosaicId: MosaicId, percentage: number){
+
+        if(percentage > 100){
+            throw new Error("Percentage cannot be more than 100%");
+        }
+        else if(percentage < 0.00001){
+            throw new Error("Percentage cannot be less than 0.00001%");
+        }
+
         return new MosaicLevy(
             MosaicLevyType.LevyPercentileFee,
             recipient,
             mosaicId,
-            MosaicLevy.createLevyFeePercentile(percentage, mosaicOnePercentValue)
+            MosaicLevy.createLevyFeePercentile(percentage)
         );
     }
 
@@ -34,11 +45,8 @@ export class MosaicLevy{
         );
     }
 
-    static createLevyFeePercentile(percentage: number, mosaicOnePercentValue?: number): UInt64{
+    static createLevyFeePercentile(percentage: number): UInt64{
 
-        if(mosaicOnePercentValue){
-            return UInt64.fromUint(percentage * mosaicOnePercentValue);
-        }
-        return UInt64.fromUint(percentage * defaultMosaicLevyOnePercentValue);
+        return UInt64.fromUint(percentage * MosaicLevy.DefaultMosaicLevyEffectiveValue);
     }
 }
