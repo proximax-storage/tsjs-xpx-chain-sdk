@@ -428,7 +428,7 @@ import { MetadataSearchDTO } from './metadataSearchDTO';
 import { HarvesterInfoDTO } from './harvesterInfoDTO';
 import { HarvesterInfoWithMetaDTO } from './harvesterInfoWithMetaDTO';
 import { HarvesterSearchDTO } from './harvesterSearchDTO';
-import { InlineHarvesterInfoDTO } from './InlineHarvesterInfoDTO';
+import { InlineHarvesterInfoDTO } from './inlineHarvesterInfoDTO';
 
 /* tslint:disable:no-unused-variable */
 let primitives = [
