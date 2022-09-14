@@ -235,7 +235,7 @@ export class ConfUtils {
 
     public static simpleAccountRestrictionBLockAddress(account: Account, blockAddress: Address, transactionHttp: TransactionHttp = new TransactionHttp(APIUrl)) {
         return Configuration.getTransactionBuilderFactory().then(factory => {
-            return new Promise((resolve, reject) => {
+            return new Promise<void>((resolve, reject) => {
                 const listener = new Listener(APIUrl);
                 listener.open().then(() => {
                     const modifyAccountRestrictionAddressTransaction = factory.accountRestrictionAddress()
@@ -260,7 +260,7 @@ export class ConfUtils {
         const namespaceHttp = ConfNamespaceHttp;
         const transactionHttp = ConfTransactionHttp;
         return Configuration.getTransactionBuilderFactory().then(factory => {
-            return new Promise((resolve, reject) => {
+            return new Promise<void>((resolve, reject) => {
                 namespaceHttp.getNamespace(namespaceId).subscribe(namespaceInfo => {
                     resolve();
                 }, error => {
@@ -288,7 +288,7 @@ export class ConfUtils {
         const mosaicHttp = ConfMosaicHttp;
         const transactionHttp = ConfTransactionHttp;
         return Configuration.getTransactionBuilderFactory().then(factory => {
-            return new Promise((resolve, reject) => {
+            return new Promise<void>((resolve, reject) => {
                 mosaicHttp.getMosaic(mosaicId).subscribe(mosaicInfo => {
                     resolve();
                 }, error => {
