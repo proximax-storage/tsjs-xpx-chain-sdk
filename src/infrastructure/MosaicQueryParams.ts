@@ -16,6 +16,7 @@
 
 import { PublicAccount } from "../model/account/PublicAccount";
 import { Order_v2 } from "./QueryParams";
+import { PaginationQueryParams } from "./PaginationQueryParams";
 
 export enum MosaicSortingField{
 
@@ -25,25 +26,64 @@ export enum MosaicSortingField{
 
 export class MosaicFieldOrder{
 
-    constructor(public sortingField: MosaicSortingField, public order: Order_v2){
+    constructor(public sortingField: MosaicSortingField | string, public order: Order_v2){
     }
 
-    static setAscending(sortingField: MosaicSortingField){
+    static setAscending(sortingField: MosaicSortingField | string){
         return new MosaicFieldOrder(sortingField, Order_v2.ASC);
     }
 
-    static setDescending(sortingField: MosaicSortingField){
+    static setDescending(sortingField: MosaicSortingField | string){
         return new MosaicFieldOrder(sortingField, Order_v2.DESC);
     }
 }
 
-export class MosaicQueryParams{
+export class MosaicCreatorFilters{
 
-    pageSize?: number;
-    pageNumber?: number;
+    ownerPubKey: string | PublicAccount;
+    /** 
+     * optional when ownerPubKey defined 
+     * true = returns only mosaics creator holding 
+     * false = returns only mosaics creator not holding
+    */
+    holding?: boolean;
+
+    constructor(ownerPublicKey: string | PublicAccount){
+        this.ownerPubKey = ownerPublicKey;
+    }
+
+    buildQueryParamsString(){
+        let queryParams = this.buildQueryParams();
+        const entries = Object.entries(queryParams);
+
+        let queryParamsArray = entries.map(data=>{
+            return data[0] + "=" + data[1]
+        })
+
+        return queryParamsArray.join("&")
+    }
+
+    buildQueryParams(){
+        let queryParams = Object.assign({}, this);
+        MosaicCreatorFilters.convertToPrimitiveType(queryParams);
+
+        return queryParams;
+    }
+
+    static convertToPrimitiveType(queryParams: MosaicCreatorFilters){
+        if(queryParams.ownerPubKey){
+            if(queryParams.ownerPubKey instanceof PublicAccount){
+                queryParams.ownerPubKey = queryParams.ownerPubKey.publicKey;
+            }
+        }
+    }
+}
+
+export class MosaicQueryParams extends PaginationQueryParams{
+
     order?: Order_v2;
-    sortField?: MosaicSortingField;
-    ownerPubKey?: string | PublicAccount;
+    sortField?: string | MosaicSortingField;
+    ownerFilters?: MosaicCreatorFilters;
     mutable?: boolean;
     transferable?: boolean;
     supply?: number;
@@ -52,7 +92,7 @@ export class MosaicQueryParams{
      * Constructor
      */
     constructor() {
-
+        super();
     }
 
     updateFieldOrder(fieldOrder: MosaicFieldOrder){
@@ -62,11 +102,11 @@ export class MosaicQueryParams{
 
     buildQueryParams(): object{
         let queryParams = Object.assign({}, this);
-
         MosaicQueryParams.adjustNonComplianceParams(queryParams);
-        MosaicQueryParams.convertToPrimitiveType(queryParams);
+        
+        let flattenedQueryParams = super.buildQueryParams(queryParams);
 
-        return queryParams;
+        return flattenedQueryParams;
     }
 
     buildQueryParamsString(): string{
@@ -85,14 +125,6 @@ export class MosaicQueryParams{
         })
 
         return queryParamsArray.join("&")
-    }
-
-    static convertToPrimitiveType(queryParams: MosaicQueryParams){
-        if(queryParams.ownerPubKey){
-            if(queryParams.ownerPubKey instanceof PublicAccount){
-                queryParams.ownerPubKey = queryParams.ownerPubKey.publicKey;
-            }
-        }
     }
 
     static adjustNonComplianceParams(queryParams: MosaicQueryParams){

@@ -26,15 +26,15 @@ export class PaginationQueryParams{
 
     }
 
-    buildQueryParams(): object{
-        let queryParams = Object.assign({}, this);
+    buildQueryParams(input?: object): object{
+        let queryParams = input ? Object.assign({}, input) : Object.assign({}, this);
+        let flattenedQueryParams = PaginationQueryParams.flattenObject(queryParams);
 
-        return queryParams;
+        return flattenedQueryParams;
     }
 
     buildQueryParamsString(): string{
         let queryParams = this.buildQueryParams();
-
         const entries = Object.entries(queryParams);
 
         let queryParamsArray = entries.map(data=>{
@@ -48,5 +48,28 @@ export class PaginationQueryParams{
         })
 
         return queryParamsArray.join("&")
+    }
+
+    static flattenObject(input:object){
+        let newObject = {}; 
+
+        for(let propName in input){
+            let propValue = input[propName];
+            if(typeof propValue === "object" && !Array.isArray(propValue)){
+                const newPropValue = typeof propValue["buildQueryParams"] === 'function' ? propValue["buildQueryParams"](): propValue; 
+                let flattenEmbeddedObject = PaginationQueryParams.flattenObject(newPropValue);
+
+                for(let embeddedPropName in flattenEmbeddedObject){
+                    let embeddedPropValue = flattenEmbeddedObject[embeddedPropName];
+
+                    newObject[embeddedPropName] = embeddedPropValue;
+                }
+            }
+            else{
+                newObject[propName] = propValue;
+            }
+        }
+
+        return newObject;
     }
 }
