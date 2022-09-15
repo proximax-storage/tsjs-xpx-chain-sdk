@@ -45,6 +45,7 @@ export * from './transactionRoutesApi';
 import { TransactionRoutesApi } from './transactionRoutesApi';
 export * from './upgradeRoutesApi';
 import { UpgradeRoutesApi } from './upgradeRoutesApi';
+export * from './harvesterRoutesApi';
 import * as fs from 'fs';
 import * as http from 'http';
 

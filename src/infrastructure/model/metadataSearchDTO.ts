@@ -17,7 +17,7 @@
 import { MetadataEntryInlineResponse } from './metadataEntryInlineResponse';
 import { PaginationDTO } from './paginationDTO';
 
-export class MetadataEntriesDTO {
+export class MetadataSearchDTO {
     'data': Array<MetadataEntryInlineResponse>;
     'pagination': PaginationDTO;
 
@@ -36,7 +36,7 @@ export class MetadataEntriesDTO {
         }    ];
 
     static getAttributeTypeMap() {
-        return MetadataEntriesDTO.attributeTypeMap;
+        return MetadataSearchDTO.attributeTypeMap;
     }
 }
 

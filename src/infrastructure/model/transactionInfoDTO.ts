@@ -55,10 +55,11 @@ import { SecretLockTransactionDTO } from './secretLockTransactionDTO';
 import { SecretProofTransactionDTO } from './secretProofTransactionDTO';
 import { StartDriveVerificationTransactionDTO } from './startDriveVerificationTransactionDTO';
 import { TransactionMetaDTO } from './transactionMetaDTO';
+import { TransactionEmbeddedMetaDTO } from './transactionEmbeddedMetaDTO';
 import { TransferTransactionDTO } from './transferTransactionDTO';
 
 export class TransactionInfoDTO {
-    'meta': TransactionMetaDTO;
+    'meta': TransactionMetaDTO | TransactionEmbeddedMetaDTO;
     'transaction': BlockchainUpgradeTransactionDTO | NetworkConfigTransactionDTO | AddressMetadataTransactionDTO | MosaicMetadataTransactionDTO | NamespaceMetadataTransactionDTO | MosaicDefinitionTransactionDTO | MosaicSupplyChangeTransactionDTO | RegisterNamespaceTransactionDTO | AddressAliasTransactionDTO | MosaicAliasTransactionDTO | TransferTransactionDTO | ModifyMultisigAccountTransactionDTO | AggregateTransactionDTO | HashLockTransactionDTO | AccountPropertiesTransactionDTO | SecretLockTransactionDTO | SecretProofTransactionDTO | AccountLinkTransactionDTO | AddExchangeOfferTransactionDTO | ExchangeOfferTransactionDTO | RemoveExchangeOfferTransactionDTO | PrepareDriveTransactionDTO | JoinToDriveTransactionDTO | DriveFileSystemTransactionDTO | FilesDepositTransactionDTO | EndDriveTransactionDTO | DriveFilesRewardTransactionDTO | StartDriveVerificationTransactionDTO | EndDriveVerificationTransactionDTO;
 
     static discriminator: string | undefined = undefined;
@@ -67,7 +68,7 @@ export class TransactionInfoDTO {
         {
             "name": "meta",
             "baseName": "meta",
-            "type": "TransactionMetaDTO"
+            "type": "TransactionMetaDTO | TransactionEmbeddedMetaDTO"
         },
         {
             "name": "transaction",

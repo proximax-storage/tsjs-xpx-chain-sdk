@@ -29,10 +29,12 @@ import { MosaicRoutesApi } from './api';
 import {Http} from './Http';
 import {MosaicRepository} from './MosaicRepository';
 import {NetworkHttp} from './NetworkHttp';
-import { RichlistEntry, Address } from '../model/model';
+import { RichlistEntry, Address, MosaicSearch } from '../model/model';
 import { PageQueryParams } from './PageQueryParams';
+import { MosaicQueryParams } from './MosaicQueryParams';
 import { MosaicLevy } from "../model/mosaic/MosaicLevy";
 import { RequestOptions } from './RequestOptions';
+import { Pagination } from '../model/Pagination';
 
 /**
  * Mosaic http repository.
@@ -204,4 +206,51 @@ export class MosaicHttp extends Http implements MosaicRepository {
             }))            
     }
 
+    /**
+     * Gets MosaicInfo for different mosaicIds.
+     * @param mosaicQueryParams - conditions of the mosaic search 
+     * @returns Observable<MosaicInfo[]>
+     */
+     public searchMosaics(mosaicQueryParams: MosaicQueryParams, requestOptions?: RequestOptions): Observable<MosaicSearch> {
+        return this.getNetworkTypeObservable(requestOptions).pipe(
+            mergeMap((networkType) => observableFrom(
+                this.mosaicRoutesApi.searchMosaics(mosaicQueryParams, requestOptions)).pipe(map(response => {
+                    let mosaicsInfo = response.body.data.map((mosaicInfoDTO) => {
+                        let mosaicFlag;
+                        let divisibility;
+                        let duration;
+                        if (mosaicInfoDTO.mosaic.properties[MosaicPropertyType.MosaicFlags].value) {
+                            mosaicFlag = mosaicInfoDTO.mosaic.properties[MosaicPropertyType.MosaicFlags].value;
+                        }
+                        if (mosaicInfoDTO.mosaic.properties[MosaicPropertyType.Divisibility].value) {
+                            divisibility = mosaicInfoDTO.mosaic.properties[MosaicPropertyType.Divisibility].value;
+                        }
+                        if (mosaicInfoDTO.mosaic.properties[MosaicPropertyType.Duration].value) {
+                            duration = mosaicInfoDTO.mosaic.properties[MosaicPropertyType.Duration].value;
+                        }
+                        return new MosaicInfo(
+                            mosaicInfoDTO.meta.id,
+                            new MosaicId(mosaicInfoDTO.mosaic.mosaicId),
+                            new UInt64(mosaicInfoDTO.mosaic.supply),
+                            new UInt64(mosaicInfoDTO.mosaic.height),
+                            PublicAccount.createFromPublicKey(mosaicInfoDTO.mosaic.owner, networkType),
+                            mosaicInfoDTO.mosaic.revision,
+                            new MosaicProperties(
+                                mosaicFlag ? new UInt64(mosaicFlag) : UInt64.fromUint(0),
+                                (divisibility ? new UInt64(divisibility) : UInt64.fromUint(0)).compact(),
+                                duration ? new UInt64(duration) : undefined,
+                            ),
+                        );
+                    });
+                    let paginationData = new Pagination(
+                        response.body.pagination.totalEntries, 
+                        response.body.pagination.pageNumber,
+                        response.body.pagination.pageSize,
+                        response.body.pagination.totalPages
+                    );
+                    return new MosaicSearch(mosaicsInfo, paginationData);
+            }))
+            )
+        );
+    }
 }

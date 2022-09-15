@@ -504,6 +504,7 @@ export class AccountRoutesApi {
             localVarQueryParameters = transactionQueryParams.buildQueryParams();
         }
         localVarQueryParameters["address"] = plainAddress;
+        localVarQueryParameters["firstLevel"] = false;
 
         let requestHeaders = this.combineHeaders(reqOptions);
 

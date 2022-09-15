@@ -22,7 +22,7 @@ import {AxiosRequestConfig, AxiosResponse, AxiosError} from 'axios';
 import { AddressMetadataInfoDTO } from '../model/addressMetadataInfoDTO';
 import { MetadataIds } from '../model/metadataIds';
 import { MetadataEntryGetInlineResponse } from '../model/metadataEntryGetInlineResponse'
-import { MetadataEntriesDTO } from '../model/metadataEntriesDTO';
+import { MetadataSearchDTO } from '../model/metadataSearchDTO';
 import { MetadataQueryParams } from '../MetadataQueryParams';
 import { CompositeHashes } from '../model/compositeHashes';
 import { RequestOptions } from '../RequestOptions';
@@ -77,7 +77,7 @@ export class MetadataRoutesApi {
     }
 
     /**
-     * Gets the metadata(AccountMetadataIndo, MosaicMetadataInfo or NamespaceMetadataInfo) for a given metadataId.
+     * Get the metadata from a compositeHash.
      * @summary Get metadata of namespace/mosaic/account
      * @param compositeHash The metadata compositeHash identifier.
      */
@@ -152,11 +152,11 @@ export class MetadataRoutesApi {
         });
     }
     /**
-     * Gets the metadata for a given mosaicId.
+     * Search metadatas based on the metadata query params
      * @summary Search metadata
      * @param metadataQueryParams search filter
      */
-    public async searchMetadata (metadataQueryParams?: MetadataQueryParams, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: MetadataEntriesDTO;  }> {
+    public async searchMetadata (metadataQueryParams?: MetadataQueryParams, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: MetadataSearchDTO;  }> {
         const localVarPath = '/metadata_v2';
 
         let localVarQueryParameters: any = {};
@@ -176,10 +176,10 @@ export class MetadataRoutesApi {
             params: localVarQueryParameters
         };
 
-        return new Promise<{ response: AxiosResponse; body: MetadataEntriesDTO;  }>((resolve, reject) => {
+        return new Promise<{ response: AxiosResponse; body: MetadataSearchDTO;  }>((resolve, reject) => {
             axios(localVarRequestOptions).then(
                 (response)=>{
-                    let body = ObjectSerializer.deserialize(response.data, "MetadataEntriesDTO");
+                    let body = ObjectSerializer.deserialize(response.data, "MetadataSearchDTO");
                     if (response.status && response.status >= 200 && response.status <= 299) {
                         resolve({ response: response, body: body });
                     } else {

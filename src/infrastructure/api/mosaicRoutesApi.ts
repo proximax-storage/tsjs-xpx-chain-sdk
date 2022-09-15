@@ -32,10 +32,12 @@ import {AxiosRequestConfig, AxiosResponse, AxiosError} from 'axios';
 /* tslint:disable:no-unused-locals */
 import { MosaicIds } from '../model/mosaicIds';
 import { MosaicInfoDTO } from '../model/mosaicInfoDTO';
+import { MosaicSearchDTO } from '../model/mosaicSearchDTO';
 import { MosaicNamesDTO } from '../model/mosaicNamesDTO';
 import { MosaicRichListDTO } from '../model/mosaicRichListDTO';
 import { MosaicLevyDTO } from '../model/mosaicLevyDTO';
 import { RequestOptions } from '../RequestOptions';
+import { MosaicQueryParams } from '../MosaicQueryParams';
 
 import { ObjectSerializer } from '../model/models';
 
@@ -300,6 +302,48 @@ export class MosaicRoutesApi {
                         resolve({ response: response, body: body });
                     } else {
                             reject(response);
+                    }
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
+        });
+    }
+
+    /**
+     * Search mosaics
+     * @summary Get mosaics information
+     * @param mosaicIds 
+     */
+     public async searchMosaics (queryParams?: MosaicQueryParams, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: MosaicSearchDTO;  }> {
+        const localVarPath = '/mosaics';
+
+        let localVarQueryParameters: any = {};
+
+        if(queryParams){
+            localVarQueryParameters = queryParams.buildQueryParams();
+        }
+
+        let requestHeaders = this.combineHeaders(reqOptions);
+
+        let localVarRequestOptions: AxiosRequestConfig = {
+            method: 'GET',
+            headers: requestHeaders,
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json',
+            params: localVarQueryParameters
+        };
+
+        return new Promise<{ response: AxiosResponse; body: MosaicSearchDTO;  }>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "MosaicSearchDTO");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
+                    } else {
+                        reject(response);
                     }
                 },
                 (error: AxiosError ) => {

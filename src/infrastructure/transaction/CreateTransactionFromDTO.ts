@@ -73,6 +73,7 @@ import { MosaicModifyLevyTransaction } from '../../model/transaction/MosaicModif
 import { MosaicRemoveLevyTransaction } from '../../model/transaction/MosaicRemoveLevyTransaction';
 import { PlaceSdaExchangeOfferTransaction } from '../../model/transaction/PlaceSdaExchangeOfferTransaction';
 import { RemoveSdaExchangeOfferTransaction } from '../../model/transaction/RemoveSdaExchangeOfferTransaction';
+import { HarvesterTransaction } from '../../model/transaction/HarvesterTransaction';
 import { MosaicNonce } from '../../model/mosaic/MosaicNonce';
 import { MosaicLevy } from '../../model/mosaic/MosaicLevy';
 
@@ -83,66 +84,71 @@ import { MosaicLevy } from '../../model/mosaic/MosaicLevy';
  * @constructor
  */
 export const CreateTransactionFromDTO = (transactionDTO): Transaction | InnerTransaction => {
-    if (transactionDTO.transaction.type === TransactionType.AGGREGATE_COMPLETE ||
-        transactionDTO.transaction.type === TransactionType.AGGREGATE_BONDED) {
-        const innerTransactions = transactionDTO.transaction.transactions === undefined ? [] : transactionDTO.transaction.transactions.map((innerTransactionDTO) => {
-            const aggregateTransactionInfo = innerTransactionDTO.meta ? new AggregateTransactionInfo(
-                new UInt64(innerTransactionDTO.meta.height),
-                innerTransactionDTO.meta.index,
-                innerTransactionDTO.meta.id,
-                innerTransactionDTO.meta.aggregateHash,
-                innerTransactionDTO.meta.aggregateId,
-                innerTransactionDTO.meta.uniqueAggregateHash
-            ) : undefined;
-            innerTransactionDTO.transaction.maxFee = transactionDTO.transaction.maxFee;
-            innerTransactionDTO.transaction.deadline = transactionDTO.transaction.deadline;
-            innerTransactionDTO.transaction.signature = transactionDTO.transaction.signature;
-            return CreateStandaloneTransactionFromDTO(innerTransactionDTO.transaction, aggregateTransactionInfo);
-        });
-        return new AggregateTransaction(
-            extractNetworkType(transactionDTO.transaction.version),
-            transactionDTO.transaction.type,
-            extractTransactionVersion(transactionDTO.transaction.version),
-            Deadline.createFromDTO(transactionDTO.transaction.deadline),
-            new UInt64(transactionDTO.transaction.maxFee || [0, 0]),
-            innerTransactions,
-            transactionDTO.transaction.cosignatures ? transactionDTO.transaction.cosignatures
-                .map((aggregateCosignatureDTO) => {
-                    return new AggregateTransactionCosignature(
-                        aggregateCosignatureDTO.signature,
-                        PublicAccount.createFromPublicKey(aggregateCosignatureDTO.signer,
-                            extractNetworkType(transactionDTO.transaction.version)));
-                }) : [],
-            transactionDTO.transaction.signature,
-            transactionDTO.transaction.signer ? PublicAccount.createFromPublicKey(transactionDTO.transaction.signer,
-                            extractNetworkType(transactionDTO.transaction.version)) : undefined,
-            transactionDTO.meta ? new TransactionInfo(
+    try {
+        if (transactionDTO.transaction.type === TransactionType.AGGREGATE_COMPLETE ||
+            transactionDTO.transaction.type === TransactionType.AGGREGATE_BONDED) {
+            const innerTransactions = transactionDTO.transaction.transactions === undefined ? [] : transactionDTO.transaction.transactions.map((innerTransactionDTO) => {
+                const aggregateTransactionInfo = innerTransactionDTO.meta ? new AggregateTransactionInfo(
+                    new UInt64(innerTransactionDTO.meta.height),
+                    innerTransactionDTO.meta.index,
+                    innerTransactionDTO.meta.id,
+                    innerTransactionDTO.meta.aggregateHash,
+                    innerTransactionDTO.meta.aggregateId,
+                    innerTransactionDTO.meta.uniqueAggregateHash
+                ) : undefined;
+                innerTransactionDTO.transaction.maxFee = transactionDTO.transaction.maxFee;
+                innerTransactionDTO.transaction.deadline = transactionDTO.transaction.deadline;
+                innerTransactionDTO.transaction.signature = transactionDTO.transaction.signature;
+                return CreateStandaloneTransactionFromDTO(innerTransactionDTO.transaction, aggregateTransactionInfo);
+            });
+            return new AggregateTransaction(
+                extractNetworkType(transactionDTO.transaction.version),
+                transactionDTO.transaction.type,
+                extractTransactionVersion(transactionDTO.transaction.version),
+                Deadline.createFromDTO(transactionDTO.transaction.deadline),
+                new UInt64(transactionDTO.transaction.maxFee || [0, 0]),
+                innerTransactions,
+                transactionDTO.transaction.cosignatures ? transactionDTO.transaction.cosignatures
+                    .map((aggregateCosignatureDTO) => {
+                        return new AggregateTransactionCosignature(
+                            aggregateCosignatureDTO.signature,
+                            PublicAccount.createFromPublicKey(aggregateCosignatureDTO.signer,
+                                extractNetworkType(transactionDTO.transaction.version)));
+                    }) : [],
+                transactionDTO.transaction.signature,
+                transactionDTO.transaction.signer ? PublicAccount.createFromPublicKey(transactionDTO.transaction.signer,
+                                extractNetworkType(transactionDTO.transaction.version)) : undefined,
+                transactionDTO.meta ? new TransactionInfo(
+                    new UInt64(transactionDTO.meta.height),
+                    transactionDTO.meta.index,
+                    transactionDTO.meta.id,
+                    transactionDTO.meta.hash,
+                    transactionDTO.meta.merkleComponentHash,
+                ) : undefined,
+            );
+        } else if(transactionDTO.meta && transactionDTO.meta.aggregateHash){
+            const aggregateTransactionInfo = new AggregateTransactionInfo(
+                new UInt64(transactionDTO.meta.height),
+                transactionDTO.meta.index,
+                transactionDTO.meta.id,
+                transactionDTO.meta.aggregateHash,
+                transactionDTO.meta.aggregateId,
+                transactionDTO.meta.uniqueAggregateHash
+            );
+            return CreateStandaloneTransactionFromDTO(transactionDTO.transaction, aggregateTransactionInfo, true);
+        } else {
+            const transactionInfo = transactionDTO.meta ? new TransactionInfo(
                 new UInt64(transactionDTO.meta.height),
                 transactionDTO.meta.index,
                 transactionDTO.meta.id,
                 transactionDTO.meta.hash,
                 transactionDTO.meta.merkleComponentHash,
-            ) : undefined,
-        );
-    } else if(transactionDTO.meta && transactionDTO.meta.aggregateHash){
-        const aggregateTransactionInfo = new AggregateTransactionInfo(
-            new UInt64(transactionDTO.meta.height),
-            transactionDTO.meta.index,
-            transactionDTO.meta.id,
-            transactionDTO.meta.aggregateHash,
-            transactionDTO.meta.aggregateId,
-            transactionDTO.meta.uniqueAggregateHash
-        );
-        return CreateStandaloneTransactionFromDTO(transactionDTO.transaction, aggregateTransactionInfo, true);
-    } else {
-        const transactionInfo = transactionDTO.meta ? new TransactionInfo(
-            new UInt64(transactionDTO.meta.height),
-            transactionDTO.meta.index,
-            transactionDTO.meta.id,
-            transactionDTO.meta.hash,
-            transactionDTO.meta.merkleComponentHash,
-        ) : undefined;
-        return CreateStandaloneTransactionFromDTO(transactionDTO.transaction, transactionInfo);
+            ) : undefined;
+            return CreateStandaloneTransactionFromDTO(transactionDTO.transaction, transactionInfo);
+        }
+    } catch (error) {
+        console.log(error);
+        return transactionDTO;       
     }
 };
 
@@ -403,17 +409,18 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
                 transactionDTO.type === TransactionType.MODIFY_NAMESPACE_METADATA) {
         const networkType = extractNetworkType(transactionDTO.version);
         const transactionVersion = extractTransactionVersion(transactionDTO.version);
-        const deadline = Deadline.createFromDTO(transactionDTO.deadline);
-        const maxFee = new UInt64(transactionDTO.maxFee || [0, 0]);
-        const metadataType = transactionDTO.metadataType;
+        const deadline = isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline);
+        const maxFee = isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]);
+        const signature = isEmbedded ? undefined : transactionDTO.signature;
+        // const metadataType = transactionDTO.metadataType;
         const metadataId = transactionDTO.metadataId;
         const modifications =
             transactionDTO.modifications ?
-            transactionDTO.modifications.map(m => new MetadataModification(m.modificationType, m.key, m.value)) :
+            transactionDTO.modifications.map(m => new MetadataModification(m.key, m.value)) :
             undefined
-        switch(metadataType) {
-            case oldMetadataType.ADDRESS: {
-                return new ModifyMetadataTransaction(
+        switch(transactionDTO.type) {
+            case TransactionType.MODIFY_ACCOUNT_METADATA: {
+                let modifyMetadataTxn = new ModifyMetadataTransaction(
                     TransactionType.MODIFY_ACCOUNT_METADATA,
                     networkType,
                     transactionVersion,
@@ -422,15 +429,16 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
                     oldMetadataType.ADDRESS,
                     Address.createFromEncoded(metadataId).plain(),
                     modifications,
-                    transactionDTO.signature,
+                    signature,
                     transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
                             extractNetworkType(transactionDTO.version)) : undefined,
                     transactionInfo,
                     )
-                //break;
+                return isEmbedded ? modifyMetadataTxn.toAggregate(modifyMetadataTxn.signer!) : modifyMetadataTxn;
+                // break;
             }
-            case oldMetadataType.MOSAIC: {
-                return new ModifyMetadataTransaction(
+            case TransactionType.MODIFY_MOSAIC_METADATA: {
+                let modifyMetadataTxn = new ModifyMetadataTransaction(
                     TransactionType.MODIFY_MOSAIC_METADATA,
                     networkType,
                     transactionVersion,
@@ -439,15 +447,16 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
                     oldMetadataType.MOSAIC,
                     new MosaicId(metadataId).toHex(),
                     modifications,
-                    transactionDTO.signature,
+                    signature,
                     transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
                             extractNetworkType(transactionDTO.version)) : undefined,
                     transactionInfo,
                     )
-                //break;
+                return isEmbedded ? modifyMetadataTxn.toAggregate(modifyMetadataTxn.signer!) : modifyMetadataTxn;
+                // break;
             }
-            case oldMetadataType.NAMESPACE: {
-                return new ModifyMetadataTransaction(
+            case TransactionType.MODIFY_NAMESPACE_METADATA: {
+                let modifyMetadataTxn = new ModifyMetadataTransaction(
                     TransactionType.MODIFY_NAMESPACE_METADATA,
                     networkType,
                     transactionVersion,
@@ -456,16 +465,17 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
                     oldMetadataType.NAMESPACE,
                     new NamespaceId(metadataId).toHex(),
                     modifications,
-                    transactionDTO.signature,
+                    signature,
                     transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
                             extractNetworkType(transactionDTO.version)) : undefined,
                     transactionInfo,
                     )
-                //break;
+                return isEmbedded ? modifyMetadataTxn.toAggregate(modifyMetadataTxn.signer!) : modifyMetadataTxn;
+                // break;
             }
-            default: {
-                throw new Error('Unimplemented modify metadata transaction with type ' + metadataType);
-            }
+            // default: {
+            //     throw new Error('Unimplemented modify metadata transaction with type ' + metadataType);
+            // }
         }
     } else if (transactionDTO.type === TransactionType.CHAIN_UPGRADE) {
         const chainUpgradeTxn = new ChainUpgradeTransaction(
@@ -679,8 +689,35 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
             transactionInfo,
         );
         return isEmbedded ? removeSdaExchangeOfferTxn.toAggregate(removeSdaExchangeOfferTxn.signer!) : removeSdaExchangeOfferTxn;
+    } else if (transactionDTO.type === TransactionType.ADD_HARVESTER) {
+        let networkType = extractNetworkType(transactionDTO.version);
+        const addHarvesterTxn = new HarvesterTransaction(
+            networkType,
+            TransactionType.ADD_HARVESTER,
+            extractTransactionVersion(transactionDTO.version),
+            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+            PublicAccount.createFromPublicKey(transactionDTO.harvesterKey, networkType),
+            isEmbedded ? undefined : transactionDTO.signature,
+            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer, networkType) : undefined,
+            transactionInfo,
+        );
+        return isEmbedded ? addHarvesterTxn.toAggregate(addHarvesterTxn.signer!) : addHarvesterTxn;
+    } else if (transactionDTO.type === TransactionType.REMOVE_HARVESTER) {
+        let networkType = extractNetworkType(transactionDTO.version);
+        const removeHarvesterTxn = new HarvesterTransaction(
+            networkType,
+            TransactionType.REMOVE_HARVESTER,
+            extractTransactionVersion(transactionDTO.version),
+            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+            PublicAccount.createFromPublicKey(transactionDTO.harvesterKey, networkType),
+            isEmbedded ? undefined : transactionDTO.signature,
+            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer, networkType) : undefined,
+            transactionInfo,
+        );
+        return isEmbedded ? removeHarvesterTxn.toAggregate(removeHarvesterTxn.signer!) : removeHarvesterTxn;
     }
-    
 
     throw new Error('Unimplemented transaction with type ' + transactionDTO.type);
 };

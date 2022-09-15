@@ -59,6 +59,11 @@ export * from './exchangeSda/SdaOfferInfoWithOwner';
 export * from './exchangeSda/SdaOfferInfo';
 export * from './exchangeSda/SdaExchangeOfferType';
 
+// Harvester
+export * from './harvester/HarvesterInfo';
+export * from './harvester/HarvesterSearch';
+export * from './harvester/HarvesterMetaInfo';
+
 // Metadata
 // export * from './metadata/AddressMetadata';
 // export * from './metadata/Field';
@@ -81,6 +86,7 @@ export * from './mosaic/MosaicNonce';
 export * from './mosaic/MosaicProperties';
 export * from './mosaic/MosaicPropertyType';
 export * from './mosaic/MosaicSupplyType';
+export * from './mosaic/MosaicSearch';
 export * from './mosaic/NetworkCurrencyMosaic';
 export * from './mosaic/NetworkHarvestMosaic';
 export * from './mosaic/NetworkMosaic';
@@ -191,6 +197,7 @@ export * from './transaction/TransactionType';
 export * from './transaction/TransactionVersion';
 export * from './transaction/TransferTransaction';
 export * from './transaction/TransactionSearch';
+export * from './transaction/HarvesterTransaction';
 
 // Upgrade
 export * from './upgrade/ChainUpgrade';

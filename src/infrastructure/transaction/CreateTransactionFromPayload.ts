@@ -496,7 +496,7 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                     )})
                 )
                 .build();
-        case TransactionType.REMOVE_EXCHANGE_OFFER:
+        case TransactionType.REMOVE_EXCHANGE_OFFER:{
             // const numOffers = extractNumberFromHex(transactionData.substring(0, 2));
             const removeOffersArray =  transactionData.substring(2).match(/.{18}/g) || [];
             return factory.removeExchangeOffer()
@@ -510,6 +510,21 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                     )})
                 )
                 .build();
+        }
+        case TransactionType.ADD_HARVESTER:{
+            const harvesterKey = transactionData.substring(0, 64);
+            const harvesterAcc = PublicAccount.createFromPublicKey(harvesterKey, networkType);
+            return factory.addHarvester()
+                .harvesterKey(harvesterAcc)
+                .build();
+        }
+        case TransactionType.REMOVE_HARVESTER:{
+            const harvesterKey = transactionData.substring(0, 64);
+            const harvesterAcc = PublicAccount.createFromPublicKey(harvesterKey, networkType);
+            return factory.removeHarvester()
+                .harvesterKey(harvesterAcc)
+                .build();
+        }
 
         case TransactionType.PLACE_SDA_EXCHANGE_OFFER:
             const placeSdaOffersArray =  transactionData.substring(2).match(/.{144}/g) || [];

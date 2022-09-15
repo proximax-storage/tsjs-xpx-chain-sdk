@@ -34,6 +34,8 @@ import { AddExchangeOfferTransactionBuilder } from "./AddExchangeOfferTransactio
 import { RemoveExchangeOfferTransactionBuilder } from "./RemoveExchangeOfferTransaction";
 import { PlaceSdaExchangeOfferTransactionBuilder } from "./PlaceSdaExchangeOfferTransaction";
 import { RemoveSdaExchangeOfferTransactionBuilder } from "./RemoveSdaExchangeOfferTransaction";
+import { AddHarvesterTransactionBuilder, RemoveHarvesterTransactionBuilder } from "./HarvesterTransaction";
+
 
 
 export class TransactionBuilderFactory {
@@ -262,12 +264,18 @@ export class TransactionBuilderFactory {
 
     public placeSdaExchangeOffer(): PlaceSdaExchangeOfferTransactionBuilder{
         const builder = new PlaceSdaExchangeOfferTransactionBuilder();
+    
+    public addHarvester(): AddHarvesterTransactionBuilder {
+        const builder = new AddHarvesterTransactionBuilder();
         this.configureBuilder(builder);
         return builder;
     }
 
     public removeSdaExchangeOffer(): RemoveSdaExchangeOfferTransactionBuilder{
         const builder = new RemoveSdaExchangeOfferTransactionBuilder();
+
+    public removeHarvester(): RemoveHarvesterTransactionBuilder {
+        const builder = new RemoveHarvesterTransactionBuilder();
         this.configureBuilder(builder);
         return builder;
     }

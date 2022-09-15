@@ -14,6 +14,7 @@ import { MetadataRepository } from './MetadataRepository';
 import { MetadataSearch } from '../model/metadata/MetadataSearch';
 import { CompositeHashes } from './model/compositeHashes';
 import { RequestOptions } from './RequestOptions';
+import { Pagination } from '../model/Pagination';
 
 /**
  * Metadata http repository.
@@ -116,8 +117,14 @@ export class MetadataHttp extends Http implements MetadataRepository {
                         metadataDTO.meta.id
                     );
                 })
-
-                return new MetadataSearch(metadataEntries, response.body.pagination)
+                
+                let paginationData = new Pagination(
+                    response.body.pagination.totalEntries, 
+                    response.body.pagination.pageNumber,
+                    response.body.pagination.pageSize,
+                    response.body.pagination.totalPages
+                );
+                return new MetadataSearch(metadataEntries, paginationData);
             }));
     }
 }

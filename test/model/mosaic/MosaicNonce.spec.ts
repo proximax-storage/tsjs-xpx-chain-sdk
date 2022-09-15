@@ -43,6 +43,6 @@ describe('MosaicNonce', () => {
     it('should create nonce from hexadecimal notation', () => {
         const nonce = MosaicNonce.createFromHex('12345678');
         expect(nonce.nonce).to.not.be.null;
-        deepStrictEqual(nonce.nonce, new Uint8Array([0x12, 0x34, 0x56, 0x78]));
+        deepStrictEqual(nonce.nonce, new Uint8Array([0x78, 0x56, 0x34, 0x12]));
     });
 });

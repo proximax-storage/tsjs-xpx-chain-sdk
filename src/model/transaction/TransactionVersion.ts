@@ -201,4 +201,15 @@ export class TransactionVersion {
      * @type {number}
      */
     public static readonly REMOVE_SDA_EXCHANGE_OFFER = 1;
+
+    * Add harvester transaction version
+    * @type {number}
+    */
+     public static readonly ADD_HARVESTER = 1;
+
+     /**
+     * Remove harvester transaction version
+     * @type {number}
+     */
+     public static readonly REMOVE_HARVESTER = 1;
 }
