@@ -18,23 +18,56 @@ import { PublicAccount } from "../model/account/PublicAccount";
 import { Address } from "../model/account/Address";
 import { TransactionType } from "../model/transaction/TransactionType"
 import { Order_v2 } from "./QueryParams";
+import { MosaicId, NamespaceId } from "../model/model";
+import { PaginationQueryParams } from "./PaginationQueryParams";
 
-/*
-export class TransactionSearchMosaic{
+export class TransactionMosaicSearchFilters{
 
-    transferMosaicId: string;
+    transferMosaicId: string | MosaicId | NamespaceId;
     toTransferAmount?: number;
     fromTransferAmount?: number;
 
-    constructor(transferMosaicId: string){
+    constructor(transferMosaicId: string | MosaicId | NamespaceId){
         this.transferMosaicId = transferMosaicId;
     }
 
-    toQueryParams(){
-        return Object.keys(this);
+    buildQueryParamsString(){
+        let queryParams = this.buildQueryParams();
+
+        const entries = Object.entries(queryParams);
+
+        let queryParamsArray = entries.map(data=>{
+            return data[0] + "=" + data[1]
+        })
+
+        return queryParamsArray.join("&")
+    }
+
+    buildQueryParams(){
+        let queryParams = Object.assign({}, this);
+
+        TransactionMosaicSearchFilters.adjustNonComplianceParams(queryParams);
+        TransactionMosaicSearchFilters.convertToPrimitiveType(queryParams);
+
+        return queryParams;
+    }
+
+    static adjustNonComplianceParams(queryParams: TransactionMosaicSearchFilters){
+        if(queryParams.fromTransferAmount !== undefined && queryParams.fromTransferAmount < 1){
+            delete queryParams.fromTransferAmount;
+        }
+
+        if(queryParams.toTransferAmount !== undefined && queryParams.toTransferAmount < 1){
+            delete queryParams.toTransferAmount;
+        }
+    }
+
+    static convertToPrimitiveType(queryParams: TransactionMosaicSearchFilters){
+        if(queryParams.transferMosaicId instanceof MosaicId || queryParams.transferMosaicId instanceof NamespaceId){
+            queryParams.transferMosaicId = queryParams.transferMosaicId.toHex();
+        }
     }
 }
-*/
 
 export enum TransactionSortingField{
 
@@ -43,22 +76,20 @@ export enum TransactionSortingField{
 
 export class TransactionFieldOrder{
 
-    constructor(public sortingField: TransactionSortingField, public order: Order_v2){
+    constructor(public sortingField: TransactionSortingField | string, public order: Order_v2){
     }
 
-    static setAscending(sortingField: TransactionSortingField){
+    static setAscending(sortingField: TransactionSortingField | string){
         return new TransactionFieldOrder(sortingField, Order_v2.ASC);
     }
 
-    static setDescending(sortingField: TransactionSortingField){
+    static setDescending(sortingField: TransactionSortingField | string){
         return new TransactionFieldOrder(sortingField, Order_v2.DESC);
     }
 }
 
-export class TransactionQueryParams{
+export class TransactionQueryParams extends PaginationQueryParams{
 
-    pageSize?: number;
-    pageNumber?: number;
     /**
     * filter by transaction types
     */
@@ -68,7 +99,7 @@ export class TransactionQueryParams{
     */
     embedded?: boolean;
     order?: Order_v2;
-    sortField?: TransactionSortingField;
+    sortField?: string | TransactionSortingField;
     toHeight?: number;
     fromHeight?: number;
     height?: number;
@@ -81,9 +112,12 @@ export class TransactionQueryParams{
     * set to false to get the complete aggregate transactions
     */
     firstLevel?: boolean;
-    
+    /**
+     * include only transfer transaction with the mosaicId provided, 
+     * will return error when provided along with transaction types
+     */
+    transferMosaicIdFilters?: TransactionMosaicSearchFilters;
     /* non-applicable for now
-    transferMosaicId?: TransactionSearchMosaic;
     offset?: string;
     */
 
@@ -91,7 +125,7 @@ export class TransactionQueryParams{
      * Constructor
      */
     constructor() {
-
+        super();
     }
 
     updateFieldOrder(transactionFieldOrder: TransactionFieldOrder){
@@ -105,7 +139,9 @@ export class TransactionQueryParams{
         TransactionQueryParams.adjustNonComplianceParams(queryParams);
         TransactionQueryParams.convertToPrimitiveType(queryParams);
 
-        return queryParams;
+        let flattenedQueryParams = super.buildQueryParams(queryParams);
+
+        return flattenedQueryParams;
     }
 
     buildQueryParamsString(): string{
