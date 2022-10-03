@@ -210,17 +210,18 @@ export class AggregateTransaction extends Transaction {
      * @memberof AggregateTransaction
      */
     public get size(): number {
-        return AggregateTransaction.calculateSize(this.innerTransactions || []);
+        return AggregateTransaction.calculateSize(this.innerTransactions || [], this.cosignatures.length);
     }
 
-    public static calculateSize(innerTransactions: InnerTransaction[]): number {
+    public static calculateSize(innerTransactions: InnerTransaction[], numOfCosignatures: number): number {
         // .aggregateTransaction() => .toAggregateTransaction() removes 80 bytes from each inner tx
         const innerTransactionsSumSize = innerTransactions.reduce((previous, current) => previous + current.size - 80, 0);
         const byteSize = Transaction.getHeaderSize();
         // set static byte size fields
         const byteTransactionsSize = 4;
+        const cosignerBytes = 96 * numOfCosignatures;
 
-        return byteSize + byteTransactionsSize + innerTransactionsSumSize;
+        return byteSize + byteTransactionsSize + innerTransactionsSumSize + cosignerBytes;
     }
 
 }
@@ -245,7 +246,7 @@ export class AggregateCompleteTransactionBuilder extends TransactionBuilder {
             TransactionType.AGGREGATE_COMPLETE,
             this._version || TransactionVersion.AGGREGATE_COMPLETE,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._maxFee ? this._maxFee : calculateFee(AggregateTransaction.calculateSize(this._innerTransactions), this._feeCalculationStrategy),
+            this._maxFee ? this._maxFee : calculateFee(AggregateTransaction.calculateSize(this._innerTransactions, this._cosignatures.length), this._feeCalculationStrategy),
             this._innerTransactions,
             this._cosignatures,
             this._signature,
@@ -274,7 +275,7 @@ export class AggregateBondedTransactionBuilder extends TransactionBuilder {
             TransactionType.AGGREGATE_BONDED,
             this._version || TransactionVersion.AGGREGATE_BONDED,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._maxFee ? this._maxFee : calculateFee(AggregateTransaction.calculateSize(this._innerTransactions), this._feeCalculationStrategy),
+            this._maxFee ? this._maxFee : calculateFee(AggregateTransaction.calculateSize(this._innerTransactions, this._cosignatures.length), this._feeCalculationStrategy),
             this._innerTransactions,
             this._cosignatures,
             this._signature,

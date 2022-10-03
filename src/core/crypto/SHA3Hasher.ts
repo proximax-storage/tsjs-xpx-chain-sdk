@@ -28,6 +28,8 @@ export class SHA3Hasher {
      */
     public static func = (dest, data, length, signSchema = SignSchema.SHA3) => {
         const hasher = SHA3Hasher.getHasher(length, signSchema);
+        if(hasher === undefined)
+            throw new Error("invalid hasher, hasher not found");
         const hash = hasher.arrayBuffer(data);
         array.copy(dest, array.uint8View(hash));
     }
@@ -42,7 +44,7 @@ export class SHA3Hasher {
         let hash;
         return {
             reset: () => {
-                hash = SHA3Hasher.getHasher(length, signSchema).create();
+                hash = SHA3Hasher.getHasher(length, signSchema)!.create();
             },
             update: (data: any) => {
                 if (data instanceof Uint8Array) {

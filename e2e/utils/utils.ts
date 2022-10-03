@@ -2,7 +2,7 @@ import { Listener } from "../../src/infrastructure/Listener";
 import { Address, Transaction, AggregateTransactionInfo, AggregateTransaction } from "../../src/model/model";
 
 export const validateTransactionConfirmed = (listener: Listener, address: Address,  hash: string) => {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
         const status = listener.status(address).subscribe(error => {
             if (error && hash && error.hash === hash) {
                 console.error(error);
