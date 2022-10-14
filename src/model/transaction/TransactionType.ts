@@ -204,13 +204,16 @@ export class TransactionType {
     * @type {number}
     */
 	public static readonly REMOVE_SDA_EXCHANGE_OFFER = 0x426A;
+    
     /**
     * Add harvester transaction type
+    * @type {number}
     */
     public static readonly ADD_HARVESTER = 0x4161;
 
     /**
     * Remove harvester transaction type
+    * @type {number}
     */
     public static readonly REMOVE_HARVESTER = 0x4261;
 }

@@ -264,15 +264,21 @@ export class TransactionBuilderFactory {
 
     public placeSdaExchangeOffer(): PlaceSdaExchangeOfferTransactionBuilder{
         const builder = new PlaceSdaExchangeOfferTransactionBuilder();
-    
-    public addHarvester(): AddHarvesterTransactionBuilder {
-        const builder = new AddHarvesterTransactionBuilder();
         this.configureBuilder(builder);
         return builder;
     }
 
     public removeSdaExchangeOffer(): RemoveSdaExchangeOfferTransactionBuilder{
         const builder = new RemoveSdaExchangeOfferTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public addHarvester(): AddHarvesterTransactionBuilder {
+        const builder = new AddHarvesterTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
 
     public removeHarvester(): RemoveHarvesterTransactionBuilder {
         const builder = new RemoveHarvesterTransactionBuilder();
