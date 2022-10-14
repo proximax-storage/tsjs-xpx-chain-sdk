@@ -267,14 +267,14 @@ export class TransactionBuilderFactory {
         return builder;
     }
 
-    public placeSdaExchangeOffer(): PlaceSdaExchangeOfferTransactionBuilder{
-        const builder = new PlaceSdaExchangeOfferTransactionBuilder();
+    public removeHarvester(): RemoveHarvesterTransactionBuilder {
+        const builder = new RemoveHarvesterTransactionBuilder();
         this.configureBuilder(builder);
         return builder;
     }
 
-    public removeHarvester(): RemoveHarvesterTransactionBuilder {
-        const builder = new RemoveHarvesterTransactionBuilder();
+    public placeSdaExchangeOffer(): PlaceSdaExchangeOfferTransactionBuilder{
+        const builder = new PlaceSdaExchangeOfferTransactionBuilder();
         this.configureBuilder(builder);
         return builder;
     }
@@ -283,7 +283,7 @@ export class TransactionBuilderFactory {
         const builder = new RemoveSdaExchangeOfferTransactionBuilder();
         this.configureBuilder(builder);
         return builder;
-    }
+    }    
 }
 
 
