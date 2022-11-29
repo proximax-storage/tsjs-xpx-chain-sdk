@@ -36,10 +36,20 @@ export class NamespaceMosaicIdGenerator {
      * @param {string} namespaceName - The namespace name
      * @returns sub namespace id
      */
-    public static namespaceId = (namespaceName) => {
+    public static namespaceId = (namespaceName: string) => {
         const path = IdGenerator.generateNamespacePath(namespaceName);
         return path.length ? IdGenerator.generateNamespacePath(namespaceName)[path.length - 1] : [];
     }
+
+    /**
+     * @param {number[]} parentNamespaceId - The parent namespace id
+     * @param {string} namespaceName - The namespace name
+     * @returns sub namespace id
+     */
+     public static subNamespaceIdWithParentId = (parentNamespaceId: number[], namespaceName: string) => {
+        return IdGenerator.generateNamespaceIdWithParentId(parentNamespaceId, namespaceName);
+    }
+    
     /**
      * @param {string} parentNamespaceName - The parent namespace name
      * @param {string} namespaceName - The namespace name
@@ -55,9 +65,8 @@ export class NamespaceMosaicIdGenerator {
      * @param {string} namespaceName - The namespace name
      * @returns sub namespace id
      */
-    public static subnamespaceNamespaceId = (parentNamespaceName, namespaceName) => {
+    public static subnamespaceNamespaceId = (parentNamespaceName: string, namespaceName: string) => {
         const path = IdGenerator.generateNamespacePath(`${parentNamespaceName}.${namespaceName}`);
         return path[path.length - 1];
     }
-
 }

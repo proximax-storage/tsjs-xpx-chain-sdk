@@ -32,6 +32,16 @@ export class IdGenerator {
     }
 
     /**
+     * Generates a subnamespace id given a parent Id and a namespace name.
+     * @param {number[]} parentId The parentId in uint64 with uint32 array.
+     * @param {string} namespaceName The subnamespace name.
+     * @returns {number[]} The namespace id.
+     */
+     public static generateNamespaceIdWithParentId = (parentId: number[], namespaceName: string) => {
+        return utilities.generateNamespaceId(parentId, namespaceName);
+    }
+
+    /**
      * Parses a unified namespace name into a path.
      * @param {string} name The unified namespace name.
      * @returns {array<module:coders/uint64~uint64>} The namespace path.
