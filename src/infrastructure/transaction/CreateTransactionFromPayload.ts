@@ -228,7 +228,7 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
             // read bytes
             const namespaceType = extractNumberFromHex(transactionData.substring(0, 2));
             const nameSpaceDurationParentId = transactionData.substring(2, 18);
-            const nameSpaceId = transactionData.substring(18, 34);
+            const nameSpaceId = NamespaceId.createFromEncoded(transactionData.substring(18, 34));
             const nameSize = transactionData.substring(34, 36);
             const nameSpaceName = transactionData.substring(36);
 

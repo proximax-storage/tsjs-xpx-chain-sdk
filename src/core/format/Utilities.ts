@@ -102,11 +102,11 @@ export const throwInvalidFqn = (reason, name) => {
     throw Error(`fully qualified id is invalid due to ${reason} (${name})`);
 };
 
-export const extractPartName = (name, start, size) => {
+export const extractPartName = (name: string, start: number, size: number) => {
     if (0 === size) {
         throwInvalidFqn('empty part', name);
     }
-    const partName = name.substr(start, size);
+    const partName = name.substring(start, start + size);
     if (!idGeneratorConst.name_pattern.test(partName)) {
         throwInvalidFqn(`invalid part name [${partName}]`, name);
     }
@@ -133,7 +133,7 @@ export const split = (name, processor) => {
 
 export const generateNamespaceId = (parentId, name) => {
     const hash = sha3_256.create();
-    hash.update(Uint32Array.from(parentId).buffer as any);
+    hash.update(new Uint8Array(Uint32Array.from(parentId).buffer));
     hash.update(name);
     const result = new Uint32Array(hash.arrayBuffer());
     // right zero-filling required to keep unsigned number representation

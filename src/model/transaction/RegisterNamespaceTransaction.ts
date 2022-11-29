@@ -253,13 +253,14 @@ export class RegisterSubNamespaceTransactionBuilder extends TransactionBuilder {
     }
 
     public build(): RegisterNamespaceTransaction {
-        const parentId: NamespaceId = typeof this._parentNamespace === 'string' ?
-            new NamespaceId(NamespaceMosaicIdGenerator.subnamespaceParentId(this._parentNamespace, this._namespaceName)) :
-            this._parentNamespace;
 
-        let namespaceId = typeof this._parentNamespace === 'string' ?
-            new NamespaceId(NamespaceMosaicIdGenerator.subnamespaceNamespaceId(this._parentNamespace, this._namespaceName)) :
-            new NamespaceId(NamespaceMosaicIdGenerator.namespaceId(this._namespaceName));
+        const parentId: NamespaceId = this._parentNamespace instanceof NamespaceId ? this._parentNamespace :
+            new NamespaceId(NamespaceMosaicIdGenerator.subnamespaceParentId(this._parentNamespace, this._namespaceName));
+
+        let namespaceId: NamespaceId = this._parentNamespace instanceof NamespaceId ? 
+            new NamespaceId(NamespaceMosaicIdGenerator.subNamespaceIdWithParentId(this._parentNamespace.id.toDTO(), this._namespaceName)) : 
+            new NamespaceId(NamespaceMosaicIdGenerator.subnamespaceNamespaceId(this._parentNamespace, this._namespaceName)) ;
+
 
         return new RegisterNamespaceTransaction(
             this._networkType,
