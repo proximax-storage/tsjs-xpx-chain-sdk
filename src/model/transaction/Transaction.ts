@@ -33,6 +33,8 @@ import { FeeCalculationStrategy, DefaultFeeCalculationStrategy } from './FeeCalc
  */
 export abstract class Transaction {
 
+    public readonly transactionName: string;
+
     /**
      * @description get the byte size of the common transaction header
      * @returns {number}
@@ -94,6 +96,7 @@ export abstract class Transaction {
                  * Transactions meta data object contains additional information about the transaction.
                  */
                 public readonly transactionInfo?: TransactionInfo | AggregateTransactionInfo) {
+        this.transactionName = Transaction.extractTransactionName(type);
     }
 
     /**
@@ -240,6 +243,20 @@ export abstract class Transaction {
             Object.assign(commonTransactionObject, {signer: this.signer.publicKey});
         }
         return { transaction: commonTransactionObject };
+    }
+
+    protected static extractTransactionName = (type: number): string =>{
+
+        let transactionTypeValues = Object.values(TransactionType);
+        let transactionTypeKeys = Object.keys(TransactionType);
+
+        if (transactionTypeValues.includes(type)) {
+    
+            return transactionTypeKeys[transactionTypeValues.indexOf(type)];
+        }
+        else{
+            return "UNKNOWN";
+        }
     }
 }
 

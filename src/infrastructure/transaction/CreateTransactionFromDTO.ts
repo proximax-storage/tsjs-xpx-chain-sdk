@@ -51,6 +51,7 @@ import {SecretLockTransaction} from '../../model/transaction/SecretLockTransacti
 import {SecretProofTransaction} from '../../model/transaction/SecretProofTransaction';
 import {TransactionHash} from '../../model/transaction/TransactionHash';
 import {Transaction} from '../../model/transaction/Transaction';
+import {UnknownTransaction} from '../../model/transaction/UnknownTransaction';
 import {InnerTransaction} from '../../model/transaction/InnerTransaction';
 import {TransactionInfo} from '../../model/transaction/TransactionInfo';
 import {TransactionType} from '../../model/transaction/TransactionType';
@@ -80,6 +81,10 @@ import { MosaicLevy } from '../../model/mosaic/MosaicLevy';
  * @constructor
  */
 export const CreateTransactionFromDTO = (transactionDTO): Transaction | InnerTransaction => {
+
+    const networkType = extractNetworkType(transactionDTO.transaction.version);
+    const transactionVersion = extractTransactionVersion(transactionDTO.transaction.version);
+
     try {
         if (transactionDTO.transaction.type === TransactionType.AGGREGATE_COMPLETE ||
             transactionDTO.transaction.type === TransactionType.AGGREGATE_BONDED) {
@@ -95,12 +100,12 @@ export const CreateTransactionFromDTO = (transactionDTO): Transaction | InnerTra
                 innerTransactionDTO.transaction.maxFee = transactionDTO.transaction.maxFee;
                 innerTransactionDTO.transaction.deadline = transactionDTO.transaction.deadline;
                 innerTransactionDTO.transaction.signature = transactionDTO.transaction.signature;
-                return CreateStandaloneTransactionFromDTO(innerTransactionDTO.transaction, aggregateTransactionInfo);
+                return CreateStandaloneTransactionFromDTO(innerTransactionDTO.transaction, aggregateTransactionInfo, true);
             });
             return new AggregateTransaction(
-                extractNetworkType(transactionDTO.transaction.version),
+                networkType,
                 transactionDTO.transaction.type,
-                extractTransactionVersion(transactionDTO.transaction.version),
+                transactionVersion,
                 Deadline.createFromDTO(transactionDTO.transaction.deadline),
                 new UInt64(transactionDTO.transaction.maxFee || [0, 0]),
                 innerTransactions,
@@ -109,18 +114,18 @@ export const CreateTransactionFromDTO = (transactionDTO): Transaction | InnerTra
                         return new AggregateTransactionCosignature(
                             aggregateCosignatureDTO.signature,
                             PublicAccount.createFromPublicKey(aggregateCosignatureDTO.signer,
-                                extractNetworkType(transactionDTO.transaction.version)));
+                                networkType));
                     }) : [],
                 transactionDTO.transaction.signature,
                 transactionDTO.transaction.signer ? PublicAccount.createFromPublicKey(transactionDTO.transaction.signer,
-                                extractNetworkType(transactionDTO.transaction.version)) : undefined,
+                    networkType) : undefined,
                 transactionDTO.meta ? new TransactionInfo(
                     new UInt64(transactionDTO.meta.height),
                     transactionDTO.meta.index,
                     transactionDTO.meta.id,
                     transactionDTO.meta.hash,
                     transactionDTO.meta.merkleComponentHash,
-                ) : undefined,
+                ) : undefined
             );
         } else if(transactionDTO.meta && transactionDTO.meta.aggregateHash){
             const aggregateTransactionInfo = new AggregateTransactionInfo(
@@ -157,530 +162,538 @@ export const CreateTransactionFromDTO = (transactionDTO): Transaction | InnerTra
  */
 const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isEmbedded: boolean = false): Transaction | InnerTransaction => {
 
-    if (transactionDTO.type === TransactionType.TRANSFER) {
+    const networkType = extractNetworkType(transactionDTO.version);
+    const transactionVersion = extractTransactionVersion(transactionDTO.version);
 
-        let message: PlainMessage | EncryptedMessage | HexadecimalMessage;
-        if (transactionDTO.message && transactionDTO.message.type === MessageType.PlainMessage) {
-            message = PlainMessage.createFromPayload(transactionDTO.message.payload);
-        } else if (transactionDTO.message && transactionDTO.message.type === MessageType.EncryptedMessage) {
-            message = EncryptedMessage.createFromPayload(transactionDTO.message.payload);
-        } else if (transactionDTO.message && transactionDTO.message.type === MessageType.HexadecimalMessage) {
-            message = HexadecimalMessage.createFromPayload(transactionDTO.message.payload);
-        } else {
-            message = EmptyMessage;
+    try {
+        if (transactionDTO.type === TransactionType.TRANSFER) {
+
+            let message: PlainMessage | EncryptedMessage | HexadecimalMessage;
+            if (transactionDTO.message && transactionDTO.message.type === MessageType.PlainMessage) {
+                message = PlainMessage.createFromPayload(transactionDTO.message.payload);
+            } else if (transactionDTO.message && transactionDTO.message.type === MessageType.EncryptedMessage) {
+                message = EncryptedMessage.createFromPayload(transactionDTO.message.payload);
+            } else if (transactionDTO.message && transactionDTO.message.type === MessageType.HexadecimalMessage) {
+                message = HexadecimalMessage.createFromPayload(transactionDTO.message.payload);
+            } else {
+                message = EmptyMessage;
+            }
+    
+            const transferTxn = new TransferTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded ? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                extractRecipient(transactionDTO.recipient),
+                extractMosaics(transactionDTO.mosaics),
+                message,
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                        networkType) : undefined,
+                transactionInfo
+            );
+    
+            return isEmbedded ? transferTxn.toAggregate(transferTxn.signer!) : transferTxn;
+        } else if (transactionDTO.type === TransactionType.REGISTER_NAMESPACE) {
+            const registerNamespaceTxn = new RegisterNamespaceTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded ? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                transactionDTO.namespaceType,
+                transactionDTO.name,
+                new NamespaceId(transactionDTO.namespaceId),
+                transactionDTO.namespaceType === 0 ? new UInt64(transactionDTO.duration) : undefined,
+                transactionDTO.namespaceType === 1 ? new NamespaceId(transactionDTO.parentId) : undefined,
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                    networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? registerNamespaceTxn.toAggregate(registerNamespaceTxn.signer!) : registerNamespaceTxn;
+        } else if (transactionDTO.type === TransactionType.MOSAIC_DEFINITION) {
+            const mosaicDefinitionTxn = new MosaicDefinitionTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded ? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                MosaicNonce.createFromNumber(transactionDTO.mosaicNonce),
+                new MosaicId(transactionDTO.mosaicId),
+                new MosaicProperties(
+                    new UInt64(transactionDTO.properties[MosaicPropertyType.MosaicFlags].value),
+                    (new UInt64(transactionDTO.properties[MosaicPropertyType.Divisibility].value)).compact(),
+                    transactionDTO.properties.length === 3 &&  transactionDTO.properties[MosaicPropertyType.Duration].value ?
+                        new UInt64(transactionDTO.properties[MosaicPropertyType.Duration].value) : undefined,
+                ),
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                    networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? mosaicDefinitionTxn.toAggregate(mosaicDefinitionTxn.signer!) : mosaicDefinitionTxn;
+        } else if (transactionDTO.type === TransactionType.MOSAIC_SUPPLY_CHANGE) {
+            const mosaicSupplyChangeTxn = new MosaicSupplyChangeTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                new MosaicId(transactionDTO.mosaicId),
+                transactionDTO.direction,
+                new UInt64(transactionDTO.delta),
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                    networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? mosaicSupplyChangeTxn.toAggregate(mosaicSupplyChangeTxn.signer!) : mosaicSupplyChangeTxn;
+        } else if (transactionDTO.type === TransactionType.MODIFY_MULTISIG_ACCOUNT) {
+            const modifyMultisigTxn = new ModifyMultisigAccountTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                transactionDTO.minApprovalDelta,
+                transactionDTO.minRemovalDelta,
+                transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new MultisigCosignatoryModification(
+                    modificationDTO.type,
+                    PublicAccount.createFromPublicKey(modificationDTO.cosignatoryPublicKey, networkType),
+                )) : [],
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                    networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? modifyMultisigTxn.toAggregate(modifyMultisigTxn.signer!) : modifyMultisigTxn;
+        } else if (transactionDTO.type === TransactionType.LOCK) {
+            const lockHashTxn = new LockFundsTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                new Mosaic(new MosaicId(transactionDTO.mosaicId), new UInt64(transactionDTO.amount)),
+                new UInt64(transactionDTO.duration),
+                new TransactionHash(transactionDTO.hash, TransactionType.AGGREGATE_BONDED),
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer, networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? lockHashTxn.toAggregate(lockHashTxn.signer!) : lockHashTxn;
+        } else if (transactionDTO.type === TransactionType.SECRET_LOCK) {
+            const recipient = transactionDTO.recipient;
+            const secretLockTxn = new SecretLockTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                new Mosaic(new MosaicId(transactionDTO.mosaicId), new UInt64(transactionDTO.amount)),
+                new UInt64(transactionDTO.duration),
+                transactionDTO.hashAlgorithm,
+                (transactionDTO.hashAlgorithm === 2 ? transactionDTO.secret.substring(0, 40) : transactionDTO.secret),
+                typeof recipient === 'object' && recipient.hasOwnProperty('address') ?
+                    Address.createFromRawAddress(recipient.address) : Address.createFromEncoded(recipient),
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                    networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? secretLockTxn.toAggregate(secretLockTxn.signer!) : secretLockTxn;
+        } else if (transactionDTO.type === TransactionType.SECRET_PROOF) {
+            const secretProofTxn = new SecretProofTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                transactionDTO.hashAlgorithm,
+                (transactionDTO.hashAlgorithm === 2 ? transactionDTO.secret.substring(0, 40) : transactionDTO.secret),
+                Address.createFromEncoded(transactionDTO.recipient),
+                transactionDTO.proof,
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                    networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? secretProofTxn.toAggregate(secretProofTxn.signer!) : secretProofTxn;
+        } else if (transactionDTO.type === TransactionType.MOSAIC_ALIAS) {
+            const mosaicAliasTxn = new MosaicAliasTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                transactionDTO.aliasAction,
+                new NamespaceId(transactionDTO.namespaceId),
+                new MosaicId(transactionDTO.mosaicId),
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                    networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? mosaicAliasTxn.toAggregate(mosaicAliasTxn.signer!) : mosaicAliasTxn;
+        } else if (transactionDTO.type === TransactionType.ADDRESS_ALIAS) {
+            const addressAliasTxn = new AddressAliasTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                transactionDTO.aliasAction,
+                new NamespaceId(transactionDTO.namespaceId),
+                extractRecipient(transactionDTO.address) as Address,
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                    networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? addressAliasTxn.toAggregate(addressAliasTxn.signer!) : addressAliasTxn;
+        } else if (transactionDTO.type === TransactionType.MODIFY_ACCOUNT_RESTRICTION_ADDRESS) {
+            const accountAddressRestrictionTxn = new AccountAddressRestrictionModificationTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                transactionDTO.propertyType,
+                transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountRestrictionModification<string>(
+                    modificationDTO.type,
+                    Address.createFromEncoded(modificationDTO.value).plain(),
+                )) : [],
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? accountAddressRestrictionTxn.toAggregate(accountAddressRestrictionTxn.signer!) : accountAddressRestrictionTxn;
+        } else if (transactionDTO.type === TransactionType.MODIFY_ACCOUNT_RESTRICTION_OPERATION) {
+            const accountOperationRestrictionTxn = new AccountOperationRestrictionModificationTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                transactionDTO.propertyType,
+                transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountRestrictionModification<number[]>(
+                    modificationDTO.type,
+                    modificationDTO.value,
+                )) : [],
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? accountOperationRestrictionTxn.toAggregate(accountOperationRestrictionTxn.signer!) : accountOperationRestrictionTxn;
+        } else if (transactionDTO.type === TransactionType.MODIFY_ACCOUNT_RESTRICTION_MOSAIC) {
+            const accountMosaicRestrictionTxn = new AccountMosaicRestrictionModificationTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                transactionDTO.propertyType,
+                transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountRestrictionModification<TransactionType>(
+                    modificationDTO.type,
+                    modificationDTO.value,
+                )) : [],
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? accountMosaicRestrictionTxn.toAggregate(accountMosaicRestrictionTxn.signer!) : accountMosaicRestrictionTxn;
+        } else if (transactionDTO.type === TransactionType.LINK_ACCOUNT) {
+            const accountLinkTxn = new AccountLinkTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                transactionDTO.remoteAccountKey,
+                transactionDTO.action,
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                        networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? accountLinkTxn.toAggregate(accountLinkTxn.signer!) : accountLinkTxn;
+        } else if (transactionDTO.type === TransactionType.MODIFY_ACCOUNT_METADATA ||
+                    transactionDTO.type === TransactionType.MODIFY_MOSAIC_METADATA ||
+                    transactionDTO.type === TransactionType.MODIFY_NAMESPACE_METADATA) {
+
+            const deadline = isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline);
+            const maxFee = isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]);
+            const signature = isEmbedded ? undefined : transactionDTO.signature;
+            // const metadataType = transactionDTO.metadataType;
+            const metadataId = transactionDTO.metadataId;
+            const modifications =
+                transactionDTO.modifications ?
+                transactionDTO.modifications.map(m => new MetadataModification(m.key, m.value)) :
+                undefined
+            switch(transactionDTO.type) {
+                case TransactionType.MODIFY_ACCOUNT_METADATA: {
+                    let modifyMetadataTxn = new ModifyMetadataTransaction(
+                        TransactionType.MODIFY_ACCOUNT_METADATA,
+                        networkType,
+                        transactionVersion,
+                        deadline,
+                        maxFee,
+                        oldMetadataType.ADDRESS,
+                        Address.createFromEncoded(metadataId).plain(),
+                        modifications,
+                        signature,
+                        transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType) : undefined,
+                        transactionInfo,
+                        )
+                    return isEmbedded ? modifyMetadataTxn.toAggregate(modifyMetadataTxn.signer!) : modifyMetadataTxn;
+                }
+                case TransactionType.MODIFY_MOSAIC_METADATA: {
+                    let modifyMetadataTxn = new ModifyMetadataTransaction(
+                        TransactionType.MODIFY_MOSAIC_METADATA,
+                        networkType,
+                        transactionVersion,
+                        deadline,
+                        maxFee,
+                        oldMetadataType.MOSAIC,
+                        new MosaicId(metadataId).toHex(),
+                        modifications,
+                        signature,
+                        transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType) : undefined,
+                        transactionInfo,
+                        )
+                    return isEmbedded ? modifyMetadataTxn.toAggregate(modifyMetadataTxn.signer!) : modifyMetadataTxn;
+                }
+                case TransactionType.MODIFY_NAMESPACE_METADATA: {
+                    let modifyMetadataTxn = new ModifyMetadataTransaction(
+                        TransactionType.MODIFY_NAMESPACE_METADATA,
+                        networkType,
+                        transactionVersion,
+                        deadline,
+                        maxFee,
+                        oldMetadataType.NAMESPACE,
+                        new NamespaceId(metadataId).toHex(),
+                        modifications,
+                        signature,
+                        transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType) : undefined,
+                        transactionInfo,
+                        )
+                    return isEmbedded ? modifyMetadataTxn.toAggregate(modifyMetadataTxn.signer!) : modifyMetadataTxn;
+                }
+            }
+        } else if (transactionDTO.type === TransactionType.CHAIN_UPGRADE) {
+            const chainUpgradeTxn = new ChainUpgradeTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                new UInt64(transactionDTO.upgradePeriod),
+                new UInt64(transactionDTO.newBlockchainVersion),
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? chainUpgradeTxn.toAggregate(chainUpgradeTxn.signer!) : chainUpgradeTxn;
+        } else if (transactionDTO.type === TransactionType.CHAIN_CONFIGURE) {
+            const chainConfigTxn = new ChainConfigTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                new UInt64(transactionDTO.applyHeightDelta || [0, 0]),
+                transactionDTO.networkConfig,
+                transactionDTO.supportedEntityVersions,
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? chainConfigTxn.toAggregate(chainConfigTxn.signer!) : chainConfigTxn;
+        } else if (transactionDTO.type === TransactionType.ADD_EXCHANGE_OFFER) {
+            const addExchangeOfferTxn = new AddExchangeOfferTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                transactionDTO.offers.map(o => new AddExchangeOffer(
+                    new MosaicId(o.mosaicId),
+                    new UInt64(o.mosaicAmount),
+                    new UInt64(o.cost),
+                    o.type,
+                    new UInt64(o.duration)
+                )),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? addExchangeOfferTxn.toAggregate(addExchangeOfferTxn.signer!) : addExchangeOfferTxn;
+        } else if (transactionDTO.type === TransactionType.EXCHANGE_OFFER) {
+            const exchangeOfferTxn = new ExchangeOfferTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                transactionDTO.offers.map(o => new ExchangeOffer(
+                    new MosaicId(o.mosaicId),
+                    new UInt64(o.mosaicAmount),
+                    new UInt64(o.cost),
+                    o.type,
+                    PublicAccount.createFromPublicKey(o.owner, networkType)
+                )),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? exchangeOfferTxn.toAggregate(exchangeOfferTxn.signer!) : exchangeOfferTxn;
+        } else if (transactionDTO.type === TransactionType.REMOVE_EXCHANGE_OFFER) {
+            const removeExchangeOfferTxn = new RemoveExchangeOfferTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                transactionDTO.offers.map(o => new RemoveExchangeOffer(
+                    new MosaicId(o.mosaicId),
+                    o.offerType // or type?
+                )),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? removeExchangeOfferTxn.toAggregate(removeExchangeOfferTxn.signer!) : removeExchangeOfferTxn;
+        } else if (transactionDTO.type === TransactionType.ACCOUNT_METADATA_V2) {
+            const accountMetadataTxn = new AccountMetadataTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                new UInt64(transactionDTO.scopedMetadataKey),
+                PublicAccount.createFromPublicKey(transactionDTO.targetKey, networkType),
+                transactionDTO.valueSizeDelta,
+                "",
+                "",
+                transactionDTO.valueSize,
+                convert.hexToUint8(transactionDTO.value),
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? accountMetadataTxn.toAggregate(accountMetadataTxn.signer!) : accountMetadataTxn;
+        } else if (transactionDTO.type === TransactionType.MOSAIC_METADATA_V2) {
+            const mosaicMetadataTxn = new MosaicMetadataTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                new UInt64(transactionDTO.scopedMetadataKey),
+                PublicAccount.createFromPublicKey(transactionDTO.targetKey, networkType),
+                new MosaicId(transactionDTO.targetMosaicId),
+                transactionDTO.valueSizeDelta,
+                "",
+                "",
+                transactionDTO.valueSize,
+                convert.hexToUint8(transactionDTO.value),
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? mosaicMetadataTxn.toAggregate(mosaicMetadataTxn.signer!) : mosaicMetadataTxn;
+        } else if (transactionDTO.type === TransactionType.NAMESPACE_METADATA_V2) {
+            const namespaceMetadataTxn = new NamespaceMetadataTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                new UInt64(transactionDTO.scopedMetadataKey),
+                PublicAccount.createFromPublicKey(transactionDTO.targetKey, networkType),
+                new NamespaceId(transactionDTO.targetNamespaceId),
+                transactionDTO.valueSizeDelta,
+                "",
+                "",
+                transactionDTO.valueSize,
+                convert.hexToUint8(transactionDTO.value),
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? namespaceMetadataTxn.toAggregate(namespaceMetadataTxn.signer!) : namespaceMetadataTxn;
+        } else if (transactionDTO.type === TransactionType.MODIFY_MOSAIC_LEVY) {
+            const mosaicModifyLevyTxn = new MosaicModifyLevyTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                new MosaicId(transactionDTO.mosaicId),
+                new MosaicLevy(
+                    transactionDTO.levy.type, 
+                    Address.createFromEncoded(transactionDTO.levy.recipient), 
+                    new MosaicId(transactionDTO.levy.mosaicId), 
+                    new UInt64(transactionDTO.levy.fee)
+                ),
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? mosaicModifyLevyTxn.toAggregate(mosaicModifyLevyTxn.signer!) : mosaicModifyLevyTxn;
+        } else if (transactionDTO.type === TransactionType.REMOVE_MOSAIC_LEVY) {
+            const mosaicRemoveLevyTxn = new MosaicRemoveLevyTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                new MosaicId(transactionDTO.mosaicId),
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? mosaicRemoveLevyTxn.toAggregate(mosaicRemoveLevyTxn.signer!) : mosaicRemoveLevyTxn;
+        } else if (transactionDTO.type === TransactionType.ADD_HARVESTER) {
+            const addHarvesterTxn = new HarvesterTransaction(
+                networkType,
+                TransactionType.ADD_HARVESTER,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                PublicAccount.createFromPublicKey(transactionDTO.harvesterKey, networkType),
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer, networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? addHarvesterTxn.toAggregate(addHarvesterTxn.signer!) : addHarvesterTxn;
+        } else if (transactionDTO.type === TransactionType.REMOVE_HARVESTER) {
+            const removeHarvesterTxn = new HarvesterTransaction(
+                networkType,
+                TransactionType.REMOVE_HARVESTER,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                PublicAccount.createFromPublicKey(transactionDTO.harvesterKey, networkType),
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer, networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? removeHarvesterTxn.toAggregate(removeHarvesterTxn.signer!) : removeHarvesterTxn;
         }
 
-        const transferTxn = new TransferTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded ? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            extractRecipient(transactionDTO.recipient),
-            extractMosaics(transactionDTO.mosaics),
-            message,
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                    extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
+        throw new Error('Unimplemented transaction with type ' + transactionDTO.type);
+    } catch (error) {
 
-        return isEmbedded ? transferTxn.toAggregate(transferTxn.signer!) : transferTxn;
-    } else if (transactionDTO.type === TransactionType.REGISTER_NAMESPACE) {
-        const registerNamespaceTxn = new RegisterNamespaceTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded ? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            transactionDTO.namespaceType,
-            transactionDTO.name,
-            new NamespaceId(transactionDTO.namespaceId),
-            transactionDTO.namespaceType === 0 ? new UInt64(transactionDTO.duration) : undefined,
-            transactionDTO.namespaceType === 1 ? new NamespaceId(transactionDTO.parentId) : undefined,
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? registerNamespaceTxn.toAggregate(registerNamespaceTxn.signer!) : registerNamespaceTxn;
-    } else if (transactionDTO.type === TransactionType.MOSAIC_DEFINITION) {
-        const mosaicDefinitionTxn = new MosaicDefinitionTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded ? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            MosaicNonce.createFromNumber(transactionDTO.mosaicNonce),
-            new MosaicId(transactionDTO.mosaicId),
-            new MosaicProperties(
-                new UInt64(transactionDTO.properties[MosaicPropertyType.MosaicFlags].value),
-                (new UInt64(transactionDTO.properties[MosaicPropertyType.Divisibility].value)).compact(),
-                transactionDTO.properties.length === 3 &&  transactionDTO.properties[MosaicPropertyType.Duration].value ?
-                    new UInt64(transactionDTO.properties[MosaicPropertyType.Duration].value) : undefined,
-            ),
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? mosaicDefinitionTxn.toAggregate(mosaicDefinitionTxn.signer!) : mosaicDefinitionTxn;
-    } else if (transactionDTO.type === TransactionType.MOSAIC_SUPPLY_CHANGE) {
-        const mosaicSupplyChangeTxn = new MosaicSupplyChangeTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
+        let unknownTxnData = cloneAndRemoveTxnBaseData(transactionDTO);
+
+        return new UnknownTransaction(
+            unknownTxnData,
+            transactionDTO.type, 
+            networkType, 
+            transactionVersion, 
             isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
             isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            new MosaicId(transactionDTO.mosaicId),
-            transactionDTO.direction,
-            new UInt64(transactionDTO.delta),
+            PublicAccount.createFromPublicKey(transactionDTO.signer, networkType),
             isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
+            transactionInfo
         );
-        return isEmbedded ? mosaicSupplyChangeTxn.toAggregate(mosaicSupplyChangeTxn.signer!) : mosaicSupplyChangeTxn;
-    } else if (transactionDTO.type === TransactionType.MODIFY_MULTISIG_ACCOUNT) {
-        const modifyMultisigTxn = new ModifyMultisigAccountTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            transactionDTO.minApprovalDelta,
-            transactionDTO.minRemovalDelta,
-            transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new MultisigCosignatoryModification(
-                modificationDTO.type,
-                PublicAccount.createFromPublicKey(modificationDTO.cosignatoryPublicKey, extractNetworkType(transactionDTO.version)),
-            )) : [],
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? modifyMultisigTxn.toAggregate(modifyMultisigTxn.signer!) : modifyMultisigTxn;
-    } else if (transactionDTO.type === TransactionType.LOCK) {
-        const networkType = extractNetworkType(transactionDTO.version);
-        const lockHashTxn = new LockFundsTransaction(
-            networkType,
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            new Mosaic(new MosaicId(transactionDTO.mosaicId), new UInt64(transactionDTO.amount)),
-            new UInt64(transactionDTO.duration),
-            new TransactionHash(transactionDTO.hash, TransactionType.AGGREGATE_BONDED),
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer, networkType) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? lockHashTxn.toAggregate(lockHashTxn.signer!) : lockHashTxn;
-    } else if (transactionDTO.type === TransactionType.SECRET_LOCK) {
-        const recipient = transactionDTO.recipient;
-        const secretLockTxn = new SecretLockTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            new Mosaic(new MosaicId(transactionDTO.mosaicId), new UInt64(transactionDTO.amount)),
-            new UInt64(transactionDTO.duration),
-            transactionDTO.hashAlgorithm,
-            (transactionDTO.hashAlgorithm === 2 ? transactionDTO.secret.substring(0, 40) : transactionDTO.secret),
-            typeof recipient === 'object' && recipient.hasOwnProperty('address') ?
-                Address.createFromRawAddress(recipient.address) : Address.createFromEncoded(recipient),
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? secretLockTxn.toAggregate(secretLockTxn.signer!) : secretLockTxn;
-    } else if (transactionDTO.type === TransactionType.SECRET_PROOF) {
-        const secretProofTxn = new SecretProofTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            transactionDTO.hashAlgorithm,
-            (transactionDTO.hashAlgorithm === 2 ? transactionDTO.secret.substring(0, 40) : transactionDTO.secret),
-            Address.createFromEncoded(transactionDTO.recipient),
-            transactionDTO.proof,
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? secretProofTxn.toAggregate(secretProofTxn.signer!) : secretProofTxn;
-    } else if (transactionDTO.type === TransactionType.MOSAIC_ALIAS) {
-        const mosaicAliasTxn = new MosaicAliasTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            transactionDTO.aliasAction,
-            new NamespaceId(transactionDTO.namespaceId),
-            new MosaicId(transactionDTO.mosaicId),
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? mosaicAliasTxn.toAggregate(mosaicAliasTxn.signer!) : mosaicAliasTxn;
-    } else if (transactionDTO.type === TransactionType.ADDRESS_ALIAS) {
-        const addressAliasTxn = new AddressAliasTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            transactionDTO.aliasAction,
-            new NamespaceId(transactionDTO.namespaceId),
-            extractRecipient(transactionDTO.address) as Address,
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? addressAliasTxn.toAggregate(addressAliasTxn.signer!) : addressAliasTxn;
-    } else if (transactionDTO.type === TransactionType.MODIFY_ACCOUNT_RESTRICTION_ADDRESS) {
-        const accountAddressRestrictionTxn = new AccountAddressRestrictionModificationTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            transactionDTO.propertyType,
-            transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountRestrictionModification<string>(
-                modificationDTO.type,
-                Address.createFromEncoded(modificationDTO.value).plain(),
-            )) : [],
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? accountAddressRestrictionTxn.toAggregate(accountAddressRestrictionTxn.signer!) : accountAddressRestrictionTxn;
-    } else if (transactionDTO.type === TransactionType.MODIFY_ACCOUNT_RESTRICTION_OPERATION) {
-        const accountOperationRestrictionTxn = new AccountOperationRestrictionModificationTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            transactionDTO.propertyType,
-            transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountRestrictionModification<number[]>(
-                modificationDTO.type,
-                modificationDTO.value,
-            )) : [],
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? accountOperationRestrictionTxn.toAggregate(accountOperationRestrictionTxn.signer!) : accountOperationRestrictionTxn;
-    } else if (transactionDTO.type === TransactionType.MODIFY_ACCOUNT_RESTRICTION_MOSAIC) {
-        const accountMosaicRestrictionTxn = new AccountMosaicRestrictionModificationTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            transactionDTO.propertyType,
-            transactionDTO.modifications ? transactionDTO.modifications.map((modificationDTO) => new AccountRestrictionModification<TransactionType>(
-                modificationDTO.type,
-                modificationDTO.value,
-            )) : [],
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? accountMosaicRestrictionTxn.toAggregate(accountMosaicRestrictionTxn.signer!) : accountMosaicRestrictionTxn;
-    } else if (transactionDTO.type === TransactionType.LINK_ACCOUNT) {
-        const accountLinkTxn = new AccountLinkTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            transactionDTO.remoteAccountKey,
-            transactionDTO.action,
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                    extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? accountLinkTxn.toAggregate(accountLinkTxn.signer!) : accountLinkTxn;
-    } else if (transactionDTO.type === TransactionType.MODIFY_ACCOUNT_METADATA ||
-                transactionDTO.type === TransactionType.MODIFY_MOSAIC_METADATA ||
-                transactionDTO.type === TransactionType.MODIFY_NAMESPACE_METADATA) {
-        const networkType = extractNetworkType(transactionDTO.version);
-        const transactionVersion = extractTransactionVersion(transactionDTO.version);
-        const deadline = isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline);
-        const maxFee = isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]);
-        const signature = isEmbedded ? undefined : transactionDTO.signature;
-        // const metadataType = transactionDTO.metadataType;
-        const metadataId = transactionDTO.metadataId;
-        const modifications =
-            transactionDTO.modifications ?
-            transactionDTO.modifications.map(m => new MetadataModification(m.key, m.value)) :
-            undefined
-        switch(transactionDTO.type) {
-            case TransactionType.MODIFY_ACCOUNT_METADATA: {
-                let modifyMetadataTxn = new ModifyMetadataTransaction(
-                    TransactionType.MODIFY_ACCOUNT_METADATA,
-                    networkType,
-                    transactionVersion,
-                    deadline,
-                    maxFee,
-                    oldMetadataType.ADDRESS,
-                    Address.createFromEncoded(metadataId).plain(),
-                    modifications,
-                    signature,
-                    transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-                    transactionInfo,
-                    )
-                return isEmbedded ? modifyMetadataTxn.toAggregate(modifyMetadataTxn.signer!) : modifyMetadataTxn;
-                // break;
-            }
-            case TransactionType.MODIFY_MOSAIC_METADATA: {
-                let modifyMetadataTxn = new ModifyMetadataTransaction(
-                    TransactionType.MODIFY_MOSAIC_METADATA,
-                    networkType,
-                    transactionVersion,
-                    deadline,
-                    maxFee,
-                    oldMetadataType.MOSAIC,
-                    new MosaicId(metadataId).toHex(),
-                    modifications,
-                    signature,
-                    transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-                    transactionInfo,
-                    )
-                return isEmbedded ? modifyMetadataTxn.toAggregate(modifyMetadataTxn.signer!) : modifyMetadataTxn;
-                // break;
-            }
-            case TransactionType.MODIFY_NAMESPACE_METADATA: {
-                let modifyMetadataTxn = new ModifyMetadataTransaction(
-                    TransactionType.MODIFY_NAMESPACE_METADATA,
-                    networkType,
-                    transactionVersion,
-                    deadline,
-                    maxFee,
-                    oldMetadataType.NAMESPACE,
-                    new NamespaceId(metadataId).toHex(),
-                    modifications,
-                    signature,
-                    transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-                    transactionInfo,
-                    )
-                return isEmbedded ? modifyMetadataTxn.toAggregate(modifyMetadataTxn.signer!) : modifyMetadataTxn;
-                // break;
-            }
-            // default: {
-            //     throw new Error('Unimplemented modify metadata transaction with type ' + metadataType);
-            // }
-        }
-    } else if (transactionDTO.type === TransactionType.CHAIN_UPGRADE) {
-        const chainUpgradeTxn = new ChainUpgradeTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            new UInt64(transactionDTO.upgradePeriod),
-            new UInt64(transactionDTO.newBlockchainVersion),
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? chainUpgradeTxn.toAggregate(chainUpgradeTxn.signer!) : chainUpgradeTxn;
-    } else if (transactionDTO.type === TransactionType.CHAIN_CONFIGURE) {
-        const chainConfigTxn = new ChainConfigTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            new UInt64(transactionDTO.applyHeightDelta || [0, 0]),
-            transactionDTO.networkConfig,
-            transactionDTO.supportedEntityVersions,
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? chainConfigTxn.toAggregate(chainConfigTxn.signer!) : chainConfigTxn;
-    } else if (transactionDTO.type === TransactionType.ADD_EXCHANGE_OFFER) {
-        const addExchangeOfferTxn = new AddExchangeOfferTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            transactionDTO.offers.map(o => new AddExchangeOffer(
-                new MosaicId(o.mosaicId),
-                new UInt64(o.mosaicAmount),
-                new UInt64(o.cost),
-                o.type,
-                new UInt64(o.duration)
-            )),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? addExchangeOfferTxn.toAggregate(addExchangeOfferTxn.signer!) : addExchangeOfferTxn;
-    } else if (transactionDTO.type === TransactionType.EXCHANGE_OFFER) {
-        const exchangeOfferTxn = new ExchangeOfferTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            transactionDTO.offers.map(o => new ExchangeOffer(
-                new MosaicId(o.mosaicId),
-                new UInt64(o.mosaicAmount),
-                new UInt64(o.cost),
-                o.type,
-                PublicAccount.createFromPublicKey(o.owner, extractNetworkType(transactionDTO.version))
-            )),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? exchangeOfferTxn.toAggregate(exchangeOfferTxn.signer!) : exchangeOfferTxn;
-    } else if (transactionDTO.type === TransactionType.REMOVE_EXCHANGE_OFFER) {
-        const removeExchangeOfferTxn = new RemoveExchangeOfferTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            transactionDTO.offers.map(o => new RemoveExchangeOffer(
-                new MosaicId(o.mosaicId),
-                o.offerType // or type?
-            )),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? removeExchangeOfferTxn.toAggregate(removeExchangeOfferTxn.signer!) : removeExchangeOfferTxn;
-    } else if (transactionDTO.type === TransactionType.ACCOUNT_METADATA_V2) {
-        const networkType = extractNetworkType(transactionDTO.version);
-        const accountMetadataTxn = new AccountMetadataTransaction(
-            networkType,
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            new UInt64(transactionDTO.scopedMetadataKey),
-            PublicAccount.createFromPublicKey(transactionDTO.targetKey, networkType),
-            transactionDTO.valueSizeDelta,
-            "",
-            "",
-            transactionDTO.valueSize,
-            convert.hexToUint8(transactionDTO.value),
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? accountMetadataTxn.toAggregate(accountMetadataTxn.signer!) : accountMetadataTxn;
-    } else if (transactionDTO.type === TransactionType.MOSAIC_METADATA_V2) {
-        const networkType = extractNetworkType(transactionDTO.version);
-        const mosaicMetadataTxn = new MosaicMetadataTransaction(
-            networkType,
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            new UInt64(transactionDTO.scopedMetadataKey),
-            PublicAccount.createFromPublicKey(transactionDTO.targetKey, networkType),
-            new MosaicId(transactionDTO.targetMosaicId),
-            transactionDTO.valueSizeDelta,
-            "",
-            "",
-            transactionDTO.valueSize,
-            convert.hexToUint8(transactionDTO.value),
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? mosaicMetadataTxn.toAggregate(mosaicMetadataTxn.signer!) : mosaicMetadataTxn;
-    } else if (transactionDTO.type === TransactionType.NAMESPACE_METADATA_V2) {
-        const networkType = extractNetworkType(transactionDTO.version);
-        const namespaceMetadataTxn = new NamespaceMetadataTransaction(
-            networkType,
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            new UInt64(transactionDTO.scopedMetadataKey),
-            PublicAccount.createFromPublicKey(transactionDTO.targetKey, networkType),
-            new NamespaceId(transactionDTO.targetNamespaceId),
-            transactionDTO.valueSizeDelta,
-            "",
-            "",
-            transactionDTO.valueSize,
-            convert.hexToUint8(transactionDTO.value),
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? namespaceMetadataTxn.toAggregate(namespaceMetadataTxn.signer!) : namespaceMetadataTxn;
-    } else if (transactionDTO.type === TransactionType.MODIFY_MOSAIC_LEVY) {
-        const mosaicModifyLevyTxn = new MosaicModifyLevyTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            new MosaicId(transactionDTO.mosaicId),
-            new MosaicLevy(
-                transactionDTO.levy.type, 
-                Address.createFromEncoded(transactionDTO.levy.recipient), 
-                new MosaicId(transactionDTO.levy.mosaicId), 
-                new UInt64(transactionDTO.levy.fee)
-            ),
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? mosaicModifyLevyTxn.toAggregate(mosaicModifyLevyTxn.signer!) : mosaicModifyLevyTxn;
-    } else if (transactionDTO.type === TransactionType.REMOVE_MOSAIC_LEVY) {
-        const mosaicRemoveLevyTxn = new MosaicRemoveLevyTransaction(
-            extractNetworkType(transactionDTO.version),
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            new MosaicId(transactionDTO.mosaicId),
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
-                            extractNetworkType(transactionDTO.version)) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? mosaicRemoveLevyTxn.toAggregate(mosaicRemoveLevyTxn.signer!) : mosaicRemoveLevyTxn;
-    } else if (transactionDTO.type === TransactionType.ADD_HARVESTER) {
-        let networkType = extractNetworkType(transactionDTO.version);
-        const addHarvesterTxn = new HarvesterTransaction(
-            networkType,
-            TransactionType.ADD_HARVESTER,
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            PublicAccount.createFromPublicKey(transactionDTO.harvesterKey, networkType),
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer, networkType) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? addHarvesterTxn.toAggregate(addHarvesterTxn.signer!) : addHarvesterTxn;
-    } else if (transactionDTO.type === TransactionType.REMOVE_HARVESTER) {
-        let networkType = extractNetworkType(transactionDTO.version);
-        const removeHarvesterTxn = new HarvesterTransaction(
-            networkType,
-            TransactionType.REMOVE_HARVESTER,
-            extractTransactionVersion(transactionDTO.version),
-            isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-            isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
-            PublicAccount.createFromPublicKey(transactionDTO.harvesterKey, networkType),
-            isEmbedded ? undefined : transactionDTO.signature,
-            transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer, networkType) : undefined,
-            transactionInfo,
-        );
-        return isEmbedded ? removeHarvesterTxn.toAggregate(removeHarvesterTxn.signer!) : removeHarvesterTxn;
     }
-
-    throw new Error('Unimplemented transaction with type ' + transactionDTO.type);
+    
 };
 
 export const extractNetworkType = (version: number): NetworkType => {
@@ -704,6 +717,37 @@ export const extractNetworkType = (version: number): NetworkType => {
 export const extractTransactionVersion = (version: number): number => {
     return parseInt((version >>> 0).toString(16).substring(2), 16); // ">>> 0" hack makes it effectively an Uint32
 };
+
+const cloneAndRemoveTxnBaseData = (transactionDTO: Object): any =>{
+
+    let clonedTransactionDTO = Object.assign({}, transactionDTO);
+
+    if('signature' in clonedTransactionDTO){
+        delete clonedTransactionDTO['signature'];
+    }
+
+    if('signer' in clonedTransactionDTO){
+        delete clonedTransactionDTO['signer'];
+    }
+
+    if('version' in clonedTransactionDTO){
+        delete clonedTransactionDTO['version'];
+    }
+
+    if('type' in clonedTransactionDTO){
+        delete clonedTransactionDTO['type'];
+    }
+
+    if('deadline' in clonedTransactionDTO){
+        delete clonedTransactionDTO['deadline'];
+    }
+
+    if('maxFee' in clonedTransactionDTO){
+        delete clonedTransactionDTO['maxFee'];
+    }
+
+    return clonedTransactionDTO;
+}
 
 /**
  * Extract recipient value from encoded hexadecimal notation.
