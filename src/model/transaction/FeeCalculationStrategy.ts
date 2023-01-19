@@ -11,10 +11,11 @@ export enum FeeCalculationStrategy {
     HighFeeCalculationStrategy = 1500000
 }
 
-export const DefaultMaxFee = 75000000;
+// export const DefaultMaxFee = 75000000;
 
 export const DefaultFeeCalculationStrategy: FeeCalculationStrategy = FeeCalculationStrategy.MiddleFeeCalculationStrategy;
 
 export const calculateFee = (transactionByteSize: number, feeCalculationStratgy: FeeCalculationStrategy = DefaultFeeCalculationStrategy) => {
-    return UInt64.fromUint(Math.min(DefaultMaxFee, transactionByteSize * feeCalculationStratgy));
+    // return UInt64.fromUint(Math.min(DefaultMaxFee, transactionByteSize * feeCalculationStratgy));
+    return UInt64.fromUint(transactionByteSize * feeCalculationStratgy);
 }
