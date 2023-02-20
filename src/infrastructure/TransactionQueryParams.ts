@@ -105,7 +105,14 @@ export class TransactionQueryParams extends PaginationQueryParams{
     height?: number;
     signerPublicKey?: string | PublicAccount;
     recipientAddress?: string | Address;
+    /**
+     * address involved in the transaction. It can be sender, recipient, or cosigner that required to cosign the transaction). 
+     * cannot be combined with recipientAddress and signerPublicKey
+     */
     address?: string | Address;
+    /**
+     * combination of signerPublicKey and recipientAddress
+     */
     publicKey?: string | PublicAccount;
     /**
     * include only first level of Aggregate transactions (exclude innerTransactions), default to true
