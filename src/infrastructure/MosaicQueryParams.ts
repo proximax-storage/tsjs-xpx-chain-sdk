@@ -48,8 +48,12 @@ export class MosaicCreatorFilters{
     */
     holding?: boolean;
 
-    constructor(ownerPublicKey: string | PublicAccount){
+    constructor(ownerPublicKey: string | PublicAccount, holding?: boolean){
         this.ownerPubKey = ownerPublicKey;
+
+        if(holding !== undefined){
+            this.holding = holding;
+        }
     }
 
     buildQueryParamsString(){
