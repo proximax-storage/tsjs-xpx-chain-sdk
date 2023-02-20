@@ -88,6 +88,39 @@ export class PublicAccount {
     }
 
     /**
+     * Verify a signature from hexadecimal string (bytes representation).
+     *
+     * @param {string} hexString - The data to verify.
+     * @param {string} signature - The signature to verify.
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @return {boolean}  - True if the signature is valid, false otherwise.
+     */
+    public verifySignatureWithHexString(hexString: string, signature: string, signSchema: SignSchema = SignSchema.SHA3): boolean {
+        if (!convert.isHexString(hexString)) {
+            throw new Error('HexString must be hexadecimal only');
+        }
+        
+        if (!signature) {
+            throw new Error('Missing argument');
+        }
+
+        if (signature.length / 2 !== Hash512) {
+            throw new Error('Signature length is incorrect');
+        }
+
+        if (!convert.isHexString(signature)) {
+            throw new Error('Signature must be hexadecimal only');
+        }
+        // Convert signature key to Uint8Array
+        const convertedSignature = convert.hexToUint8(signature);
+
+        // Convert to Uint8Array
+        const convertedData = convert.hexToUint8(hexString);
+
+        return KeyPair.verify(convert.hexToUint8(this.publicKey), convertedData, convertedSignature, signSchema);
+    }
+
+    /**
      * Compares public accounts for equality.
      * @param publicAccount
      * @returns {boolean}

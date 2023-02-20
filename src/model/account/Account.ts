@@ -237,4 +237,21 @@ export class Account {
             signSchema,
         ));
     }
+
+    /**
+     * Sign hexadecimal string (bytes representation)
+     * @param hexString - Hex string to be signed
+     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @return {string} - Signed data result
+     */
+    public signHexString(hexString: string, signSchema: SignSchema = SignSchema.SHA3): string {
+
+        if(!convert.isHexString(hexString))
+            throw new Error('Invalid hex string');
+
+        return convert.uint8ToHex(KeyPair.sign(this.keyPair,
+            convert.hexToUint8(hexString),
+            signSchema,
+        ));
+    }
 }
