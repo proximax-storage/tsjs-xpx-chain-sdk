@@ -104,14 +104,14 @@ describe('Account', () => {
                 .to.be.true;
         });
 
-        it('hexa', () => {
+        it('hexadecimal - bytes', () => {
             const account = Account.createFromPrivateKey(
                 'AB860ED1FE7C91C02F79C02225DAC708D7BD13369877C1F59E678CC587658C47',
                 NetworkType.MIJIN_TEST,
             );
             const publicAccount = account.publicAccount;
-            const signed = account.signData('0xAA');
-            expect(publicAccount.verifySignature('0xAA', signed))
+            const signed = account.signHexString('AA');
+            expect(publicAccount.verifySignatureWithHexString('AA', signed))
                 .to.be.true;
         });
 
