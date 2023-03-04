@@ -1,9 +1,10 @@
 const conf = require("config");
 
 import { MosaicId, NamespaceId, TransactionType, RegisterNamespaceTransaction, MosaicDefinitionTransaction,
-    TransferTransaction, TransactionInfo, MosaicNonce, MosaicProperties, UInt64, BlockInfo, ChainConfigTransaction, TransactionBuilderFactory, NetworkType, Account } from '../../src/model/model';
+    TransferTransaction, TransactionInfo, MosaicNonce, MosaicProperties, UInt64, BlockInfo, ChainConfigTransaction, TransactionBuilderFactory, NetworkType, Account, Transaction } from '../../src/model/model';
 import { ConfUtils } from './ConfUtils';
 import { AccountHttp, TransactionHttp, NamespaceHttp, MosaicHttp, BlockHttp, TransactionQueryParams } from '../../src/infrastructure/infrastructure';
+import { firstValueFrom } from "rxjs"
 
 // config types
 interface ConfApi {
@@ -190,7 +191,7 @@ class NemesisBlockInfo {
     static async getInstance(): Promise<BlockInfo> {
         if (!NemesisBlockInfo.instance) {
             const blockHttp = new BlockHttp(APIUrl);
-            NemesisBlockInfo.instance = await blockHttp.getBlockByHeight(1).toPromise();
+            NemesisBlockInfo.instance = await firstValueFrom(blockHttp.getBlockByHeight(1));
         }
         return NemesisBlockInfo.instance;
     }
@@ -215,8 +216,8 @@ const GetNemesisBlockDataPromise = () => {
     return NemesisBlockInfo.getInstance().then((nemesisBlockInfo) => {
         let transactionQueryParams = new TransactionQueryParams();
         transactionQueryParams.pageSize = 100;
-        return blockHttp.getBlockTransactions(1, transactionQueryParams).toPromise()
-        .then(txs => {
+        return firstValueFrom(blockHttp.getBlockTransactions(1, transactionQueryParams))
+        .then((txs: Transaction[]) => {
             const regNamespaceTxs = txs.filter(tx => tx.type === TransactionType.REGISTER_NAMESPACE) as RegisterNamespaceTransaction[];
             const currencyNamespace = regNamespaceTxs.find(tx => tx.namespaceName === "xpx");
             const testNamespace = currencyNamespace ? currencyNamespace : regNamespaceTxs[0];

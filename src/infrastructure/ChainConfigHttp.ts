@@ -4,7 +4,7 @@
 
 import {from as observableFrom, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import { ConfigRoutesApi } from './api';
+import { ConfigRoutesApi, NetworkConfigResponse } from './api';
 import { ChainConfigRepository } from './ChainConfigRepository';
 import {Http} from './Http';
 import { ChainConfig } from '../model/model';
@@ -38,8 +38,11 @@ export class ChainConfigHttp extends Http implements ChainConfigRepository {
      */
     public getChainConfig(height: number, requestOptions?: RequestOptions): Observable<ChainConfig> {
         return observableFrom(
-            this.configRoutesApi.getConfig(height, requestOptions)).pipe(map(response => {
-                return ChainConfig.createFromDTO(response.body.networkConfig);
-        }));
+            this.configRoutesApi.getConfig(height, requestOptions))
+            .pipe(
+                map((response: NetworkConfigResponse) => {
+                    return ChainConfig.createFromDTO(response.body.networkConfig);
+                })
+            );
     }
 }

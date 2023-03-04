@@ -18,7 +18,7 @@ import {from as observableFrom, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import { NodeInfo } from '../model/node/NodeInfo';
 import { NodeTime } from '../model/node/NodeTime';
-import { NodeRoutesApi } from './api';
+import { NodeInfoResponse, NodeRoutesApi, NodeTimeResponse } from './api';
 import {Http} from './Http';
 import {NodeRepository} from './NodeRepository';
 import { RequestOptions } from './RequestOptions';
@@ -50,18 +50,20 @@ export class NodeHttp extends Http implements NodeRepository {
      * @summary Get the node information
      */
     public getNodeInfo(requestOptions?: RequestOptions): Observable<NodeInfo> {
-        return observableFrom(this.nodeRoutesApi.getNodeInfo(requestOptions)).pipe(map(response => {
-            const nodeInfoDTO = response.body;
-            return new NodeInfo(
-                nodeInfoDTO.publicKey,
-                nodeInfoDTO.port,
-                nodeInfoDTO.networkIdentifier,
-                nodeInfoDTO.version,
-                nodeInfoDTO.roles as number,
-                nodeInfoDTO.host,
-                nodeInfoDTO.friendlyName,
-            );
-        }));
+        return observableFrom(this.nodeRoutesApi.getNodeInfo(requestOptions)).pipe(
+            map((response: NodeInfoResponse) => {
+                const nodeInfoDTO = response.body;
+                return new NodeInfo(
+                    nodeInfoDTO.publicKey,
+                    nodeInfoDTO.port,
+                    nodeInfoDTO.networkIdentifier,
+                    nodeInfoDTO.version,
+                    nodeInfoDTO.roles as number,
+                    nodeInfoDTO.host,
+                    nodeInfoDTO.friendlyName,
+                );
+            })
+        );
     }
 
     /**
@@ -69,9 +71,11 @@ export class NodeHttp extends Http implements NodeRepository {
      * @summary Get the node time
      */
     public getNodeTime(requestOptions?: RequestOptions): Observable<NodeTime> {
-        return observableFrom(this.nodeRoutesApi.getNodeTime(requestOptions)).pipe(map(response => {
-            const nodeTimeDTO = response.body;
-            return new NodeTime(nodeTimeDTO.communicationTimestamps.sendTimestamp, nodeTimeDTO.communicationTimestamps.receiveTimestamp);
-        }));
+        return observableFrom(this.nodeRoutesApi.getNodeTime(requestOptions)).pipe(
+            map((response: NodeTimeResponse) => {
+                const nodeTimeDTO = response.body;
+                return new NodeTime(nodeTimeDTO.communicationTimestamps.sendTimestamp, nodeTimeDTO.communicationTimestamps.receiveTimestamp);
+            })
+        );
     }
 }

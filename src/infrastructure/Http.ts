@@ -42,7 +42,7 @@ export abstract class Http {
     getNetworkTypeObservable(requestOptions?: RequestOptions): Observable<NetworkType> {
         let networkTypeResolve;
         if (this.networkType == null) {
-            networkTypeResolve = this.networkHttp.getNetworkType(requestOptions).pipe(map((networkType) => {
+            networkTypeResolve = this.networkHttp.getNetworkType(requestOptions).pipe(map((networkType: NetworkType) => {
                 this.networkType = networkType;
                 return networkType;
             }));

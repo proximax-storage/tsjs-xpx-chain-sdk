@@ -25,6 +25,16 @@ import { RequestOptions } from '../RequestOptions';
 
 import { ObjectSerializer } from '../model/models';
 
+export interface HarvesterInfoResponse{ 
+    response: AxiosResponse; 
+    body: InlineHarvesterInfoDTO[];  
+}
+
+export interface HarvesterSearchResponse{ 
+    response: AxiosResponse; 
+    body: HarvesterSearchDTO;  
+}
+
 let defaultBasePath = 'http://localhost:3000';
 
 export class HarvesterRoutesApi {
@@ -76,7 +86,7 @@ export class HarvesterRoutesApi {
      * Get the harvesting harvester from an account.
      * @param accountId The accountId (public key/address) in string.
      */
-    public async getAccountHarvestingHarvesterInfo (accountId: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<InlineHarvesterInfoDTO>;  }> {
+    public async getAccountHarvestingHarvesterInfo (accountId: string, reqOptions?:RequestOptions) : Promise<HarvesterInfoResponse> {
         const localVarPath = '/account/{accountId}/harvesting'
             .replace('{' + 'accountId' + '}', encodeURIComponent(accountId));
 
@@ -95,7 +105,7 @@ export class HarvesterRoutesApi {
             responseType: 'json'
         };
 
-        return new Promise<{ response: AxiosResponse; body: Array<InlineHarvesterInfoDTO>;  }>((resolve, reject) => {
+        return new Promise<HarvesterInfoResponse>((resolve, reject) => {
             axios(localVarRequestOptions).then(
                 (response)=>{
                     let body = ObjectSerializer.deserialize(response.data, "Array<InlineHarvesterInfoDTO>");
@@ -117,7 +127,7 @@ export class HarvesterRoutesApi {
      * @summary Search harvester based on query params
      * @param paginationQueryParams search filter
      */
-    public async searchHarvesters (paginationQueryParams?: PaginationQueryParams, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: HarvesterSearchDTO;  }> {
+    public async searchHarvesters (paginationQueryParams?: PaginationQueryParams, reqOptions?:RequestOptions) : Promise<HarvesterSearchResponse> {
         const localVarPath = '/harvesters';
 
         let localVarQueryParameters: any = {};
@@ -137,7 +147,7 @@ export class HarvesterRoutesApi {
             params: localVarQueryParameters
         };
 
-        return new Promise<{ response: AxiosResponse; body: HarvesterSearchDTO;  }>((resolve, reject) => {
+        return new Promise<HarvesterSearchResponse>((resolve, reject) => {
             axios(localVarRequestOptions).then(
                 (response)=>{
                     let body = ObjectSerializer.deserialize(response.data, "HarvesterSearchDTO");

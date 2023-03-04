@@ -15,6 +15,7 @@
  */
 
 import { keccak256, sha3_256 } from 'js-sha3';
+import * as CryptoJS from 'crypto-js';
 import RIPEMD160 = require('ripemd160');
 import { SignSchema } from '../crypto';
 import { Base32 } from './Base32';
@@ -85,6 +86,7 @@ export class RawAddress {
         const publicKeyHash = signSchema === SignSchema.SHA3 ? sha3_256.arrayBuffer(publicKey) : keccak256.arrayBuffer(publicKey);
 
         // step 2: ripemd160 hash of (1)
+        // CryptoJS.RIPEMD160(Buffer.from(publicKeyHash))
         const ripemdHash = new RIPEMD160().update(Buffer.from(publicKeyHash)).digest();
 
         // step 3: add network identifier byte in front of (2)
