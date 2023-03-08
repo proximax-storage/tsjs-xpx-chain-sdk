@@ -179,3 +179,9 @@ export const decodeBlock = (input, inputOffset, output, outputOffset) => {
     output[outputOffset + 3] = ((bytes[4] & 0x01) << 7) | (bytes[5] << 2) | (bytes[6] >> 3);
     output[outputOffset + 4] = ((bytes[6] & 0x07) << 5) | bytes[7];
 };
+
+export const ucwords = (data: string) =>{
+
+    return data.trim().replace("_", " ").toLowerCase().split(" ")
+                .map(word => word.charAt(0).toUpperCase() + word.substring(1)).join(" ");
+}

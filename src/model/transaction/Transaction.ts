@@ -26,7 +26,9 @@ import { InnerTransaction } from './InnerTransaction';
 import { SignedTransaction } from './SignedTransaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
+import { TransactionTypeAltName } from './TransactionTypeAltName';
 import { FeeCalculationStrategy, DefaultFeeCalculationStrategy } from './FeeCalculationStrategy';
+import { ucwords } from '../../core/format/Utilities'
 
 /**
  * An abstract transaction class that serves as the base class of all NEM transactions.
@@ -249,13 +251,23 @@ export abstract class Transaction {
 
         let transactionTypeValues = Object.values(TransactionType);
         let transactionTypeKeys = Object.keys(TransactionType);
+        let transactionAltNameKeys = Object.keys(TransactionTypeAltName);
+        let transactionAltNameValues = Object.values(TransactionTypeAltName);
 
         if (transactionTypeValues.includes(type)) {
-    
-            return transactionTypeKeys[transactionTypeValues.indexOf(type)];
+
+            let typeName = transactionTypeKeys[transactionTypeValues.indexOf(type)];
+
+            if (transactionAltNameKeys.includes(typeName)) {
+
+                return transactionAltNameValues[transactionAltNameKeys.indexOf(typeName)];
+            }
+            else {
+                return ucwords(typeName);
+            }
         }
         else{
-            return "UNKNOWN";
+            return "Unknown";
         }
     }
 }
