@@ -212,6 +212,19 @@ describe('Transaction', () => {
             );
             expect(transaction.size).to.be.equal(122);
         });
+
+        it('should return announced transaction size when exist from transaction info', () => {
+            const transaction = new FakeTransaction(TransactionType.TRANSFER,
+                NetworkType.MIJIN_TEST,
+                1,
+                Deadline.create(),
+                UInt64.fromUint(0),
+                undefined,
+                undefined,
+                new TransactionInfo(UInt64.fromUint(100), 1, 'id_hash', 'hash', 'hash', 187),
+            );
+            expect(transaction.transactionInfo!.size).to.be.equal(187);
+        });
     });
 
     describe('version', () => {

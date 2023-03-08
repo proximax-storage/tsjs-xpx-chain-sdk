@@ -18,6 +18,7 @@ import {UInt64} from '../UInt64';
 
 /**
  * Transaction information model included in all transactions
+ * It exist only for announced transaction, all value returned from Sirius Chain
  */
 export class TransactionInfo {
 
@@ -48,5 +49,9 @@ export class TransactionInfo {
                 /**
                  * The transaction merkle hash.
                  */
-                public readonly merkleComponentHash?: string) {}
+                public readonly merkleComponentHash?: string,
+                /**
+                 * The transaction size.
+                 */
+                public readonly size?: number) {}
 }

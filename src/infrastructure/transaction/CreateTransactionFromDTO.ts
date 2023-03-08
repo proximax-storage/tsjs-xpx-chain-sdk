@@ -125,6 +125,7 @@ export const CreateTransactionFromDTO = (transactionDTO): Transaction | InnerTra
                     transactionDTO.meta.id,
                     transactionDTO.meta.hash,
                     transactionDTO.meta.merkleComponentHash,
+                    transactionDTO.transaction.size ? transactionDTO.transaction.size : undefined
                 ) : undefined
             );
         } else if(transactionDTO.meta && transactionDTO.meta.aggregateHash){
@@ -144,6 +145,7 @@ export const CreateTransactionFromDTO = (transactionDTO): Transaction | InnerTra
                 transactionDTO.meta.id,
                 transactionDTO.meta.hash,
                 transactionDTO.meta.merkleComponentHash,
+                transactionDTO.transaction.size ? transactionDTO.transaction.size : undefined
             ) : undefined;
             return CreateStandaloneTransactionFromDTO(transactionDTO.transaction, transactionInfo);
         }
