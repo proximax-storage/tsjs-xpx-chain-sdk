@@ -30,6 +30,7 @@ export class UnknownTransaction extends Transaction{
 
     /**
      * @constructor
+     * @param unknownData
      * @param type
      * @param networkType
      * @param version
