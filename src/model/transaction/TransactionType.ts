@@ -116,18 +116,21 @@ export class TransactionType {
 
     /**
      * Modify account/address related metadata transaction type
+     * @deprecated
      * @type {number}
      */
     public static readonly MODIFY_ACCOUNT_METADATA = 0x413D;
 
     /**
      * Modify mosaic related metadata transaction type
+     * @deprecated
      * @type {number}
      */
     public static readonly MODIFY_MOSAIC_METADATA = 0x423D;
 
     /**
      * Modify namespace related metadata transaction type
+     * @deprecated
      * @type {number}
      */
     public static readonly MODIFY_NAMESPACE_METADATA = 0x433D;

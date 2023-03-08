@@ -26,7 +26,6 @@ export enum MetadataModificationType {
 
 /**
  * Represents single metadata modification - add/remove of the key/value pair
- *
  * @param type
  * @param key
  * @param value
@@ -52,6 +51,7 @@ export class MetadataModification {
 
 /**
  * Modify metadata transaction contains information about metadata being modified.
+ * @deprecated please use AccountMetadataTransaction, MosaicMetadataTransaction and NamespaceMetadataTransaction
  */
 export class ModifyMetadataTransaction extends Transaction {
 
@@ -61,6 +61,7 @@ export class ModifyMetadataTransaction extends Transaction {
 
     /**
      * Create a modify metadata transaction object
+     * @deprecated please use AccountMetadataTransaction
      * @returns {ModifyMetadataTransaction}
      */
     public static createWithAddress(
@@ -79,6 +80,7 @@ export class ModifyMetadataTransaction extends Transaction {
     }
     /**
      * Create a modify metadata transaction object
+     * @deprecated please use MosaicMetadataTransaction
      * @returns {ModifyMetadataTransaction}
      */
     public static createWithMosaicId(
@@ -97,6 +99,7 @@ export class ModifyMetadataTransaction extends Transaction {
     }
     /**
      * Create a modify metadata transaction object
+     * @deprecated please use NamespaceMetadataTransaction
      * @returns {ModifyMetadataTransaction}
      */
     public static createWithNamespaceId(
