@@ -13,7 +13,9 @@
 import { RequestFile } from '../api';
 
 /**
-* The type of the action: * 0 - Link. * 1 - Unlink. 
+* The type of the action: 
+* 0 - Link. 
+* 1 - Unlink. 
 */
 export enum LinkActionEnum {
     NUMBER_0 = <any> 0,

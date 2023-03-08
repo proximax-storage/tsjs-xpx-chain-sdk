@@ -28,7 +28,9 @@
 import { RequestFile } from '../api';
 
 /**
-* The role of the node: * owner - show drives where an account is a participant as owner * replicator - show drives where an account is a participant as replicators 
+* The role of the node: 
+* owner - show drives where an account is a participant as owner 
+* replicator - show drives where an account is a participant as replicators 
 */
 export enum RolesTypeEnum {
     Owner = <any> 'owner',

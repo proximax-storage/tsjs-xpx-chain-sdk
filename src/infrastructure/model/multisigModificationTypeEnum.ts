@@ -28,7 +28,9 @@
 import { RequestFile } from '../api';
 
 /**
-* The type of the modification: * 0 - Add cosignatory. * 1 - Remove cosignatory. 
+* The type of the modification: 
+* 0 - Add cosignatory. 
+* 1 - Remove cosignatory. 
 */
 export enum MultisigModificationTypeEnum {
     NUMBER_0 = <any> 0,

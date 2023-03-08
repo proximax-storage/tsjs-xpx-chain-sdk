@@ -28,7 +28,9 @@
 import { RequestFile } from '../api';
 
 /**
-* The namespace type: * 0 -  Root namespace. * 1 -  Subnamespace. 
+* The namespace type: 
+* 0 -  Root namespace. 
+* 1 -  Subnamespace. 
 */
 export enum NamespaceTypeEnum {
     NUMBER_0 = <any> 0,

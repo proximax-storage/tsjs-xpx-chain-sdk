@@ -1,4 +1,5 @@
 /*
+ * Copyright 2023 ProximaX
  * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,10 +21,7 @@
  * Transaction format versions are defined in catapult-server in
  * each transaction's plugin source code.
  *
- * In [catapult-server](https://github.com/nemtech/catapult-server), the `DEFINE_TRANSACTION_CONSTANTS` macro
- * is used to define the `TYPE` and `VERSION` of the transaction format.
- *
- * @see https://github.com/nemtech/catapult-server/blob/master/plugins/txes/transfer/src/model/TransferTransaction.h#L37
+ * You can check out the implemented version for each transaction at the Sirius blockchain network config
  */
 export class TransactionVersion {
 
@@ -125,6 +123,7 @@ export class TransactionVersion {
 
     /**
      * Modify metadata transactions version
+     * @deprecated
      * @type {number}
      */
     public static readonly MODIFY_METADATA = 1;

@@ -13,7 +13,10 @@
 import { RequestFile } from '../api';
 
 /**
-* The role of the node: * 0 - A sell offer. * 1 - A buy offer. * 2 - Unknown type. 
+* The role of the node: 
+* 0 - A sell offer. 
+* 1 - A buy offer. 
+* 2 - Unknown type. 
 */
 export enum OfferTypeEnum {
     NUMBER_0 = <any> 0,

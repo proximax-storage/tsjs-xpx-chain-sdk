@@ -1,4 +1,5 @@
 /*
+ * Copyright 2023 ProximaX
  * Copyright 2018 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,6 +43,12 @@ describe('Deadline', () => {
         expect(() => {
             Deadline.create(2, ChronoUnit.DAYS);
         }).to.throw(Error);
+    });
+
+    it('should create deadline greater than 24h, for aggregate bonded transaction', () => {
+        expect(() => {
+            Deadline.createForBonded(2, ChronoUnit.DAYS);
+        }).to.not.throw(Error);
     });
 
     it('should createComplete date with Deadline array', () => {

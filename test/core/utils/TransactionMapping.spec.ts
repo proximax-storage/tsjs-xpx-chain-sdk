@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {deepStrictEqual, deepEqual} from 'assert';
+import {deepStrictEqual} from 'assert';
 import { expect } from 'chai';
 import { sha3_256 } from 'js-sha3';
 import {Convert as convert} from '../../../src/core/format';
@@ -1050,7 +1050,7 @@ describe('TransactionMapping - createFromDTO (Transaction.toJSON() feed)', () =>
         expect(transaction.type).to.be.equal(TransactionType.SECRET_PROOF);
         expect(transaction.hashType).to.be.equal(HashType.Op_Sha3_256);
         expect(transaction.secret).to.be.equal(sha3_256.create().update(convert.hexToUint8(proof)).hex());
-        deepEqual(transaction.recipient, account.address);
+        deepStrictEqual(transaction.recipient, account.address);
         expect(transaction.proof).to.be.equal(proof);
 
     });

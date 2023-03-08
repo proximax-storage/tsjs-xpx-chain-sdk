@@ -1,4 +1,5 @@
 /*
+ * Copyright 2023 ProximaX
  * Copyright 2018 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +26,7 @@ export class Address {
     /**
      * Create from private key
      * @param publicKey - The account public key.
-     * @param networkType - The NEM network type.
+     * @param networkType - The Sirius Chain network type.
      * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {Address}
      */
@@ -91,7 +92,7 @@ export class Address {
                          */
                         private readonly address: string,
                         /**
-                         * The NEM network type.
+                         * The Sirius Chain network type.
                          */
                         public readonly networkType: NetworkType) {
     }

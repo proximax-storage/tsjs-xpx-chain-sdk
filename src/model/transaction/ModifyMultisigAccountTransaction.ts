@@ -28,7 +28,7 @@ import { TransactionVersion } from './TransactionVersion';
 import { calculateFee } from './FeeCalculationStrategy';
 
 /**
- * Modify multisig account transactions are part of the NEM's multisig account system.
+ * Modify multisig account transactions are part of the Sirius's multisig account system.
  * A modify multisig account transaction holds an array of multisig cosignatory modifications,
  * min number of signatures to approve a transaction and a min number of signatures to remove a cosignatory.
  * @since 1.0
