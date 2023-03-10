@@ -52,6 +52,9 @@ Feel free to start an issue or create a pull request. Check [CONTRIBUTING](CONTR
 
 ## License
 
+Copyright (c) 2019-2023 ProximaX
+Licensed under the [Apache License 2.0](LICENSE)
+
 Copyright (c) 2018-2019 NEM
 Licensed under the [Apache License 2.0](LICENSE)
 

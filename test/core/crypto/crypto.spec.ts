@@ -339,11 +339,11 @@ describe('crypto tests', () => {
     it('Can encode and decode message', () => {
         const senderPriv = 'E1C8521608F4896CA26A0C2DE739310EA4B06861D126CF4D6922064678A1969B';
         const recipientPublic = '12AAD2D33020C3EAE12592875CD7D2FF54A61DD03C1FAADB84A083D41F75C229';
-        const message = 'NEM is awesome !';
+        const message = 'Sirius is awesome !';
         const encryptedMessage = Crypto.encode(senderPriv, recipientPublic, message);
         const senderPublic = '9F784BF20318AE3CA6246C0EC2207FE095FFF7A84B6787E7E3C2CE4C3B92A2EA';
         const recipientPriv = 'A22A4BBF126A2D7D7ECE823174DFD184C5DE0FDE4CB2075D30CFA409F7EF8908';
-        const expectedMessage = 'NEM is awesome !';
+        const expectedMessage = 'Sirius is awesome !';
         const decrypted = Crypto.decode(recipientPriv, senderPublic, encryptedMessage);
 
         expect(decrypted).equal(expectedMessage);
@@ -352,11 +352,11 @@ describe('crypto tests', () => {
     it('Can encode a message and failed decode with wrong key', () => {
         const senderPriv = 'E1C8521608F4896CA26A0C2DE739310EA4B06861D126CF4D6922064678A1969B';
         const recipientPublic = '12AAD2D33020C3EAE12592875CD7D2FF54A61DD03C1FAADB84A083D41F75C229';
-        const message = 'NEM is awesome !';
+        const message = 'Sirius is awesome !';
         const encryptedMessage = Crypto.encode(senderPriv, recipientPublic, message);
         const senderPublic = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
         const recipientPriv = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
-        const expectedMessage = 'NEM is awesome !';
+        const expectedMessage = 'Sirius is awesome !';
         const decrypted = Crypto.decode(recipientPriv, senderPublic, encryptedMessage);
 
         expect(decrypted).not.equal(expectedMessage);
@@ -367,7 +367,7 @@ describe('crypto tests', () => {
             // Arrange:
             const senderPriv = '';
             const recipientPublic = '2618090794e9c9682f2ac6504369a2f4fb9fe7ee7746f9560aca228d355b1cb9';
-            const message = 'NEM is awesome !';
+            const message = 'Sirius is awesome !';
 
             // Act:
             const result = Crypto.encode.bind(null, senderPriv, recipientPublic, message);
@@ -380,7 +380,7 @@ describe('crypto tests', () => {
             // Arrange:
             const senderPriv = '2a91e1d5c110a8d0105aad4683f962c2a56663a3cad46666b16d243174673d90';
             const recipientPublic = '';
-            const message = 'NEM is awesome !';
+            const message = 'Sirius is awesome !';
 
             // Act:
             const result = Crypto.encode.bind(null, senderPriv, recipientPublic, message);
@@ -406,7 +406,7 @@ describe('crypto tests', () => {
             // Arrange:
             const senderPublic = '9291abb3c52134be9d20ef21a796743497df7776d2661237bda9cadade34e44c';
             const recipientPriv = '';
-            const message = 'NEM is awesome !';
+            const message = 'Sirius is awesome !';
             const encryptedMessage = 'dd31d6b4111c1023bae6533399e74f73a29c6e6b48ab550f8a7bea127e27ddd' +
                 'b4fd3fe4fad3c835307c0da52d9c268f56237d1810e07912e6a6568cba09d9a9176ee6b1ade9569c2e1e273e9675bd4ff';
 
@@ -421,7 +421,7 @@ describe('crypto tests', () => {
             // Arrange:
             const senderPublic = '';
             const recipientPriv = '2618090794e9c9682f2ac6504369a2f4fb9fe7ee7746f9560aca228d355b1cb9';
-            const message = 'NEM is awesome !';
+            const message = 'Sirius is awesome !';
             const encryptedMessage = 'dd31d6b4111c1023bae6533399e74f73a29c6e6b48ab550f8a7bea127e27ddd' +
                 'b4fd3fe4fad3c835307c0da52d9c268f56237d1810e07912e6a6568cba09d9a9176ee6b1ade9569c2e1e273e9675bd4ff';
 
@@ -436,7 +436,7 @@ describe('crypto tests', () => {
             // Arrange:
             const senderPublic = '9291abb3c52134be9d20ef21a796743497df7776d2661237bda9cadade34e44c';
             const recipientPriv = '2618090794e9c9682f2ac6504369a2f4fb9fe7ee7746f9560aca228d355b1cb9';
-            const message = 'NEM is awesome !';
+            const message = 'Sirius is awesome !';
             const encryptedMessage = '';
 
             // Act:

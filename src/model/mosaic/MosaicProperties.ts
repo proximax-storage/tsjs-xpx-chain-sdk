@@ -1,4 +1,5 @@
 /*
+ * Copyright 2023 ProximaX
  * Copyright 2018 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -59,7 +60,7 @@ export class MosaicProperties {
                  */
                 public readonly duration?: UInt64) {
         let binaryFlags = '00' + (flags.lower >>> 0).toString(2);
-        binaryFlags = binaryFlags.substr(binaryFlags.length - 2, 2);
+        binaryFlags = binaryFlags.slice(- 2);
         this.supplyMutable = binaryFlags[1] === '1';
         this.transferable = binaryFlags[0] === '1';
     }

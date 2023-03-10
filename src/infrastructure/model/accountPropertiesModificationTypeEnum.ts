@@ -13,7 +13,9 @@
 import { RequestFile } from '../api';
 
 /**
-* The account properties modification type: * 0 - Add property. * 1 - Remove property. 
+* The account properties modification type: 
+* 0 - Add property. 
+* 1 - Remove property. 
 */
 export enum AccountPropertiesModificationTypeEnum {
     NUMBER_0 = <any> 0,

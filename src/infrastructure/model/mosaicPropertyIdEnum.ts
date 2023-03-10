@@ -28,7 +28,10 @@
 import { RequestFile } from '../api';
 
 /**
-* The mosaic propery id means: * 0 - MosaicFlags * 1 - Divisibility * 2 - Duration 
+* The mosaic propery id means: 
+* 0 - MosaicFlags 
+* 1 - Divisibility 
+* 2 - Duration 
 */
 export enum MosaicPropertyIdEnum {
     NUMBER_0 = <any> 0,

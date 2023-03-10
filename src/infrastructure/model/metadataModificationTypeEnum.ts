@@ -13,7 +13,9 @@
 import { RequestFile } from '../api';
 
 /**
-* The type of the metadata modification: * 0 - Add metadata. * 1 - Remove metadata. 
+* The type of the metadata modification: 
+* 0 - Add metadata. 
+* 1 - Remove metadata. 
 */
 export enum MetadataModificationTypeEnum {
     NUMBER_0 = <any> 0,

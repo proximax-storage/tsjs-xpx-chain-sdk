@@ -13,7 +13,9 @@
 import { RequestFile } from '../api';
 
 /**
-* The supply modification direction: * 0  - Decrease. * 1  - Increase. 
+* The supply modification direction: 
+* 0  - Decrease. 
+* 1  - Increase. 
 */
 export enum MosaicDirectionEnum {
     NUMBER_0 = <any> 0,

@@ -28,7 +28,10 @@
 import { RequestFile } from '../api';
 
 /**
-* The alias type: * 0 -  No alias. * 1 -  Mosaic id alias. * 2 -  Addres alias. 
+* The alias type: 
+* 0 -  No alias. 
+* 1 -  Mosaic id alias. 
+* 2 -  Addres alias. 
 */
 export enum AliasTypeEnum {
     NUMBER_0 = <any> 0,

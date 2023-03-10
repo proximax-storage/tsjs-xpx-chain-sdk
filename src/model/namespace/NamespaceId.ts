@@ -35,7 +35,7 @@ export class NamespaceId {
     public readonly fullName?: string;
 
     /**
-     * Create NamespaceId from namespace string name (ex: nem or domain.subdom.subdome)
+     * Create NamespaceId from namespace string name (ex: xpx or domain.subdom.subdome)
      * or id in form of array number (ex: [929036875, 2226345261])
      *
      * @param id

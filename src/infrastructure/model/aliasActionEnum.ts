@@ -13,7 +13,9 @@
 import { RequestFile } from '../api';
 
 /**
-* The alias action: * 0 -  Link alias. * 1 -  Unlink alias. 
+* The alias action: 
+* 0 -  Link alias. 
+* 1 -  Unlink alias. 
 */
 export enum AliasActionEnum {
     NUMBER_0 = <any> 0,

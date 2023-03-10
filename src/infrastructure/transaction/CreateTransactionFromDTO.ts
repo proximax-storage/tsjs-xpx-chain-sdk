@@ -1,4 +1,5 @@
 /*
+ * Copyright 2023 ProximaX
  * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -125,6 +126,7 @@ export const CreateTransactionFromDTO = (transactionDTO): Transaction | InnerTra
                     transactionDTO.meta.id,
                     transactionDTO.meta.hash,
                     transactionDTO.meta.merkleComponentHash,
+                    transactionDTO.transaction.size ? transactionDTO.transaction.size : undefined
                 ) : undefined
             );
         } else if(transactionDTO.meta && transactionDTO.meta.aggregateHash){
@@ -144,6 +146,7 @@ export const CreateTransactionFromDTO = (transactionDTO): Transaction | InnerTra
                 transactionDTO.meta.id,
                 transactionDTO.meta.hash,
                 transactionDTO.meta.merkleComponentHash,
+                transactionDTO.transaction.size ? transactionDTO.transaction.size : undefined
             ) : undefined;
             return CreateStandaloneTransactionFromDTO(transactionDTO.transaction, transactionInfo);
         }
