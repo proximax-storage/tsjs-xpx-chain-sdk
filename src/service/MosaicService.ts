@@ -18,11 +18,12 @@ import { Observable, of as observableOf } from 'rxjs';
 import { filter, first, map, mergeMap, take, toArray } from 'rxjs/operators';
 import { AccountHttp } from '../infrastructure/AccountHttp';
 import { MosaicHttp } from '../infrastructure/MosaicHttp';
-import { NamespaceHttp } from '../infrastructure/NamespaceHttp';
+import { ChainHttp } from '../infrastructure/ChainHttp';
 import { Address } from '../model/account/Address';
 import { MosaicInfo } from '../model/model';
 import { Mosaic } from '../model/mosaic/Mosaic';
 import { MosaicId } from '../model/mosaic/MosaicId';
+import { UInt64 } from '../model/UInt64';
 import { MosaicAmountView } from './MosaicAmountView';
 import { MosaicView } from './MosaicView';
 
@@ -37,7 +38,8 @@ export class MosaicService {
      * @param mosaicHttp
      */
     constructor(private readonly accountHttp: AccountHttp,
-                private readonly mosaicHttp: MosaicHttp) {
+                private readonly mosaicHttp: MosaicHttp,
+                private readonly chainHttp: ChainHttp) {
 
     }
 
@@ -81,5 +83,22 @@ export class MosaicService {
         return observableOf(address).pipe(
             mergeMap((_) => this.accountHttp.getAccountInfo(_)),
             mergeMap((_) => this.mosaicsAmountView(_.mosaics)));
+    }
+
+    /**
+     * Get mosaic remaining blocks for a given mosaicId
+     * @param mosaicId - MosaicId
+     * @returns {Observable<number>}
+     */
+    mosaicRemainingBlock(mosaicId: MosaicId): Observable<number> {
+        return observableOf(mosaicId).pipe(
+            mergeMap((_: MosaicId) => this.mosaicHttp.getMosaic(_)),
+            mergeMap((_: MosaicInfo) => _.duration && _.duration.compact() !== 0 ?
+                this.chainHttp.getBlockchainHeight()
+                    .pipe(
+                        map((chainHeight: UInt64) => (_.duration!.compact() + _.height.compact() ) - chainHeight.compact() ),
+                    ) : observableOf(Number.POSITIVE_INFINITY),
+            ),
+        )
     }
 }
