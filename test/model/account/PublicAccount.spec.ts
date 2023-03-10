@@ -53,6 +53,19 @@ describe('Signature verification', () => {
         expect(signerPublicAccount.verifySignature(data, signature)).to.be.true;
     });
 
+    it('Can verify a signature - hex string - byte', () => {
+        // Arrange:'
+        const signerPublicAccount = PublicAccount.createFromPublicKey(
+            '1464953393CE96A08ABA6184601FD08864E910696B060FF7064474726E666CA8',
+            NetworkType.MIJIN_TEST);
+        const data = 'I am so so so awesome as always';
+        const hexadecimalString = Convert.utf8ToHex(data);
+        const signature = '2092660F5BD4AE832B2E290F34A76B41506EE473B02FD7FD468B32C80C945CF60A0D60D005FA9B2DB3AD3212F8028C1449D3DCF81C9FAB3EB4975A7409D8D802'; // tslint:disable-line
+
+        // Act & Assert:
+        expect(signerPublicAccount.verifySignatureWithHexString(hexadecimalString, signature)).to.be.true;
+    });
+
     it('Verify a signature using NIS1 schema', () => {
         // Arrange:'
         const account = Account.createFromPrivateKey(
