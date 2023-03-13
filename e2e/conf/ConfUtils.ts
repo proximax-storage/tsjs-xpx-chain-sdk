@@ -1,5 +1,5 @@
 import { SeedAccount, APIUrl, ConfNetworkMosaic, AllTestingAccounts, TestAccount, TestingAccount, ConfTestingNamespaceId, ConfTestingMosaicNonce, ConfTestingMosaicProperties, TestingRecipient, ConfAccountHttp, ConfTransactionHttp, ConfNamespaceHttp, ConfMosaicHttp, Configuration, ConfTestingMosaicId } from "./conf.spec";
-import { Account, PlainMessage, UInt64, MultisigCosignatoryModification, MultisigCosignatoryModificationType, Address, Mosaic, MosaicId, AccountInfo, NamespaceId, RegisterNamespaceTransaction, CosignatureTransaction, AccountRestrictionModification, RestrictionModificationType, RestrictionType, MosaicSupplyType } from "../../src/model/model";
+import { Account, PlainMessage, UInt64, MultisigCosignatoryModification, MultisigCosignatoryModificationType, Address, Mosaic, MosaicId, AccountInfo, NamespaceId, RegisterNamespaceTransaction, CosignatureTransaction, AccountRestrictionModification, RestrictionModificationType, RestrictionType, MosaicSupplyType, MultisigAccountInfo } from "../../src/model/model";
 import { forkJoin } from "rxjs";
 import { TransactionHttp, Listener, AccountHttp } from "../../src/infrastructure/infrastructure";
 import { Test } from "mocha";
@@ -32,8 +32,10 @@ export class ConfUtils {
 
     public static prepareE2eTestData() {
         return Promise.all(Array.from(AllTestingAccounts.values()).filter(ta => ta.conf.seed).map(ta =>
-            ConfUtils.seed(ta).then(accInfo =>
-                ConfUtils.checkIfNeedPubKey(ta, accInfo)
+            ConfUtils.seed(ta).then(accInfo =>{
+               return accInfo ? ConfUtils.checkIfNeedPubKey(ta, accInfo): undefined;
+            }
+                
         ))).then(accInfos => {
             // get all the msig roots; will traverse them with bfs, so all other in the middle nodes will be processed automatically
             const msigAccounts: TestAccount[] = Array.from(AllTestingAccounts.values()).filter(ta => ta.hasCosignatories() && !ta.isCosignatory());
@@ -58,16 +60,20 @@ export class ConfUtils {
 
     public static convertToMultisigIfNotConvertedYet(ta: TestAccount) {
         const accountHttp = ConfAccountHttp;
-        return accountHttp.getMultisigAccountInfo(ta.acc.address).toPromise().then(msigInfo => {
-            if (msigInfo.cosignatories && msigInfo.cosignatories.length > 0) {
-                console.log(ta.conf.alias + " already is msig");
-                return Promise.resolve();
-            } else {// it is not msig just yet, we need to convert it now
-                return ConfUtils.convertToMultisig(ta);
-            }
-        }, error => { // it is not msig just yet, we need to convert it now
-            return ConfUtils.convertToMultisig(ta);
-        });
+        return accountHttp.getMultisigAccountInfo(ta.acc.address).subscribe(
+            {
+                 next: (msigInfo: MultisigAccountInfo) => {
+                    if (msigInfo && msigInfo.cosignatories && msigInfo.cosignatories.length > 0) {
+                        console.log(ta.conf.alias + " already is msig");
+                        return Promise.resolve();
+                    } else {// it is not msig just yet, we need to convert it now
+                        return ConfUtils.convertToMultisig(ta);
+                    }
+                }, 
+                error: (error) => { // it is not msig just yet, we need to convert it now
+                    return ConfUtils.convertToMultisig(ta);
+                }
+            });
     }
 
     public static checkIfNeedPubKey(ta: TestAccount, accountInfo: AccountInfo) {

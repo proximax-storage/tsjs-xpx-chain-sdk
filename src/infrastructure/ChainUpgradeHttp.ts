@@ -4,7 +4,7 @@
 
 import {from as observableFrom, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import { UpgradeRoutesApi } from './api';
+import { BlockchainUpgradeResponse, UpgradeRoutesApi } from './api';
 import { ChainUpgradeRepository } from './ChainUpgradeRepository';
 import {Http} from './Http';
 import { ChainUpgrade } from '../model/model';
@@ -38,8 +38,11 @@ export class ChainUpgradeHttp extends Http implements ChainUpgradeRepository {
      */
     public getChainUpgrade(height: number, requestOptions?: RequestOptions): Observable<ChainUpgrade> {
         return observableFrom(
-            this.upgradeRoutesApi.getUpgrade(height, requestOptions)).pipe(map(response => {
-                return ChainUpgrade.createFromDTO(response.body.blockchainUpgrade);
-        }));
+            this.upgradeRoutesApi.getUpgrade(height, requestOptions))
+            .pipe(
+                map((response: BlockchainUpgradeResponse) => {
+                    return ChainUpgrade.createFromDTO(response.body.blockchainUpgrade);
+            })
+        );
     }
 }

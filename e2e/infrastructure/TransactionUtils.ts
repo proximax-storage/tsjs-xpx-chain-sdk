@@ -31,7 +31,7 @@ import {PlainMessage} from '../../src/model/transaction/PlainMessage';
 import {TransferTransaction} from '../../src/model/transaction/TransferTransaction';
 import {UInt64} from '../../src/model/UInt64';
 import {CosignatoryAccount, MultisigAccount, APIUrl, TestingAccount, TestingRecipient, ConfNetworkMosaic, Cosignatory3Account, Configuration } from '../../e2e/conf/conf.spec';
-import { HashLockTransaction, TransactionInfo, TransactionType, AggregateTransactionCosignature } from '../../src/model/model';
+import { HashLockTransaction, TransactionInfo, TransactionType, AggregateTransactionCosignature, Transaction } from '../../src/model/model';
 import { Listener } from '../../src/infrastructure/Listener';
 import { filter, mergeMap } from 'rxjs/operators';
 
@@ -95,22 +95,27 @@ export class TransactionUtils {
             return new Promise((resolve, reject) => {
                 listener.open().then(() => {
                     listener.confirmed(CosignatoryAccount.address).pipe(
-                        filter((transaction) => {
+                        filter((transaction: Transaction) => {
                             return transaction.type === TransactionType.LOCK
                             && (transaction as LockFundsTransaction).hash === lockFundTransaction.hash;
                         }),
-                        mergeMap(unused => {
+                        mergeMap((unused: Transaction) => {
                             return transactionHttp.announceAggregateBonded(signedAggregateTransaction)
                         })
-                    ).subscribe(result => {
-                        // console.log(result);
-                        listener.close();
-                        resolve(result);
-                    }, error => {
-                        console.log(error);
-                        listener.close();
-                        reject(error);
-                    });
+                    ).subscribe(
+                        { 
+                            next: (result) => {
+                                // console.log(result);
+                                listener.close();
+                                resolve(result);
+                                }, 
+                            error: (error) => {
+                                console.log(error);
+                                listener.close();
+                                reject(error);
+                            }
+                        }
+                    );
 
                     transactionHttp.announce(signedLockFundTransaction).subscribe(result => {
                         // console.log(result);

@@ -15,6 +15,7 @@ import { MetadataSearch } from '../model/metadata/MetadataSearch';
 import { CompositeHashes } from './model/compositeHashes';
 import { RequestOptions } from './RequestOptions';
 import { Pagination } from '../model/Pagination';
+import { MetadataEntriesResponse, MetadataEntryResponse, MetadataSearchResponse } from './api';
 
 /**
  * Metadata http repository.
@@ -45,22 +46,24 @@ export class MetadataHttp extends Http implements MetadataRepository {
      * @returns Observable<MetadataEntry>
      */
     public getMetadata(compositeHash: string, requestOptions?: RequestOptions): Observable<MetadataEntry> {
-        return observableFrom(
-            this.metadataRoutesApi.getMetadata(compositeHash, requestOptions)).pipe(map(response => {
-                const metadataInlineDTO = response.body;
-                return new MetadataEntry(
-                    metadataInlineDTO.metadataEntry.version,
-                    metadataInlineDTO.metadataEntry.compositeHash,
-                    Address.createFromEncoded(metadataInlineDTO.metadataEntry.sourceAddress),
-                    metadataInlineDTO.metadataEntry.targetKey,
-                    new UInt64(metadataInlineDTO.metadataEntry.scopedMetadataKey),
-                    new UInt64(metadataInlineDTO.metadataEntry.targetId),
-                    metadataInlineDTO.metadataEntry.metadataType,
-                    metadataInlineDTO.metadataEntry.valueSize,
-                    metadataInlineDTO.metadataEntry.value,
-                    metadataInlineDTO.id
-                );
-            }));
+        return observableFrom(this.metadataRoutesApi.getMetadata(compositeHash, requestOptions))
+            .pipe(
+                map((response: MetadataEntryResponse) => {
+                    const metadataInlineDTO = response.body;
+                    return new MetadataEntry(
+                        metadataInlineDTO.metadataEntry.version,
+                        metadataInlineDTO.metadataEntry.compositeHash,
+                        Address.createFromEncoded(metadataInlineDTO.metadataEntry.sourceAddress),
+                        metadataInlineDTO.metadataEntry.targetKey,
+                        new UInt64(metadataInlineDTO.metadataEntry.scopedMetadataKey),
+                        new UInt64(metadataInlineDTO.metadataEntry.targetId),
+                        metadataInlineDTO.metadataEntry.metadataType,
+                        metadataInlineDTO.metadataEntry.valueSize,
+                        metadataInlineDTO.metadataEntry.value,
+                        metadataInlineDTO.id
+                    );
+                })
+            );
     }
 
     /**
@@ -74,25 +77,27 @@ export class MetadataHttp extends Http implements MetadataRepository {
             compositeHashes : compositeHashes
         }
 
-        return observableFrom(
-            this.metadataRoutesApi.getMetadatas(hashes, requestOptions)).pipe(map(response => {
-                const metadataInlineDTOs = response.body;
+        return observableFrom(this.metadataRoutesApi.getMetadatas(hashes, requestOptions))
+            .pipe(
+                map((response: MetadataEntriesResponse) => {
+                    const metadataInlineDTOs = response.body;
 
-                return metadataInlineDTOs.map(metadataDTO =>{
-                    return new MetadataEntry(
-                        metadataDTO.metadataEntry.version,
-                        metadataDTO.metadataEntry.compositeHash,
-                        Address.createFromEncoded(metadataDTO.metadataEntry.sourceAddress),
-                        metadataDTO.metadataEntry.targetKey,
-                        new UInt64(metadataDTO.metadataEntry.scopedMetadataKey),
-                        new UInt64(metadataDTO.metadataEntry.targetId),
-                        metadataDTO.metadataEntry.metadataType,
-                        metadataDTO.metadataEntry.valueSize,
-                        metadataDTO.metadataEntry.value,
-                        metadataDTO.id
-                    );
+                    return metadataInlineDTOs.map(metadataDTO =>{
+                        return new MetadataEntry(
+                            metadataDTO.metadataEntry.version,
+                            metadataDTO.metadataEntry.compositeHash,
+                            Address.createFromEncoded(metadataDTO.metadataEntry.sourceAddress),
+                            metadataDTO.metadataEntry.targetKey,
+                            new UInt64(metadataDTO.metadataEntry.scopedMetadataKey),
+                            new UInt64(metadataDTO.metadataEntry.targetId),
+                            metadataDTO.metadataEntry.metadataType,
+                            metadataDTO.metadataEntry.valueSize,
+                            metadataDTO.metadataEntry.value,
+                            metadataDTO.id
+                        );
+                    })
                 })
-            }));
+            );
     }
 
     /**
@@ -101,30 +106,32 @@ export class MetadataHttp extends Http implements MetadataRepository {
      * @returns Observable<MetadataEntry[]>
      */
      public searchMetadata(metadataQueryParams?: MetadataQueryParams, requestOptions?: RequestOptions): Observable<MetadataSearch> {
-        return observableFrom(
-            this.metadataRoutesApi.searchMetadata(metadataQueryParams, requestOptions)).pipe(map(response => {
-                let metadataEntries: MetadataEntry[] = response.body.data.map(metadataDTO =>{
-                    return new MetadataEntry(
-                        metadataDTO.metadataEntry.version,
-                        metadataDTO.metadataEntry.compositeHash,
-                        Address.createFromEncoded(metadataDTO.metadataEntry.sourceAddress),
-                        metadataDTO.metadataEntry.targetKey,
-                        new UInt64(metadataDTO.metadataEntry.scopedMetadataKey),
-                        new UInt64(metadataDTO.metadataEntry.targetId),
-                        metadataDTO.metadataEntry.metadataType,
-                        metadataDTO.metadataEntry.valueSize,
-                        metadataDTO.metadataEntry.value,
-                        metadataDTO.meta.id
+        return observableFrom(this.metadataRoutesApi.searchMetadata(metadataQueryParams, requestOptions))
+            .pipe(
+                map((response: MetadataSearchResponse) => {
+                    let metadataEntries: MetadataEntry[] = response.body.data.map(metadataDTO =>{
+                        return new MetadataEntry(
+                            metadataDTO.metadataEntry.version,
+                            metadataDTO.metadataEntry.compositeHash,
+                            Address.createFromEncoded(metadataDTO.metadataEntry.sourceAddress),
+                            metadataDTO.metadataEntry.targetKey,
+                            new UInt64(metadataDTO.metadataEntry.scopedMetadataKey),
+                            new UInt64(metadataDTO.metadataEntry.targetId),
+                            metadataDTO.metadataEntry.metadataType,
+                            metadataDTO.metadataEntry.valueSize,
+                            metadataDTO.metadataEntry.value,
+                            metadataDTO.meta.id
+                        );
+                    })
+                    
+                    let paginationData = new Pagination(
+                        response.body.pagination.totalEntries, 
+                        response.body.pagination.pageNumber,
+                        response.body.pagination.pageSize,
+                        response.body.pagination.totalPages
                     );
+                    return new MetadataSearch(metadataEntries, paginationData);
                 })
-                
-                let paginationData = new Pagination(
-                    response.body.pagination.totalEntries, 
-                    response.body.pagination.pageNumber,
-                    response.body.pagination.pageSize,
-                    response.body.pagination.totalPages
-                );
-                return new MetadataSearch(metadataEntries, paginationData);
-            }));
+            );
     }
 }

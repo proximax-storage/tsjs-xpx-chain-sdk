@@ -190,6 +190,7 @@ export * from './transaction/TransferTransaction';
 export * from './transaction/TransactionSearch';
 export * from './transaction/HarvesterTransaction';
 export * from './transaction/UnknownTransaction';
+export * from './transaction/TransactionSizeInfo';
 
 // Upgrade
 export * from './upgrade/ChainUpgrade';

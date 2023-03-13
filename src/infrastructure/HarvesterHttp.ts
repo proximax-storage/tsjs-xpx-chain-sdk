@@ -4,11 +4,11 @@
 
 import { from as observableFrom, Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
-import { HarvesterRoutesApi } from './api/apis';
+import { HarvesterInfoResponse, HarvesterRoutesApi, HarvesterSearchResponse } from './api/apis';
 import { NetworkHttp } from './NetworkHttp';
 import { Http } from './Http';
 import { HarvesterRepository } from './HarvesterRepository';
-import { HarvesterSearch, HarvesterInfo, Address, PublicAccount, HarvesterMetaInfo } from '../model/model';
+import { HarvesterSearch, HarvesterInfo, Address, PublicAccount, HarvesterMetaInfo, NetworkType } from '../model/model';
 import { PaginationQueryParams } from './PaginationQueryParams';
 import { RequestOptions } from './RequestOptions';
 import { Pagination } from '../model/Pagination';
@@ -45,8 +45,9 @@ export class HarvesterHttp extends Http implements HarvesterRepository {
     public getAccountHarvestingHarvesterInfo(accountId: Address | PublicAccount, requestOptions?: RequestOptions): Observable<HarvesterInfo[]> {
         const accountIdArg = (accountId instanceof PublicAccount) ? accountId.publicKey : accountId.plain();
         return this.getNetworkTypeObservable(requestOptions).pipe(
-            mergeMap(networkType => observableFrom(
-                this.harvesterRoutesApi.getAccountHarvestingHarvesterInfo(accountIdArg, requestOptions)).pipe(map(response =>{
+            mergeMap((networkType: NetworkType) => observableFrom(
+                this.harvesterRoutesApi.getAccountHarvestingHarvesterInfo(accountIdArg, requestOptions))
+                .pipe(map((response: HarvesterInfoResponse) =>{
                     return response.body.map((inlineHarvesterInfoDTO)=>{
                         return HarvesterInfo.createFromDTO(inlineHarvesterInfoDTO.harvester, networkType)
                     })
@@ -61,22 +62,26 @@ export class HarvesterHttp extends Http implements HarvesterRepository {
      */
     public searchHarvesters(paginationQueryParams?: PaginationQueryParams, requestOptions?: RequestOptions): Observable<HarvesterSearch> {
         return this.getNetworkTypeObservable(requestOptions).pipe(
-            mergeMap(networkType => observableFrom(
-                this.harvesterRoutesApi.searchHarvesters(paginationQueryParams, requestOptions)).pipe(map(response =>{
+            mergeMap((networkType: NetworkType) => observableFrom(
+                this.harvesterRoutesApi.searchHarvesters(paginationQueryParams, requestOptions))
+                .pipe(
+                    map((response: HarvesterSearchResponse) =>{
 
-                    let harvesterMetaInfo = response.body.data.map((harvestorWithMetaDTO) => {
-                        
-                        return HarvesterMetaInfo.createFromDTO(harvestorWithMetaDTO, networkType);
-                    });
+                        let harvesterMetaInfo = response.body.data.map((harvestorWithMetaDTO) => {
+                            
+                            return HarvesterMetaInfo.createFromDTO(harvestorWithMetaDTO, networkType);
+                        });
 
-                    let paginationData = new Pagination(
-                        response.body.pagination.totalEntries, 
-                        response.body.pagination.pageNumber,
-                        response.body.pagination.pageSize,
-                        response.body.pagination.totalPages
-                    );
-                    return new HarvesterSearch(harvesterMetaInfo, paginationData);
-                })))
+                        let paginationData = new Pagination(
+                            response.body.pagination.totalEntries, 
+                            response.body.pagination.pageNumber,
+                            response.body.pagination.pageSize,
+                            response.body.pagination.totalPages
+                        );
+                        return new HarvesterSearch(harvesterMetaInfo, paginationData);
+                    })
+                )
+            )
         );
     }
 }

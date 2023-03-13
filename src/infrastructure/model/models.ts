@@ -115,7 +115,7 @@ export * from './heightInfoDTO';
 export * from './inflationReceiptDTO';
 export * from './inflationReceiptDTOAllOf';
 export * from './exchangeInlineResponse200';
-export * from './inlineResponse2001';
+export * from './driveInlineResponse2001';
 export * from './joinToDriveTransactionDTO';
 export * from './linkActionEnum';
 export * from './merklePathItem';
@@ -207,6 +207,7 @@ export * from './transactionDTO';
 export * from './transactionHashes';
 export * from './transactionIds';
 export * from './transactionInfoDTO';
+export * from './transactionSearchDTO';
 export * from './transactionMetaDTO';
 export * from './transactionPayload';
 export * from './transactionStatementDTO';
@@ -319,7 +320,7 @@ import { HeightInfoDTO } from './heightInfoDTO';
 import { InflationReceiptDTO } from './inflationReceiptDTO';
 import { InflationReceiptDTOAllOf } from './inflationReceiptDTOAllOf';
 import { ExchangeInlineResponse200 } from './exchangeInlineResponse200';
-import { InlineResponse2001 } from './inlineResponse2001';
+import { DriveInlineResponse2001 } from './driveInlineResponse2001';
 import { JoinToDriveTransactionDTO } from './joinToDriveTransactionDTO';
 import { LinkActionEnum } from './linkActionEnum';
 import { MerklePathItem } from './merklePathItem';
@@ -560,7 +561,7 @@ let typeMap: {[index: string]: any} = {
     "InflationReceiptDTO": InflationReceiptDTO,
     "InflationReceiptDTOAllOf": InflationReceiptDTOAllOf,
     "ExchangeInlineResponse200": ExchangeInlineResponse200,
-    "InlineResponse2001": InlineResponse2001,
+    "DriveInlineResponse2001": DriveInlineResponse2001,
     "JoinToDriveTransactionDTO": JoinToDriveTransactionDTO,
     "MerklePathItem": MerklePathItem,
     "MerkleProofInfo": MerkleProofInfo,
