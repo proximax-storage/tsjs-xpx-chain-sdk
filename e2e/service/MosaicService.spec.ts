@@ -69,8 +69,8 @@ describe('MosaicService', () => {
 
         return GetNemesisBlockDataPromise().then(data => {
             return mosaicService.mosaicsAmountViewFromAddress(SeedAccount.address).pipe(
-                mergeMap((_) => _),
-                map((mosaic) => console.log('You have', mosaic.relativeAmount(), mosaic.fullName())),
+                mergeMap((_: MosaicAmountView[]) => _),
+                map((mosaic: MosaicAmountView) => console.log('You have', mosaic.relativeAmount(), mosaic.fullName())),
                 toArray(),
             ).toPromise();
         });

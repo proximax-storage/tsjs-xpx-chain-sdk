@@ -15,7 +15,7 @@
  */
 
 import {from as observableFrom , Observable, of as observableOf} from 'rxjs';
-import { flatMap, map, mergeMap, toArray} from 'rxjs/operators';
+import { map, mergeMap, toArray} from 'rxjs/operators';
 import { TransactionMapping } from '../core/utils/TransactionMapping';
 import { AccountHttp } from '../infrastructure/AccountHttp';
 import { AggregateTransaction as AggregatedTransactionCore} from '../infrastructure/builders/AggregateTransaction';
@@ -26,7 +26,7 @@ import { ModifyMultisigAccountTransaction } from '../model/transaction/ModifyMul
 import { MultisigCosignatoryModificationType } from '../model/transaction/MultisigCosignatoryModificationType';
 import { SignedTransaction } from '../model/transaction/SignedTransaction';
 import { TransactionType } from '../model/transaction/TransactionType';
-import { CosignatureSignedTransaction, PublicAccount } from '../model/model';
+import { CosignatureSignedTransaction, MultisigAccountInfo, PublicAccount } from '../model/model';
 
 /**
  * Aggregated Transaction service
@@ -55,22 +55,22 @@ export class AggregateTransactionService {
             signers.push(signedTransaction.signer);
         }
         return observableFrom(aggregateTransaction.innerTransactions).pipe(
-            mergeMap((innerTransaction) => this.accountHttp.getMultisigAccountInfo(innerTransaction.signer.address)
+            mergeMap((innerTransaction: InnerTransaction) => this.accountHttp.getMultisigAccountInfo(innerTransaction.signer.address)
                 .pipe(
                     /**
                      * For multisig account, we need to get the graph info in case it has multiple levels
                      */
-                    mergeMap((_) => _.minApproval !== 0 && _.minRemoval !== 0 ?
+                    mergeMap((_: MultisigAccountInfo) => _.minApproval !== 0 && _.minRemoval !== 0 ?
                         this.accountHttp.getMultisigAccountGraphInfo(_.account.address)
                         .pipe(
-                            map((graphInfo) => this.validateCosignatories(graphInfo, signers, innerTransaction)),
+                            map((graphInfo: MultisigAccountGraphInfo) => this.validateCosignatories(graphInfo, signers, innerTransaction)),
                         ) : observableOf(signers.find((s) => s === _.account.publicKey ) !== undefined),
                         ),
                     ),
                 ),
             toArray(),
         ).pipe(
-            flatMap((results) => {
+            mergeMap((results: boolean[]) => {
                 return observableOf(results.every((isComplete) => isComplete));
             }),
         );

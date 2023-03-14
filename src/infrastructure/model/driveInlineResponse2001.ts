@@ -13,8 +13,8 @@
 import { RequestFile } from '../api';
 import { DriveDTO } from './driveDTO';
 
-export class InlineResponse2001 {
-    'drive'?: DriveDTO;
+export class DriveInlineResponse2001 {
+    'drive'?: DriveDTO[];
 
     static discriminator: string | undefined = undefined;
 
@@ -22,11 +22,11 @@ export class InlineResponse2001 {
         {
             "name": "drive",
             "baseName": "drive",
-            "type": "DriveDTO"
+            "type": "Array<DriveDTO>"
         }    ];
 
     static getAttributeTypeMap() {
-        return InlineResponse2001.attributeTypeMap;
+        return DriveInlineResponse2001.attributeTypeMap;
     }
 }
 

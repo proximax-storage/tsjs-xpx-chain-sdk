@@ -13,14 +13,13 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-
 import http = require('http');
 import axios from 'axios';
 import {AxiosRequestConfig, AxiosResponse, AxiosError} from 'axios';
 
 /* tslint:disable:no-unused-locals */
-import { AddressMetadataInfoDTO } from '../model/addressMetadataInfoDTO';
-import { MetadataIds } from '../model/metadataIds';
+// import { AddressMetadataInfoDTO } from '../model/addressMetadataInfoDTO';
+// import { MetadataIds } from '../model/metadataIds';
 import { MetadataEntryGetInlineResponse } from '../model/metadataEntryGetInlineResponse'
 import { MetadataSearchDTO } from '../model/metadataSearchDTO';
 import { MetadataQueryParams } from '../MetadataQueryParams';
@@ -28,6 +27,21 @@ import { CompositeHashes } from '../model/compositeHashes';
 import { RequestOptions } from '../RequestOptions';
 
 import { ObjectSerializer } from '../model/models';
+
+export interface MetadataEntryResponse{ 
+    response: AxiosResponse; 
+    body: MetadataEntryGetInlineResponse;  
+}
+
+export interface MetadataEntriesResponse{ 
+    response: AxiosResponse; 
+    body: MetadataEntryGetInlineResponse[];  
+}
+
+export interface MetadataSearchResponse{ 
+    response: AxiosResponse; 
+    body: MetadataSearchDTO;  
+}
 
 let defaultBasePath = 'http://localhost:3000';
 
@@ -81,7 +95,7 @@ export class MetadataRoutesApi {
      * @summary Get metadata of namespace/mosaic/account
      * @param compositeHash The metadata compositeHash identifier.
      */
-    public async getMetadata (compositeHash: string, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: MetadataEntryGetInlineResponse;  }> {
+    public async getMetadata (compositeHash: string, reqOptions?:RequestOptions) : Promise<MetadataEntryResponse> {
         const localVarPath = '/metadata_v2/{compositeHash}'
             .replace('{' + 'compositeHash' + '}', encodeURIComponent(String(compositeHash)));
 
@@ -100,7 +114,7 @@ export class MetadataRoutesApi {
             responseType: 'json'
         };
 
-        return new Promise<{ response: AxiosResponse; body: MetadataEntryGetInlineResponse;  }>((resolve, reject) => {
+        return new Promise<MetadataEntryResponse>((resolve, reject) => {
             axios(localVarRequestOptions).then(
                 (response)=>{
                     let body = ObjectSerializer.deserialize(response.data, "MetadataEntryGetInlineResponse");
@@ -121,7 +135,7 @@ export class MetadataRoutesApi {
      * @summary Get metadatas(namespace/mosaic/account) for an array of compositeHashes
      * @param compositeHashes of metadata
      */
-    public async getMetadatas (compositeHashes: CompositeHashes, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: Array<MetadataEntryGetInlineResponse>;  }> {
+    public async getMetadatas (compositeHashes: CompositeHashes, reqOptions?:RequestOptions) : Promise<MetadataEntriesResponse> {
         const localVarPath = '/metadata_v2';
 
         let requestHeaders = this.combineHeaders(reqOptions);
@@ -135,7 +149,7 @@ export class MetadataRoutesApi {
             data: ObjectSerializer.serialize(compositeHashes, "compositeHashes")
         };
 
-        return new Promise<{ response: AxiosResponse; body: Array<MetadataEntryGetInlineResponse>;  }>((resolve, reject) => {
+        return new Promise<MetadataEntriesResponse>((resolve, reject) => {
             axios(localVarRequestOptions).then(
                 (response)=>{
                     let body = ObjectSerializer.deserialize(response.data, "Array<MetadataEntryGetInlineResponse>");
@@ -156,7 +170,7 @@ export class MetadataRoutesApi {
      * @summary Search metadata
      * @param metadataQueryParams search filter
      */
-    public async searchMetadata (metadataQueryParams?: MetadataQueryParams, reqOptions?:RequestOptions) : Promise<{ response: AxiosResponse; body: MetadataSearchDTO;  }> {
+    public async searchMetadata (metadataQueryParams?: MetadataQueryParams, reqOptions?:RequestOptions) : Promise<MetadataSearchResponse> {
         const localVarPath = '/metadata_v2';
 
         let localVarQueryParameters: any = {};
@@ -176,7 +190,7 @@ export class MetadataRoutesApi {
             params: localVarQueryParameters
         };
 
-        return new Promise<{ response: AxiosResponse; body: MetadataSearchDTO;  }>((resolve, reject) => {
+        return new Promise<MetadataSearchResponse>((resolve, reject) => {
             axios(localVarRequestOptions).then(
                 (response)=>{
                     let body = ObjectSerializer.deserialize(response.data, "MetadataSearchDTO");

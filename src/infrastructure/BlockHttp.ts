@@ -26,7 +26,7 @@ import { Statement } from '../model/receipt/Statement';
 import {Transaction} from '../model/transaction/Transaction';
 import { TransactionSearch } from '../model/transaction/TransactionSearch';
 import {UInt64} from '../model/UInt64';
-import { BlockRoutesApi } from './api';
+import { BlockInfoResponse, BlockRoutesApi, BlocksInfoResponse, MerkleProofInfoResponse, StatementsResponse, TransactionSearchResponse } from './api';
 import {BlockRepository} from './BlockRepository';
 import {Http} from './Http';
 import { NetworkHttp } from './NetworkHttp';
@@ -35,6 +35,7 @@ import { CreateStatementFromDTO } from './receipt/CreateReceiptFromDTO';
 import {CreateTransactionFromDTO, extractBeneficiary} from './transaction/CreateTransactionFromDTO';
 import { RequestOptions } from './RequestOptions';
 import { Pagination } from '../model/Pagination';
+import { NetworkType } from '../model/model';
 
 /**
  * Blocks returned limits:
@@ -79,7 +80,8 @@ export class BlockHttp extends Http implements BlockRepository {
      * @returns Observable<BlockInfo>
      */
     public getBlockByHeight(height: number, requestOptions?: RequestOptions): Observable<BlockInfo> {
-        return observableFrom(this.blockRoutesApi.getBlockByHeight(height, requestOptions)).pipe(map(response => {
+        return observableFrom(this.blockRoutesApi.getBlockByHeight(height, requestOptions))
+        .pipe(map((response: BlockInfoResponse) => {
             const blockDTO = response.body;
             const networkType = parseInt((blockDTO.block.version >>> 0).toString(16).substring(0, 2), 16); // ">>> 0" hack makes it effectively an Uint32
             return new BlockInfo(
@@ -114,7 +116,7 @@ export class BlockHttp extends Http implements BlockRepository {
     public getBlockTransactions(height: number, txnQueryParam?: TransactionQueryParams, requestOptions?: RequestOptions): Observable<Transaction[]> {
         return observableFrom(
             this.blockRoutesApi.getBlockTransactions(height, txnQueryParam, requestOptions))
-                .pipe(map(response => {
+                .pipe(map((response: TransactionSearchResponse) => {
                     let transactions: Transaction[] = [];
                     if(response.body.data.length){
                         transactions = response.body.data.map((transactionDTO) => {
@@ -134,7 +136,7 @@ export class BlockHttp extends Http implements BlockRepository {
     public getBlockTransactionsWithPagination(height: number, txnQueryParam?: TransactionQueryParams, requestOptions?: RequestOptions): Observable<TransactionSearch> {
         return observableFrom(
             this.blockRoutesApi.getBlockTransactions(height, txnQueryParam, requestOptions))
-                .pipe(map(response => {
+                .pipe(map((response: TransactionSearchResponse) => {
                     let transactions: Transaction[] = [];
                     if(response.body.data.length){
                         transactions = response.body.data.map((transactionDTO) => {
@@ -161,31 +163,32 @@ export class BlockHttp extends Http implements BlockRepository {
      */
     public getBlocksByHeightWithLimit(height: number, limit: LimitType = LimitType.N_25, requestOptions?: RequestOptions): Observable<BlockInfo[]> {
         return observableFrom(
-            this.blockRoutesApi.getBlocksByHeightWithLimit(height, limit, requestOptions)).pipe(map(response => {
-            return response.body.map((blockDTO) => {
-                const networkType = parseInt((blockDTO.block.version >>> 0).toString(16).substring(0, 2), 16);
-                return new BlockInfo(
-                    blockDTO.meta.hash,
-                    blockDTO.meta.generationHash,
-                    new UInt64(blockDTO.meta.totalFee),
-                    blockDTO.meta.numTransactions,
-                    blockDTO.block.signature,
-                    PublicAccount.createFromPublicKey(blockDTO.block.signer, networkType),
-                    networkType,
-                    parseInt((blockDTO.block.version >>> 0).toString(16).substring(2, 4), 16), // Tx version
-                    blockDTO.block.type,
-                    new UInt64(blockDTO.block.height),
-                    new UInt64(blockDTO.block.timestamp),
-                    new UInt64(blockDTO.block.difficulty),
-                    blockDTO.block.feeMultiplier,
-                    blockDTO.block.previousBlockHash,
-                    blockDTO.block.blockTransactionsHash,
-                    blockDTO.block.blockReceiptsHash,
-                    blockDTO.block.stateHash,
-                    extractBeneficiary(blockDTO, networkType),
-                );
-            });
-        }));
+            this.blockRoutesApi.getBlocksByHeightWithLimit(height, limit, requestOptions))
+            .pipe(map((response: BlocksInfoResponse) => {
+                return response.body.map((blockDTO) => {
+                    const networkType = parseInt((blockDTO.block.version >>> 0).toString(16).substring(0, 2), 16);
+                    return new BlockInfo(
+                        blockDTO.meta.hash,
+                        blockDTO.meta.generationHash,
+                        new UInt64(blockDTO.meta.totalFee),
+                        blockDTO.meta.numTransactions,
+                        blockDTO.block.signature,
+                        PublicAccount.createFromPublicKey(blockDTO.block.signer, networkType),
+                        networkType,
+                        parseInt((blockDTO.block.version >>> 0).toString(16).substring(2, 4), 16), // Tx version
+                        blockDTO.block.type,
+                        new UInt64(blockDTO.block.height),
+                        new UInt64(blockDTO.block.timestamp),
+                        new UInt64(blockDTO.block.difficulty),
+                        blockDTO.block.feeMultiplier,
+                        blockDTO.block.previousBlockHash,
+                        blockDTO.block.blockTransactionsHash,
+                        blockDTO.block.blockReceiptsHash,
+                        blockDTO.block.stateHash,
+                        extractBeneficiary(blockDTO, networkType),
+                    );
+                });
+            }));
     }
 
     /**
@@ -200,7 +203,8 @@ export class BlockHttp extends Http implements BlockRepository {
      */
     public getMerkleReceipts(height: number, hash: string, requestOptions?: RequestOptions): Observable<MerkleProofInfo> {
         return observableFrom(
-            this.blockRoutesApi.getMerkleReceipts(height, hash, requestOptions)).pipe(map(response => {
+            this.blockRoutesApi.getMerkleReceipts(height, hash, requestOptions))
+            .pipe(map((response: MerkleProofInfoResponse) => {
                 const merkleProofReceipt = response.body;
                 return new MerkleProofInfo(
                     new MerkleProofInfoPayload(
@@ -223,7 +227,8 @@ export class BlockHttp extends Http implements BlockRepository {
      */
     public getMerkleTransaction(height: number, hash: string, requestOptions?: RequestOptions): Observable<MerkleProofInfo> {
         return observableFrom(
-            this.blockRoutesApi.getMerkleReceipts(height, hash, requestOptions)).pipe(map(response => {
+            this.blockRoutesApi.getMerkleReceipts(height, hash, requestOptions))
+            .pipe(map((response: MerkleProofInfoResponse) => {
                 const merkleProofTransaction = response.body;
                 return new MerkleProofInfo(
                     new MerkleProofInfoPayload(
@@ -241,9 +246,9 @@ export class BlockHttp extends Http implements BlockRepository {
      */
     public getBlockReceipts(height: number, requestOptions?: RequestOptions): Observable<Statement> {
         return this.getNetworkTypeObservable(requestOptions).pipe(
-            mergeMap((networkType) => observableFrom(
+            mergeMap((networkType: NetworkType) => observableFrom(
                 this.blockRoutesApi.getBlockReceipts(height, requestOptions)).pipe(
-                    map(response => {
+                    map((response: StatementsResponse) => {
                         return CreateStatementFromDTO(response.body, networkType);
                     }),
                 ),

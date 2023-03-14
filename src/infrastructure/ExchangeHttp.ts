@@ -4,7 +4,7 @@
 
 import { from as observableFrom, Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
-import { ExchangeRoutesApi } from './api/apis';
+import { ExchangeMosaicsResponse, ExchangeResponse, ExchangeRoutesApi, ExchangesResponse } from './api/apis';
 import { NetworkHttp } from './NetworkHttp';
 import { Http } from './Http';
 import { ExchangeRepository } from './ExchangeRepository';
@@ -45,10 +45,13 @@ export class ExchangeHttp extends Http implements ExchangeRepository {
     public getAccountExchanges(accountId: Address | PublicAccount, requestOptions?: RequestOptions): Observable<AccountExchanges | undefined> {
         const accountIdArg = (accountId instanceof PublicAccount) ? accountId.publicKey : accountId.plain();
         return this.getNetworkTypeObservable(requestOptions).pipe(
-            mergeMap(networkType => observableFrom(
-                this.exchangeRoutesApi.getAccountExchangeOffers(accountIdArg, requestOptions)).pipe(map(response =>
-                    AccountExchanges.createFromDTO(response.body.exchange, networkType))
-                ))
+            mergeMap((networkType: NetworkType) => observableFrom(
+                this.exchangeRoutesApi.getAccountExchangeOffers(accountIdArg, requestOptions))
+                .pipe(
+                    map((response: ExchangeResponse) =>
+                        AccountExchanges.createFromDTO(response.body.exchange, networkType))
+                )
+            )
         );
     }
 
@@ -62,10 +65,14 @@ export class ExchangeHttp extends Http implements ExchangeRepository {
         const offerTypeArg = offerType === ExchangeOfferType.BUY_OFFER ? "buy" : "sell";
         const mosaicIdArg = mosaicId.toHex();
         return this.getNetworkTypeObservable(requestOptions).pipe(
-            mergeMap(networkType => observableFrom(
-                this.exchangeRoutesApi.getExchangeOffers(offerTypeArg, mosaicIdArg, requestOptions)).pipe(map(response =>
-                    response.body.map(exchangesDTO => MosaicExchange.createFromDTO(exchangesDTO, networkType))
-                )))
+            mergeMap((networkType: NetworkType) => observableFrom(
+                this.exchangeRoutesApi.getExchangeOffers(offerTypeArg, mosaicIdArg, requestOptions))
+                .pipe(
+                    map((response: ExchangesResponse) =>
+                        response.body.map(exchangesDTO => MosaicExchange.createFromDTO(exchangesDTO, networkType))
+                    )
+                )
+            )
         );
     }
 
@@ -75,7 +82,7 @@ export class ExchangeHttp extends Http implements ExchangeRepository {
      */
      public getOfferList(requestOptions?: RequestOptions): Observable<MosaicId[]> {
         return observableFrom(this.exchangeRoutesApi.getOfferList(requestOptions)).pipe(
-                map(response =>{
+                map((response: ExchangeMosaicsResponse) =>{
                     return response.body.map(exchangeMosaicDTO => new MosaicId(exchangeMosaicDTO.mosaicId));
                 })
             );
