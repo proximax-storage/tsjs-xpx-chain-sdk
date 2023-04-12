@@ -29,9 +29,6 @@ export class EncryptedMessage extends Message {
         super(MessageType.EncryptedMessage, payload);
     }
 
-    public size(): number {
-        return (this.payload || '').length / 2;
-    }
 
     /**
      *

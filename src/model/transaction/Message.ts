@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-import {decode} from 'utf8';
 import {Convert as convert} from '../../core/format'
 
 /**
@@ -28,21 +27,41 @@ export abstract class Message {
      * @returns {string}
      */
     public static decodeHex(hex: string): string {
-        let str = '';
-        for (let i = 0; i < hex.length; i += 2) {
-            str += String.fromCharCode(parseInt(hex.substring(i, i + 2), 16));
-        }
+        let message = "";
         try {
-            return decode(str);
+            let uint8Array = convert.hexToUint8(hex);
+
+            message = new TextDecoder().decode(uint8Array);
         } catch (e) {
-            return str;
+            
         }
+
+        return message;
+    }
+
+    /**
+     * @internal
+     * @param message
+     * @returns {string}
+     */
+    public static encodeToHex(message: string): string {
+        
+        let payload = "";
+        try {
+            let uint8Array = new TextEncoder().encode(message);
+            payload = convert.uint8ToHex(uint8Array);
+        } catch (e) {
+            
+        }
+
+        return payload;
     }
 
     /**
      * @internal
      * @param type
-     * @param payload
+     * @param payload - Hexadecimal message payload
+     * @param message
      */
     constructor(/**
                  * Message type
@@ -51,13 +70,19 @@ export abstract class Message {
                 /**
                  * Message payload
                  */
-                public readonly payload: string) {
+                public readonly payload: string, 
+                /**
+                 * Message payload
+                 */
+                public message: string = "") { 
     }
 
     /**
      * Returns the byte size of the message
      */
-    public abstract size(): number;
+    public size(): number{
+        return this.payload.length ? this.payload.length / 2 : 0;
+    }
 
     /**
      * Create DTO object
@@ -65,7 +90,8 @@ export abstract class Message {
     toDTO() {
         return {
             type: this.type,
-            payload: this.type === 0 ? convert.utf8ToHex(this.payload) : this.payload,
+            payload: this.payload,
+            message: this.message,
         };
     }
 }

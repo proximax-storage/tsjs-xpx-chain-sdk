@@ -1,4 +1,5 @@
 /*
+ * Copyright 2023 ProximaX
  * Copyright 2018 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +17,6 @@
 
 import {Message} from './Message';
 import {MessageType} from './MessageType';
-import { Convert as convert } from '../../core/format';
 
 /**
  * The plain message model defines a plain string. When sending it to the network we transform the payload to hex-string.
@@ -27,28 +27,23 @@ export class PlainMessage extends Message {
      * @returns PlainMessage
      */
     public static create(message: string): PlainMessage {
-        return new PlainMessage(message);
+        return new PlainMessage(message, Message.encodeToHex(message));
     }
 
     /**
      * @internal
      */
     public static createFromPayload(payload: string): PlainMessage {
-        return new PlainMessage(this.decodeHex(payload));
+        return new PlainMessage(Message.decodeHex(payload), payload);
     }
 
     /**
      * @internal
      * @param payload
-     */
-    constructor(payload: string) {
-        super(MessageType.PlainMessage, payload);
+     */ 
+    constructor(public readonly message: string, payload?: string) {
+        super(MessageType.PlainMessage, payload ? payload: Message.encodeToHex(message), message);
     }
-
-    public size(): number {
-        return convert.utf8ToHex(this.payload || '').length / 2;
-    }
-
 }
 
 /**

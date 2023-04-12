@@ -107,14 +107,8 @@ export class Builder {
         // Constants
 
         // Create message
-        let bytePayload;
-        if (this.message.type === MessageType.EncryptedMessage) {
-            bytePayload = convert.hexToUint8(this.message.payload);
-        } else if(this.message.type === MessageType.HexadecimalMessage){
-            bytePayload = convert.hexToUint8(this.message.payload);
-        } else {
-            bytePayload = convert.hexToUint8(convert.utf8ToHex(this.message.payload));
-        }
+        let bytePayload = convert.hexToUint8(this.message.payload);
+
         const payload = MessageBuffer.createPayloadVector(builder, bytePayload);
         MessageBuffer.startMessageBuffer(builder);
         MessageBuffer.addType(builder, this.message.type);
