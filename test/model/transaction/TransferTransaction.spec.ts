@@ -69,7 +69,7 @@ describe('TransferTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        expect(transferTransaction.message.payload).to.be.equal('test-message');
+        expect(transferTransaction.message.message).to.be.equal('test-message');
         expect(transferTransaction.mosaics.length).to.be.equal(0);
         expect(transferTransaction.recipient).to.be.instanceof(Address);
         expect((transferTransaction.recipient as Address).plain()).to.be.equal('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
@@ -93,7 +93,7 @@ describe('TransferTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        expect(transferTransaction.message.payload).to.be.equal('test-message');
+        expect(transferTransaction.message.message).to.be.equal('test-message');
         expect(transferTransaction.mosaics.length).to.be.equal(1);
         expect(transferTransaction.recipient).to.be.instanceof(Address);
         expect((transferTransaction.recipient as Address).plain()).to.be.equal('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
@@ -120,7 +120,7 @@ describe('TransferTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        expect(transferTransaction.message.payload).to.be.equal('test-message');
+        expect(transferTransaction.message.message).to.be.equal('test-message');
         expect(transferTransaction.mosaics.length).to.be.equal(1);
         expect(transferTransaction.recipient).to.be.instanceof(NamespaceId);
         expect(transferTransaction.recipient).to.be.equal(addressAlias);

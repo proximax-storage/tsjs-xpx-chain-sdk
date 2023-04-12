@@ -86,7 +86,6 @@ export class UnknownTransaction extends Transaction{
 
     /**
      * @override Transaction.size()
-     * @internal
      * @description get the byte size of a UnknownTransaction, will return error
      * @returns {never}
      * @memberof UnknownTransaction

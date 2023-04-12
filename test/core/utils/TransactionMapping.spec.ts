@@ -382,7 +382,7 @@ describe('TransactionMapping - createFromPayload', () => {
 
         const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as TransferTransaction;
 
-        expect(transaction.message.payload).to.be.equal('test-message');
+        expect(transaction.message.message).to.be.equal('test-message');
         expect(transaction.mosaics.length).to.be.equal(1);
         expect(transaction.recipientToString()).to.be.equal('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
 
@@ -812,7 +812,7 @@ describe('TransactionMapping - createFromDTO (Transaction.toJSON() feed)', () =>
         const transaction = TransactionMapping.createFromDTO(transferTransaction.toJSON()) as TransferTransaction;
 
         expect((transaction.recipient as Address).plain()).to.be.equal('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
-        expect(transaction.message.payload).to.be.equal('test-message');
+        expect(transaction.message.message).to.be.equal('test-message');
     });
 
     it('should create TransferTransaction - NamespaceId', () => {
@@ -828,7 +828,7 @@ describe('TransactionMapping - createFromDTO (Transaction.toJSON() feed)', () =>
 
         const transaction = TransactionMapping.createFromDTO(transferTransaction.toJSON()) as TransferTransaction;
         expect((transaction.recipient as NamespaceId).id.toHex().toUpperCase()).to.be.equal(new UInt64([33347626, 3779697293]).toHex());
-        expect(transaction.message.payload).to.be.equal('test-message');
+        expect(transaction.message.message).to.be.equal('test-message');
     });
 
     it('should create TransferTransaction - Encrypted Message', () => {

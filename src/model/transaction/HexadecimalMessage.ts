@@ -48,8 +48,5 @@ export class HexadecimalMessage extends Message {
         super(MessageType.HexadecimalMessage, payload);
     }
 
-    public size(): number {
-        return (this.payload || '').length / 2;
-    }
 
 }

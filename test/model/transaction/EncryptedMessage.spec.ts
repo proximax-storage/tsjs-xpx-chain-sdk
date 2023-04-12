@@ -47,14 +47,14 @@ describe('EncryptedMessage', () => {
     it('should return encrypted message dto', () => {
         const encryptedMessage = sender.encryptMessage('test transaction', recipient.publicAccount);
         const plainMessage = recipient.decryptMessage(encryptedMessage, sender.publicAccount);
-        expect(plainMessage.payload).to.be.equal('test transaction');
+        expect(plainMessage.message).to.be.equal('test transaction');
     });
 
     it('should decrypt message from raw encrypted message payload', () => {
         const payload = 'EF6F9F6F8BEFD8BC1FAECD1E610CC195D87D667F401A5B4EA8F0398BDE0B0A2FA4543D7C5C2468D2' +
                         'D478347FB856243F66b3c55321afe7471862d93392a9c57ef0646a045c3e038706de519b8392f4a2';
         const plainMessage = recipient.decryptMessage(new EncryptedMessage(payload), sender.publicAccount);
-        expect(plainMessage.payload).to.be.equal('Testing simple transfer');
+        expect(plainMessage.message).to.be.equal('Testing simple transfer');
     });
 
     it('should return decrepted message reading from message payload', () => {
@@ -70,7 +70,7 @@ describe('EncryptedMessage', () => {
         const encryptMessage = EncryptedMessage
             .createFromPayload(signedTransaction.payload.substring(302, signedTransaction.payload.length - 32));
         const plainMessage = recipient.decryptMessage(encryptMessage, sender.publicAccount);
-        expect(plainMessage.payload).to.be.equal('Testing simple transfer');
+        expect(plainMessage.message).to.be.equal('Testing simple transfer');
     });
 
     it('should encrypt/decrypt message as in js library test', () => {
@@ -81,10 +81,10 @@ describe('EncryptedMessage', () => {
         const senderPublic = senderPrivate.publicAccount;
 
         const encryptedMessage = senderPrivate.encryptMessage(message, recipientPublic);
-        expect(encryptedMessage.payload).not.to.be.equal(message);
+        expect(encryptedMessage.message).not.to.be.equal(message);
 
         const decryptedMessage = recipientPrivate.decryptMessage(encryptedMessage, senderPublic);
-        expect(decryptedMessage.payload).to.be.equal(message);
+        expect(decryptedMessage.message).to.be.equal(message);
     });
 
     it('should decrypt message from js library test', () => {
@@ -94,7 +94,7 @@ describe('EncryptedMessage', () => {
 
         const encryptMessage = new EncryptedMessage(encryptedMessageString);
         const plainMessage = recipientPrivate.decryptMessage(encryptMessage, senderPublic);
-        expect(plainMessage.payload).to.be.equal('ProximaX is awesome !');
+        expect(plainMessage.message).to.be.equal('ProximaX is awesome !');
     });
 
     it('should decrypt message encrypted in java sdk', () => {
@@ -103,7 +103,7 @@ describe('EncryptedMessage', () => {
         const sender = PublicAccount.createFromPublicKey('A36DF1F0B64C7FF71499784317C8D63FB1DB8E1909519AB72051D2BE77A1EF45', NetworkType.TEST_NET);
         const recipient = Account.createFromPrivateKey('6556da78c063e0547b7fd2e8a8b66ba09b8f28043235fea441414f0fc591f507', NetworkType.TEST_NET);
         const plainMessage = recipient.decryptMessage(encryptMessage, sender);
-        expect(plainMessage.payload).to.be.equal('java SDK secure message');
+        expect(plainMessage.message).to.be.equal('java SDK secure message');
     });
 
     it('should create secure message and decrypt message with sender private key ', () => {
@@ -118,7 +118,7 @@ describe('EncryptedMessage', () => {
 
         const decodedMessagePayload = EncryptedMessage.decrypt(secureMessage, senderPrivateKey, recipientPublicAccount);
 
-        expect(decodedMessagePayload.payload).to.be.equal(payload);
+        expect(decodedMessagePayload.message).to.be.equal(payload);
     });
 
     it('should create secure message and decrypt message with receiver private key', () => {
@@ -133,7 +133,7 @@ describe('EncryptedMessage', () => {
 
         const decodedMessagePayload = EncryptedMessage.decrypt(secureMessage, recipientPrivateKey, senderPublicAccount);
 
-        expect(decodedMessagePayload.payload).to.be.equal(payload);
+        expect(decodedMessagePayload.message).to.be.equal(payload);
     });
 
     it('should decrypt payload uploaded from java sdk with sender private key', () => {
@@ -144,9 +144,9 @@ describe('EncryptedMessage', () => {
         const publicAccount = PublicAccount.createFromPublicKey(publicKey, NetworkType.MIJIN_TEST);
         const secureMessage = new EncryptedMessage(payload);
 
-        const decodedMessagePayload = EncryptedMessage.decrypt(secureMessage, privateKey, publicAccount).payload;
+        const decodedMessage = EncryptedMessage.decrypt(secureMessage, privateKey, publicAccount).message;
 
-        expect(decodedMessagePayload).to.be.equal(expectedPayload);
+        expect(decodedMessage).to.be.equal(expectedPayload);
     });
 
     it('should decrypt payload uploaded from java sdk with receiver private key', () => {
@@ -157,15 +157,15 @@ describe('EncryptedMessage', () => {
         const publicAccount = PublicAccount.createFromPublicKey(publicKey, NetworkType.MIJIN_TEST);
         const secureMessage = new EncryptedMessage(payload);
 
-        const decodedMessagePayload = EncryptedMessage.decrypt(secureMessage, privateKey, publicAccount).payload;
+        const decodedMessage = EncryptedMessage.decrypt(secureMessage, privateKey, publicAccount).message;
 
-        expect(decodedMessagePayload).to.be.equal(expectedPayload);
+        expect(decodedMessage).to.be.equal(expectedPayload);
     });
     it('should encrypt and decrypt message using NIS1 schema', () => {
         const encryptedMessage = sender_nis.encryptMessage('Testing simple transfer', recipient_nis.publicAccount, SignSchema.KECCAK_REVERSED_KEY);
         const payload = encryptedMessage.payload;
         const plainMessage = recipient_nis.decryptMessage(new EncryptedMessage(payload), sender_nis.publicAccount, SignSchema.KECCAK_REVERSED_KEY);
-        expect(plainMessage.payload).to.be.equal('Testing simple transfer');
+        expect(plainMessage.message).to.be.equal('Testing simple transfer');
     });
 
 });

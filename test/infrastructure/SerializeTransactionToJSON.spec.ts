@@ -279,7 +279,7 @@ describe('SerializeTransactionToJSON', () => {
 
         expect(json.transaction.type).to.be.equal(TransactionType.TRANSFER);
         expect((json.transaction.recipient as any).address).to.be.equal(address.plain());
-        expect(json.transaction.message.payload).to.be.equal('746573742d6d657373616765');
+        expect(json.transaction.message.payload).to.be.equal('746573742D6D657373616765');
         expect(json.transaction.message.type).to.be.equal(0);
         expect(json.transaction.mosaics.length).to.be.equal(1);
         deepStrictEqual(json.transaction.mosaics[0].id, mosaic.id.id.toDTO());
@@ -304,7 +304,7 @@ describe('SerializeTransactionToJSON', () => {
         expect(json.transaction.type).to.be.equal(TransactionType.TRANSFER);
         expect((json.transaction.recipient as any).fullName).to.be.equal('some-namespace');
         deepStrictEqual((json.transaction.recipient as any).id, namespaceId.id.toDTO());
-        expect(json.transaction.message.payload).to.be.equal('746573742d6d657373616765');
+        expect(json.transaction.message.payload).to.be.equal('746573742D6D657373616765');
         expect(json.transaction.message.type).to.be.equal(0);
         expect(json.transaction.mosaics.length).to.be.equal(1);
         deepStrictEqual(json.transaction.mosaics[0].id, mosaic.id.id.toDTO());
