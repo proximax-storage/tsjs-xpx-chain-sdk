@@ -35,10 +35,6 @@ import { RemoveExchangeOfferTransactionBuilder } from "./RemoveExchangeOfferTran
 import { PlaceSdaExchangeOfferTransactionBuilder } from "./PlaceSdaExchangeOfferTransaction";
 import { RemoveSdaExchangeOfferTransactionBuilder } from "./RemoveSdaExchangeOfferTransaction";
 import { AddHarvesterTransactionBuilder, RemoveHarvesterTransactionBuilder } from "./HarvesterTransaction";
-import { PlaceSdaExchangeOfferTransactionBuilder } from "./PlaceSdaExchangeOfferTransaction";
-import { RemoveSdaExchangeOfferTransactionBuilder } from "./RemoveSdaExchangeOfferTransaction";
-
-
 
 export class TransactionBuilderFactory {
     private _networkType: NetworkType = NetworkType.MIJIN_TEST;
@@ -260,18 +256,6 @@ export class TransactionBuilderFactory {
 
     public removeExchangeOffer(): RemoveExchangeOfferTransactionBuilder {
         const builder = new RemoveExchangeOfferTransactionBuilder();
-        this.configureBuilder(builder);
-        return builder;
-    }
-
-    public placeSdaExchangeOffer(): PlaceSdaExchangeOfferTransactionBuilder{
-        const builder = new PlaceSdaExchangeOfferTransactionBuilder();
-        this.configureBuilder(builder);
-        return builder;
-    }
-
-    public removeSdaExchangeOffer(): RemoveSdaExchangeOfferTransactionBuilder{
-        const builder = new RemoveSdaExchangeOfferTransactionBuilder();
         this.configureBuilder(builder);
         return builder;
     }
