@@ -73,9 +73,9 @@ import { MosaicMetadataTransaction } from '../../model/transaction/MosaicMetadat
 import { NamespaceMetadataTransaction } from '../../model/transaction/NamespaceMetadataTransaction';
 import { MosaicModifyLevyTransaction } from '../../model/transaction/MosaicModifyLevyTransaction';
 import { MosaicRemoveLevyTransaction } from '../../model/transaction/MosaicRemoveLevyTransaction';
-import { HarvesterTransaction } from '../../model/transaction/HarvesterTransaction';
 import { PlaceSdaExchangeOfferTransaction } from '../../model/transaction/PlaceSdaExchangeOfferTransaction';
 import { RemoveSdaExchangeOfferTransaction } from '../../model/transaction/RemoveSdaExchangeOfferTransaction';
+import { HarvesterTransaction } from '../../model/transaction/HarvesterTransaction';
 import { MosaicNonce } from '../../model/mosaic/MosaicNonce';
 import { MosaicLevy } from '../../model/mosaic/MosaicLevy';
 

@@ -54,6 +54,12 @@ export * from './exchange/AccountExchanges';
 export * from './exchange/MosaicExchange';
 export * from './exchange/OfferInfo';
 
+// ExchangeSda
+export * from './exchangeSda/AccountSdaExchanges';
+export * from './exchangeSda/SdaOfferInfoWithOwner';
+export * from './exchangeSda/SdaOfferInfo';
+export * from './exchangeSda/SdaExchangeOfferType';
+
 // Harvester
 export * from './harvester/HarvesterInfo';
 export * from './harvester/HarvesterSearch';
