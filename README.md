@@ -4,15 +4,15 @@
 
 The official ProximaX Blockchain SDK for TypeScript and JavaScript, available for browsers, mobile applications and NodeJS, to work with the ProximaX Sirius Blockchain
 
+Build with NodeJS 18
+
 # TODO: update both CHANGELOG.md and README.md
 
 ## Requirements
 
 ### NodeJS
 
-- NodeJS 10.X.X
-- NodeJS 12.X.X
-- NodeJS 14.X.X
+- NodeJS 18.X.X
 
 ## Installation
 
@@ -22,10 +22,6 @@ The official ProximaX Blockchain SDK for TypeScript and JavaScript, available fo
 
 - check out [wiki][wiki]
 - browse [examples][examples]
-
-## tsjs-xpx-chain-sdk Releases
-
-The release notes for the tsjs-xpx-chain-sdk can be found [here](CHANGELOG.md).
 
 ## Contributing
 
@@ -39,10 +35,6 @@ To get the full description of the available classes and their functions, check 
 Use the following available resources to get help:
 
 - If you found a bug, [open a new issue][issues]
-
-## Changelog
-
-Important versions listed below. Refer to the [Changelog](CHANGELOG.md) for a full history of the project.
 
 ## Contributing
 

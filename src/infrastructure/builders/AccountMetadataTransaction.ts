@@ -10,7 +10,7 @@ import { VerifiableTransaction } from './VerifiableTransaction';
 import AccountMetadataTransactionSchema from '../schemas/AccountMetadataTransactionSchema';
 import {AccountMetadataTransactionBuffer} from '../buffers/AccountMetadataTransactionBuffer';
 
-const { flatbuffers } = require('flatbuffers');
+import * as flatbuffers from 'flatbuffers';
 
 export default class AccountMetadataTransaction extends VerifiableTransaction {
     constructor(bytes) {
@@ -99,6 +99,8 @@ export class Builder {
 
     build() {
         const builder = new flatbuffers.Builder(1);
+        const valueSizeDeltaUint8Array = new Uint8Array([this.valueSizeDelta, this.valueSizeDelta >> 8]);
+        const valueSizeUint8Array = new Uint8Array([this.valueSize, this.valueSize >> 8]);
 
         // Create vectors
         const signatureVector = AccountMetadataTransactionBuffer
@@ -108,6 +110,8 @@ export class Builder {
         const feeVector = AccountMetadataTransactionBuffer.createMaxFeeVector(builder, this.fee);
         const targetKeyVector = AccountMetadataTransactionBuffer.createTargetKeyVector(builder, convert.hexToUint8(this.targetPublicKey));
         const scopedMetadataKeyVector = AccountMetadataTransactionBuffer.createScopedMetadataKeyVector(builder, this.scopedMetadataKey);
+        const valueSizeDeltaVector = AccountMetadataTransactionBuffer.createValueSizeDeltaVector(builder, valueSizeDeltaUint8Array);
+        const valueSizeVector = AccountMetadataTransactionBuffer.createValueSizeDeltaVector(builder, valueSizeUint8Array);
         const valueVector = AccountMetadataTransactionBuffer.createValueVector(builder, this.valueDifferences);
 
         AccountMetadataTransactionBuffer.startAccountMetadataTransactionBuffer(builder);
@@ -120,8 +124,8 @@ export class Builder {
         AccountMetadataTransactionBuffer.addDeadline(builder, deadlineVector);
         AccountMetadataTransactionBuffer.addTargetKey(builder, targetKeyVector);
         AccountMetadataTransactionBuffer.addScopedMetadataKey(builder, scopedMetadataKeyVector);
-        AccountMetadataTransactionBuffer.addValueSizeDelta(builder, this.valueSizeDelta);
-        AccountMetadataTransactionBuffer.addValueSize(builder, this.valueSize);    
+        AccountMetadataTransactionBuffer.addValueSizeDelta(builder, valueSizeDeltaVector);
+        AccountMetadataTransactionBuffer.addValueSize(builder, valueSizeVector);    
         AccountMetadataTransactionBuffer.addValue(builder, valueVector);
 
         const codedTransfer = AccountMetadataTransactionBuffer.endAccountMetadataTransactionBuffer(builder);

@@ -12,7 +12,7 @@ import ModifyMetadataTransactionSchema from '../schemas/ModifyMetadataTransactio
 
 const { ModifyMetadataTransactionBuffer, MetadataModificationBuffer } = ModifyMetadataTransactionBufferPackage.Buffers;
 
-const { flatbuffers } = require('flatbuffers');
+import * as flatbuffers from 'flatbuffers';
 
 export default class ModifyMetadataTransaction extends VerifiableTransaction {
     constructor(bytes) {
