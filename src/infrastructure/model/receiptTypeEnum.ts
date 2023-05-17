@@ -29,6 +29,7 @@ import { RequestFile } from '../api';
 
 /**
 * The type of the receipt: 
+* 0x124D (4685 decimal) - Balance_Transfer
 * 0x134D (4941 decimal) - Mosaic_Rental_Fee. 
 * 0x124E (4686 decimal) - Namespace_Rental_Fee. 
 * 0x2143 (8515 decimal) - Harvest_Fee. 

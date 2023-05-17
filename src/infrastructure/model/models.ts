@@ -16,6 +16,7 @@
  */
 export * from './accountDTO';
 export * from './accountExchangeDTO';
+export * from './accountSdaExchangeDTO';
 export * from './accountIds';
 export * from './accountInfoDTO';
 export * from './accountLinkTransactionBodyDTO';
@@ -175,6 +176,8 @@ export * from './nodeInfoDTO';
 export * from './nodeTimeDTO';
 export * from './offerDTO';
 export * from './offerInfoDTO';
+export * from './sdaOfferInfoDTO';
+export * from './sdaOfferInfoWithOwnerDTO';
 export * from './offerTypeEnum';
 export * from './paymentsDTO';
 export * from './prepareDriveTransactionBodyDTO';
@@ -221,6 +224,7 @@ export * from './verifiableEntityDTO';
 
 import { AccountDTO } from './accountDTO';
 import { AccountExchangeDTO } from './accountExchangeDTO';
+import { AccountSdaExchangeDTO } from './accountSdaExchangeDTO';
 import { AccountIds } from './accountIds';
 import { AccountInfoDTO } from './accountInfoDTO';
 import { AccountLinkTransactionBodyDTO } from './accountLinkTransactionBodyDTO';
@@ -305,6 +309,8 @@ import { EntityTypeEnum } from './entityTypeEnum';
 import { ExchangeOfferTransactionBodyDTO } from './exchangeOfferTransactionBodyDTO';
 import { ExchangeOfferTransactionDTO } from './exchangeOfferTransactionDTO';
 import { ExchangesDTO } from './exchangesDTO';
+import { SdaOfferInfoDTO } from './sdaOfferInfoDTO';
+import { SdaOfferInfoWithOwnerDTO } from './sdaOfferInfoWithOwnerDTO';
 import { FailureVerificationDTO } from './failureVerificationDTO';
 import { FieldDTO } from './fieldDTO';
 import { FileDTO } from './fileDTO';
@@ -469,6 +475,7 @@ let enumsMap: {[index: string]: any} = {
 let typeMap: {[index: string]: any} = {
     "AccountDTO": AccountDTO,
     "AccountExchangeDTO": AccountExchangeDTO,
+    "AccountSdaExchangeDTO": AccountSdaExchangeDTO,
     "AccountIds": AccountIds,
     "AccountInfoDTO": AccountInfoDTO,
     "AccountLinkTransactionBodyDTO": AccountLinkTransactionBodyDTO,
@@ -547,6 +554,8 @@ let typeMap: {[index: string]: any} = {
     "ExchangeOfferTransactionBodyDTO": ExchangeOfferTransactionBodyDTO,
     "ExchangeOfferTransactionDTO": ExchangeOfferTransactionDTO,
     "ExchangesDTO": ExchangesDTO,
+    "SdaOfferInfoDTO": SdaOfferInfoDTO,
+    "SdaOfferInfoWithOwnerDTO": SdaOfferInfoWithOwnerDTO,
     "FailureVerificationDTO": FailureVerificationDTO,
     "FieldDTO": FieldDTO,
     "FileDTO": FileDTO,

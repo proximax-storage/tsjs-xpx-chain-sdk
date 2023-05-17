@@ -23,6 +23,7 @@ export * from './ChainUpgradeHttp';
 export * from './DiagnosticHttp';
 export * from './ExchangeHttp';
 export * from './HarvesterHttp';
+export * from './ExchangeSdaHttp';
 export * from './Http';
 export * from './MetadataHttp';
 export * from './MosaicHttp';

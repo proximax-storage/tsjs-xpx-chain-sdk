@@ -58,6 +58,11 @@ export * from './exchange/OfferInfo';
 export * from './harvester/HarvesterInfo';
 export * from './harvester/HarvesterSearch';
 export * from './harvester/HarvesterMetaInfo';
+// ExchangeSda
+export * from './exchangeSda/AccountSdaExchanges';
+export * from './exchangeSda/SdaOfferInfoWithOwner';
+export * from './exchangeSda/SdaOfferInfo';
+export * from './exchangeSda/SdaExchangeOfferType';
 
 // Metadata
 // export * from './metadata/AddressMetadata';
@@ -168,9 +173,13 @@ export * from './transaction/MultisigCosignatoryModification';
 export * from './transaction/MultisigCosignatoryModificationType';
 export * from './transaction/NamespaceMetadataTransaction';
 export * from './transaction/PlainMessage';
+export * from './transaction/PlaceSdaExchangeOfferTransaction';
 export * from './transaction/RegisterNamespaceTransaction';
 export * from './transaction/RemoveExchangeOffer';
 export * from './transaction/RemoveExchangeOfferTransaction';
+export * from './transaction/RemoveSdaExchangeOffer';
+export * from './transaction/RemoveSdaExchangeOfferTransaction';
+export * from './transaction/SdaExchangeOffer';
 export * from './transaction/SecretLockTransaction';
 export * from './transaction/SecretProofTransaction';
 export * from './transaction/SignedTransaction';

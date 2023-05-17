@@ -64,6 +64,8 @@ import { AddExchangeOfferTransaction } from '../../model/transaction/AddExchange
 import { AddExchangeOffer } from '../../model/transaction/AddExchangeOffer';
 import { ExchangeOfferTransaction } from '../../model/transaction/ExchangeOfferTransaction';
 import { ExchangeOffer } from '../../model/transaction/ExchangeOffer';
+import { SdaExchangeOffer } from '../../model/transaction/SdaExchangeOffer';
+import { RemoveSdaExchangeOffer } from '../../model/transaction/RemoveSdaExchangeOffer';
 import { RemoveExchangeOfferTransaction } from '../../model/transaction/RemoveExchangeOfferTransaction';
 import { RemoveExchangeOffer } from '../../model/transaction/RemoveExchangeOffer';
 import { AccountMetadataTransaction } from '../../model/transaction/AccountMetadataTransaction';
@@ -72,6 +74,8 @@ import { NamespaceMetadataTransaction } from '../../model/transaction/NamespaceM
 import { MosaicModifyLevyTransaction } from '../../model/transaction/MosaicModifyLevyTransaction';
 import { MosaicRemoveLevyTransaction } from '../../model/transaction/MosaicRemoveLevyTransaction';
 import { HarvesterTransaction } from '../../model/transaction/HarvesterTransaction';
+import { PlaceSdaExchangeOfferTransaction } from '../../model/transaction/PlaceSdaExchangeOfferTransaction';
+import { RemoveSdaExchangeOfferTransaction } from '../../model/transaction/RemoveSdaExchangeOfferTransaction';
 import { MosaicNonce } from '../../model/mosaic/MosaicNonce';
 import { MosaicLevy } from '../../model/mosaic/MosaicLevy';
 
@@ -677,8 +681,43 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
                 transactionInfo,
             );
             return isEmbedded ? removeHarvesterTxn.toAggregate(removeHarvesterTxn.signer!) : removeHarvesterTxn;
-        }
-
+        }else if (transactionDTO.type === TransactionType.PLACE_SDA_EXCHANGE_OFFER) {
+            const placeSdaExchangeOfferTxn = new PlaceSdaExchangeOfferTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                transactionDTO.sdaOffers.map(o => new SdaExchangeOffer(
+                    new MosaicId(o.mosaicIdGive),
+                    new UInt64(o.mosaicAmountGive),
+                    new MosaicId(o.mosaicIdGet),
+                    new UInt64(o.mosaicAmountGet),
+                    new UInt64(o.duration)
+                )),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? placeSdaExchangeOfferTxn.toAggregate(placeSdaExchangeOfferTxn.signer!) : placeSdaExchangeOfferTxn;
+        } else if (transactionDTO.type === TransactionType.REMOVE_SDA_EXCHANGE_OFFER) {
+            const removeSdaExchangeOfferTxn = new RemoveSdaExchangeOfferTransaction(
+                networkType,
+                transactionVersion,
+                isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                transactionDTO.sdaOffers.map(o => new RemoveSdaExchangeOffer(
+                    new MosaicId(o.mosaicIdGive),
+                    new MosaicId(o.mosaicIdGet)
+                )),
+                isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType) : undefined,
+                transactionInfo,
+            );
+            return isEmbedded ? removeSdaExchangeOfferTxn.toAggregate(removeSdaExchangeOfferTxn.signer!) : removeSdaExchangeOfferTxn;
+        } 
+        
         throw new Error('Unimplemented transaction with type ' + transactionDTO.type);
     } catch (error) {
 
@@ -696,7 +735,6 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isE
             transactionInfo
         );
     }
-    
 };
 
 export const extractNetworkType = (version: number): NetworkType => {

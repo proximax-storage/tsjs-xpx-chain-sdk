@@ -33,6 +33,8 @@ import { ExchangeOfferTransactionBuilder } from "./ExchangeOfferTransaction";
 import { AddExchangeOfferTransactionBuilder } from "./AddExchangeOfferTransaction";
 import { RemoveExchangeOfferTransactionBuilder } from "./RemoveExchangeOfferTransaction";
 import { AddHarvesterTransactionBuilder, RemoveHarvesterTransactionBuilder } from "./HarvesterTransaction";
+import { PlaceSdaExchangeOfferTransactionBuilder } from "./PlaceSdaExchangeOfferTransaction";
+import { RemoveSdaExchangeOfferTransactionBuilder } from "./RemoveSdaExchangeOfferTransaction";
 
 
 export class TransactionBuilderFactory {
@@ -270,6 +272,18 @@ export class TransactionBuilderFactory {
         this.configureBuilder(builder);
         return builder;
     }
+
+    public placeSdaExchangeOffer(): PlaceSdaExchangeOfferTransactionBuilder{
+        const builder = new PlaceSdaExchangeOfferTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public removeSdaExchangeOffer(): RemoveSdaExchangeOfferTransactionBuilder{
+        const builder = new RemoveSdaExchangeOfferTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }    
 }
 
 

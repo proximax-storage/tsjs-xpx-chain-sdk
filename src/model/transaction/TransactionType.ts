@@ -70,7 +70,8 @@ export class TransactionType {
 
     /**
      * Aggregate bonded transaction type
-     */
+     * @type {number}
+    */
     public static readonly AGGREGATE_BONDED = 0x4241;
 
     /**
@@ -138,51 +139,61 @@ export class TransactionType {
 
     /**
      * Upgrade chain transaction type
-     */
+     * @type {number}
+    */
     public static readonly CHAIN_UPGRADE = 0x4158;
 
     /**
      * Configure chain transaction type
-     */
+     * @type {number}
+    */
     public static readonly CHAIN_CONFIGURE = 0x4159;
 
     /**
      * Add exchange transaction type
-     */
+     * @type {number}
+    */
     public static readonly ADD_EXCHANGE_OFFER = 0x415D;
 
     /**
      * Exchange transaction type
-     */
+     * @type {number}
+    */
     public static readonly EXCHANGE_OFFER = 0x425D;
 
     /**
      * Remove exchange transaction type
-     */
+     * @type {number}
+    */
     public static readonly REMOVE_EXCHANGE_OFFER = 0x435D;
 
     /**
      * Modify account metadata transaction type - NEM 
-     */
+     * @type {number}
+    */
     public static readonly ACCOUNT_METADATA_V2 = 0x413F;
 
     /**
     * Modify mosaic metadata transaction type - NEM 
+    * @type {number}
     */
     public static readonly MOSAIC_METADATA_V2 = 0x423F;
 
     /**
     * Modify namespace metadata transaction type - NEM
+    * @type {number}
     */
     public static readonly NAMESPACE_METADATA_V2 = 0x433F;
 
     /**
     * Modify mosaic levy transaction type
+    * @type {number}
     */
     public static readonly MODIFY_MOSAIC_LEVY = 0x434D;
 
     /**
     * Remove mosaic levy transaction type
+    * @type {number}
     */
     public static readonly REMOVE_MOSAIC_LEVY = 0x444D;
 
@@ -195,4 +206,14 @@ export class TransactionType {
     * Remove harvester transaction type
     */
     public static readonly REMOVE_HARVESTER = 0x4261;
+
+    /**
+    * Add harvester transaction type
+    */
+    public static readonly PLACE_SDA_EXCHANGE_OFFER = 0x416A;
+
+    /**
+    * Remove harvester transaction type
+    */
+    public static readonly REMOVE_SDA_EXCHANGE_OFFER = 0x426A;
 }
