@@ -206,4 +206,14 @@ export class TransactionType {
     * Remove harvester transaction type
     */
     public static readonly REMOVE_HARVESTER = 0x4261;
+
+    /**
+    * Add harvester transaction type
+    */
+    public static readonly PLACE_SDA_EXCHANGE_OFFER = 0x416A;
+
+    /**
+    * Remove harvester transaction type
+    */
+    public static readonly REMOVE_SDA_EXCHANGE_OFFER = 0x426A;
 }
