@@ -8,17 +8,17 @@ export class RemoveSdaExchangeOffer {
 
     /**
      * Constructor
-     * @param mosaicId
-     * @param offerType
+     * @param mosaicIdGive
+     * @param mosaicIdGet
      */
     constructor(
                 /**
-                 * Id of the mosaic for which the offer should be removed.
+                 * Id of the mosaic give for which the offer pair should be removed.
                  */
                 public readonly mosaicIdGive: MosaicId,
 
                 /**
-                 * Exchange offer type (buy/sell).
+                 * Id of the mosaic get for which the offer pair should be removed.
                  */
                 public readonly mosaicIdGet: MosaicId,
     ) {
