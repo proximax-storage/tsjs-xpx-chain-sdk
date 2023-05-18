@@ -23,7 +23,7 @@ import { Mosaic } from '../../src/model/mosaic/Mosaic';
 import {AggregateTransaction} from '../../src/model/transaction/AggregateTransaction';
 import {CosignatureTransaction} from '../../src/model/transaction/CosignatureTransaction';
 import {Deadline} from '../../src/model/transaction/Deadline';
-import { LockFundsTransaction } from '../../src/model/transaction/LockFundsTransaction';
+import { HashLockTransaction } from '../../src/model/transaction/HashLockTransaction';
 import { ModifyMultisigAccountTransaction } from '../../src/model/transaction/ModifyMultisigAccountTransaction';
 import { MultisigCosignatoryModification } from '../../src/model/transaction/MultisigCosignatoryModification';
 import { MultisigCosignatoryModificationType } from '../../src/model/transaction/MultisigCosignatoryModificationType';
@@ -31,7 +31,7 @@ import {PlainMessage} from '../../src/model/transaction/PlainMessage';
 import {TransferTransaction} from '../../src/model/transaction/TransferTransaction';
 import {UInt64} from '../../src/model/UInt64';
 import {CosignatoryAccount, MultisigAccount, APIUrl, TestingAccount, TestingRecipient, ConfNetworkMosaic, Cosignatory3Account, Configuration } from '../../e2e/conf/conf.spec';
-import { HashLockTransaction, TransactionInfo, TransactionType, AggregateTransactionCosignature, Transaction } from '../../src/model/model';
+import { TransactionInfo, TransactionType, AggregateTransactionCosignature, Transaction } from '../../src/model/model';
 import { Listener } from '../../src/infrastructure/Listener';
 import { filter, mergeMap } from 'rxjs/operators';
 
@@ -82,13 +82,13 @@ export class TransactionUtils {
 
             const signedAggregateTransaction = CosignatoryAccount.sign(aggregateTransaction, factory.generationHash);
 
-            const lockFundTransaction = factory.lockFunds()
+            const lockHashTransaction = factory.hashLock()
                 .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10000000)))
                 .duration(UInt64.fromUint(120))
                 .transactionHash(signedAggregateTransaction)
                 .build();
 
-            const signedLockFundTransaction = CosignatoryAccount.sign(lockFundTransaction, factory.generationHash);
+            const signedLockHashTransaction = CosignatoryAccount.sign(lockHashTransaction, factory.generationHash);
 
             const listener = new Listener(APIUrl);
 
@@ -96,8 +96,8 @@ export class TransactionUtils {
                 listener.open().then(() => {
                     listener.confirmed(CosignatoryAccount.address).pipe(
                         filter((transaction: Transaction) => {
-                            return transaction.type === TransactionType.LOCK
-                            && (transaction as LockFundsTransaction).hash === lockFundTransaction.hash;
+                            return transaction.type === TransactionType.HASH_LOCK
+                            && (transaction as HashLockTransaction).hash === lockHashTransaction.hash;
                         }),
                         mergeMap((unused: Transaction) => {
                             return transactionHttp.announceAggregateBonded(signedAggregateTransaction)
@@ -117,7 +117,7 @@ export class TransactionUtils {
                         }
                     );
 
-                    transactionHttp.announce(signedLockFundTransaction).subscribe(result => {
+                    transactionHttp.announce(signedLockHashTransaction).subscribe(result => {
                         // console.log(result);
                     }, error => {
                         console.log(error);

@@ -74,23 +74,23 @@ describe('MetadataHttp', () => {
                     .innerTransactions([accountMetadataTransaction.toAggregateV1(TestingAccount.publicAccount)])
                     .build();
 
-                const signedMetadataTransaction = aggregateBondedTxn.preV2Sign(TestingAccount, factory.generationHash);
+                const signedMetadataTransaction = aggregateBondedTxn.preV2SignWith(TestingAccount, factory.generationHash);
                 
-                const lockhashTransaction = factory.lockFunds()
+                const lockHashTransaction = factory.hashLock()
                     .duration(UInt64.fromUint(1000))
                     .transactionHash(signedMetadataTransaction)
                     .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
                     .build();
 
-                const signedLockhashTransaction = lockhashTransaction.preV2Sign(TestingAccount, factory.generationHash);
+                const signedLockHashTransaction = lockHashTransaction.preV2SignWith(TestingAccount, factory.generationHash);
 
-                validateTransactionConfirmed(listener, TestingAccount.address, signedLockhashTransaction.hash)
+                validateTransactionConfirmed(listener, TestingAccount.address, signedLockHashTransaction.hash)
                     .then(() => {
                         validateTransactionConfirmed(listener, TestingAccount.address, signedMetadataTransaction.hash)
                             .then(() => done()).catch((reason) => fail(reason));
                         transactionHttp.announce(signedMetadataTransaction);
                     }).catch((reason) => fail(reason));
-                transactionHttp.announce(signedLockhashTransaction);
+                transactionHttp.announce(signedLockHashTransaction);
             });
         });
 
@@ -122,15 +122,15 @@ describe('MetadataHttp', () => {
                     .innerTransactions([accountMetadataTransaction.toAggregateV1(TestingAccount.publicAccount)])
                     .build();
 
-                const signedMetadataTransaction = aggregateBondedTxn.preV2Sign(TestingAccount, factory.generationHash);
+                const signedMetadataTransaction = aggregateBondedTxn.preV2SignWith(TestingAccount, factory.generationHash);
                 
-                const lockhashTransaction = factory.lockFunds()
+                const lockhashTransaction = factory.hashLock()
                     .duration(UInt64.fromUint(1000))
                     .transactionHash(signedMetadataTransaction)
                     .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
                     .build();
 
-                const signedLockhashTransaction = lockhashTransaction.preV2Sign(TestingAccount, factory.generationHash);
+                const signedLockhashTransaction = lockhashTransaction.preV2SignWith(TestingAccount, factory.generationHash);
 
                 validateTransactionConfirmed(listener, TestingAccount.address, signedLockhashTransaction.hash)
                     .then(() => {
@@ -157,15 +157,15 @@ describe('MetadataHttp', () => {
                     .innerTransactions([namespaceMetadataTransaction.toAggregateV1(TestingAccount.publicAccount)])
                     .build();
 
-                const signedMetadataTransaction = aggregateBondedTxn.preV2Sign(TestingAccount, factory.generationHash);
+                const signedMetadataTransaction = aggregateBondedTxn.preV2SignWith(TestingAccount, factory.generationHash);
                 
-                const lockhashTransaction = factory.lockFunds()
+                const lockhashTransaction = factory.hashLock()
                     .duration(UInt64.fromUint(1000))
                     .transactionHash(signedMetadataTransaction)
                     .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
                     .build();
 
-                const signedLockhashTransaction = lockhashTransaction.preV2Sign(TestingAccount, factory.generationHash);
+                const signedLockhashTransaction = lockhashTransaction.preV2SignWith(TestingAccount, factory.generationHash);
 
                 validateTransactionConfirmed(listener, TestingAccount.address, signedLockhashTransaction.hash)
                     .then(() => {
@@ -205,15 +205,15 @@ describe('MetadataHttp', () => {
                     .innerTransactions([namespaceMetadataTransaction.toAggregateV1(TestingAccount.publicAccount)])
                     .build();
 
-                const signedMetadataTransaction = aggregateBondedTxn.preV2Sign(TestingAccount, factory.generationHash);
+                const signedMetadataTransaction = aggregateBondedTxn.preV2SignWith(TestingAccount, factory.generationHash);
                 
-                const lockhashTransaction = factory.lockFunds()
+                const lockhashTransaction = factory.hashLock()
                     .duration(UInt64.fromUint(1000))
                     .transactionHash(signedMetadataTransaction)
                     .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
                     .build();
 
-                const signedLockhashTransaction = lockhashTransaction.preV2Sign(TestingAccount, factory.generationHash);
+                const signedLockhashTransaction = lockhashTransaction.preV2SignWith(TestingAccount, factory.generationHash);
 
                 validateTransactionConfirmed(listener, TestingAccount.address, signedLockhashTransaction.hash)
                     .then(() => {
@@ -240,15 +240,15 @@ describe('MetadataHttp', () => {
                     .innerTransactions([mosaicMetadataTransaction.toAggregateV1(TestingAccount.publicAccount)])
                     .build();
 
-                const signedMetadataTransaction = aggregateBondedTxn.preV2Sign(TestingAccount, factory.generationHash);
+                const signedMetadataTransaction = aggregateBondedTxn.preV2SignWith(TestingAccount, factory.generationHash);
                 
-                const lockhashTransaction = factory.lockFunds()
+                const lockhashTransaction = factory.hashLock()
                     .duration(UInt64.fromUint(1000))
                     .transactionHash(signedMetadataTransaction)
                     .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
                     .build();
 
-                const signedLockhashTransaction = lockhashTransaction.preV2Sign(TestingAccount, factory.generationHash);
+                const signedLockhashTransaction = lockhashTransaction.preV2SignWith(TestingAccount, factory.generationHash);
 
                 validateTransactionConfirmed(listener, TestingAccount.address, signedLockhashTransaction.hash)
                     .then(() => {
@@ -287,15 +287,15 @@ describe('MetadataHttp', () => {
                     .innerTransactions([mosaicMetadataTransaction.toAggregateV1(TestingAccount.publicAccount)])
                     .build();
 
-                const signedMetadataTransaction = aggregateBondedTxn.preV2Sign(TestingAccount, factory.generationHash);
+                const signedMetadataTransaction = aggregateBondedTxn.preV2SignWith(TestingAccount, factory.generationHash);
                 
-                const lockhashTransaction = factory.lockFunds()
+                const lockhashTransaction = factory.hashLock()
                     .duration(UInt64.fromUint(1000))
                     .transactionHash(signedMetadataTransaction)
                     .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
                     .build();
 
-                const signedLockhashTransaction = lockhashTransaction.preV2Sign(TestingAccount, factory.generationHash);
+                const signedLockhashTransaction = lockhashTransaction.preV2SignWith(TestingAccount, factory.generationHash);
 
                 validateTransactionConfirmed(listener, TestingAccount.address, signedLockhashTransaction.hash)
                     .then(() => {

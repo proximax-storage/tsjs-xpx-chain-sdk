@@ -84,7 +84,7 @@ describe('BlockHttp', () => {
                 .message(PlainMessage.create('test-message'))
                 .build();
 
-            const signedTransaction = transferTransaction.preV2Sign(TestingAccount, factory.generationHash);
+            const signedTransaction = transferTransaction.preV2SignWith(TestingAccount, factory.generationHash);
 
             validateTransactionAnnounceCorrectly(TestingRecipient.address, done, signedTransaction.hash);
 
