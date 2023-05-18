@@ -187,10 +187,10 @@ export class ConfUtils {
                         .build();
 
                     const aggregateBonded = factory.aggregateBonded()
-                        .innerTransactions([convertIntoMultisigTransaction.toAggregate(ta.acc.publicAccount)])
+                        .innerTransactions([convertIntoMultisigTransaction.toAggregateV1(ta.acc.publicAccount)])
                         .build();
 
-                    const signedAggregateBonded = aggregateBonded.signWith(ta.acc, factory.generationHash);
+                    const signedAggregateBonded = aggregateBonded.preV2Sign(ta.acc, factory.generationHash);
 
                     const lockFunds = factory.lockFunds()
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
@@ -198,7 +198,7 @@ export class ConfUtils {
                         .transactionHash(signedAggregateBonded)
                         .build();
 
-                    const signedLockFunds = lockFunds.signWith(ta.acc, factory.generationHash);
+                    const signedLockFunds = lockFunds.preV2Sign(ta.acc, factory.generationHash);
                     listener.cosignatureAdded(ta.acc.address).subscribe(tx => {
                         console.log(tx);
                     });
@@ -278,7 +278,7 @@ export class ConfUtils {
                             .duration(UInt64.fromUint(1000))
                             .build();
 
-                        const signedRegisterNamespaceTransaction = registerNamespaceTransaction.signWith(TestingAccount, factory.generationHash);
+                        const signedRegisterNamespaceTransaction = registerNamespaceTransaction.preV2Sign(TestingAccount, factory.generationHash);
                         this.waitForConfirmation(listener, TestingAccount.address, () => {
                             listener.close();
                             resolve();
@@ -306,14 +306,14 @@ export class ConfUtils {
                             .mosaicProperties(ConfTestingMosaicProperties)
                             .build();
 
-                        const signedMosaicDefinitionTransaction = mosaicDefinitionTransaction.signWith(TestingAccount, factory.generationHash);
+                        const signedMosaicDefinitionTransaction = mosaicDefinitionTransaction.preV2Sign(TestingAccount, factory.generationHash);
                         this.waitForConfirmation(listener, TestingAccount.address, () => {
                             const mosaicSupplyChangeTransaction = factory.mosaicSupplyChange()
                                 .mosaicId(ConfTestingMosaicId)
                                 .direction(MosaicSupplyType.Increase)
                                 .delta(UInt64.fromUint(1000000000 * 10^ConfTestingMosaicProperties.divisibility))
                                 .build();
-                                const signedMosaicSupplyChangeTransaction = mosaicSupplyChangeTransaction.signWith(TestingAccount, factory.generationHash);
+                                const signedMosaicSupplyChangeTransaction = mosaicSupplyChangeTransaction.preV2Sign(TestingAccount, factory.generationHash);
                                 this.waitForConfirmation(listener, TestingAccount.address, () => {
                                     listener.close();
                                     resolve();

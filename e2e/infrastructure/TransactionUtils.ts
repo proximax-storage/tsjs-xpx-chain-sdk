@@ -77,7 +77,7 @@ export class TransactionUtils {
 
             const aggregateTransaction = factory.aggregateBonded()
                 .deadline(Deadline.create(10, ChronoUnit.MINUTES))
-                .innerTransactions([transferTransaction.toAggregate(MultisigAccount.publicAccount)])
+                .innerTransactions([transferTransaction.toAggregateV1(MultisigAccount.publicAccount)])
                 .build();
 
             const signedAggregateTransaction = CosignatoryAccount.sign(aggregateTransaction, factory.generationHash);
@@ -149,7 +149,7 @@ export class TransactionUtils {
                 )])
                 .build();
 
-            const aggregate = modifyMultisig.toAggregate(MultisigAccount.publicAccount);
+            const aggregate = modifyMultisig.toAggregateV1(MultisigAccount.publicAccount);
 
             const aggregateTransaction = factory.aggregateComplete()
                 .innerTransactions([aggregate])

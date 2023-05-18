@@ -26,7 +26,7 @@ describe('array', () => {
             const view = array.uint8View(src.buffer);
 
             // Assert:
-            expect(convert.uint8ToHex(view)).to.equal('0A12B5675069');
+            expect(convert.uint8ArrayToHex(view)).to.equal('0A12B5675069');
         });
 
         it('can get uint8 view of uint8 typed array', () => {
@@ -37,7 +37,7 @@ describe('array', () => {
             const view = array.uint8View(src);
 
             // Assert:
-            expect(convert.uint8ToHex(view)).to.equal('0A12B5675069');
+            expect(convert.uint8ArrayToHex(view)).to.equal('0A12B5675069');
         });
 
         it('cannot get uint8 view of arbitrary typed array', () => {
@@ -59,7 +59,7 @@ describe('array', () => {
             array.copy(dest, src);
 
             // Assert:
-            expect(convert.uint8ToHex(dest)).to.equal('0A12B5675069');
+            expect(convert.uint8ArrayToHex(dest)).to.equal('0A12B5675069');
         });
 
         it('can copy partial typed array when dest is same size as src', () => {
@@ -71,7 +71,7 @@ describe('array', () => {
             array.copy(dest, src, 3);
 
             // Assert:
-            expect(convert.uint8ToHex(dest)).to.equal('0A12B5000000');
+            expect(convert.uint8ArrayToHex(dest)).to.equal('0A12B5000000');
         });
 
         it('can copy partial typed array when dest is smaller than src', () => {
@@ -83,7 +83,7 @@ describe('array', () => {
             array.copy(dest, src);
 
             // Assert:
-            expect(convert.uint8ToHex(dest)).to.equal('0A12B567');
+            expect(convert.uint8ArrayToHex(dest)).to.equal('0A12B567');
         });
 
         it('can copy partial typed array with custom offsets', () => {
@@ -95,7 +95,7 @@ describe('array', () => {
             array.copy(dest, src, 3, 2, 1);
 
             // Assert:
-            expect(convert.uint8ToHex(dest)).to.equal('000012B56700');
+            expect(convert.uint8ArrayToHex(dest)).to.equal('000012B56700');
         });
     });
 

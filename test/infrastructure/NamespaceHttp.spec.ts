@@ -36,7 +36,7 @@ describe('NamespaceHttp', () => {
                 level2: 'grand.parent.child',
                 alias: {
                     type: AliasType.Address,
-                    address: Convert.uint8ToHex(RawAddress.stringToAddress(address.plain())), // either
+                    address: Convert.uint8ArrayToHex(RawAddress.stringToAddress(address.plain())), // either
                     // mosaicId:, // or
                 }
             }
@@ -89,7 +89,7 @@ describe('NamespaceHttp', () => {
                 level2: 'grand.parent.child',
                 alias: {
                     type: AliasType.Address,
-                    address: Convert.uint8ToHex(RawAddress.stringToAddress(address.plain())), // either
+                    address: Convert.uint8ArrayToHex(RawAddress.stringToAddress(address.plain())), // either
                     // mosaicId:, // or
                 }
             }
@@ -145,7 +145,7 @@ describe('NamespaceHttp', () => {
                 level2: 'grand.parent.child',
                 alias: {
                     type: AliasType.Mosaic,
-                    // address: Convert.uint8ToHex(RawAddress.stringToAddress(address.plain())), // either
+                    // address: Convert.uint8ArrayToHex(RawAddress.stringToAddress(address.plain())), // either
                     mosaicId: [777777, 888888] // or
                 }
             }
@@ -225,7 +225,7 @@ describe('NamespaceHttp', () => {
                 level2: 'grand.parent.child',
                 alias: {
                     type: AliasType.Mosaic,
-                    // address: Convert.uint8ToHex(RawAddress.stringToAddress(address.plain())), // either
+                    // address: Convert.uint8ArrayToHex(RawAddress.stringToAddress(address.plain())), // either
                     mosaicId: [777777, 888888] // or
                 }
             }
@@ -265,7 +265,7 @@ describe('NamespaceHttp', () => {
                 level2: 'grand.parent.child',
                 alias: {
                     type: AliasType.Address,
-                    address: Convert.uint8ToHex(RawAddress.stringToAddress(address.plain())), // either
+                    address: Convert.uint8ArrayToHex(RawAddress.stringToAddress(address.plain())), // either
                     // mosaicId: [777777, 888888] // or
                 }
             }
@@ -306,7 +306,7 @@ describe('NamespaceHttp', () => {
                 level2: 'grand.parent.child',
                 alias: {
                     type: AliasType.Address,
-                    address: Convert.uint8ToHex(RawAddress.stringToAddress(address.plain())), // either
+                    address: Convert.uint8ArrayToHex(RawAddress.stringToAddress(address.plain())), // either
                     // mosaicId: [777777, 888888] // or
                 }
             }
@@ -345,7 +345,7 @@ describe('NamespaceHttp', () => {
                 level2: 'grand.parent.child',
                 alias: {
                     type: AliasType.Mosaic,
-                    // address: Convert.uint8ToHex(RawAddress.stringToAddress(address.plain())), // either
+                    // address: Convert.uint8ArrayToHex(RawAddress.stringToAddress(address.plain())), // either
                     mosaicId: [777777, 888888] // or
                 }
             }

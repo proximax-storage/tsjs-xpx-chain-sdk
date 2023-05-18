@@ -147,10 +147,10 @@ describe('convert', () => {
         });
     });
 
-    describe('uint8ToHex', () => {
+    describe('uint8ArrayToHex', () => {
         it('can format empty array into hex string', () => {
             // Act:
-            const actual = convert.uint8ToHex(Uint8Array.of());
+            const actual = convert.uint8ArrayToHex(Uint8Array.of());
 
             // Assert:
             expect(actual).to.equal('');
@@ -158,7 +158,7 @@ describe('convert', () => {
 
         it('can format single value array into hex string', () => {
             // Act:
-            const actual = convert.uint8ToHex(Uint8Array.of(0xD2));
+            const actual = convert.uint8ArrayToHex(Uint8Array.of(0xD2));
 
             // Assert:
             expect(actual).to.equal('D2');
@@ -166,7 +166,7 @@ describe('convert', () => {
 
         it('can format multi value array into hex string', () => {
             // Act:
-            const actual = convert.uint8ToHex(Uint8Array.of(0x02, 0x6E, 0xE4, 0x15, 0xFC, 0x15));
+            const actual = convert.uint8ArrayToHex(Uint8Array.of(0x02, 0x6E, 0xE4, 0x15, 0xFC, 0x15));
 
             // Assert:
             expect(actual).to.equal('026EE415FC15');

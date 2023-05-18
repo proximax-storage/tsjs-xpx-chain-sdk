@@ -11,7 +11,7 @@ const {
     RemoveExchangeOfferBuffer,
 } = ExchangeOfferTransactionBufferPackage.Buffers;
 
-import {flatbuffers} from 'flatbuffers';
+import * as flatbuffers from 'flatbuffers';
 import RemoveExchangeOfferTransactionSchema from '../schemas/RemoveExchangeOfferTransactionSchema';
 
 /**

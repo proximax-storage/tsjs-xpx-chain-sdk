@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 NEM
+ * Copyright 2023 ProximaX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-import { sha3_256, sha3_512, Keccak } from '@noble/hashes/sha3';
-import { bytesToHex, Hash } from '@noble/hashes/utils';
+import { sha512_256, sha512, SHA512 } from '@noble/hashes/sha512';
+import { Hash } from '@noble/hashes/utils';
 import { Convert as convert, RawArray as array } from '../format';
 
-export class SHA3Hasher {
+export class SHA2Hasher {
     /**
      * Calculates the hash of data.
      * @param {Uint8Array} dest The computed hash destination.
      * @param {Uint8Array} data The data to hash.
      * @param {numeric} length The hash length in bytes.
      */
-    public static func = (dest, data: Uint8Array, length) => {
-        const hasher = SHA3Hasher.getHasher(length);
+    public static func = (dest, data, length) => {
+
+        const hasher = SHA2Hasher.getHasher(length);
         if(hasher === undefined)
             throw new Error("invalid hasher, hasher not found");
         const hash = hasher.update(data).digest();
@@ -39,10 +40,10 @@ export class SHA3Hasher {
      * @returns {object} The hasher.
      */
     public static createHasher = (length = 64) => {
-        let hash: Hash<Keccak>;
+        let hash: Hash<SHA512>;
         return {
             reset: () => {
-                hash = SHA3Hasher.getHasher(length)!;
+                hash = SHA2Hasher.getHasher(length)!;
             },
             update: (data: any) => {
                 if (data instanceof Uint8Array) {
@@ -66,8 +67,8 @@ export class SHA3Hasher {
      */
     public static getHasher = (length = 64) => {
         return {
-            32: sha3_256.create(),
-            64: sha3_512.create()
+            32: sha512_256.create(),
+            64: sha512.create()
         } [length];
     }
 }

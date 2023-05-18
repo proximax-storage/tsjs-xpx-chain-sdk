@@ -37,7 +37,7 @@ describe('MetadataTransaction', () => {
                 NetworkType.MIJIN_TEST,
                 UInt64.fromUint(0)
             );
-            const signedTransaction = mosaicMetadataTransaction.signWithV1(account, generationHash);
+            const signedTransaction = mosaicMetadataTransaction.preV2SignWith(account, generationHash);
 
             expect(mosaicMetadataTransaction.size).to.be.equal(181);
             expect(signedTransaction.payload.length).to.be.equal(181 * 2);
@@ -58,7 +58,7 @@ describe('MetadataTransaction', () => {
                 NetworkType.MIJIN_TEST,
                 UInt64.fromUint(0)
             );
-            const signedTransaction = namespaceMetadataTransaction.signWithV1(account, generationHash);
+            const signedTransaction = namespaceMetadataTransaction.preV2SignWith(account, generationHash);
 
             expect(namespaceMetadataTransaction.size).to.be.equal(181);
             expect(signedTransaction.payload.length).to.be.equal(181 * 2);
@@ -78,7 +78,7 @@ describe('MetadataTransaction', () => {
                 NetworkType.MIJIN_TEST,
                 UInt64.fromUint(0)
             );
-            const signedTransaction = accounteMetadataTransaction.signWithV1(account, generationHash);
+            const signedTransaction = accounteMetadataTransaction.preV2SignWith(account, generationHash);
 
             expect(accounteMetadataTransaction.size).to.be.equal(173);
             expect(signedTransaction.payload.length).to.be.equal(173 * 2);
@@ -102,7 +102,7 @@ describe('MetadataTransaction', () => {
                 NetworkType.MIJIN_TEST,
                 UInt64.fromUint(0)
             );
-            const signedTransaction = mosaicMetadataTransaction.signWithV1(account, generationHash);
+            const signedTransaction = mosaicMetadataTransaction.preV2SignWith(account, generationHash);
 
             expect(mosaicMetadataTransaction.valueSizeDelta).to.be.equal(0);
             expect(mosaicMetadataTransaction.valueSize).to.be.equal(5);
@@ -124,7 +124,7 @@ describe('MetadataTransaction', () => {
                 NetworkType.MIJIN_TEST,
                 UInt64.fromUint(0)
             );
-            const signedTransaction = mosaicMetadataTransaction.signWithV1(account, generationHash);
+            const signedTransaction = mosaicMetadataTransaction.preV2SignWith(account, generationHash);
 
             expect(mosaicMetadataTransaction.valueSizeDelta).to.be.equal(1);
             expect(mosaicMetadataTransaction.valueSize).to.be.equal(6);
@@ -146,7 +146,7 @@ describe('MetadataTransaction', () => {
                 NetworkType.MIJIN_TEST,
                 UInt64.fromUint(0)
             );
-            const signedTransaction = namespaceMetadataTransaction.signWithV1(account, generationHash);
+            const signedTransaction = namespaceMetadataTransaction.preV2SignWith(account, generationHash);
 
             expect(namespaceMetadataTransaction.valueSizeDelta).to.be.equal(0);
             expect(namespaceMetadataTransaction.valueSize).to.be.equal(5);
@@ -168,7 +168,7 @@ describe('MetadataTransaction', () => {
                 NetworkType.MIJIN_TEST,
                 UInt64.fromUint(0)
             );
-            const signedTransaction = namespaceMetadataTransaction.signWithV1(account, generationHash);
+            const signedTransaction = namespaceMetadataTransaction.preV2SignWith(account, generationHash);
 
             expect(namespaceMetadataTransaction.valueSizeDelta).to.be.equal(-1);
             expect(namespaceMetadataTransaction.valueSize).to.be.equal(6);
@@ -188,7 +188,7 @@ describe('MetadataTransaction', () => {
                 NetworkType.MIJIN_TEST,
                 UInt64.fromUint(0)
             );
-            const signedTransaction = accounteMetadataTransaction.signWithV1(account, generationHash);
+            const signedTransaction = accounteMetadataTransaction.preV2SignWith(account, generationHash);
 
             expect(accounteMetadataTransaction.valueSizeDelta).to.be.equal(0);
             expect(accounteMetadataTransaction.valueSize).to.be.equal(5);
@@ -208,7 +208,7 @@ describe('MetadataTransaction', () => {
                 NetworkType.MIJIN_TEST,
                 UInt64.fromUint(0)
             );
-            const signedTransaction = accounteMetadataTransaction.signWithV1(account, generationHash);
+            const signedTransaction = accounteMetadataTransaction.preV2SignWith(account, generationHash);
 
             expect(accounteMetadataTransaction.valueSizeDelta).to.be.equal(7);
             expect(accounteMetadataTransaction.valueSize).to.be.equal(7);
@@ -228,7 +228,7 @@ describe('MetadataTransaction', () => {
                 NetworkType.MIJIN_TEST,
                 UInt64.fromUint(0)
             );
-            const signedTransaction = accounteMetadataTransaction.signWithV1(account, generationHash);
+            const signedTransaction = accounteMetadataTransaction.preV2SignWith(account, generationHash);
 
             expect(accounteMetadataTransaction.valueSizeDelta).to.be.equal(-7);
             expect(accounteMetadataTransaction.valueSize).to.be.equal(7);

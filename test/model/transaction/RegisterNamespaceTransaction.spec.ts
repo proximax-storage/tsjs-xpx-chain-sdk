@@ -66,7 +66,7 @@ describe('RegisterNamespaceTransaction', () => {
         expect(registerNamespaceTransaction.duration!.lower).to.be.equal(1000);
         expect(registerNamespaceTransaction.duration!.higher).to.be.equal(0);
 
-        const signedTransaction = registerNamespaceTransaction.signWith(account, generationHash);
+        const signedTransaction = registerNamespaceTransaction.preV2SignWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
             244,
@@ -83,7 +83,7 @@ describe('RegisterNamespaceTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        const signedTransaction = registerNamespaceTransaction.signWith(account, generationHash);
+        const signedTransaction = registerNamespaceTransaction.preV2SignWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
             244,
@@ -100,7 +100,7 @@ describe('RegisterNamespaceTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        const signedTransaction = registerNamespaceTransaction.signWith(account, generationHash);
+        const signedTransaction = registerNamespaceTransaction.preV2SignWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
             244,

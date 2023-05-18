@@ -107,7 +107,7 @@ describe('base32', () => {
             const decoded = base32.Base32Decode('');
 
             // Assert:
-            expect(convert.uint8ToHex(decoded)).to.equal('');
+            expect(convert.uint8ArrayToHex(decoded)).to.equal('');
         });
 
         it('can convert test vectors', () => {
@@ -117,7 +117,7 @@ describe('base32', () => {
                 const decoded = base32.Base32Decode(sample.encoded);
 
                 // Assert:
-                expect(convert.uint8ToHex(decoded), `input ${sample.encoded}`).to.equal(sample.decoded);
+                expect(convert.uint8ArrayToHex(decoded), `input ${sample.encoded}`).to.equal(sample.decoded);
             }
         });
 
@@ -126,7 +126,7 @@ describe('base32', () => {
             const decoded = base32.Base32Decode('ABCDEFGHIJKLMNOPQRSTUVWXYZ234567');
 
             // Assert:
-            expect(convert.uint8ToHex(decoded)).to.equal('00443214C74254B635CF84653A56D7C675BE77DF');
+            expect(convert.uint8ArrayToHex(decoded)).to.equal('00443214C74254B635CF84653A56D7C675BE77DF');
         });
 
         it('throws if input size is not a multiple of block size', () => {
@@ -181,7 +181,7 @@ describe('base32', () => {
                 const result = base32.Base32Decode(encoded);
 
                 // Assert:
-                expect(convert.uint8ToHex(result), `input ${input}`).to.equal(input);
+                expect(convert.uint8ArrayToHex(result), `input ${input}`).to.equal(input);
             }
         });
     });

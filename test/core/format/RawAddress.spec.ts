@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 import {expect} from 'chai';
-import { SignSchema } from '../../../src/core/crypto';
 import {
     Convert as convert,
     RawAddress as address,
@@ -44,7 +43,7 @@ describe('address', () => {
 
             // Assert:
             expect(address.isValidAddress(decoded)).to.equal(true);
-            expect(convert.uint8ToHex(decoded)).to.equal(expectedHex);
+            expect(convert.uint8ArrayToHex(decoded)).to.equal(expectedHex);
         });
 
         it('cannot create address from encoded string with wrong length', () => {
@@ -89,7 +88,7 @@ describe('address', () => {
             // Assert:
             expect(decoded[0]).to.equal(Network_Mijin_Identifier);
             expect(address.isValidAddress(decoded)).to.equal(true);
-            expect(convert.uint8ToHex(decoded)).to.equal(expectedHex);
+            expect(convert.uint8ArrayToHex(decoded)).to.equal(expectedHex);
         });
 
         it('can create address from public key for custom network', () => {
@@ -103,7 +102,7 @@ describe('address', () => {
             // Assert:
             expect(decoded[0]).to.equal(Network_Public_Test_Identifier);
             expect(address.isValidAddress(decoded)).to.equal(true);
-            expect(convert.uint8ToHex(decoded)).to.equal(expectedHex);
+            expect(convert.uint8ArrayToHex(decoded)).to.equal(expectedHex);
         });
 
         it('address calculation is deterministic', () => {
@@ -146,21 +145,6 @@ describe('address', () => {
             expect(address.isValidAddress(decoded1)).to.equal(true);
             expect(address.isValidAddress(decoded2)).to.equal(true);
             expect(decoded1).to.not.deep.equal(decoded2);
-        });
-
-        it('can create address from public key using NIS1 schema', () => {
-            const nonKeccakHex = '9823BB7C3C089D996585466380EDBDC19D495918484BF7E997';
-            const keccakHex = '981A00208CDDCC647BF1E065E93824FAA732AAB187CC1A9B02';
-            const publicKey = convert.hexToUint8('3485D98EFD7EB07ADAFCFD1A157D89DE2796A95E780813C0258AF3F5F84ED8CB');
-
-            // Act:
-            const decoded = address.publicKeyToAddress(publicKey, Network_Public_Test_Identifier, 1);
-
-            // Assert:
-            expect(decoded[0]).to.equal(Network_Public_Test_Identifier);
-            expect(address.isValidAddress(decoded, SignSchema.KECCAK_REVERSED_KEY)).to.equal(true);
-            expect(convert.uint8ToHex(decoded)).to.equal(keccakHex);
-            expect(convert.uint8ToHex(decoded)).not.to.equal(nonKeccakHex);
         });
     });
 
@@ -231,128 +215,6 @@ describe('address', () => {
         });
     });
 
-    /**
-     * @see https://raw.githubusercontent.com/nemtech/test-vectors/master/1.test-address-nis1.json
-     */
-    describe('NIS1 test vector [PublicNet] - PublicKey to Address', () => {
-        it('can create Address from NIS public Key', () => {
-            // Arrange:
-            const Public_Keys = [
-                'c5f54ba980fcbb657dbaaa42700539b207873e134d2375efeab5f1ab52f87844',
-                '96eb2a145211b1b7ab5f0d4b14f8abc8d695c7aee31a3cfc2d4881313c68eea3',
-                '2d8425e4ca2d8926346c7a7ca39826acd881a8639e81bd68820409c6e30d142a',
-                '4feed486777ed38e44c489c7c4e93a830e4c4a907fa19a174e630ef0f6ed0409',
-                '83ee32e4e145024d29bca54f71fa335a98b3e68283f1a3099c4d4ae113b53e54',
-            ];
-
-            const Addresses = [
-                'XDD2CT6LQLIYQ56KIXI3ENTM6EK3D44P5ITPFYGC',
-                'XABHFGE5ORQD3LE4O6B7JUFN47ECOFBFAS3GSORG',
-                'XAVOZX4HDVOAR4W6K4WJHWPD3MOFU27DFG5QEJKK',
-                'XBZ6JK5YOCU6UPSSZ5D3G27UHAPHTY5HDTGU65KJ',
-                'XCQW2P5DNZ5BBXQVGS367DQ4AHC3RXOEVH7G2PY6',
-            ];
-
-            // Sanity:
-            expect(Public_Keys.length).equal(Addresses.length);
-
-            for (let i = 0; i < Public_Keys.length; ++i) {
-                // Arrange:
-                const publicKeyHex = Public_Keys[i];
-                const expectedAddress = Addresses[i];
-
-                // Act:
-                const result = address.addressToString(
-                        address.publicKeyToAddress(convert.hexToUint8(publicKeyHex), NetworkType.MAIN_NET, SignSchema.KECCAK_REVERSED_KEY));
-
-                // Assert:
-                const message = ` from ${publicKeyHex}`;
-                expect(result.toUpperCase(), `public ${message}`).equal(expectedAddress.toUpperCase());
-            }
-        });
-    });
-
-    /**
-     * @see https://raw.githubusercontent.com/nemtech/test-vectors/master/1.test-address-nis1.json
-     */
-    describe('NIS1 test vector [PublicTest] - PublicKey to Address', () => {
-        it('can create Address from NIS public Key', () => {
-            // Arrange:
-            const Public_Keys = [
-                'c5f54ba980fcbb657dbaaa42700539b207873e134d2375efeab5f1ab52f87844',
-                '96eb2a145211b1b7ab5f0d4b14f8abc8d695c7aee31a3cfc2d4881313c68eea3',
-                '2d8425e4ca2d8926346c7a7ca39826acd881a8639e81bd68820409c6e30d142a',
-                '4feed486777ed38e44c489c7c4e93a830e4c4a907fa19a174e630ef0f6ed0409',
-                '83ee32e4e145024d29bca54f71fa335a98b3e68283f1a3099c4d4ae113b53e54',
-            ];
-
-            const Addresses = [
-                'VDD2CT6LQLIYQ56KIXI3ENTM6EK3D44P5IJ2HFJB',
-                'VABHFGE5ORQD3LE4O6B7JUFN47ECOFBFAQLKCEWO',
-                'VAVOZX4HDVOAR4W6K4WJHWPD3MOFU27DFEPZIJ2P',
-                'VBZ6JK5YOCU6UPSSZ5D3G27UHAPHTY5HDRL764GL',
-                'VCQW2P5DNZ5BBXQVGS367DQ4AHC3RXOEVEZB7HLB',
-            ];
-
-            // Sanity:
-            expect(Public_Keys.length).equal(Addresses.length);
-
-            for (let i = 0; i < Public_Keys.length; ++i) {
-                // Arrange:
-                const publicKeyHex = Public_Keys[i];
-                const expectedAddress = Addresses[i];
-
-                // Act:
-                const result = address.addressToString(
-                        address.publicKeyToAddress(convert.hexToUint8(publicKeyHex), NetworkType.TEST_NET, SignSchema.KECCAK_REVERSED_KEY));
-
-                // Assert:
-                const message = ` from ${publicKeyHex}`;
-                expect(result.toUpperCase(), `public ${message}`).equal(expectedAddress.toUpperCase());
-            }
-        });
-    });
-
-    /**
-     * @see https://raw.githubusercontent.com/nemtech/test-vectors/master/1.test-address-nis1.json
-     */
-    describe('NIS1 test vector [MIJIN] - PublicKey to Address', () => {
-        it('can create Address from NIS public Key', () => {
-            // Arrange:
-            const Public_Keys = [
-                'c5f54ba980fcbb657dbaaa42700539b207873e134d2375efeab5f1ab52f87844',
-                '96eb2a145211b1b7ab5f0d4b14f8abc8d695c7aee31a3cfc2d4881313c68eea3',
-                '2d8425e4ca2d8926346c7a7ca39826acd881a8639e81bd68820409c6e30d142a',
-                '4feed486777ed38e44c489c7c4e93a830e4c4a907fa19a174e630ef0f6ed0409',
-                '83ee32e4e145024d29bca54f71fa335a98b3e68283f1a3099c4d4ae113b53e54',
-            ];
-
-            const Addresses = [
-                'MDD2CT6LQLIYQ56KIXI3ENTM6EK3D44P5LDT7JHT',
-                'MABHFGE5ORQD3LE4O6B7JUFN47ECOFBFAQ4XDSJH',
-                'MAVOZX4HDVOAR4W6K4WJHWPD3MOFU27DFEVDXFMY',
-                'MBZ6JK5YOCU6UPSSZ5D3G27UHAPHTY5HDSWBYUNP',
-                'MCQW2P5DNZ5BBXQVGS367DQ4AHC3RXOEVHTXSIR6',
-            ];
-
-            // Sanity:
-            expect(Public_Keys.length).equal(Addresses.length);
-
-            for (let i = 0; i < Public_Keys.length; ++i) {
-                // Arrange:
-                const publicKeyHex = Public_Keys[i];
-                const expectedAddress = Addresses[i];
-
-                // Act:
-                const result = address.addressToString(
-                        address.publicKeyToAddress(convert.hexToUint8(publicKeyHex), NetworkType.MIJIN, SignSchema.KECCAK_REVERSED_KEY));
-
-                // Assert:
-                const message = ` from ${publicKeyHex}`;
-                expect(result.toUpperCase(), `public ${message}`).equal(expectedAddress.toUpperCase());
-            }
-        });
-    });
 
     /**
      * @see https://raw.githubusercontent.com/nemtech/test-vectors/master/1.test-address-catapult.json

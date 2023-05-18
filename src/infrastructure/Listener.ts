@@ -34,8 +34,11 @@ import {Transaction} from '../model/transaction/Transaction';
 import {TransactionStatusError} from '../model/transaction/TransactionStatusError';
 import {TransferTransaction} from '../model/transaction/TransferTransaction';
 import {UInt64} from '../model/UInt64';
-import {CreateTransactionFromDTO, extractBeneficiary} from './transaction/CreateTransactionFromDTO';
+import {CreateTransactionFromDTO} from './transaction/CreateTransactionFromDTO';
+import {TransactionMapUtility} from './transaction/TransactionMapUtility';
 import {RequestOptions} from './RequestOptions';
+import { DerivationScheme } from "../core/crypto/DerivationScheme";
+import { Convert } from "../core/format/Convert"
 
 enum ListenerChannelName {
     block = 'block',
@@ -146,7 +149,7 @@ export class Listener {
                                 message.block.blockTransactionsHash,
                                 message.block.blockReceiptsHash,
                                 message.block.stateHash,
-                                extractBeneficiary(message, networkType), // passing `message` as `blockDTO`
+                                TransactionMapUtility.extractBeneficiary(message, networkType), // passing `message` as `blockDTO`
                             ),
                         });
                     } else if (message.status) {
@@ -159,7 +162,7 @@ export class Listener {
                     } else if (message.parentHash) {
                         this.messageSubject.next({
                             channelName: ListenerChannelName.cosignature,
-                            message: new CosignatureSignedTransaction(message.parentHash, message.signature, message.signer),
+                            message: new CosignatureSignedTransaction(message.parentHash, message.signature, message.scheme, message.signer),
                         });
                     } else if (message.meta) {
                         this.messageSubject.next({channelName: message.meta.channelName, message: message.meta.hash});

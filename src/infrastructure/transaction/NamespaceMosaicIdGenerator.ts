@@ -21,7 +21,7 @@ export class NamespaceMosaicIdGenerator {
     /**
      * @returns mosaic Id
      */
-    public static mosaicId = (nonce, ownerPublicId) => {
+    public static mosaicId = (nonce: Uint8Array, ownerPublicId: Uint8Array) => {
         return IdGenerator.generateMosaicId(nonce, ownerPublicId);
     }
 

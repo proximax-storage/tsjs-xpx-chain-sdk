@@ -10,7 +10,7 @@ import { VerifiableTransaction } from './VerifiableTransaction';
 import MosaicRemoveLevyTransactionSchema from '../schemas/MosaicRemoveLevyTransactionSchema';
 import {RemoveMosaicLevyTransactionBuffer} from '../buffers/RemoveMosaicLevyTransactionBuffer';
 
-const { flatbuffers } = require('flatbuffers');
+import * as flatbuffers from 'flatbuffers';
 
 export default class MosaicRemoveLevyTransaction extends VerifiableTransaction {
     constructor(bytes) {

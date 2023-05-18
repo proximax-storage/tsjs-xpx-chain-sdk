@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { KeyPair, SignSchema } from '../../core/crypto';
+import { KeyPair, DerivationScheme } from '../../core/crypto';
 import { SHA3Hasher as sha3Hasher } from '../../core/crypto/SHA3Hasher';
 import { Convert as convert } from '../../core/format';
 
@@ -40,42 +40,42 @@ export class VerifiableTransaction {
      * @param {string} generationHash Network generation hash byte
      * @returns {*|string} Returns Transaction Payload hash
      */
-    static createTransactionHash(transactionPayload, generationHash) {
+    static createTransactionHash(transactionPayload, generationHashBytes) {
         const byteBuffer = Array.from(convert.hexToUint8(transactionPayload));
         const signingBytes = byteBuffer
             .slice(4, 36)
             .concat(byteBuffer
                 .slice(4 + 64, 4 + 64 + 32))
-            .concat(generationHash)
+            .concat(generationHashBytes)
             .concat(byteBuffer
                 .splice(4 + 64 + 32, byteBuffer.length));
 
         const hash = new Uint8Array(32);
 
-        sha3Hasher.func(hash, signingBytes, 32);
+        sha3Hasher.func(hash, new Uint8Array(signingBytes), 32);
 
-        return convert.uint8ToHex(hash);
+        return convert.uint8ArrayToHex(hash);
     }
 
     /**
      * @param {KeyPair } keyPair KeyPair instance
      * @param {string} generationHash Network generation hash hex
-     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @param {DerivationScheme} dScheme The derivation scheme
      * @returns {module:model/TransactionPayload} - Signed Transaction Payload
      */
-    signTransaction(keyPair, generationHash, signSchema: SignSchema = SignSchema.SHA3) {
+    signTransaction(keyPair, generationHash, dScheme: DerivationScheme = DerivationScheme.Ed25519Sha3) {
         const generationHashBytes = Array.from(convert.hexToUint8(generationHash));
         const byteBuffer = this.serialize();
-        const signingBytes = generationHashBytes.concat(byteBuffer.slice(4 + 64 + 32));
-        const keyPairEncoded = KeyPair.createKeyPairFromPrivateKeyString(keyPair.privateKey, signSchema);
-        const signature = Array.from(KeyPair.sign(keyPair, new Uint8Array(signingBytes), signSchema));
+        const signingBytes = new Uint8Array(generationHashBytes.concat(byteBuffer.slice(4 + 64 + 32)));
+        const keyPairEncoded = KeyPair.createKeyPairFromPrivateKeyString(keyPair.privateKey, dScheme);
+        const signature = Array.from(KeyPair.sign(keyPair, new Uint8Array(signingBytes), dScheme));
         const signedTransactionBuffer = byteBuffer
             .splice(0, 4)
             .concat(signature)
             .concat(Array.from(keyPairEncoded.publicKey))
             .concat(byteBuffer
                 .splice(64 + 32, byteBuffer.length));
-        const payload = convert.uint8ToHex(signedTransactionBuffer);
+        const payload = convert.uint8ArrayToHex(signedTransactionBuffer);
         return {
             payload,
             hash: VerifiableTransaction.createTransactionHash(payload, generationHashBytes),
@@ -90,19 +90,34 @@ export class VerifiableTransaction {
      * @returns {string} - Serialized Transaction Payload
      */
     serializeUnsignedTransaction() {
-        return convert.uint8ToHex(this.serialize());
+        return convert.uint8ArrayToHex(this.serialize());
     }
 
     /**
      * @param {KeyPair} keyPair KeyPair instance
-     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @param {DerivationScheme} dScheme The derivation scheme
      * @returns {module:model/TransactionPayload} Returns TransactionPayload instance
      */
-    signCosignatoriesTransaction(keyPair, signSchema: SignSchema = SignSchema.SHA3) {
-        const signature = KeyPair.sign(keyPair, new Uint8Array(this.bytes), signSchema);
+    signCosignatoriesTransaction(keyPair, dScheme: DerivationScheme = DerivationScheme.Ed25519Sha3) {
+        const signature = KeyPair.sign(keyPair, new Uint8Array(this.bytes), dScheme);
         return {
-            parentHash: convert.uint8ToHex(this.bytes),
-            signature: convert.uint8ToHex(signature),
+            parentHash: convert.uint8ArrayToHex(this.bytes),
+            signature: convert.uint8ArrayToHex(signature),
+            scheme: convert.uint8ToHex(dScheme),
+            signer: keyPair.publicKey,
+        };
+    }
+
+    /**
+     * @param {KeyPair} keyPair KeyPair instance
+     * @param {DerivationScheme} dScheme The derivation scheme
+     * @returns {module:model/TransactionPayload} Returns TransactionPayload instance
+     */
+    signCosignatoriesTransactionV1(keyPair) {
+        const signature = KeyPair.sign(keyPair, new Uint8Array(this.bytes), DerivationScheme.Ed25519Sha3);
+        return {
+            parentHash: convert.uint8ArrayToHex(this.bytes),
+            signature: convert.uint8ArrayToHex(signature),
             signer: keyPair.publicKey,
         };
     }

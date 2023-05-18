@@ -21,6 +21,7 @@ import { AggregateTransactionInfo } from './AggregateTransactionInfo';
 import { Transaction } from './Transaction';
 import { Deadline } from './Deadline';
 import { TransactionInfo } from './TransactionInfo';
+import { DerivationScheme } from '../../core/crypto';
 
 /**
  * An unknown transaction class that hold the transaction dto with issue, 
@@ -96,7 +97,6 @@ export class UnknownTransaction extends Transaction{
 
     /**
      * @override Transaction.buildTransaction()
-     * @internal
      * @description buildTransaction of UnknownTransaction, will return error
      * @returns {never}
      * @memberof UnknownTransaction
@@ -107,25 +107,25 @@ export class UnknownTransaction extends Transaction{
 
     /**
      * Convert an aggregate transaction to an inner transaction including transaction signer, will return error
-     * @override Transaction.toAggregate()
+     * @override Transaction.toAggregateV1()
      * @internal
      * @param signer - Transaction signer.
      * @returns never
      */
-    public toAggregate(signer: PublicAccount): never {
+    public toAggregateV1(signer: PublicAccount): never {
         throw new Error('Cannot create inner transaction from UnknownTransaction.');
     }
 
     /**
      * Serialize and sign transaction creating a new SignedTransaction
-     * @override Transaction.signWith()
+     * @override Transaction.preV2SignWith()
      * @internal
      * @param account - The account to sign the transaction
      * @param generationHash - Network generation hash hex
-     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @param {DerivationScheme} dScheme The Sign Schema. (SHA2 / SHA3)
      * @returns {never}
      */
-    public signWith(): never {
+    public preV2SignWith(): never {
         throw new Error('Cannot sign UnknownTransaction');
     }
 
@@ -169,7 +169,7 @@ export class UnknownTransaction extends Transaction{
     public toJSON() {
         const commonTransactionObject = {
             type: this.type,
-            networkType: this.networkType,
+            networkType: this.version.networkType,
             version: this.versionToDTO(),
             maxFee: this.maxFee.toDTO(),
             deadline: this.deadline.toDTO(),

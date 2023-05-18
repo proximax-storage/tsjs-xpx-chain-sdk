@@ -23,10 +23,10 @@ describe('TransactionType', () => {
         expect(TransactionType.MOSAIC_DEFINITION).to.be.equal(0x414D);
         expect(TransactionType.MOSAIC_SUPPLY_CHANGE).to.be.equal(0x424D);
         expect(TransactionType.MODIFY_MULTISIG_ACCOUNT).to.be.equal(0x4155);
-        expect(TransactionType.AGGREGATE_COMPLETE).to.be.equal(0x4141);
-        expect(TransactionType.AGGREGATE_BONDED).to.be.equal(0x4241);
-        expect(TransactionType.AGGREGATE_BONDED).to.be.equal(0x4241);
-        expect(TransactionType.LOCK).to.be.equal(0x4148);
+        expect(TransactionType.AGGREGATE_COMPLETE_V1).to.be.equal(0x4141);
+        expect(TransactionType.AGGREGATE_BONDED_V1).to.be.equal(0x4241);
+        expect(TransactionType.AGGREGATE_BONDED_V1).to.be.equal(0x4241);
+        expect(TransactionType.HASH_LOCK).to.be.equal(0x4148);
         expect(TransactionType.SECRET_LOCK).to.be.equal(0x4152);
         expect(TransactionType.SECRET_PROOF).to.be.equal(0x4252);
     });

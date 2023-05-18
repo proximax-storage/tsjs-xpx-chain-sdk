@@ -17,9 +17,7 @@ import {
     VerifiableTransaction
 } from './VerifiableTransaction';
 
-const {
-    flatbuffers
-} = require('flatbuffers');
+import * as flatbuffers from 'flatbuffers';
 
 /**
  * @module transactions/VerifiableTransactionBuilder

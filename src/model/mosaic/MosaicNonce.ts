@@ -96,7 +96,7 @@ export class MosaicNonce {
     }
 
     toNumber(){
-        const hex = convert.uint8ToHex(this.nonce);
+        const hex = convert.uint8ArrayToHex(this.nonce);
         return parseInt(convert.hexReverse(hex), 16);
     }
 

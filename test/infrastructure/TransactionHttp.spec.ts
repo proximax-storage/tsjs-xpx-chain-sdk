@@ -127,14 +127,14 @@ describe('TransactionHttp', () => {
         });
         it('should throw if not aggregate bonded', (done) => {
             try {
-                let call$ = client.announceAggregateBonded({ type: TransactionType.AGGREGATE_COMPLETE } as SignedTransaction);    
+                let call$ = client.announceAggregateBonded({ type: TransactionType.AGGREGATE_COMPLETE_V1 } as SignedTransaction);    
             } catch (error) {
-                expect(error.message).to.be.equal('Only Transaction Type 0x4241 is allowed for announce aggregate bonded')
+                expect(error.message).to.be.equal('Only Transaction Type Bonded v1 or v2 is allowed for announce aggregate bonded')
                 done();
             }
         });
         it('should call api client', (done) => {
-            client.announceAggregateBonded({ type: TransactionType.AGGREGATE_BONDED } as SignedTransaction).subscribe(response => {
+            client.announceAggregateBonded({ type: TransactionType.AGGREGATE_BONDED_V1 } as SignedTransaction).subscribe(response => {
                 expect(response.message).to.be.equal('some message');
                 done();
             })

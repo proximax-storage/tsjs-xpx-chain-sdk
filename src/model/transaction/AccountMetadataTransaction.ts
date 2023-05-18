@@ -8,7 +8,7 @@ import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
 import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
-import { TransactionVersion } from './TransactionVersion';
+import { TransactionTypeVersion } from './TransactionTypeVersion';
 import { AggregateTransactionInfo } from './AggregateTransactionInfo';
 import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
 import { Builder } from '../../infrastructure/builders/AccountMetadataTransaction';
@@ -144,7 +144,7 @@ export class AccountMetadataTransaction extends Transaction {
                 value: this.value,
                 oldValue: this.oldValue,
                 valueSize: this.valueSize,
-                valueDifferences: Convert.uint8ToHex(this.valueDifferences) 
+                valueDifferences: Convert.uint8ArrayToHex(this.valueDifferences) 
             }
         }
     }
@@ -244,7 +244,7 @@ export class AccountMetadataTransactionBuilder extends TransactionBuilder {
     public build(): AccountMetadataTransaction {
         return new AccountMetadataTransaction(
             this._networkType,
-            this._version || TransactionVersion.ACCOUNT_METADATA_V2,
+            this._version || TransactionTypeVersion.ACCOUNT_METADATA_V2,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(AccountMetadataTransaction.calculateSize(this._valueSize), this._feeCalculationStrategy),
             this._scopedMetadataKey,

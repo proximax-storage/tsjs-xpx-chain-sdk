@@ -11,7 +11,7 @@ import { PublicAccount } from '../account/PublicAccount';
 import { TransactionInfo } from './TransactionInfo';
 import { Builder } from '../../infrastructure/builders/ChainConfigTransaction';
 import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
-import { TransactionVersion } from './TransactionVersion';
+import { TransactionTypeVersion } from './TransactionTypeVersion';
 import { calculateFee, FeeCalculationStrategy } from './FeeCalculationStrategy';
 
 export class ChainConfigTransaction extends Transaction {
@@ -140,7 +140,7 @@ export class ChainConfigTransactionBuilder extends TransactionBuilder {
     public build(): ChainConfigTransaction {
         return new ChainConfigTransaction(
             this._networkType,
-            this._version || TransactionVersion.CHAIN_CONFIG,
+            this._version || TransactionTypeVersion.CHAIN_CONFIG,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(ChainConfigTransaction.calculateSize(this._networkConfig.length, this._supportedEntityVersions.length), this._feeCalculationStrategy),
             this._applyHeightDelta,

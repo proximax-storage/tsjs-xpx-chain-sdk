@@ -8,7 +8,7 @@ import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
 import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
-import { TransactionVersion } from './TransactionVersion';
+import { TransactionTypeVersion } from './TransactionTypeVersion';
 import { AggregateTransactionInfo } from './AggregateTransactionInfo';
 import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
 import { Builder } from '../../infrastructure/builders/MosaicRemoveLevyTransaction';
@@ -129,7 +129,7 @@ export class MosaicRemoveLevyTransactionBuilder extends TransactionBuilder {
     public build(): MosaicRemoveLevyTransaction {
         return new MosaicRemoveLevyTransaction(
             this._networkType,
-            this._version || TransactionVersion.MOSAIC_REMOVE_LEVY,
+            this._version || TransactionTypeVersion.MOSAIC_REMOVE_LEVY,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(MosaicRemoveLevyTransaction.calculateSize(), this._feeCalculationStrategy),
             this._mosaicId,

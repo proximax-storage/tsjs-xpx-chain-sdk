@@ -76,7 +76,7 @@ describe('MosaicSupplyChangeTransaction', () => {
         expect(mosaicSupplyChangeTransaction.mosaicId.id.lower).to.be.equal(2262289484);
         expect(mosaicSupplyChangeTransaction.mosaicId.id.higher).to.be.equal(3405110546);
 
-        const signedTransaction = mosaicSupplyChangeTransaction.signWith(account, generationHash);
+        const signedTransaction = mosaicSupplyChangeTransaction.preV2SignWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
             244,

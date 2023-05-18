@@ -8,7 +8,7 @@ import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
 import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
-import { TransactionVersion } from './TransactionVersion';
+import { TransactionTypeVersion } from './TransactionTypeVersion';
 import { AggregateTransactionInfo } from './AggregateTransactionInfo';
 import { MetadataType } from '../metadata/oldMetadataType';
 import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
@@ -224,7 +224,7 @@ class ModifyMetadataTransactionBuilder extends TransactionBuilder {
         return new ModifyMetadataTransaction(
             this._transactionType,
             this._networkType,
-            this._version || TransactionVersion.MODIFY_METADATA,
+            this._version || TransactionTypeVersion.MODIFY_METADATA,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(ModifyMetadataTransaction.calculateSize(this._transactionType, this._modifications), this._feeCalculationStrategy),
             this._metadataType,

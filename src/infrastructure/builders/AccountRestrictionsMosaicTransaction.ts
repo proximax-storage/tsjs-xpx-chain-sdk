@@ -28,7 +28,7 @@ const {
     PropertyModificationBuffer,
 } = AccountRestrictionsMosaicTransactionBufferPackage.Buffers;
 
-import {flatbuffers} from 'flatbuffers';
+import * as flatbuffers from 'flatbuffers';
 
 export default class AccountRestrictionsMosaicTransaction extends VerifiableTransaction {
     constructor(bytes) {

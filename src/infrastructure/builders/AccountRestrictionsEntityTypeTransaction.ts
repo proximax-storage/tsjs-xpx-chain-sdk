@@ -27,7 +27,7 @@ const {
     PropertyModificationBuffer,
 } = AccountRestrictionsEntityTypeTransactionBufferPackage.Buffers;
 
-import {flatbuffers} from 'flatbuffers';
+import * as flatbuffers from 'flatbuffers';
 
 export default class AccountRestrictionsEntityTypeTransaction extends VerifiableTransaction {
     constructor(bytes) {

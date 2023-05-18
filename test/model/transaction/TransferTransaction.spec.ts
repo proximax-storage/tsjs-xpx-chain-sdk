@@ -74,7 +74,7 @@ describe('TransferTransaction', () => {
         expect(transferTransaction.recipient).to.be.instanceof(Address);
         expect((transferTransaction.recipient as Address).plain()).to.be.equal('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
 
-        const signedTransaction = transferTransaction.signWith(account, generationHash);
+        const signedTransaction = transferTransaction.preV2SignWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
             244,
@@ -98,7 +98,7 @@ describe('TransferTransaction', () => {
         expect(transferTransaction.recipient).to.be.instanceof(Address);
         expect((transferTransaction.recipient as Address).plain()).to.be.equal('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
 
-        const signedTransaction = transferTransaction.signWith(account, generationHash);
+        const signedTransaction = transferTransaction.preV2SignWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
             244,
@@ -126,7 +126,7 @@ describe('TransferTransaction', () => {
         expect(transferTransaction.recipient).to.be.equal(addressAlias);
         expect((transferTransaction.recipient as NamespaceId).toHex()).to.be.equal(addressAlias.toHex());
 
-        const signedTransaction = transferTransaction.signWith(account, generationHash);
+        const signedTransaction = transferTransaction.preV2SignWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
             244,
@@ -149,7 +149,7 @@ describe('TransferTransaction', () => {
         // test recipientToString with Address recipient
         expect(transferTransaction.recipientToString()).to.be.equal('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
 
-        const signedTransaction = transferTransaction.signWith(account, generationHash);
+        const signedTransaction = transferTransaction.preV2SignWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
             244,
@@ -171,7 +171,7 @@ describe('TransferTransaction', () => {
         // test recipientToString with NamespaceId recipient
         expect(transferTransaction.recipientToString()).to.be.equal('d85742d268617751');
 
-        const signedTransaction = transferTransaction.signWith(account, generationHash);
+        const signedTransaction = transferTransaction.preV2SignWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
             244,

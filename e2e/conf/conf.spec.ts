@@ -81,7 +81,7 @@ class TestAccount {
 
     constructor(confAccount: ConfAccount, customPK?: string) {
         this.conf = confAccount;
-        this.acc = Account.createFromPrivateKey(customPK || confAccount.pk, ConfNetworkType);
+        this.acc = Account.createFromPrivateKey(customPK || confAccount.pk, ConfNetworkType, 1);
     }
 
     hasCosignatories() {

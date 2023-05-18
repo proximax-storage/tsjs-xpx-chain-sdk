@@ -11,7 +11,7 @@ import MosaicModifyLevyTransactionSchema from '../schemas/MosaicModifyLevyTransa
 import {ModifyMosaicLevyTransactionBuffer} from '../buffers/ModifyMosaicLevyTransactionBuffer';
 import {MosaicLevy} from '../buffers/MosaicLevyBuffer';
 
-const { flatbuffers } = require('flatbuffers');
+import * as flatbuffers from 'flatbuffers';
 
 export default class MosaicModifyLevyTransaction extends VerifiableTransaction {
     constructor(bytes) {

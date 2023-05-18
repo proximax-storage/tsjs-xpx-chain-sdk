@@ -15,7 +15,6 @@
  */
 
 import {expect} from 'chai';
-import { SignSchema } from '../../../src/core/crypto';
 import {Account} from '../../../src/model/account/Account';
 import { Deadline, NetworkCurrencyMosaic, NetworkType, TransferTransaction, PublicAccount } from '../../../src/model/model';
 import {EncryptedMessage} from '../../../src/model/transaction/EncryptedMessage';
@@ -29,14 +28,9 @@ describe('EncryptedMessage', () => {
     let recipient_nis: Account;
     before(() => {
         sender = Account.createFromPrivateKey('2602F4236B199B3DF762B2AAB46FC3B77D8DDB214F0B62538D3827576C46C108',
-                                              NetworkType.MIJIN_TEST);
+                                              NetworkType.MIJIN_TEST, 1);
         recipient = Account.createFromPrivateKey('B72F2950498111BADF276D6D9D5E345F04E0D5C9B8342DA983C3395B4CF18F08',
-                                              NetworkType.MIJIN_TEST);
-
-        sender_nis = Account.createFromPrivateKey('2602F4236B199B3DF762B2AAB46FC3B77D8DDB214F0B62538D3827576C46C108',
-                                              NetworkType.MIJIN_TEST, SignSchema.KECCAK_REVERSED_KEY);
-        recipient_nis = Account.createFromPrivateKey('B72F2950498111BADF276D6D9D5E345F04E0D5C9B8342DA983C3395B4CF18F08',
-                                              NetworkType.MIJIN_TEST, SignSchema.KECCAK_REVERSED_KEY);
+                                              NetworkType.MIJIN_TEST, 1);
     });
 
     it('should create a encrypted message from a DTO', () => {
@@ -66,7 +60,7 @@ describe('EncryptedMessage', () => {
             sender.encryptMessage('Testing simple transfer', recipient.publicAccount),
             NetworkType.MIJIN_TEST,
         );
-        const signedTransaction = transferTransaction.signWith(sender, generationHash);
+        const signedTransaction = transferTransaction.preV2SignWith(sender, generationHash);
         const encryptMessage = EncryptedMessage
             .createFromPayload(signedTransaction.payload.substring(302, signedTransaction.payload.length - 32));
         const plainMessage = recipient.decryptMessage(encryptMessage, sender.publicAccount);
@@ -75,9 +69,9 @@ describe('EncryptedMessage', () => {
 
     it('should encrypt/decrypt message as in js library test', () => {
         const message = 'ProximaX is awesome !';
-        const recipientPrivate = Account.createFromPrivateKey('2618090794e9c9682f2ac6504369a2f4fb9fe7ee7746f9560aca228d355b1cb9', NetworkType.MAIN_NET);
+        const recipientPrivate = Account.createFromPrivateKey('2618090794e9c9682f2ac6504369a2f4fb9fe7ee7746f9560aca228d355b1cb9', NetworkType.MAIN_NET, 1);
         const recipientPublic = recipientPrivate.publicAccount;
-        const senderPrivate = Account.createFromPrivateKey('2a91e1d5c110a8d0105aad4683f962c2a56663a3cad46666b16d243174673d90', NetworkType.MAIN_NET);
+        const senderPrivate = Account.createFromPrivateKey('2a91e1d5c110a8d0105aad4683f962c2a56663a3cad46666b16d243174673d90', NetworkType.MAIN_NET, 1);
         const senderPublic = senderPrivate.publicAccount;
 
         const encryptedMessage = senderPrivate.encryptMessage(message, recipientPublic);
@@ -89,7 +83,7 @@ describe('EncryptedMessage', () => {
 
     it('should decrypt message from js library test', () => {
         const encryptedMessageString = '5F8D37E8116B6DC9171FFEB7617B0988BFD8ABE0E611C2C34CC127B637D8192AF396CF605EE7CB0E7618DF82AA48C68460afb8873d3d3954a1528f2c70b11890f5d078c1fe345bb4f84c24f87bdbe652';
-        const recipientPrivate = Account.createFromPrivateKey('2618090794e9c9682f2ac6504369a2f4fb9fe7ee7746f9560aca228d355b1cb9', NetworkType.MAIN_NET);
+        const recipientPrivate = Account.createFromPrivateKey('2618090794e9c9682f2ac6504369a2f4fb9fe7ee7746f9560aca228d355b1cb9', NetworkType.MAIN_NET, 1);
         const senderPublic = PublicAccount.createFromPublicKey('2D04DFC0418A1A2893AA56CB651AE2F3FBE3884F77E64476984E9A6BFB1B7B46', NetworkType.MAIN_NET);
 
         const encryptMessage = new EncryptedMessage(encryptedMessageString);
@@ -101,7 +95,7 @@ describe('EncryptedMessage', () => {
         const encryptMessage = new EncryptedMessage(
             '2BD9DAF45E1248FBC3BE8A6413E44B03797763E54124053E4669BBC00553AA4ED2AC04CD7CCD5981C12CB14DCBC689CC9D467A0231F94A50212695E38DDD13A04E451032DD2677CBFC24637A2D17F8A9');
         const sender = PublicAccount.createFromPublicKey('A36DF1F0B64C7FF71499784317C8D63FB1DB8E1909519AB72051D2BE77A1EF45', NetworkType.TEST_NET);
-        const recipient = Account.createFromPrivateKey('6556da78c063e0547b7fd2e8a8b66ba09b8f28043235fea441414f0fc591f507', NetworkType.TEST_NET);
+        const recipient = Account.createFromPrivateKey('6556da78c063e0547b7fd2e8a8b66ba09b8f28043235fea441414f0fc591f507', NetworkType.TEST_NET, 1);
         const plainMessage = recipient.decryptMessage(encryptMessage, sender);
         expect(plainMessage.message).to.be.equal('java SDK secure message');
     });
@@ -161,11 +155,4 @@ describe('EncryptedMessage', () => {
 
         expect(decodedMessage).to.be.equal(expectedPayload);
     });
-    it('should encrypt and decrypt message using NIS1 schema', () => {
-        const encryptedMessage = sender_nis.encryptMessage('Testing simple transfer', recipient_nis.publicAccount, SignSchema.KECCAK_REVERSED_KEY);
-        const payload = encryptedMessage.payload;
-        const plainMessage = recipient_nis.decryptMessage(new EncryptedMessage(payload), sender_nis.publicAccount, SignSchema.KECCAK_REVERSED_KEY);
-        expect(plainMessage.message).to.be.equal('Testing simple transfer');
-    });
-
 });

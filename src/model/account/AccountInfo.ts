@@ -1,4 +1,5 @@
 /*
+ * Copyright 2023 ProximaX
  * Copyright 2018 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,9 +27,9 @@ import {PublicAccount} from './PublicAccount';
 export class AccountInfo {
 
     /**
-     *
+     * Account info get from blockchain
      */
-    constructor(// TODO: meta not implemented in nis
+    constructor(
         /**
          * Account metadata
          */
@@ -60,8 +61,11 @@ export class AccountInfo {
         /**
          * Mosaics hold by the account.
          */
-        public readonly mosaics: Mosaic[]) {
-
+        public readonly mosaics: Mosaic[], 
+        /**
+         * account version
+         */
+        public readonly version: number = 1) { 
     }
 
     /**
@@ -69,6 +73,6 @@ export class AccountInfo {
      * @returns {PublicAccount}
      */
     get publicAccount(): PublicAccount {
-        return PublicAccount.createFromPublicKey(this.publicKey, this.address.networkType);
+        return PublicAccount.createFromPublicKey(this.publicKey, this.address.networkType, this.version);
     }
 }
