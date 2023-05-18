@@ -42,6 +42,7 @@ export class UnknownTransaction extends Transaction{
      * @param transactionInfo
      */
     constructor(
+            public readonly unknownPayload: string,
             public readonly unknownData: Object,
             
             /**
@@ -69,7 +70,7 @@ export class UnknownTransaction extends Transaction{
             /**
              * The account of the transaction creator.
              */
-            signer: PublicAccount,
+            signer?: PublicAccount,
             
             /**
              * The transaction signature (missing if part of an aggregate transaction).
@@ -103,6 +104,17 @@ export class UnknownTransaction extends Transaction{
      */
     protected buildTransaction(): never {
         throw new Error("Cannot buildTransaction from UnknownTransaction");
+    }
+
+    /**
+     * Convert an aggregate transaction to an inner transaction including transaction signer, will return error
+     * @override Transaction.toAggregate()
+     * @internal
+     * @param signer - Transaction signer.
+     * @returns never
+     */
+    public toAggregate(signer: PublicAccount): never {
+        throw new Error('Cannot create inner transaction from UnknownTransaction.');
     }
 
     /**
@@ -175,7 +187,8 @@ export class UnknownTransaction extends Transaction{
             deadline: this.deadline.toDTO(),
             signature: this.signature ? this.signature : '',
             signer: this.signer!.publicKey,
-            unknownData: this.unknownData
+            unknownData: this.unknownData,
+            unknownPayload: this.unknownPayload
         };
 
         return { transaction: commonTransactionObject };

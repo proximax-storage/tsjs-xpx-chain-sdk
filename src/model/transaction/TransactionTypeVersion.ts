@@ -212,4 +212,17 @@ export enum TransactionTypeVersion {
      * @type {number}
      */
     AGGREGATE_BONDED_V2 = 1,
+
+    /**
+     * Place SDA exchange transaction version.
+     * @type {number}
+     */
+    PLACE_SDA_EXCHANGE_OFFER = 1,
+
+    /**
+     * Remove SDA exchange offer transaction version
+     * @type {number}
+     */
+    REMOVE_SDA_EXCHANGE_OFFER = 1
+
 }

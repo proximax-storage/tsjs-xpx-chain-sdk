@@ -344,7 +344,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isA
                 isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
                 new Mosaic(new MosaicId(transactionDTO.mosaicId), new UInt64(transactionDTO.amount)),
                 new UInt64(transactionDTO.duration),
-                new TransactionHash(transactionDTO.hash, TransactionType.AGGREGATE_BONDED_V1),
+                new TransactionHash(transactionDTO.hash, dScheme ? TransactionType.AGGREGATE_BONDED_V2 : TransactionType.AGGREGATE_BONDED_V1),
                 isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
                 transactionDTO.signer ? 
                     PublicAccount.createFromPublicKey(transactionDTO.signer, networkType, signerVersion) : undefined,
@@ -824,6 +824,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isA
         let unknownTxnData = cloneAndRemoveTxnBaseData(transactionDTO);
 
         return new UnknownTransaction(
+            "",
             unknownTxnData,
             transactionDTO.type, 
             networkType, 

@@ -88,7 +88,7 @@ export abstract class Transaction {
                  * A sender of a transaction must specify during the transaction definition a max_fee,
                  * meaning the maximum fee the account allows to spend for this transaction.
                  */
-                public readonly maxFee: UInt64,
+                public maxFee: UInt64,
                 /**
                  * The transaction signature (missing if part of an aggregate transaction).
                  */
