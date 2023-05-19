@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-import { SignSchema } from '../../core/crypto';
 import { Convert as convert, RawAddress as AddressLibrary} from '../../core/format';
 import {NetworkType} from '../blockchain/NetworkType';
 
@@ -27,15 +26,14 @@ export class Address {
      * Create from private key
      * @param publicKey - The account public key.
      * @param networkType - The Sirius Chain network type.
-     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @param version The account version
      * @returns {Address}
      */
     public static createFromPublicKey(publicKey: string,
-                                      networkType: NetworkType,
-                                      signSchema = SignSchema.SHA3): Address {
+                                      networkType: NetworkType): Address {
         const publicKeyUint8 = convert.hexToUint8(publicKey);
         const address = AddressLibrary
-            .addressToString(AddressLibrary.publicKeyToAddress(publicKeyUint8, networkType, signSchema));
+            .addressToString(AddressLibrary.publicKeyToAddress(publicKeyUint8, networkType));
         return new Address(address, networkType);
     }
 

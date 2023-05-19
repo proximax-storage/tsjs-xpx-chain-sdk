@@ -41,15 +41,20 @@ import {RegisterNamespaceTransaction} from '../../../src/model/transaction/Regis
 import { TransactionType } from '../../../src/model/transaction/TransactionType';
 import {TransferTransaction} from '../../../src/model/transaction/TransferTransaction';
 import {UInt64} from '../../../src/model/UInt64';
-import {Cosignatory2Account, CosignatoryAccount, MultisigAccount, TestingAccount} from '../../conf/conf.spec';
+import {Cosignatory2Account, CosignatoryAccount, MultisigAccount, TestingAccount, 
+    Cosignatory2AccountV2, CosignatoryAccountV2, TestingAccountV2} from '../../conf/conf.spec';
 import { DefaultFeeCalculationStrategy } from '../../../src/model/transaction/FeeCalculationStrategy';
 import { AggregateTransactionService } from '../../../src/service/service';
+import { DerivationScheme } from "../../../src/core/crypto/DerivationScheme";
+import { Convert } from "../../../src/core/format/Convert";
 
 describe('AggregateTransaction', () => {
     let account: Account;
+    let accountV2: Account;
     const generationHash = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
     before(() => {
         account = TestingAccount;
+        accountV2 = TestingAccountV2;
     });
 
     it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
@@ -61,9 +66,9 @@ describe('AggregateTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        const aggregateTransaction = AggregateTransaction.createComplete(
+        const aggregateTransaction = AggregateTransaction.createCompleteV1(
             Deadline.create(),
-            [transferTransaction.toAggregate(account.publicAccount)],
+            [transferTransaction.toAggregateV1(account.publicAccount)],
             NetworkType.MIJIN_TEST,
             [],
         );
@@ -80,9 +85,9 @@ describe('AggregateTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        const aggregateTransaction = AggregateTransaction.createComplete(
+        const aggregateTransaction = AggregateTransaction.createCompleteV1(
             Deadline.create(),
-            [transferTransaction.toAggregate(account.publicAccount)],
+            [transferTransaction.toAggregateV1(account.publicAccount)],
             NetworkType.MIJIN_TEST,
             [],
             new UInt64([1, 0]),
@@ -101,13 +106,13 @@ describe('AggregateTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        const aggregateTransaction = AggregateTransaction.createComplete(
+        const aggregateTransaction = AggregateTransaction.createCompleteV1(
             Deadline.create(),
-            [transferTransaction.toAggregate(account.publicAccount)],
+            [transferTransaction.toAggregateV1(account.publicAccount)],
             NetworkType.MIJIN_TEST,
             []);
 
-        const signedTransaction = aggregateTransaction.signWith(account, generationHash);
+        const signedTransaction = aggregateTransaction.preV2SignWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(0, 8)).to.be.equal('D1000000');
         expect(signedTransaction.payload.substring(244, 260)).to.be.equal('5300000053000000');
@@ -125,14 +130,14 @@ describe('AggregateTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        const aggregateTransaction = AggregateTransaction.createComplete(
+        const aggregateTransaction = AggregateTransaction.createCompleteV1(
             Deadline.create(),
-            [registerNamespaceTransaction.toAggregate(account.publicAccount)],
+            [registerNamespaceTransaction.toAggregateV1(account.publicAccount)],
             NetworkType.MIJIN_TEST,
             [],
         );
 
-        const signedTransaction = aggregateTransaction.signWith(account, generationHash);
+        const signedTransaction = aggregateTransaction.preV2SignWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(0, 8)).to.be.equal('CD000000');
         expect(signedTransaction.payload.substring(244, 260)).to.be.equal('4F0000004F000000');
@@ -157,14 +162,14 @@ describe('AggregateTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        const aggregateTransaction = AggregateTransaction.createComplete(
+        const aggregateTransaction = AggregateTransaction.createCompleteV1(
             Deadline.create(),
-            [mosaicDefinitionTransaction.toAggregate(account.publicAccount)],
+            [mosaicDefinitionTransaction.toAggregateV1(account.publicAccount)],
             NetworkType.MIJIN_TEST,
             [],
         );
 
-        const signedTransaction = aggregateTransaction.signWith(account, generationHash);
+        const signedTransaction = aggregateTransaction.preV2SignWith(account, generationHash);
 
         //expect(signedTransaction.payload.substring(0, 8)).to.be.equal('C0000000');
         //expect(signedTransaction.payload.substring(244, 260)).to.be.equal('4200000042000000');
@@ -185,14 +190,14 @@ describe('AggregateTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        const aggregateTransaction = AggregateTransaction.createComplete(
+        const aggregateTransaction = AggregateTransaction.createCompleteV1(
             Deadline.create(),
-            [mosaicSupplyChangeTransaction.toAggregate(account.publicAccount)],
+            [mosaicSupplyChangeTransaction.toAggregateV1(account.publicAccount)],
             NetworkType.MIJIN_TEST,
             [],
         );
 
-        const signedTransaction = aggregateTransaction.signWith(account, generationHash);
+        const signedTransaction = aggregateTransaction.preV2SignWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(0, 8)).to.be.equal('B9000000');
         expect(signedTransaction.payload.substring(244, 260)).to.be.equal('3B0000003B000000');
@@ -219,14 +224,14 @@ describe('AggregateTransaction', () => {
                 )],
             NetworkType.MIJIN_TEST,
         );
-        const aggregateTransaction = AggregateTransaction.createComplete(
+        const aggregateTransaction = AggregateTransaction.createCompleteV1(
             Deadline.create(),
-            [modifyMultisigAccountTransaction.toAggregate(account.publicAccount)],
+            [modifyMultisigAccountTransaction.toAggregateV1(account.publicAccount)],
             NetworkType.MIJIN_TEST,
             [],
         );
 
-        const signedTransaction = aggregateTransaction.signWith(account, generationHash);
+        const signedTransaction = aggregateTransaction.preV2SignWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(0, 8)).to.be.equal('ED000000');
         expect(signedTransaction.payload.substring(244, 260)).to.be.equal('6F0000006F000000');
@@ -245,12 +250,12 @@ describe('AggregateTransaction', () => {
             PlainMessage.create('test-message'),
             NetworkType.MIJIN_TEST,
         );
-        const aggregateTransaction = AggregateTransaction.createComplete(Deadline.create(),
-            [transferTransaction.toAggregate(MultisigAccount.publicAccount)],
+        const aggregateTransaction = AggregateTransaction.createCompleteV1(Deadline.create(),
+            [transferTransaction.toAggregateV1(MultisigAccount.publicAccount)],
             NetworkType.MIJIN_TEST,
             [],
         );
-        const signedTransaction = CosignatoryAccount.signTransactionWithCosignatories(
+        const signedTransaction = CosignatoryAccount.signTransactionWithCosignatoriesV1(
             aggregateTransaction,
             [Cosignatory2Account],
             generationHash,
@@ -321,17 +326,18 @@ describe('AggregateTransaction', () => {
                             ],
                             signer: 'B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF',
                             type: 16725,
-                            version: 36865,
+                            version: 2415919105,
                         },
                     },
                 ],
                 type: 16705,
-                version: 36865,
+                version: 2415919105,
             },
         };
 
         const aggregateTransaction = CreateTransactionFromDTO(
             aggregateTransactionDTO) as AggregateTransaction;
+        console.log(aggregateTransaction.cosignatures);
         expect(aggregateTransaction.signedByAccount(
             PublicAccount.createFromPublicKey('A5F82EC8EBB341427B6785C8111906CD0DF18838FB11B51CE0E18B5E79DFF630',
                 NetworkType.MIJIN_TEST))).to.be.equal(true);
@@ -343,8 +349,8 @@ describe('AggregateTransaction', () => {
                 NetworkType.MIJIN_TEST))).to.be.equal(false);
     });
 
-    it('should have type 0x4141 when it\'s complete', () => {
-        const aggregateTransaction = AggregateTransaction.createComplete(
+    it('should have type 0x4141 when it\'s completeV1', () => {
+        const aggregateTransaction = AggregateTransaction.createCompleteV1(
             Deadline.create(),
             [],
             NetworkType.MIJIN_TEST,
@@ -354,8 +360,8 @@ describe('AggregateTransaction', () => {
         expect(aggregateTransaction.type).to.be.equal(0x4141);
     });
 
-    it('should have type 0x4241 when it\'s bonded', () => {
-        const aggregateTransaction = AggregateTransaction.createBonded(
+    it('should have type 0x4241 when it\'s bondedV1', () => {
+        const aggregateTransaction = AggregateTransaction.createBondedV1(
             Deadline.create(),
             [],
             NetworkType.MIJIN_TEST,
@@ -363,6 +369,28 @@ describe('AggregateTransaction', () => {
 
         expect(aggregateTransaction.type).to.be.equal(0x4241);
     });
+
+    it('should have type 0x4341 when it\'s complete', () => {
+        const aggregateTransaction = AggregateTransaction.createComplete(
+            Deadline.create(),
+            [],
+            NetworkType.MIJIN_TEST,
+        );
+
+        expect(aggregateTransaction.type).to.be.equal(0x4341);
+    });
+
+
+    it('should have type 0x4441 when it\'s bonded', () => {
+        const aggregateTransaction = AggregateTransaction.createBonded(
+            Deadline.create(),
+            [],
+            NetworkType.MIJIN_TEST,
+        );
+
+        expect(aggregateTransaction.type).to.be.equal(0x4441);
+    });
+
 
     it('should throw exception when adding an aggregated transaction as inner transaction', () => {
         const transferTransaction = TransferTransaction.create(
@@ -373,28 +401,138 @@ describe('AggregateTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        const aggregateTransaction = AggregateTransaction.createComplete(
+        const aggregateTransaction = AggregateTransaction.createCompleteV1(
             Deadline.create(),
-            [transferTransaction.toAggregate(account.publicAccount)],
+            [transferTransaction.toAggregateV1(account.publicAccount)],
             NetworkType.MIJIN_TEST,
             []);
 
         expect(() => {
-            AggregateTransaction.createComplete(
+            AggregateTransaction.createCompleteV1(
                 Deadline.create(),
-                [aggregateTransaction.toAggregate(account.publicAccount)],
+                [aggregateTransaction.toAggregateV1(account.publicAccount)],
                 NetworkType.MIJIN_TEST,
                 []);
         }).to.throw(Error, 'Inner transaction cannot be an aggregated transaction.');
     });
 
-    it('Should create signed transaction with cosignatories - Aggregated Complete', () => {
-        /**
-         * https://github.com/nemtech/nem2-sdk-typescript-javascript/issues/112
-         */
+    it('should throw exception when unknown publicAccount version try to set as signer of inner txn with aggregate v2 transaction', () => {
+        const transferTransaction = TransferTransaction.create(
+            Deadline.create(1, ChronoUnit.HOURS),
+            Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC'),
+            [],
+            PlainMessage.create('test-message'),
+            NetworkType.MIJIN_TEST,
+        );
+
+        expect(() => {
+            AggregateTransaction.createComplete(
+                Deadline.create(),
+                [
+                    transferTransaction.toAggregate(
+                     PublicAccount.createFromPublicKey(accountV2.publicKey, NetworkType.MIJIN_TEST)
+                    )
+                ],
+                NetworkType.MIJIN_TEST,
+                []);
+        }).to.throw(Error, 'Signer missing version, please specify to aggregate transaction');
+    });
+
+    it('v2 should able to support both v1 and v2 account to aggregate transaction with correct scheme in version', () => {
+        const transferTransaction = TransferTransaction.create(
+            Deadline.create(1, ChronoUnit.HOURS),
+            Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC'),
+            [],
+            PlainMessage.create('test-message'),
+            NetworkType.MIJIN_TEST,
+        );
+
+        const transferTransaction2 = TransferTransaction.create(
+            Deadline.create(1, ChronoUnit.HOURS),
+            Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC'),
+            [],
+            PlainMessage.create('test-message'),
+            NetworkType.MIJIN_TEST,
+        );
+
+        const aggregateTransaction = AggregateTransaction.createBonded(
+            Deadline.create(),
+            [
+                transferTransaction.toAggregate(account.publicAccount),
+                transferTransaction2.toAggregate(accountV2.publicAccount)
+            ],
+            NetworkType.MIJIN_TEST,
+            []
+        );
+
+        expect(aggregateTransaction.innerTransactions[0].version.dScheme).to.be.equal(1);
+        expect(aggregateTransaction.innerTransactions[1].version.dScheme).to.be.equal(2);
+    });
+
+    it('Should create signed transaction with cosignatories - Aggregated CompleteV1', () => {
+
         const accountAlice = TestingAccount;
         const accountBob = CosignatoryAccount;
         const accountCarol = Cosignatory2Account;
+
+        const AtoBTx = TransferTransaction.create(Deadline.create(),
+                                                  accountBob.address,
+                                                  [],
+                                                  PlainMessage.create('a to b'),
+                                                  NetworkType.MIJIN_TEST);
+        const BtoATx = TransferTransaction.create(Deadline.create(),
+                                                  accountAlice.address,
+                                                  [],
+                                                  PlainMessage.create('b to a'),
+                                                  NetworkType.MIJIN_TEST);
+        const CtoATx = TransferTransaction.create(Deadline.create(),
+                                                  accountAlice.address,
+                                                  [],
+                                                  PlainMessage.create('c to a'),
+                                                  NetworkType.MIJIN_TEST);
+
+        // 01. Alice creates the aggregated tx and serialize it, Then payload send to Bob & Carol
+        const aggregateTransactionPayload = AggregateTransaction.createCompleteV1(
+            Deadline.create(),
+            [
+                AtoBTx.toAggregateV1(accountAlice.publicAccount),
+                BtoATx.toAggregateV1(accountBob.publicAccount),
+                CtoATx.toAggregateV1(accountCarol.publicAccount)],
+            NetworkType.MIJIN_TEST,
+            [],
+        ).serialize();
+
+        const aggregateTxnPayloadSize = aggregateTransactionPayload.length;
+
+        // 02.1 Bob cosigns the tx and sends it back to Alice
+        const signedTxBob = CosignatureTransaction.signTransactionPayload(accountBob, aggregateTransactionPayload, generationHash);
+
+        // 02.2 Carol cosigns the tx and sends it back to Alice
+        const signedTxCarol = CosignatureTransaction.signTransactionPayload(accountCarol, aggregateTransactionPayload, generationHash);
+
+        // 03. Alice collects the cosignatures, recreate, sign, and announces the transaction
+
+        // First Alice need to append cosignatories to current transaction.
+        const cosignatureSignedTransactions = [
+            CosignatureSignedTransaction.create(signedTxBob.parentHash, signedTxBob.signature, DerivationScheme.Ed25519Sha3, signedTxBob.signer),
+            CosignatureSignedTransaction.create(signedTxCarol.parentHash, signedTxCarol.signature, DerivationScheme.Ed25519Sha3, signedTxCarol.signer),
+        ];
+
+        const recreatedTx = TransactionMapping.createFromPayload(aggregateTransactionPayload) as AggregateTransaction;
+
+        const signedTransaction = recreatedTx.signTransactionGivenSignaturesV1(accountAlice, cosignatureSignedTransactions, generationHash);
+
+        expect(signedTransaction.type).to.be.equal(TransactionType.AGGREGATE_COMPLETE_V1);
+        expect(signedTransaction.signer).to.be.equal(accountAlice.publicKey);
+        expect(signedTransaction.payload.indexOf(accountBob.publicKey) > -1).to.be.true;
+        expect(signedTransaction.payload.indexOf(accountCarol.publicKey) > -1).to.be.true;
+        expect(signedTransaction.payload.length).to.be.equal(aggregateTxnPayloadSize + (96 * 2 * 2));
+    });
+
+    it('Should create signed transaction with cosignatories - Aggregated Complete V2', () => {
+        const accountAlice = TestingAccountV2;
+        const accountBob = CosignatoryAccountV2;
+        const accountCarol = Cosignatory2AccountV2;
 
         const AtoBTx = TransferTransaction.create(Deadline.create(),
                                                   accountBob.address,
@@ -423,6 +561,8 @@ describe('AggregateTransaction', () => {
             [],
         ).serialize();
 
+        const aggregateTxnPayloadSize = aggregateTransactionPayload.length;
+
         // 02.1 Bob cosigns the tx and sends it back to Alice
         const signedTxBob = CosignatureTransaction.signTransactionPayload(accountBob, aggregateTransactionPayload, generationHash);
 
@@ -433,18 +573,19 @@ describe('AggregateTransaction', () => {
 
         // First Alice need to append cosignatories to current transaction.
         const cosignatureSignedTransactions = [
-            new CosignatureSignedTransaction(signedTxBob.parentHash, signedTxBob.signature, signedTxBob.signer),
-            new CosignatureSignedTransaction(signedTxCarol.parentHash, signedTxCarol.signature, signedTxCarol.signer),
+            CosignatureSignedTransaction.createFromAccVersion(signedTxBob.parentHash, signedTxBob.signature, accountBob.version, signedTxBob.signer),
+            CosignatureSignedTransaction.createFromAccVersion(signedTxCarol.parentHash, signedTxCarol.signature, accountCarol.version, signedTxCarol.signer),
         ];
 
         const recreatedTx = TransactionMapping.createFromPayload(aggregateTransactionPayload) as AggregateTransaction;
 
         const signedTransaction = recreatedTx.signTransactionGivenSignatures(accountAlice, cosignatureSignedTransactions, generationHash);
 
-        expect(signedTransaction.type).to.be.equal(TransactionType.AGGREGATE_COMPLETE);
+        expect(signedTransaction.type).to.be.equal(TransactionType.AGGREGATE_COMPLETE_V2);
         expect(signedTransaction.signer).to.be.equal(accountAlice.publicKey);
         expect(signedTransaction.payload.indexOf(accountBob.publicKey) > -1).to.be.true;
         expect(signedTransaction.payload.indexOf(accountCarol.publicKey) > -1).to.be.true;
+        expect(signedTransaction.payload.length).to.be.equal(aggregateTxnPayloadSize + (97 * 2 * 2));
     });
 
     describe('size', () => {
@@ -458,9 +599,9 @@ describe('AggregateTransaction', () => {
                 PlainMessage.create('NEM'),
                 NetworkType.MIJIN_TEST,
             );
-            const aggregateTransaction = AggregateTransaction.createBonded(
+            const aggregateTransaction = AggregateTransaction.createBondedV1(
                 Deadline.create(),
-                [transaction.toAggregate(account.publicAccount)],
+                [transaction.toAggregateV1(account.publicAccount)],
                 NetworkType.MIJIN_TEST,
                 [],
             );

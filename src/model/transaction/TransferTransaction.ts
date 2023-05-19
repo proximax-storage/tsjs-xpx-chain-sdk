@@ -28,7 +28,7 @@ import { Message } from './Message';
 import { Transaction } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
-import { TransactionVersion } from './TransactionVersion';
+import { TransactionTypeVersion } from './TransactionTypeVersion';
 import { EmptyMessage } from './PlainMessage';
 import { calculateFee } from './FeeCalculationStrategy';
 
@@ -193,7 +193,7 @@ export class TransferTransactionBuilder extends TransactionBuilder {
     public build(): TransferTransaction {
         return new TransferTransaction(
             this._networkType,
-            this._version || TransactionVersion.TRANSFER,
+            this._version || TransactionTypeVersion.TRANSFER,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(TransferTransaction.calculateSize(this._message.size(), this._mosaics.length), this._feeCalculationStrategy),
             this._recipient,

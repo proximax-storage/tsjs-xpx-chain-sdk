@@ -19,11 +19,13 @@
  * 1 - Main account that is linked to a remote harvester account.
  * 2 - Remote harvester account that is linked to a balance-holding account.
  * 3 - Remote harvester eligible account that is unlinked.
+ * 4 - Locked account that is locked after v2 upgrade transaction 
  */
 
  export enum AccountType {
-    Unlinked = 0,
-    Main = 1,
-    Remote = 2,
-    Remote_Unlinked = 3,
+    Unlinked,
+    Main,
+    Remote,
+    Remote_Unlinked,
+    Locked
 }

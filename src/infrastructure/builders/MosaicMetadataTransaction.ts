@@ -10,7 +10,7 @@ import { VerifiableTransaction } from './VerifiableTransaction';
 import MosaicMetadataTransactionSchema from '../schemas/MosaicMetadataTransactionSchema';
 import {MetadataTransactionBuffer} from '../buffers/MetadataTransactionBuffer';
 
-const { flatbuffers } = require('flatbuffers');
+import * as flatbuffers from 'flatbuffers';
 
 export default class MosaicMetadataTransaction extends VerifiableTransaction {
     constructor(bytes) {
@@ -106,7 +106,9 @@ export class Builder {
     build() {
         const builder = new flatbuffers.Builder(1);
 
-        const targetIdUint8 = new Uint32Array(this.targetMosaicId);
+        const targetIdUint32 = new Uint32Array(this.targetMosaicId);
+        const valueSizeDeltaUint8Array = new Uint8Array([this.valueSizeDelta, this.valueSizeDelta >> 8]);
+        const valueSizeUint8Array = new Uint8Array([this.valueSize, this.valueSize >> 8]);
 
         // Create vectors
         const signatureVector = MetadataTransactionBuffer
@@ -116,9 +118,11 @@ export class Builder {
         const feeVector = MetadataTransactionBuffer.createMaxFeeVector(builder, this.fee);
         const targetKeyVector = MetadataTransactionBuffer.createTargetKeyVector(builder, convert.hexToUint8(this.targetPublicKey));
         const scopedMetadataKeyVector = MetadataTransactionBuffer.createScopedMetadataKeyVector(builder, this.scopedMetadataKey);
-        const targetIdVector = MetadataTransactionBuffer.createTargetIdVector(builder, targetIdUint8);
+        const targetIdVector = MetadataTransactionBuffer.createTargetIdVector(builder, targetIdUint32);
+        const valueSizeDeltaVector = MetadataTransactionBuffer.createValueSizeDeltaVector(builder, valueSizeDeltaUint8Array);
+        const valueSizeVector = MetadataTransactionBuffer.createValueSizeDeltaVector(builder, valueSizeUint8Array);
         const valueVector = MetadataTransactionBuffer.createValueVector(builder, this.valueDifferences);
-
+        
         MetadataTransactionBuffer.startMetadataTransactionBuffer(builder);
         MetadataTransactionBuffer.addSize(builder, this.size);
         MetadataTransactionBuffer.addSignature(builder, signatureVector);
@@ -130,8 +134,8 @@ export class Builder {
         MetadataTransactionBuffer.addTargetKey(builder, targetKeyVector);
         MetadataTransactionBuffer.addScopedMetadataKey(builder, scopedMetadataKeyVector);
         MetadataTransactionBuffer.addTargetId(builder, targetIdVector);
-        MetadataTransactionBuffer.addValueSizeDelta(builder, this.valueSizeDelta);
-        MetadataTransactionBuffer.addValueSize(builder, this.valueSize);    
+        MetadataTransactionBuffer.addValueSizeDelta(builder, valueSizeDeltaVector);
+        MetadataTransactionBuffer.addValueSize(builder, valueSizeVector);
         MetadataTransactionBuffer.addValue(builder, valueVector);
 
         const codedTransfer = MetadataTransactionBuffer.endMetadataTransactionBuffer(builder);

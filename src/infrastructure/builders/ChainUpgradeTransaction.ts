@@ -14,7 +14,7 @@ const {
     CatapultUpgradeTransactionBuffer,
 } = CatapultUpgradeTransactionBufferPackage.Buffers;
 
-import {flatbuffers} from 'flatbuffers';
+import * as flatbuffers from 'flatbuffers';
 
 export default class ChainUpgradeTransaction extends VerifiableTransaction {
     constructor(bytes) {

@@ -96,12 +96,12 @@ describe('CosignatureTransaction', () => {
                             recipient: '9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142',
                             signer: 'B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF',
                             type: 16724,
-                            version: 36865,
+                            version: 2415919105,
                         },
                     },
                 ],
                 type: 16705,
-                version: 36865,
+                version: 2415919105,
             },
         };
 
@@ -109,7 +109,7 @@ describe('CosignatureTransaction', () => {
 
         const cosignatureTransaction = CosignatureTransaction.create(aggregateTransferTransaction as AggregateTransaction);
 
-        const cosignatureSignedTransaction = account.signCosignatureTransaction(cosignatureTransaction);
+        const cosignatureSignedTransaction = account.preV2SignCosignatureTransaction(cosignatureTransaction);
 
         expect(cosignatureSignedTransaction.parentHash).to.be.equal(aggregateTransferTransaction.transactionInfo!.hash);
         expect(cosignatureSignedTransaction.signature).to.be.equal('BF3BC39F2292C028CB0FFA438A9F567A7C4D7' +

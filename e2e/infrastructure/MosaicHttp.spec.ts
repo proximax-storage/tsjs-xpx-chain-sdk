@@ -80,7 +80,7 @@ describe('MosaicHttp', () => {
                 .build();
 
             namespaceId = new NamespaceId(namespaceName);
-            const signedTransaction = registerNamespaceTransaction.signWith(TestingAccount, factory.generationHash);
+            const signedTransaction = registerNamespaceTransaction.preV2SignWith(TestingAccount, factory.generationHash);
 
             validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
 
@@ -106,7 +106,7 @@ describe('MosaicHttp', () => {
                 }))
                 .build();
 
-            const signedTransaction = mosaicDefinitionTransaction.signWith(TestingAccount, factory.generationHash);
+            const signedTransaction = mosaicDefinitionTransaction.preV2SignWith(TestingAccount, factory.generationHash);
 
             validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
 
@@ -122,7 +122,7 @@ describe('MosaicHttp', () => {
                 .mosaicId(mosaicId)
                 .build();
 
-            const signedTransaction = mosaicAliasTransaction.signWith(TestingAccount, factory.generationHash);
+            const signedTransaction = mosaicAliasTransaction.preV2SignWith(TestingAccount, factory.generationHash);
 
             validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
 
@@ -138,7 +138,7 @@ describe('MosaicHttp', () => {
                 .mosaicId(mosaicId)
                 .build();
 
-            const signedTransaction = modifyMosaicLevyTransaction.signWith(TestingAccount, factory.generationHash);
+            const signedTransaction = modifyMosaicLevyTransaction.preV2SignWith(TestingAccount, factory.generationHash);
 
             validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
 
@@ -152,7 +152,7 @@ describe('MosaicHttp', () => {
                 .mosaicId(mosaicId)
                 .build();
 
-            const signedTransaction = removeMosaicLevyTransaction.signWith(TestingAccount, factory.generationHash);
+            const signedTransaction = removeMosaicLevyTransaction.preV2SignWith(TestingAccount, factory.generationHash);
 
             validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
 

@@ -1,4 +1,5 @@
 /*
+ * Copyright 2023 ProximaX
  * Copyright 2018 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +15,10 @@
  * limitations under the License.
  */
 
+import { DerivationScheme } from "../../core/crypto";
+import { Convert } from "../../core/format";
+import { PublicAccount } from "../../model/account/PublicAccount";
+
 /**
  * Co-signature signed transaction.
  */
@@ -21,6 +26,7 @@ export class CosignatureSignedTransaction {
     /**
      * @param parentHash
      * @param signature
+     * @param scheme
      * @param signer
      */
     constructor(
@@ -33,7 +39,35 @@ export class CosignatureSignedTransaction {
                  */
                 public readonly signature: string,
                 /**
+                 * The derivation scheme
+                 */
+                public readonly scheme: string,
+                /**
                  * The signer of the transaction.
                  */
                 public readonly signer: string) {}
+
+
+    public static create(
+        parentHash: string,
+        signature: string,
+        dScheme: DerivationScheme,
+        signer: string
+    ){
+        return new CosignatureSignedTransaction(parentHash, signature, Convert.uint8ToHex(dScheme), signer);
+    }
+
+    public static createFromAccVersion(
+        parentHash: string,
+        signature: string,
+        accVersion: number,
+        signer: string
+    ){
+        return new CosignatureSignedTransaction(
+            parentHash, 
+            signature, 
+            Convert.uint8ToHex(PublicAccount.getDerivationSchemeFromAccVersion(accVersion)), 
+            signer
+        );
+    }
 }

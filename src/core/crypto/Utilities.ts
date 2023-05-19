@@ -1,4 +1,5 @@
 /*
+ * Copyright 2023 ProximaX
  * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +16,9 @@
  */
 import { RawArray as array } from '../format';
 import * as nacl from './nacl_catapult';
+import { DerivationScheme } from './DerivationScheme';
 import { SHA3Hasher as sha3Hasher } from './SHA3Hasher';
-import { SignSchema } from './SignSchema';
+import { SHA2Hasher as sha2Hasher } from './SHA2Hasher';
 export const CryptoJS = require('crypto-js');
 export const Key_Size = 32;
 export const Signature_Size = 64;
@@ -61,10 +63,45 @@ export const words2ua = (destUa, cryptoWords) => {
     return destUa;
 };
 
-export const catapult_hash = {
+export const catapult_hash_sha3 = {
     func: sha3Hasher.func,
     createHasher: sha3Hasher.createHasher,
 };
+
+export const catapult_hash_sha2 = {
+    func: sha2Hasher.func,
+    createHasher: sha2Hasher.createHasher,
+};
+
+export const getHasherFuncFromAccountVersion = (accVersion: number) =>{
+
+    if(accVersion === 2){
+        return catapult_hash_sha2.func;
+    }
+    else{
+        return catapult_hash_sha3.func;
+    }
+}
+
+export const getHasherFuncFromDerivationScheme = (dScheme: DerivationScheme) =>{
+
+    if(dScheme === DerivationScheme.Ed25519Sha2){
+        return catapult_hash_sha2.func;
+    }
+    else{
+        return catapult_hash_sha3.func;
+    }
+}
+
+export const getHasherFromDerivationScheme = (dScheme: DerivationScheme) =>{
+
+    if(dScheme === DerivationScheme.Ed25519Sha2){
+        return catapult_hash_sha2.createHasher(64);
+    }
+    else{
+        return catapult_hash_sha3.createHasher(64);
+    }
+}
 
 // custom catapult crypto functions
 export const catapult_crypto = (function() {
@@ -74,9 +111,9 @@ export const catapult_crypto = (function() {
         d[31] |= 64;
     }
 
-    function prepareForScalarMult(sk, hashfunc, signSchema: SignSchema) {
+    function prepareForScalarMult(sk, hashfunc) {
         const d = new Uint8Array(Hash_Size);
-        hashfunc(d, sk, Hash_Size, signSchema);
+        hashfunc(d, sk, Hash_Size);
         clamp(d);
         return d;
     }
@@ -108,9 +145,9 @@ export const catapult_crypto = (function() {
     })();
 
     return {
-        extractPublicKey: (sk, hashfunc, signSchema: SignSchema) => {
+        extractPublicKey: (sk, hashfunc) => {
             const c = nacl;
-            const d = prepareForScalarMult(sk, hashfunc, signSchema);
+            const d = prepareForScalarMult(sk, hashfunc);
 
             const p = [c.gf(), c.gf(), c.gf(), c.gf()];
             const pk = new Uint8Array(Key_Size);
@@ -201,9 +238,9 @@ export const catapult_crypto = (function() {
             return 0 === c.crypto_verify_32(signature, 0, t, 0);
         },
 
-        deriveSharedKey: (salt, sk, pk, hashfunc, signSchema: SignSchema) => {
+        deriveSharedKey: (salt, sk, pk, hashfunc) => {
             const c = nacl;
-            const d = prepareForScalarMult(sk, hashfunc, signSchema);
+            const d = prepareForScalarMult(sk, hashfunc);
 
             // sharedKey = pack(p = d (derived from sk) * q (derived from pk))
             const q = [c.gf(), c.gf(), c.gf(), c.gf()];
@@ -218,7 +255,7 @@ export const catapult_crypto = (function() {
             }
             // return the hash of the result
             const sharedKeyHash = new Uint8Array(Key_Size);
-            hashfunc(sharedKeyHash, sharedKey, Key_Size, signSchema);
+            hashfunc(sharedKeyHash, sharedKey, Key_Size);
             return sharedKeyHash;
         },
     };

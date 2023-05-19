@@ -23,7 +23,7 @@ import * as SecretProofTransactionBufferPackage from '../buffers/SecretProofTran
 import SecretProofTransactionSchema from '../schemas/SecretProofTransactionSchema';
 import { VerifiableTransaction } from './VerifiableTransaction';
 
-import {flatbuffers} from 'flatbuffers';
+import * as flatbuffers from 'flatbuffers';
 
 const {
     SecretProofTransactionBuffer,

@@ -11,7 +11,7 @@ const {
     AddExchangeOfferBuffer,
 } = ExchangeOfferTransactionBufferPackage.Buffers;
 
-import {flatbuffers} from 'flatbuffers';
+import * as flatbuffers from 'flatbuffers';
 import AddExchangeOfferTransactionSchema from '../schemas/AddExchangeOfferTransactionSchema';
 
 /**

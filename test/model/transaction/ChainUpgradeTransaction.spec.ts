@@ -25,7 +25,7 @@ describe('ChainUpgradeTransaction', () => {
                 UInt64.fromHex("abcdefabcdefabcd"),
                 NetworkType.MIJIN_TEST
             );
-            const signedTransaction = chainUpgradeTransaction.signWith(account, generationHash);
+            const signedTransaction = chainUpgradeTransaction.preV2SignWith(account, generationHash);
 
             expect(chainUpgradeTransaction.size).to.be.equal(138);
             expect(signedTransaction.payload.length).to.be.equal(138 * 2);

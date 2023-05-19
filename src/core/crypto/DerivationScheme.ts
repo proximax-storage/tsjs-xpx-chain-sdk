@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 NEM
+ * Copyright 2023 ProximaX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,11 @@
  */
 
  /**
-  * [KECCAK_REVERSED_KEY]: Keccak hash algorithm with reversed private keys.
-  * [SHA3]: SHA3 hash algorithm without key reversal
+  * [Ed25519Sha3]: SHA3 hash algorithm - Account v1
+  * [Ed25519Sha2]: SHA2 hash algorithm - Account v2
   */
-export enum SignSchema {
-    KECCAK_REVERSED_KEY = 1,
-    SHA3 = 2,
+export enum DerivationScheme {
+  Unset,
+	Ed25519Sha3,
+	Ed25519Sha2
 }

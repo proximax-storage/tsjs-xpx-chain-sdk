@@ -27,7 +27,7 @@ const {
     RegisterNamespaceTransactionBuffer,
 } = NamespaceCreationTransactionBufferPackage.default.Buffers;
 
-import {flatbuffers} from 'flatbuffers';
+import * as flatbuffers from 'flatbuffers';
 
 export default class NamespaceCreationTransaction extends VerifiableTransaction {
     constructor(bytes) {

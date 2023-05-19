@@ -29,6 +29,7 @@ export class TransactionInfo {
      * @param id
      * @param hash
      * @param merkleComponentHash
+     * @param size
      */
     constructor(
                 /**

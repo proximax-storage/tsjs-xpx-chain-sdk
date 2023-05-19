@@ -277,12 +277,36 @@ export class AccountMetadataTransactionBuffer {
     builder.startVector(4, numElems, 4);
   }
 
-  static addValueSizeDelta(builder: flatbuffers.Builder, valueSizeDelta: number) {
-    builder.addFieldInt16(9, valueSizeDelta, 0);
+  static addValueSizeDelta(builder:flatbuffers.Builder, valueSizeDeltaOffset:flatbuffers.Offset) {
+    builder.addFieldOffset(9, valueSizeDeltaOffset, 0);
   }
-
-  static addValueSize(builder: flatbuffers.Builder, valueSize: number) {
-    builder.addFieldInt16(10, valueSize, 0);
+  
+  static createValueSizeDeltaVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset {
+    builder.startVector(1, data.length, 1);
+    for (let i = data.length - 1; i >= 0; i--) {
+      builder.addInt8(data[i]!);
+    }
+    return builder.endVector();
+  }
+  
+  static startValueSizeDeltaVector(builder:flatbuffers.Builder, numElems:number) {
+    builder.startVector(1, numElems, 1);
+  }
+  
+  static addValueSize(builder:flatbuffers.Builder, valueSizeOffset:flatbuffers.Offset) {
+    builder.addFieldOffset(10, valueSizeOffset, 0);
+  }
+  
+  static createValueSizeVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset {
+    builder.startVector(1, data.length, 1);
+    for (let i = data.length - 1; i >= 0; i--) {
+      builder.addInt8(data[i]!);
+    }
+    return builder.endVector();
+  }
+  
+  static startValueSizeVector(builder:flatbuffers.Builder, numElems:number) {
+    builder.startVector(1, numElems, 1);
   }
 
   static addValue(builder: flatbuffers.Builder, valueOffset: flatbuffers.Offset) {

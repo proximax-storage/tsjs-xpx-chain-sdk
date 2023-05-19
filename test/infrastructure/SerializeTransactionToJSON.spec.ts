@@ -38,7 +38,7 @@ import { AggregateTransaction } from '../../src/model/transaction/AggregateTrans
 import { Deadline } from '../../src/model/transaction/Deadline';
 import { HashType } from '../../src/model/transaction/HashType';
 import { LinkAction } from '../../src/model/transaction/LinkAction';
-import { LockFundsTransaction } from '../../src/model/transaction/LockFundsTransaction';
+import { HashLockTransaction } from '../../src/model/transaction/HashLockTransaction';
 import { ModifyMultisigAccountTransaction } from '../../src/model/transaction/ModifyMultisigAccountTransaction';
 import { MosaicAliasTransaction } from '../../src/model/transaction/MosaicAliasTransaction';
 import { MosaicDefinitionTransaction } from '../../src/model/transaction/MosaicDefinitionTransaction';
@@ -391,15 +391,15 @@ describe('SerializeTransactionToJSON', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        const aggregateTransaction = AggregateTransaction.createComplete(
+        const aggregateTransaction = AggregateTransaction.createCompleteV1(
             Deadline.create(),
-            [transferTransaction.toAggregate(account.publicAccount)],
+            [transferTransaction.toAggregateV1(account.publicAccount)],
             NetworkType.MIJIN_TEST,
             []);
 
         const json = aggregateTransaction.toJSON();
 
-        expect(json.transaction.type).to.be.equal(TransactionType.AGGREGATE_COMPLETE);
+        expect(json.transaction.type).to.be.equal(TransactionType.AGGREGATE_COMPLETE_V1);
         expect(json.transaction.transactions.length).to.be.equal(1);
         expect(json.transaction.transactions[0].transaction.type).to.be.equal(TransactionType.TRANSFER);
     });
@@ -413,30 +413,30 @@ describe('SerializeTransactionToJSON', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        const aggregateTransaction = AggregateTransaction.createBonded(
+        const aggregateTransaction = AggregateTransaction.createBondedV1(
             Deadline.create(),
-            [transferTransaction.toAggregate(account.publicAccount)],
+            [transferTransaction.toAggregateV1(account.publicAccount)],
             NetworkType.MIJIN_TEST,
             []);
 
         const json = aggregateTransaction.toJSON();
 
-        expect(json.transaction.type).to.be.equal(TransactionType.AGGREGATE_BONDED);
+        expect(json.transaction.type).to.be.equal(TransactionType.AGGREGATE_BONDED_V1);
         expect(json.transaction.transactions.length).to.be.equal(1);
         expect(json.transaction.transactions[0].transaction.type).to.be.equal(TransactionType.TRANSFER);
     });
 
-    it('should create LockFundTransaction', () => {
+    it('should create HashLockTransaction', () => {
         const generationHash = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
         const mosaic = NetworkCurrencyMosaic.createRelative(10);
-        const aggregateTransaction = AggregateTransaction.createBonded(
+        const aggregateTransaction = AggregateTransaction.createBondedV1(
             Deadline.create(),
             [],
             NetworkType.MIJIN_TEST,
             [],
         );
-        const signedTransaction = account.sign(aggregateTransaction, generationHash);
-        const lockTransaction = LockFundsTransaction.create(Deadline.create(),
+        const signedTransaction = account.preV2Sign(aggregateTransaction, generationHash);
+        const lockTransaction = HashLockTransaction.create(Deadline.create(),
             mosaic,
             UInt64.fromUint(10),
             signedTransaction,
@@ -444,7 +444,7 @@ describe('SerializeTransactionToJSON', () => {
 
         const json = lockTransaction.toJSON();
 
-        expect(json.transaction.type).to.be.equal(TransactionType.LOCK);
+        expect(json.transaction.type).to.be.equal(TransactionType.HASH_LOCK);
         expect(json.transaction.hash).to.be.equal(signedTransaction.hash);
         deepStrictEqual(json.transaction.mosaicId, mosaic.id.id.toDTO());
         deepStrictEqual(json.transaction.amount, mosaic.amount.toDTO());

@@ -25,12 +25,12 @@ describe('SimpleWallet', () => {
         const simpleWallet = SimpleWallet.create('wallet-name', new Password('password'), NetworkType.MIJIN_TEST);
         expect(simpleWallet.name).to.be.equal('wallet-name');
         expect(simpleWallet.network).to.be.equal(NetworkType.MIJIN_TEST);
-        expect(simpleWallet.schema).to.be.equal('simple_v2');
+        expect(simpleWallet.schema).to.be.equal('sirius_dual');
     });
 
     it('should createComplete a new wallet with privateKey', () => {
         const privateKey = '5149a02ca2b2610138376717daaff8477f1639796aa108b7eee83e99e585b250';
-        const account = Account.createFromPrivateKey(privateKey, NetworkType.MIJIN_TEST);
+        const account = Account.createFromPrivateKey(privateKey, NetworkType.MIJIN_TEST, 1);
         const simpleWallet = SimpleWallet.createFromPrivateKey('wallet-name', new Password('password'), privateKey, NetworkType.MIJIN_TEST);
         expect(simpleWallet.name).to.be.equal('wallet-name');
         expect(simpleWallet.network).to.be.equal(NetworkType.MIJIN_TEST);

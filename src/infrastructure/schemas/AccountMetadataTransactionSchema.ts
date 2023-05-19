@@ -1,4 +1,4 @@
-// Copyright 2019 ProximaX Limited. All rights reserved.
+// Copyright 2023 ProximaX Limited. All rights reserved.
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file
 
@@ -22,8 +22,8 @@ const schema = new Schema([
 	array('deadline', TypeSize.INT),
 	array('targetAddress'),
 	array('scopedMetadataKey', TypeSize.INT),
-	short('valueSizeDelta'),
-	ushort('valueSize'),
+	array('valueSizeDelta'),
+	array('valueSize'),
 	array('value')
 ]);
 export default schema;

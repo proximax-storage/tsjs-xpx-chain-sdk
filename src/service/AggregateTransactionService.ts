@@ -162,15 +162,43 @@ export class AggregateTransactionService {
     public static addCosignatures(signedTransaction: SignedTransaction, cosignatures: CosignatureSignedTransaction[]): SignedTransaction {
         // re-create the transaction from payload to determine the type - only allow aggregate complete transaction as an input
         const recreatedSignedTx = TransactionMapping.createFromPayload(signedTransaction.payload);
-        if (recreatedSignedTx.type !== TransactionType.AGGREGATE_COMPLETE) {
-            throw new Error('Only serialized signed aggregate complete transaction allowed.');
+        if (recreatedSignedTx.type !== TransactionType.AGGREGATE_COMPLETE_V2) {
+            throw new Error('Only serialized signed aggregate complete v2 transaction allowed.');
         }
         const recreatedSignedAggregateComplete = recreatedSignedTx as AggregateTransaction;
 
         const signedTransactionRaw = AggregatedTransactionCore.appendSignatures(
             signedTransaction,
             cosignatures.filter(cosignature => ! recreatedSignedAggregateComplete.signedByAccount(
-                    PublicAccount.createFromPublicKey(cosignature.signer, recreatedSignedAggregateComplete.networkType))));
+                    PublicAccount.createFromPublicKey(cosignature.signer, recreatedSignedAggregateComplete.version.networkType))));
+
+        return new SignedTransaction(
+            signedTransactionRaw.payload,
+            signedTransaction.hash,
+            signedTransaction.signer,
+            signedTransaction.type,
+            signedTransaction.networkType
+        );
+    }
+
+    /**
+     * Appends cosignatures to a signed aggregate transaction, if they are not yet added
+     *
+     * @param signedTransaction
+     * @param cosignatures
+     */
+    public static addCosignaturesV1(signedTransaction: SignedTransaction, cosignatures: CosignatureSignedTransaction[]): SignedTransaction {
+        // re-create the transaction from payload to determine the type - only allow aggregate complete transaction as an input
+        const recreatedSignedTx = TransactionMapping.createFromPayload(signedTransaction.payload);
+        if (recreatedSignedTx.type !== TransactionType.AGGREGATE_COMPLETE_V1) {
+            throw new Error('Only serialized signed aggregate complete v1 transaction allowed.');
+        }
+        const recreatedSignedAggregateComplete = recreatedSignedTx as AggregateTransaction;
+
+        const signedTransactionRaw = AggregatedTransactionCore.appendSignaturesV1(
+            signedTransaction,
+            cosignatures.filter(cosignature => ! recreatedSignedAggregateComplete.signedByAccount(
+                    PublicAccount.createFromPublicKey(cosignature.signer, recreatedSignedAggregateComplete.version.networkType))));
 
         return new SignedTransaction(
             signedTransactionRaw.payload,

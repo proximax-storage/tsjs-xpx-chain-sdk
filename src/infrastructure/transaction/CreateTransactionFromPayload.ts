@@ -16,7 +16,7 @@
  */
 
 import { Convert as convert } from '../../core/format';
-import { decode } from 'utf8';
+// import { decode } from 'utf8';
 import { Address } from '../../model/account/Address';
 import { PublicAccount } from '../../model/account/PublicAccount';
 import { NetworkType } from '../../model/blockchain/NetworkType';
@@ -29,6 +29,7 @@ import { NamespaceId } from '../../model/namespace/NamespaceId';
 import { NamespaceType } from '../../model/namespace/NamespaceType';
 import { AccountRestrictionModification } from '../../model/transaction/AccountRestrictionModification';
 import { AggregateTransactionCosignature } from '../../model/transaction/AggregateTransactionCosignature';
+import { AggregateV2TransactionCosignature } from '../../model/transaction/AggregateV2TransactionCosignature';
 import { Deadline } from '../../model/transaction/Deadline';
 import { EncryptedMessage } from '../../model/transaction/EncryptedMessage';
 import { Message } from '../../model/transaction/Message';
@@ -46,6 +47,9 @@ import { SdaExchangeOffer } from '../../model/transaction/SdaExchangeOffer';
 import { RemoveSdaExchangeOffer } from '../../model/transaction/RemoveSdaExchangeOffer';
 import { HexadecimalMessage } from '../../model/transaction/HexadecimalMessage';
 import { TransactionHash } from '../../model/transaction/TransactionHash';
+import { TransactionMapUtility } from "./TransactionMapUtility";
+import { TransactionVersion } from "../../model/transaction/TransactionVersion";
+import {UnknownTransaction} from '../../model/transaction/UnknownTransaction';
 
 /**
  * @internal
@@ -73,12 +77,19 @@ export const CreateTransactionFromPayload = (transactionBinary: string): Transac
     const transactionOffset = deadlineOffset + deadlineLength;
 
     // Transaction byte data
-    const networkType = extractNetwork(transactionBinary.substring(versionOffset, typeOffset));
-    const type = extractNumberFromHex(transactionBinary.substring(typeOffset, feeOffset));
-    const deadline = UInt64.fromHex(reverse(transactionBinary.substring(deadlineOffset, transactionOffset))).toDTO();
+    const transactionVersion = TransactionVersion.createFromPayloadHex(transactionBinary.substring(versionOffset, typeOffset));
+    // const networkType = transactionVersion.networkType;//extractNetworkFromHexPayload(transactionBinary.substring(versionOffset, typeOffset));
+    // const dScheme = transactionVersion.dScheme;
+    // const accountVersion = PublicAccount.getAccVersionFromDerivationScheme(dScheme);
+    const type = extractNumberFromHexReverse(transactionBinary.substring(typeOffset, feeOffset));
+    const maxFee = UInt64.fromHex(reverseHexString(transactionBinary.substring(feeOffset, deadlineOffset)));
+    const deadline = UInt64.fromHex(reverseHexString(transactionBinary.substring(deadlineOffset, transactionOffset))).toDTO();
     const transactionData = transactionBinary.substring(transactionOffset);
+    
+    let txn = CreateTransaction(type, transactionData, transactionVersion, deadline);
+    txn.maxFee = maxFee;
 
-    return CreateTransaction(type, transactionData, networkType, deadline);
+    return txn;
 };
 
 /**
@@ -89,10 +100,11 @@ export const CreateTransactionFromPayload = (transactionBinary: string): Transac
  * @param deadline - Deadline
  * @returns {Transaction}
  */
-const CreateTransaction = (type: number, transactionData: string, networkType: NetworkType, deadline: number[]): Transaction => {
+const CreateTransaction = (type: number, transactionData: string, txnVersion: TransactionVersion, deadline: number[]): Transaction => {
     const factory = new TransactionBuilderFactory();
-    factory.networkType = networkType;
+    factory.networkType = txnVersion.networkType;
     factory.createNewDeadlineFn = () => Deadline.createFromDTO(deadline);
+    // const accVersion = PublicAccount.getAccVersionFromDerivationScheme(transactionVersion.dScheme);
 
     switch (type) {
         case TransactionType.MODIFY_ACCOUNT_RESTRICTION_ADDRESS:
@@ -111,31 +123,33 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
             switch (type) {
                 case TransactionType.MODIFY_ACCOUNT_RESTRICTION_ADDRESS:
                     return factory.accountRestrictionAddress()
-                        .restrictionType(extractNumberFromHex(propertyType))
+                        .restrictionType(extractNumberFromHexReverse(propertyType))
                         .modifications(modificationArray ? modificationArray.map((modification) => new AccountRestrictionModification(
-                            extractNumberFromHex(modification.substring(0, 2)),
+                            extractNumberFromHexReverse(modification.substring(0, 2)),
                             Address.createFromEncoded(modification.substring(2, modification.length)).plain(),
                         )) : [])
                         .build();
                 case TransactionType.MODIFY_ACCOUNT_RESTRICTION_MOSAIC:
                     return factory.accountRestrictionMosaic()
-                        .restrictionType(extractNumberFromHex(propertyType))
+                        .restrictionType(extractNumberFromHexReverse(propertyType))
                         .modifications(modificationArray ? modificationArray.map((modification) => new AccountRestrictionModification(
-                            extractNumberFromHex(modification.substring(0, 2)),
-                            UInt64.fromHex(reverse(modification.substring(2, modification.length))).toDTO(),
+                            extractNumberFromHexReverse(modification.substring(0, 2)),
+                            UInt64.fromHex(reverseHexString(modification.substring(2, modification.length))).toDTO(),
                         )) : [])
                         .build();
                 case TransactionType.MODIFY_ACCOUNT_RESTRICTION_OPERATION:
                     return factory.accountRestrictionOperation()
-                        .restrictionType(extractNumberFromHex(propertyType))
+                        .restrictionType(extractNumberFromHexReverse(propertyType))
                         .modifications(modificationArray ? modificationArray.map((modification) => new AccountRestrictionModification(
-                            extractNumberFromHex(modification.substring(0, 2)),
-                            extractNumberFromHex(
+                            extractNumberFromHexReverse(modification.substring(0, 2)),
+                            extractNumberFromHexReverse(
                                 modification.substring(2, modification.length)),
                         )) : [])
                         .build();
+                
             }
             throw new Error ('Account restriction transaction type not recognised.');
+
         case TransactionType.LINK_ACCOUNT:
             // read bytes
             const remoteAccountKey = transactionData.substring(0, 64);
@@ -143,7 +157,7 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
 
             return factory.accountLink()
                 .remoteAccountKey(remoteAccountKey)
-                .linkAction(extractNumberFromHex(linkAction))
+                .linkAction(extractNumberFromHexReverse(linkAction))
                 .build();
 
         case TransactionType.ADDRESS_ALIAS:
@@ -153,8 +167,8 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
             const addressAliasAddress = transactionData.substring(18);
 
             return factory.addressAlias()
-                .actionType(extractNumberFromHex(addressAliasAction))
-                .namespaceId(new NamespaceId(UInt64.fromHex(reverse(addressAliasNamespaceId)).toDTO()))
+                .actionType(extractNumberFromHexReverse(addressAliasAction))
+                .namespaceId(new NamespaceId(UInt64.fromHex(reverseHexString(addressAliasNamespaceId)).toDTO()))
                 .address(Address.createFromEncoded(addressAliasAddress))
                 .build();
 
@@ -167,9 +181,9 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
             const mosaicAliasMosaicId = transactionData.substring(18);
 
             return factory.mosaicAlias()
-                .actionType(extractNumberFromHex(mosaicAliasAction))
-                .namespaceId(new NamespaceId(UInt64.fromHex(reverse(mosaicAliasNamespaceId)).toDTO()))
-                .mosaicId(new MosaicId(UInt64.fromHex(reverse(mosaicAliasMosaicId)).toDTO()))
+                .actionType(extractNumberFromHexReverse(mosaicAliasAction))
+                .namespaceId(new NamespaceId(UInt64.fromHex(reverseHexString(mosaicAliasNamespaceId)).toDTO()))
+                .mosaicId(new MosaicId(UInt64.fromHex(reverseHexString(mosaicAliasMosaicId)).toDTO()))
                 .build();
 
         case TransactionType.MOSAIC_DEFINITION:
@@ -192,7 +206,7 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
             const mosaicNonce = transactionData.substring(0, mosaicDefMosaicNonceLength);
             const mosaicId = transactionData.substring(mosaicIdOffset, propsOffset);
             const props = transactionData.substring(propsOffset, flagsOffset);
-            const flags = extractNumberFromHex(
+            const flags = extractNumberFromHexReverse(
                 transactionData.substring(flagsOffset, divisibilityOffset));
             const divisibility = transactionData.substring(divisibilityOffset, durationIndOffset);
             const durationInd = transactionData.substring(durationIndOffset, durationOffset);
@@ -201,17 +215,17 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
             const regexArray = mosaicNonce.match(/.{1,2}/g);
 
             const nonceArray = regexArray ? regexArray.map((n) => {
-                return extractNumberFromHex(n);
+                return extractNumberFromHexReverse(n);
             }) : [];
 
             return factory.mosaicDefinition()
                 .mosaicNonce(new MosaicNonce(new Uint8Array(nonceArray)))
-                .mosaicId(new MosaicId(UInt64.fromHex(reverse(mosaicId)).toDTO()))
+                .mosaicId(new MosaicId(UInt64.fromHex(reverseHexString(mosaicId)).toDTO()))
                 .mosaicProperties(MosaicProperties.create({
                     supplyMutable: (flags & 1) === 1,
                     transferable: (flags & 2) === 2,
-                    divisibility: extractNumberFromHex(divisibility),
-                    duration: duration ? UInt64.fromHex(reverse(duration)) : undefined,
+                    divisibility: extractNumberFromHexReverse(divisibility),
+                    duration: duration ? UInt64.fromHex(reverseHexString(duration)) : undefined,
                 }))
                 .build();
 
@@ -222,14 +236,14 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
             const delta = transactionData.substring(18, 34);
 
             return factory.mosaicSupplyChange()
-                .mosaicId(new MosaicId(UInt64.fromHex(reverse(mosaicSupMosaicId)).toDTO()))
-                .direction(extractNumberFromHex(mosaicSupDirection))
-                .delta(UInt64.fromHex(reverse(delta)))
+                .mosaicId(new MosaicId(UInt64.fromHex(reverseHexString(mosaicSupMosaicId)).toDTO()))
+                .direction(extractNumberFromHexReverse(mosaicSupDirection))
+                .delta(UInt64.fromHex(reverseHexString(delta)))
                 .build();
 
         case TransactionType.REGISTER_NAMESPACE:
             // read bytes
-            const namespaceType = extractNumberFromHex(transactionData.substring(0, 2));
+            const namespaceType = extractNumberFromHexReverse(transactionData.substring(0, 2));
             const nameSpaceDurationParentId = transactionData.substring(2, 18);
             const nameSpaceId = NamespaceId.createFromEncoded(transactionData.substring(18, 34));
             const nameSize = transactionData.substring(34, 36);
@@ -238,21 +252,20 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
             return namespaceType === NamespaceType.RootNamespace ?
                 factory.registerRootNamespace()
                     .namespaceName(decodeHexUtf8(nameSpaceName))
-                    .duration(UInt64.fromHex(reverse(nameSpaceDurationParentId)))
+                    .duration(UInt64.fromHex(reverseHexString(nameSpaceDurationParentId)))
                     .build()
                 : factory.registerSubNamespace()
                     .namespaceName(decodeHexUtf8(nameSpaceName))
-                    .parentNamespace(new NamespaceId(UInt64.fromHex(reverse(nameSpaceDurationParentId)).toDTO()))
+                    .parentNamespace(new NamespaceId(UInt64.fromHex(reverseHexString(nameSpaceDurationParentId)).toDTO()))
                     .build();
 
         case TransactionType.TRANSFER:
             // read bytes
             const transferRecipient = transactionData.substring(0, 50);
-            const transferMessageSize = extractNumberFromHex(transactionData.substring(50, 54));
+            const transferMessageSize = extractNumberFromHexReverse(transactionData.substring(50, 54));
 
             const transferMessageAndMosaicSubString = transactionData.substring(56);
-            const transferMessageType = extractNumberFromHex(
-                                                                        transferMessageAndMosaicSubString.substring(0, 2));
+            const transferMessageType = extractNumberFromHexReverse(transferMessageAndMosaicSubString.substring(0, 2));
             const transferMessage = transferMessageAndMosaicSubString.substring(2, (transferMessageSize - 1) * 2 + 2);
             const transferMosaic = transferMessageAndMosaicSubString.substring(transferMessageSize * 2);
             const transferMosaicArray = transferMosaic.match(/.{1,32}/g);
@@ -260,27 +273,27 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
             return factory.transfer()
                 .recipient(Address.createFromEncoded(transferRecipient))
                 .mosaics(transferMosaicArray ? transferMosaicArray.map((mosaic) => new Mosaic(
-                    new MosaicId(UInt64.fromHex(reverse(mosaic.substring(0, 16))).toDTO()),
-                    UInt64.fromHex(reverse(mosaic.substring(16))),
+                    new MosaicId(UInt64.fromHex(reverseHexString(mosaic.substring(0, 16))).toDTO()),
+                    UInt64.fromHex(reverseHexString(mosaic.substring(16))),
                 )) : [])
-                .message(extractMessage(transferMessageType, transferMessage))
+                .message(TransactionMapUtility.extractMessage(transferMessageType, transferMessage))
                 .build();
 
         case TransactionType.SECRET_LOCK:
             // read bytes
             const secretLockMosaic = transactionData.substring(0, 32);
             const secretLockDuration = transactionData.substring(32, 48);
-            const secretLockHashAlgorithm = extractNumberFromHex(
+            const secretLockHashAlgorithm = extractNumberFromHexReverse(
                 transactionData.substring(48, 50));
             const secretLockSecret = transactionData.substring(50, transactionData.length - 50);
             const secretLockRecipient = transactionData.substring(transactionData.length - 50);
 
             return factory.secretLock()
                 .mosaic(new Mosaic(
-                    new MosaicId(UInt64.fromHex(reverse(secretLockMosaic.substring(0, 16))).toDTO()),
-                    UInt64.fromHex(reverse(secretLockMosaic.substring(16))),
+                    new MosaicId(UInt64.fromHex(reverseHexString(secretLockMosaic.substring(0, 16))).toDTO()),
+                    UInt64.fromHex(reverseHexString(secretLockMosaic.substring(16))),
                 ))
-                .duration(UInt64.fromHex(reverse(secretLockDuration)))
+                .duration(UInt64.fromHex(reverseHexString(secretLockDuration)))
                 .hashType(secretLockHashAlgorithm)
                 .secret(secretLockSecret)
                 .recipient(Address.createFromEncoded(secretLockRecipient))
@@ -288,7 +301,7 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
 
         case TransactionType.SECRET_PROOF:
             // read bytes
-            const secretProofHashAlgorithm = extractNumberFromHex(
+            const secretProofHashAlgorithm = extractNumberFromHexReverse(
                 transactionData.substring(0, 2));
 
             const secretProofSecretLength = 64;
@@ -306,9 +319,9 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
 
             case TransactionType.MODIFY_MULTISIG_ACCOUNT:
             // read bytes
-            const minRemovalDelta = extractNumberFromHex(transactionData.substring(0, 2));
-            const minApprovalDelta = extractNumberFromHex(transactionData.substring(2, 4));
-            const modificationsCount = extractNumberFromHex(transactionData.substring(4, 6));
+            const minRemovalDelta = extractNumberFromHexReverse(transactionData.substring(0, 2));
+            const minApprovalDelta = extractNumberFromHexReverse(transactionData.substring(2, 4));
+            const modificationsCount = extractNumberFromHexReverse(transactionData.substring(4, 6));
 
             const multiSigModificationSubString = transactionData.substring(6);
             const multiSigModificationArray = multiSigModificationSubString.match(/.{1,66}/g);
@@ -317,115 +330,178 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                 .minApprovalDelta(minApprovalDelta)
                 .minRemovalDelta(minRemovalDelta)
                 .modifications(multiSigModificationArray ? multiSigModificationArray.map((modification) => new MultisigCosignatoryModification(
-                    extractNumberFromHex(modification.substring(0, 2)),
-                    PublicAccount.createFromPublicKey(modification.substring(2), networkType),
+                    extractNumberFromHexReverse(modification.substring(0, 2)),
+                    PublicAccount.createFromPublicKey(modification.substring(2), txnVersion.networkType),
                 )) : [])
                 .build();
 
-            case TransactionType.LOCK:
+            case TransactionType.HASH_LOCK:
             // read bytes
             const hashLockMosaic = transactionData.substring(0, 32);
             const hashLockDuration = transactionData.substring(32, 48);
             const hashLockHash = transactionData.substring(48);
 
-            return factory.lockFunds()
+            return factory.hashLock()
                 .mosaic(new Mosaic(
-                    new MosaicId(UInt64.fromHex(reverse(hashLockMosaic.substring(0, 16))).toDTO()),
-                    UInt64.fromHex(reverse(hashLockMosaic.substring(16))),
+                    new MosaicId(UInt64.fromHex(reverseHexString(hashLockMosaic.substring(0, 16))).toDTO()),
+                    UInt64.fromHex(reverseHexString(hashLockMosaic.substring(16))),
                 ))
-                .duration(UInt64.fromHex(reverse(hashLockDuration)))
-                .transactionHash(new TransactionHash(hashLockHash, TransactionType.AGGREGATE_BONDED))
+                .duration(UInt64.fromHex(reverseHexString(hashLockDuration)))
+                .transactionHash(new TransactionHash(hashLockHash, txnVersion.dScheme ? TransactionType.AGGREGATE_BONDED_V2 : TransactionType.AGGREGATE_BONDED_V1))
                 .build();
 
-        case TransactionType.AGGREGATE_COMPLETE:
+        case TransactionType.AGGREGATE_COMPLETE_V1:
             // read bytes
-            const payloadSize = extractNumberFromHex(transactionData.substring(0, 8)) * 2;
+            const payloadSize = extractNumberFromHexReverse(transactionData.substring(0, 8)) * 2;
             const cosignatures = transactionData.substring(payloadSize + 8);
 
             const innerTransactionArray = parseInnerTransactionFromBinary(transactionData.substring(8, payloadSize + 8));
-            const consignatureArray = cosignatures.match(/.{1,192}/g);
+            const cosignatureArray = cosignatures.match(/.{1,192}/g);
 
-            return factory.aggregateComplete()
+            return factory.aggregateCompleteV1()
                 .innerTransactions(innerTransactionArray.map((innerTransaction) => {
-                    const txType = extractNumberFromHex(innerTransaction.substring(72, 76));
+                    const txVersion = TransactionVersion.createFromPayloadHex(innerTransaction.substring(64, 72));
+                    const txType = extractNumberFromHexReverse(innerTransaction.substring(72, 76));
                     const transaction = CreateTransaction(
                         txType,
                         innerTransaction.substring(76),
-                        networkType,
+                        txVersion,
                         deadline,
                     );
-                    return transaction.toAggregate(PublicAccount.createFromPublicKey(innerTransaction.substring(0, 64), networkType));
+                    return transaction.toAggregateV1(PublicAccount.createFromPublicKey(innerTransaction.substring(0, 64), txnVersion.networkType));
                 }))
-                .cosignatures(consignatureArray ? consignatureArray.map((cosignature) => new AggregateTransactionCosignature(
+                .cosignatures(cosignatureArray ? cosignatureArray.map((cosignature) => new AggregateTransactionCosignature(
                     cosignature.substring(64, 192),
-                    PublicAccount.createFromPublicKey(cosignature.substring(0, 64), networkType),
+                    PublicAccount.createFromPublicKey(cosignature.substring(0, 64), txnVersion.networkType),
                 )) : [])
                 .build();
 
-        case TransactionType.AGGREGATE_BONDED:
-            const bondedPayloadSize = extractNumberFromHex(transactionData.substring(0, 8)) * 2;
+        case TransactionType.AGGREGATE_BONDED_V1:
+            const bondedPayloadSize = extractNumberFromHexReverse(transactionData.substring(0, 8)) * 2;
             const bondedCosignatures = transactionData.substring(bondedPayloadSize + 8);
 
             const bondedInnerTransactionArray = parseInnerTransactionFromBinary(transactionData.substring(8, bondedPayloadSize + 8));
             const bondedConsignatureArray = bondedCosignatures.match(/.{1,192}/g);
 
-            return factory.aggregateBonded()
+            return factory.aggregateBondedV1()
                 .innerTransactions(bondedInnerTransactionArray.map((innerTransaction) => {
-                    const txType = extractNumberFromHex(innerTransaction.substring(72, 76));
+                    const txVersion = TransactionVersion.createFromPayloadHex(innerTransaction.substring(64, 72));
+                    const txType = extractNumberFromHexReverse(innerTransaction.substring(72, 76));
                     const transaction = CreateTransaction(
                         txType,
                         innerTransaction.substring(76),
-                        networkType,
+                        txVersion,
                         deadline,
                         );
-                    return transaction.toAggregate(PublicAccount.createFromPublicKey(innerTransaction.substring(0, 64), networkType));
+                    return transaction.toAggregateV1(PublicAccount.createFromPublicKey(innerTransaction.substring(0, 64), txVersion.networkType));
                 }))
                 .cosignatures(bondedConsignatureArray ? bondedConsignatureArray.map((cosignature) => new AggregateTransactionCosignature(
                     cosignature.substring(64, 192),
-                    PublicAccount.createFromPublicKey(cosignature.substring(0, 64), networkType),
+                    PublicAccount.createFromPublicKey(cosignature.substring(0, 64), txnVersion.networkType),
                 )) : [])
+                .build();
+
+        case TransactionType.AGGREGATE_COMPLETE_V2:
+            // read bytes
+            const completeV2PayloadSize = extractNumberFromHexReverse(transactionData.substring(0, 8)) * 2;
+            const completeV2Cosignatures = transactionData.substring(completeV2PayloadSize + 8);
+
+            const completeV2InnerTransactionArray = parseInnerTransactionFromBinary(transactionData.substring(8, completeV2PayloadSize + 8));
+            const completeV2CosignatureArray = completeV2Cosignatures.match(/.{1,194}/g);
+
+            return factory.aggregateComplete()
+                .innerTransactions(completeV2InnerTransactionArray.map((innerTransaction) => {
+                    const txVersion = TransactionVersion.createFromPayloadHex(innerTransaction.substring(64, 72));
+                    const txType = extractNumberFromHexReverse(innerTransaction.substring(72, 76));
+                    const transaction = CreateTransaction(
+                        txType,
+                        innerTransaction.substring(76),
+                        txVersion,
+                        deadline,
+                    );
+                    return transaction.toAggregate(PublicAccount.createFromPublicKey(innerTransaction.substring(0, 64), txVersion.networkType, txVersion.dScheme));
+                }))
+                .cosignatures(completeV2CosignatureArray ? completeV2CosignatureArray.map((cosignature) =>{
+                    const dScheme = parseInt(cosignature.substring(0, 2), 16);
+                    
+                    return new AggregateV2TransactionCosignature(
+                        dScheme,
+                        cosignature.substring(66, 192),
+                        PublicAccount.createFromPublicKey(cosignature.substring(2, 66), txnVersion.networkType, dScheme),
+                    );
+                }) : [])
+                .build();
+
+        case TransactionType.AGGREGATE_BONDED_V2:
+            const bondedV2PayloadSize = extractNumberFromHexReverse(transactionData.substring(0, 8)) * 2;
+            const bondedV2Cosignatures = transactionData.substring(bondedV2PayloadSize + 8);
+
+            const bondedV2InnerTransactionArray = parseInnerTransactionFromBinary(transactionData.substring(8, bondedV2PayloadSize + 8));
+            const bondedV2ConsignatureArray = bondedV2Cosignatures.match(/.{1,194}/g);
+
+            return factory.aggregateBonded()
+                .innerTransactions(bondedV2InnerTransactionArray.map((innerTransaction) => {
+                    const txVersion = TransactionVersion.createFromPayloadHex(innerTransaction.substring(64, 72));
+                    const txType = extractNumberFromHexReverse(innerTransaction.substring(72, 76));
+                    const transaction = CreateTransaction(
+                        txType,
+                        innerTransaction.substring(76),
+                        txVersion,
+                        deadline,
+                        );
+                    return transaction.toAggregate(PublicAccount.createFromPublicKey(innerTransaction.substring(0, 64), txVersion.networkType, txVersion.dScheme));
+                }))
+                .cosignatures(bondedV2ConsignatureArray ? bondedV2ConsignatureArray.map((cosignature) =>{
+                    const dScheme = parseInt(cosignature.substring(0, 2), 16);
+                    
+                    return new AggregateV2TransactionCosignature(
+                        dScheme,
+                        cosignature.substring(66, 192),
+                        PublicAccount.createFromPublicKey(cosignature.substring(2, 66), txnVersion.networkType, dScheme),
+                    );
+                }) : [])
                 .build();
         
         case TransactionType.MOSAIC_METADATA_V2:
             return factory.mosaicMetadata()
-                .targetPublicKey(PublicAccount.createFromPublicKey(transactionData.substring(0, 64), networkType))
-                .scopedMetadataKey(UInt64.fromHex(reverse(transactionData.substring(64, 80))))
-                .targetMosaicId(new MosaicId(UInt64.fromHex(reverse(transactionData.substring(80, 96))).toDTO()))
+                .targetPublicKey(PublicAccount.createFromPublicKey(transactionData.substring(0, 64), txnVersion.networkType))
+                .scopedMetadataKey(UInt64.fromHex(reverseHexString(transactionData.substring(64, 80))))
+                .targetMosaicId(new MosaicId(UInt64.fromHex(reverseHexString(transactionData.substring(80, 96))).toDTO()))
                 .valueSizeDelta(extractValueSizeDelta(transactionData.substring(96, 100)))
-                .valueSize(parseInt(reverse(transactionData.substring(100, 104)), 16))
+                .valueSize(parseInt(reverseHexString(transactionData.substring(100, 104)), 16))
                 .valueDifferences(convert.hexToUint8(transactionData.substring(104)))
                 .build();
             
         case TransactionType.NAMESPACE_METADATA_V2:
             return factory.namespaceMetadata()
-                .targetPublicKey(PublicAccount.createFromPublicKey(transactionData.substring(0, 64), networkType))
-                .scopedMetadataKey(UInt64.fromHex(reverse(transactionData.substring(64, 80))))
-                .targetNamespaceId(new NamespaceId(UInt64.fromHex(reverse(transactionData.substring(80, 96))).toDTO()))
+                .targetPublicKey(PublicAccount.createFromPublicKey(transactionData.substring(0, 64), txnVersion.networkType))
+                .scopedMetadataKey(UInt64.fromHex(reverseHexString(transactionData.substring(64, 80))))
+                .targetNamespaceId(new NamespaceId(UInt64.fromHex(reverseHexString(transactionData.substring(80, 96))).toDTO()))
                 .valueSizeDelta(extractValueSizeDelta(transactionData.substring(96, 100)))
-                .valueSize(parseInt(reverse(transactionData.substring(100, 104)), 16))
+                .valueSize(parseInt(reverseHexString(transactionData.substring(100, 104)), 16))
                 .valueDifferences(convert.hexToUint8(transactionData.substring(104)))
                 .build();
 
         case TransactionType.ACCOUNT_METADATA_V2:
             return factory.accountMetadata()
-                .targetPublicKey(PublicAccount.createFromPublicKey(transactionData.substring(0, 64), networkType))
-                .scopedMetadataKey(UInt64.fromHex(reverse(transactionData.substring(64, 80))))
+                .targetPublicKey(PublicAccount.createFromPublicKey(transactionData.substring(0, 64), txnVersion.networkType))
+                .scopedMetadataKey(UInt64.fromHex(reverseHexString(transactionData.substring(64, 80))))
                 .valueSizeDelta(extractValueSizeDelta(transactionData.substring(80, 84)))
-                .valueSize(parseInt(reverse(transactionData.substring(84, 88)), 16))
+                .valueSize(parseInt(reverseHexString(transactionData.substring(84, 88)), 16))
                 .valueDifferences(convert.hexToUint8(transactionData.substring(88)))
                 .build();
             
         case TransactionType.MODIFY_MOSAIC_LEVY:
             return factory.mosaicModifyLevy()
-                .mosaicId(new MosaicId(UInt64.fromHex(reverse(transactionData.substring(0, 16))).toDTO()))
+                .mosaicId(new MosaicId(UInt64.fromHex(reverseHexString(transactionData.substring(0, 16))).toDTO()))
                 .mosaicLevy(
                     new MosaicLevy(
                         parseInt(transactionData.substring(16, 18), 16), 
                         Address.createFromEncoded(transactionData.substring(18, 68)), 
                         new MosaicId(
-                            UInt64.fromHex(reverse(transactionData.substring(68, 84))).toDTO()
+                            UInt64.fromHex(reverseHexString(transactionData.substring(68, 84))).toDTO()
                         ),
-                        UInt64.fromHex(reverse(transactionData.substring(84, 100)))
+                        UInt64.fromHex(reverseHexString(transactionData.substring(84, 100)))
                     )
                 )    
                 .build();
@@ -433,79 +509,79 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
         case TransactionType.REMOVE_MOSAIC_LEVY:
         
             return factory.mosaicRemoveLevy()
-                    .mosaicId(new MosaicId(UInt64.fromHex(reverse(transactionData.substring(0, 16))).toDTO()))
+                    .mosaicId(new MosaicId(UInt64.fromHex(reverseHexString(transactionData.substring(0, 16))).toDTO()))
                     .build();
 
         case TransactionType.CHAIN_CONFIGURE:
             const applyHeightDelta = transactionData.substring(0, 16);
-            const networkConfigLength = extractNumberFromHex(transactionData.substring(16, 20));
-            const supportedEntityVersionsLength = extractNumberFromHex(transactionData.substring(20, 24));
+            const networkConfigLength = extractNumberFromHexReverse(transactionData.substring(16, 20));
+            const supportedEntityVersionsLength = extractNumberFromHexReverse(transactionData.substring(20, 24));
             const networkConfig = transactionData.substring(24, 24 + networkConfigLength*2);
             const supportedEntityVersions = transactionData.substring(24 + networkConfigLength*2, 24 + networkConfigLength*2 + supportedEntityVersionsLength*2);
             return factory.chainConfig()
-                .applyHeightDelta(UInt64.fromHex(reverse(applyHeightDelta)))
-                .networkConfig(decodeHexRaw(networkConfig))
-                .supportedEntityVersions(decodeHexRaw(supportedEntityVersions))
+                .applyHeightDelta(UInt64.fromHex(reverseHexString(applyHeightDelta)))
+                .networkConfig(decodeHexUtf8(networkConfig))
+                .supportedEntityVersions(decodeHexUtf8(supportedEntityVersions))
                 .build();
 
         case TransactionType.CHAIN_UPGRADE:
             const upgradePeriod = transactionData.substring(0, 16);
             const newBlockchainVersion = transactionData.substring(16, 32);
             return factory.chainUpgrade()
-                .upgradePeriod(UInt64.fromHex(reverse(upgradePeriod)))
-                .newBlockchainVersion(UInt64.fromHex(reverse(newBlockchainVersion)))
+                .upgradePeriod(UInt64.fromHex(reverseHexString(upgradePeriod)))
+                .newBlockchainVersion(UInt64.fromHex(reverseHexString(newBlockchainVersion)))
                 .build();
 
         case TransactionType.ADD_EXCHANGE_OFFER:
-            // const numOffers = extractNumberFromHex(transactionData.substring(0, 2));
+            // const numOffers = extractNumberFromHexReverse(transactionData.substring(0, 2));
             const addOffersArray =  transactionData.substring(2).match(/.{66}/g) || [];
             return factory.addExchangeOffer()
                 .offers(addOffersArray.map(o => {
                     const id = o.substring(0, 16);
                     const amount = o.substring(16, 32);
                     const cost = o.substring(32, 48);
-                    const type = extractNumberFromHex(o.substring(48, 50));
+                    const type = extractNumberFromHexReverse(o.substring(48, 50));
                     const duration = o.substring(50, 66);
 
                     return new AddExchangeOffer(
-                        new MosaicId(UInt64.fromHex(reverse(id)).toDTO()),
-                        UInt64.fromHex(reverse(amount)),
-                        UInt64.fromHex(reverse(cost)),
+                        new MosaicId(UInt64.fromHex(reverseHexString(id)).toDTO()),
+                        UInt64.fromHex(reverseHexString(amount)),
+                        UInt64.fromHex(reverseHexString(cost)),
                         type,
-                        UInt64.fromHex(reverse(duration))
+                        UInt64.fromHex(reverseHexString(duration))
                     )})
                 )
                 .build();
         case TransactionType.EXCHANGE_OFFER:
-            // const numOffers = extractNumberFromHex(transactionData.substring(0, 2));
+            // const numOffers = extractNumberFromHexReverse(transactionData.substring(0, 2));
             const offersArray =  transactionData.substring(2).match(/.{114}/g) || [];
             return factory.exchangeOffer()
                 .offers(offersArray.map(o => {
                     const id = o.substring(0, 16);
                     const amount = o.substring(16, 32);
                     const cost = o.substring(32, 48);
-                    const type = extractNumberFromHex(o.substring(48, 50));
+                    const type = extractNumberFromHexReverse(o.substring(48, 50));
                     const owner = o.substring(50, 114);
 
                     return new ExchangeOffer(
-                        new MosaicId(UInt64.fromHex(reverse(id)).toDTO()),
-                        UInt64.fromHex(reverse(amount)),
-                        UInt64.fromHex(reverse(cost)),
+                        new MosaicId(UInt64.fromHex(reverseHexString(id)).toDTO()),
+                        UInt64.fromHex(reverseHexString(amount)),
+                        UInt64.fromHex(reverseHexString(cost)),
                         type,
-                        PublicAccount.createFromPublicKey(owner, networkType)
+                        PublicAccount.createFromPublicKey(owner, txnVersion.networkType)
                     )})
                 )
                 .build();
         case TransactionType.REMOVE_EXCHANGE_OFFER:{
-            // const numOffers = extractNumberFromHex(transactionData.substring(0, 2));
+            // const numOffers = extractNumberFromHexReverse(transactionData.substring(0, 2));
             const removeOffersArray =  transactionData.substring(2).match(/.{18}/g) || [];
             return factory.removeExchangeOffer()
                 .offers(removeOffersArray.map(o => {
                     const id = o.substring(0, 16);
-                    const offerType = extractNumberFromHex(o.substring(16, 18));
+                    const offerType = extractNumberFromHexReverse(o.substring(16, 18));
 
                     return new RemoveExchangeOffer(
-                        new MosaicId(UInt64.fromHex(reverse(id)).toDTO()),
+                        new MosaicId(UInt64.fromHex(reverseHexString(id)).toDTO()),
                         offerType
                     )})
                 )
@@ -513,14 +589,14 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
         }
         case TransactionType.ADD_HARVESTER:{
             const harvesterKey = transactionData.substring(0, 64);
-            const harvesterAcc = PublicAccount.createFromPublicKey(harvesterKey, networkType);
+            const harvesterAcc = PublicAccount.createFromPublicKey(harvesterKey, txnVersion.networkType);
             return factory.addHarvester()
                 .harvesterKey(harvesterAcc)
                 .build();
         }
         case TransactionType.REMOVE_HARVESTER:{
             const harvesterKey = transactionData.substring(0, 64);
-            const harvesterAcc = PublicAccount.createFromPublicKey(harvesterKey, networkType);
+            const harvesterAcc = PublicAccount.createFromPublicKey(harvesterKey, txnVersion.networkType);
             return factory.removeHarvester()
                 .harvesterKey(harvesterAcc)
                 .build();
@@ -537,11 +613,11 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                     const duration = o.substring(64, 80);
 
                     return new SdaExchangeOffer(
-                        new MosaicId(UInt64.fromHex(reverse(giveMosaicId)).toDTO()),
-                        UInt64.fromHex(reverse(giveAmount)),
-                        new MosaicId(UInt64.fromHex(reverse(getMosaicId)).toDTO()),
-                        UInt64.fromHex(reverse(getAmount)),
-                        UInt64.fromHex(reverse(duration))
+                        new MosaicId(UInt64.fromHex(reverseHexString(giveMosaicId)).toDTO()),
+                        UInt64.fromHex(reverseHexString(giveAmount)),
+                        new MosaicId(UInt64.fromHex(reverseHexString(getMosaicId)).toDTO()),
+                        UInt64.fromHex(reverseHexString(getAmount)),
+                        UInt64.fromHex(reverseHexString(duration))
                     )})
                 )
                 .build();
@@ -554,14 +630,25 @@ const CreateTransaction = (type: number, transactionData: string, networkType: N
                     const getMosaicId = o.substring(16, 32);
 
                     return new RemoveSdaExchangeOffer(
-                        new MosaicId(UInt64.fromHex(reverse(giveMosaicId)).toDTO()),
-                        new MosaicId(UInt64.fromHex(reverse(getMosaicId)).toDTO())
+                        new MosaicId(UInt64.fromHex(reverseHexString(giveMosaicId)).toDTO()),
+                        new MosaicId(UInt64.fromHex(reverseHexString(getMosaicId)).toDTO())
                     )})
                 )
                 .build();
 
         default:
-            throw new Error ('Transaction type not implemented yet.');
+            return new UnknownTransaction(
+                transactionData.substring(12),
+                {},
+                type, 
+                txnVersion.networkType, 
+                txnVersion.txnTypeVersion, 
+                Deadline.createFromDTO(deadline),
+                new UInt64([0,0]),
+                undefined,
+                undefined,
+                undefined
+            );
         }
 };
 
@@ -579,8 +666,8 @@ const extractValueSizeDelta = (hexValue: string): number => {
  * @param hexValue - Hex representation of the number
  * @returns {number}
  */
-const extractNumberFromHex = (hexValue: string): number => {
-    return parseInt(convert.uint8ToHex(convert.hexToUint8(hexValue).reverse()), 16);
+const extractNumberFromHexReverse = (hexValue: string): number => {
+    return parseInt(convert.uint8ArrayToHex(convert.hexToUint8(hexValue).reverse()), 16);
 };
 
 /**
@@ -588,8 +675,8 @@ const extractNumberFromHex = (hexValue: string): number => {
  * @param versionHex - Transaction version in hex
  * @returns {NetworkType}
  */
-const extractNetwork = (versionHex: string): NetworkType => {
-    const networkType = convert.hexToUint8(versionHex)[3];
+const extractNetworkFromHexPayload = (versionHex: string): NetworkType => {
+    const networkType = convert.hexToUint8(versionHex)[3]; // get last byte, total 4 bytes, as bytes have been reversed
     if (networkType === NetworkType.MAIN_NET) {
         return NetworkType.MAIN_NET;
     } else if (networkType === NetworkType.TEST_NET) {
@@ -611,8 +698,8 @@ const extractNetwork = (versionHex: string): NetworkType => {
  * @param hex
  * @returns {string}
  */
-const reverse = (hex: string): string => {
-    return convert.uint8ToHex(convert.hexToUint8(hex).reverse());
+const reverseHexString = (hex: string): string => {
+    return convert.hexReverse(hex);
 };
 
 /**
@@ -625,7 +712,7 @@ const parseInnerTransactionFromBinary = (innerTransactionBinary: string): string
     let innerBinary = innerTransactionBinary;
 
     while (innerBinary.length) {
-        const payloadSize = extractNumberFromHex(innerBinary.substring(0, 8)) * 2;
+        const payloadSize = extractNumberFromHexReverse(innerBinary.substring(0, 8)) * 2;
         const innerTransaction = innerBinary.substring(8, payloadSize);
         embeddedTransaction.push(innerTransaction);
         innerBinary = innerBinary.substring(payloadSize);
@@ -639,42 +726,12 @@ const parseInnerTransactionFromBinary = (innerTransactionBinary: string): string
  * @returns {string}
  */
 const decodeHexUtf8 = (hex: string): string => {
-    const str = decodeHexRaw(hex);
+    const str = "";
     try {
-        return decode(str);
+        let uint8Array = convert.hexToUint8(hex);
+
+        return new TextDecoder().decode(uint8Array);
     } catch (e) {
         return str;
-    }
-};
-
-/**
- * @internal
- * @param hex - Hex input
- * @returns {string}
- */
-const decodeHexRaw = (hex: string): string => {
-    let str = '';
-    for (let i = 0; i < hex.length; i += 2) {
-        str += String.fromCharCode(parseInt(hex.substring(i, i + 2), 16));
-    }
-    return str;
-};
-
-
-/**
- * @internal
- * @param messageType - Message Type
- * @param payload - Message Payload
- * @returns {Message}
- */
-const extractMessage = (messageType: MessageType, payload: string): Message => {
-    if (messageType === MessageType.PlainMessage) {
-        return PlainMessage.createFromPayload(payload);
-    } else if (messageType === MessageType.EncryptedMessage) {
-        return EncryptedMessage.createFromPayload(payload);
-    } else if (messageType === MessageType.HexadecimalMessage) {
-        return HexadecimalMessage.createFromPayload(payload);
-    } else {
-        throw new Error('Invalid message type');
     }
 };

@@ -8,7 +8,7 @@ import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
 import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
-import { TransactionVersion } from './TransactionVersion';
+import { TransactionTypeVersion } from './TransactionTypeVersion';
 import { AggregateTransactionInfo } from './AggregateTransactionInfo';
 import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
 import { Builder } from '../../infrastructure/builders/RemoveExchangeOfferTransaction';
@@ -115,7 +115,7 @@ export class RemoveExchangeOfferTransactionBuilder extends TransactionBuilder {
     public build(): RemoveExchangeOfferTransaction {
         return new RemoveExchangeOfferTransaction(
             this._networkType,
-            this._version || TransactionVersion.REMOVE_EXCHANGE_OFFER,
+            this._version || TransactionTypeVersion.REMOVE_EXCHANGE_OFFER,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._offers,
             this._maxFee ? this._maxFee : calculateFee(RemoveExchangeOfferTransaction.calculateSize(this._offers.length), this._feeCalculationStrategy),

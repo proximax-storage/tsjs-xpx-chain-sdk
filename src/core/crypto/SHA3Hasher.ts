@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { keccak256, keccak512, sha3_256, sha3_512 } from 'js-sha3';
+import { sha3_256, sha3_512, Keccak } from '@noble/hashes/sha3';
+import { bytesToHex, Hash } from '@noble/hashes/utils';
 import { Convert as convert, RawArray as array } from '../format';
-import { SignSchema } from './SignSchema';
 
 export class SHA3Hasher {
     /**
@@ -24,27 +24,25 @@ export class SHA3Hasher {
      * @param {Uint8Array} dest The computed hash destination.
      * @param {Uint8Array} data The data to hash.
      * @param {numeric} length The hash length in bytes.
-     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      */
-    public static func = (dest, data, length, signSchema = SignSchema.SHA3) => {
-        const hasher = SHA3Hasher.getHasher(length, signSchema);
+    public static func = (dest, data: Uint8Array, length) => {
+        const hasher = SHA3Hasher.getHasher(length);
         if(hasher === undefined)
             throw new Error("invalid hasher, hasher not found");
-        const hash = hasher.arrayBuffer(data);
+        const hash = hasher.update(data).digest();
         array.copy(dest, array.uint8View(hash));
     }
 
     /**
      * Creates a hasher object.
      * @param {numeric} length The hash length in bytes.
-     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {object} The hasher.
      */
-    public static createHasher = (length = 64, signSchema = SignSchema.SHA3) => {
-        let hash;
+    public static createHasher = (length = 64) => {
+        let hash: Hash<Keccak>;
         return {
             reset: () => {
-                hash = SHA3Hasher.getHasher(length, signSchema)!.create();
+                hash = SHA3Hasher.getHasher(length)!;
             },
             update: (data: any) => {
                 if (data instanceof Uint8Array) {
@@ -56,7 +54,7 @@ export class SHA3Hasher {
                 }
             },
             finalize: (result: any) => {
-                array.copy(result, array.uint8View(hash.arrayBuffer()));
+                array.copy(result, array.uint8View(hash.digest()));
             },
         };
     }
@@ -64,13 +62,12 @@ export class SHA3Hasher {
     /**
      * Get a hasher instance.
      * @param {numeric} length The hash length in bytes.
-     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
      * @returns {object} The hasher.
      */
-    public static getHasher = (length = 64, signSchema = SignSchema.SHA3) => {
+    public static getHasher = (length = 64) => {
         return {
-            32: signSchema === SignSchema.SHA3 ? sha3_256 : keccak256,
-            64: signSchema === SignSchema.SHA3 ? sha3_512 : keccak512 ,
+            32: sha3_256.create(),
+            64: sha3_512.create()
         } [length];
     }
 }

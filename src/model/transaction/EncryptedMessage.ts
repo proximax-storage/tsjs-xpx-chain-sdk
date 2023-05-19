@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Crypto, SignSchema} from '../../core/crypto';
+import {Crypto, DerivationScheme} from '../../core/crypto';
 import {PublicAccount} from '../account/PublicAccount';
 import {Message} from './Message';
 import {MessageType} from './MessageType';
@@ -35,12 +35,12 @@ export class EncryptedMessage extends Message {
      * @param message - Plain message to be encrypted
      * @param recipientPublicAccount - Recipient public account
      * @param privateKey - Sender private key
-     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @param {DerivationScheme} dScheme The derivation scheme
      * @return {EncryptedMessage}
      */
-    public static create(message: string, recipientPublicAccount: PublicAccount, privateKey, signSchema: SignSchema = SignSchema.SHA3) {
+    public static create(message: string, recipientPublicAccount: PublicAccount, privateKey: string, dScheme: DerivationScheme = DerivationScheme.Ed25519Sha3) {
         return new EncryptedMessage(
-            Crypto.encode(privateKey, recipientPublicAccount.publicKey, message, signSchema).toUpperCase()
+            Crypto.encode(privateKey, recipientPublicAccount.publicKey, message, dScheme).toUpperCase()
         );
     }
 
@@ -57,13 +57,13 @@ export class EncryptedMessage extends Message {
      * @param encryptMessage - Encrypted message to be decrypted
      * @param privateKey - Recipient private key
      * @param recipientPublicAccount - Sender public account
-     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @param {DerivationScheme} dScheme The derivation scheme
      * @return {PlainMessage}
      */
     public static decrypt(encryptMessage: EncryptedMessage,
-                          privateKey,
+                          privateKey: string,
                           recipientPublicAccount: PublicAccount,
-                          signSchema: SignSchema = SignSchema.SHA3): PlainMessage {
-        return new PlainMessage(Crypto.decode(privateKey, recipientPublicAccount.publicKey, encryptMessage.payload, signSchema));
+                          dScheme: DerivationScheme = DerivationScheme.Ed25519Sha3): PlainMessage {
+        return new PlainMessage(Crypto.decode(privateKey, recipientPublicAccount.publicKey, encryptMessage.payload, dScheme));
     }
 }

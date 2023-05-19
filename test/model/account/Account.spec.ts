@@ -16,7 +16,7 @@
  */
 
 import {expect} from 'chai';
-import { SignSchema, Crypto } from '../../../src/core/crypto';
+import { Crypto, DerivationScheme } from '../../../src/core/crypto';
 import {Account} from '../../../src/model/account/Account';
 import {NetworkType} from '../../../src/model/blockchain/NetworkType';
 
@@ -29,26 +29,15 @@ describe('Account', () => {
     };
 
     it('should be created via private key', () => {
-        const account = Account.createFromPrivateKey(accountInformation.privateKey, NetworkType.MIJIN_TEST);
+        const account = Account.createFromPrivateKey(accountInformation.privateKey, NetworkType.MIJIN_TEST, 1);
         expect(account.publicKey).to.be.equal(accountInformation.publicKey);
         expect(account.privateKey).to.be.equal(accountInformation.privateKey);
         expect(account.address.plain()).to.be.equal(accountInformation.address);
     });
 
-    /**
-     * @see https://raw.githubusercontent.com/nemtech/test-vectors/master/1.test-keys-nis1.json
-     */
-    it('should be created via private key using NIS1 schema', () => {
-        const account = Account.createFromPrivateKey('575dbb3062267eff57c970a336ebbc8fbcfe12c5bd3ed7bc11eb0481d7704ced',
-            NetworkType.MIJIN_TEST, SignSchema.KECCAK_REVERSED_KEY);
-        expect(account.publicKey.toUpperCase()).to.be.
-            equal('c5f54ba980fcbb657dbaaa42700539b207873e134d2375efeab5f1ab52f87844'.toUpperCase());
-        expect(account.address.plain()).to.be.equal('SDD2CT6LQLIYQ56KIXI3ENTM6EK3D44P5JGDTV3S');
-    });
-
     it('should throw exception when the private key is not valid', () => {
         expect(() => {
-            Account.createFromPrivateKey('', NetworkType.MIJIN_TEST);
+            Account.createFromPrivateKey('', NetworkType.MIJIN_TEST, 1);
         }).to.throw();
     });
 
@@ -61,7 +50,7 @@ describe('Account', () => {
 
     it('should create a new account from random mnemonic', () => {
         const mnemonic = Crypto.randomMnemonic(256);
-        const account = Account.createFromMnemonic(mnemonic, NetworkType.MIJIN_TEST);
+        const account = Account.createFromMnemonic(mnemonic, NetworkType.MIJIN_TEST, 1);
         expect(account.publicKey).to.not.be.equal(undefined);
         expect(account.privateKey).to.not.be.equal(undefined);
         expect(account.address).to.not.be.equal(undefined);
@@ -79,25 +68,18 @@ describe('Account', () => {
 */
     it('should create a new account from mnemonic with 24 words', () => {
         const mnemonic = 'forest pole smooth device derive party ribbon hedgehog spring tent frown mask alter tape describe such anchor goddess example screen pistol guilt close twin';
-        const account = Account.createFromMnemonic(mnemonic,NetworkType.MIJIN_TEST);
+        const account = Account.createFromMnemonic(mnemonic,NetworkType.MIJIN_TEST, 1);
 
         expect(account.publicKey).equal('797B5E711FDBA4BEA0467717CF7FA4A6BD42390B251AF3DF9400A5DE7A24599F');
         expect(account.privateKey).equal('5B34F3339E53B7412E4354D33BE976443077BB8EE6C3086C8539E0CA56CF4AEF');
         expect(account.address.plain()).equal('SAGNWV5RA4CAAPJ7ZN5M2KIVCESEQCITMVTXX7LY');
     });
 
-    it('should generate a new account using NIS1 schema', () => {
-        const account = Account.generateNewAccount(NetworkType.MIJIN_TEST, SignSchema.KECCAK_REVERSED_KEY);
-        expect(account.publicKey).to.not.be.equal(undefined);
-        expect(account.privateKey).to.not.be.equal(undefined);
-        expect(account.address).to.not.be.equal(undefined);
-    });
-
-    describe('signData', () => {
+    describe('signData with account v1', () => {
         it('utf-8', () => {
             const account = Account.createFromPrivateKey(
                 'AB860ED1FE7C91C02F79C02225DAC708D7BD13369877C1F59E678CC587658C47',
-                NetworkType.MIJIN_TEST,
+                NetworkType.MIJIN_TEST, 1
             );
             const publicAccount = account.publicAccount;
             const signed = account.signData('ProximaX rocks!');
@@ -108,35 +90,35 @@ describe('Account', () => {
         it('hexadecimal - bytes', () => {
             const account = Account.createFromPrivateKey(
                 'AB860ED1FE7C91C02F79C02225DAC708D7BD13369877C1F59E678CC587658C47',
-                NetworkType.MIJIN_TEST,
+                NetworkType.MIJIN_TEST, 1
             );
             const publicAccount = account.publicAccount;
             const signed = account.signHexString('AA');
             expect(publicAccount.verifySignatureWithHexString('AA', signed))
                 .to.be.true;
         });
+    });
 
-        it('utf-8 - NIS1', () => {
+    describe('signData with account v2', () => {
+        it('utf-8', () => {
             const account = Account.createFromPrivateKey(
                 'AB860ED1FE7C91C02F79C02225DAC708D7BD13369877C1F59E678CC587658C47',
-                NetworkType.MIJIN_TEST,
-                SignSchema.KECCAK_REVERSED_KEY,
+                NetworkType.MIJIN_TEST, 2
             );
             const publicAccount = account.publicAccount;
-            const signed = account.signData('catapult rocks!', SignSchema.KECCAK_REVERSED_KEY);
-            expect(publicAccount.verifySignature('catapult rocks!', signed, SignSchema.KECCAK_REVERSED_KEY))
+            const signed = account.signData('ProximaX rocks!');
+            expect(publicAccount.verifySignature('ProximaX rocks!', signed))
                 .to.be.true;
         });
 
-        it('hexa - NIS1', () => {
+        it('hexadecimal - bytes', () => {
             const account = Account.createFromPrivateKey(
                 'AB860ED1FE7C91C02F79C02225DAC708D7BD13369877C1F59E678CC587658C47',
-                NetworkType.MIJIN_TEST,
-                SignSchema.KECCAK_REVERSED_KEY,
+                NetworkType.MIJIN_TEST, 2
             );
             const publicAccount = account.publicAccount;
-            const signed = account.signData('0xAA', SignSchema.KECCAK_REVERSED_KEY);
-            expect(publicAccount.verifySignature('0xAA', signed, SignSchema.KECCAK_REVERSED_KEY))
+            const signed = account.signHexString('AA');
+            expect(publicAccount.verifySignatureWithHexString('AA', signed))
                 .to.be.true;
         });
     });

@@ -130,7 +130,7 @@ export class MetadataTransactionBuffer {
    */
   targetId(index: number): number | null {
     const offset = this.bb!.__offset(this.bb_pos, 22);
-    return offset ? this.bb!.readUint8(this.bb!.__vector(this.bb_pos + offset) + index) : 0;
+    return offset ? this.bb!.readUint32(this.bb!.__vector(this.bb_pos + offset) + index * 4) : 0;
   }
 
   targetIdLength(): number {
@@ -138,9 +138,9 @@ export class MetadataTransactionBuffer {
     return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
   }
 
-  targetIdArray(): Uint8Array | null {
+  targetIdArray(): Uint32Array | null {
     const offset = this.bb!.__offset(this.bb_pos, 22);
-    return offset ? new Uint8Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
+    return offset ? new Uint32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
   }
 
   valueSizeDelta(): number {
@@ -299,8 +299,8 @@ export class MetadataTransactionBuffer {
     builder.addFieldOffset(9, targetIdOffset, 0);
   }
 
-  static createTargetIdVector(builder: flatbuffers.Builder, data: number[] | Uint32Array): flatbuffers.Offset {
-    builder.startVector(1, data.length, 1);
+  static createTargetIdVector(builder: flatbuffers.Builder, data: Uint32Array): flatbuffers.Offset{
+    builder.startVector(4, data.length, 4);
     for (let i = data.length - 1; i >= 0; i--) {
       builder.addInt32(data[i]!);
     }
@@ -308,15 +308,47 @@ export class MetadataTransactionBuffer {
   }
 
   static startTargetIdVector(builder: flatbuffers.Builder, numElems: number) {
+    builder.startVector(4, numElems, 4);
+  }
+
+  // static addValueSizeDelta(builder: flatbuffers.Builder, valueSizeDelta: number) {
+  //   builder.addFieldInt16(10, valueSizeDelta, 0);
+  // }
+
+  // static addValueSize(builder: flatbuffers.Builder, valueSize: number) {
+  //   builder.addFieldInt16(11, valueSize, 0);
+  // }
+
+  static addValueSizeDelta(builder:flatbuffers.Builder, valueSizeDeltaOffset:flatbuffers.Offset) {
+    builder.addFieldOffset(10, valueSizeDeltaOffset, 0);
+  }
+  
+  static createValueSizeDeltaVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset {
+    builder.startVector(1, data.length, 1);
+    for (let i = data.length - 1; i >= 0; i--) {
+      builder.addInt8(data[i]!);
+    }
+    return builder.endVector();
+  }
+  
+  static startValueSizeDeltaVector(builder:flatbuffers.Builder, numElems:number) {
     builder.startVector(1, numElems, 1);
   }
-
-  static addValueSizeDelta(builder: flatbuffers.Builder, valueSizeDelta: number) {
-    builder.addFieldInt16(10, valueSizeDelta, 0);
+  
+  static addValueSize(builder:flatbuffers.Builder, valueSizeOffset:flatbuffers.Offset) {
+    builder.addFieldOffset(11, valueSizeOffset, 0);
   }
-
-  static addValueSize(builder: flatbuffers.Builder, valueSize: number) {
-    builder.addFieldInt16(11, valueSize, 0);
+  
+  static createValueSizeVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset {
+    builder.startVector(1, data.length, 1);
+    for (let i = data.length - 1; i >= 0; i--) {
+      builder.addInt8(data[i]!);
+    }
+    return builder.endVector();
+  }
+  
+  static startValueSizeVector(builder:flatbuffers.Builder, numElems:number) {
+    builder.startVector(1, numElems, 1);
   }
 
   static addValue(builder: flatbuffers.Builder, valueOffset: flatbuffers.Offset) {
@@ -326,7 +358,7 @@ export class MetadataTransactionBuffer {
   static createValueVector(builder: flatbuffers.Builder, data: number[] | Uint8Array): flatbuffers.Offset {
     builder.startVector(1, data.length, 1);
     for (let i = data.length - 1; i >= 0; i--) {
-      builder.addInt8(data[i]);
+      builder.addInt8(data[i]!);
     }
     return builder.endVector();
   }
@@ -348,7 +380,7 @@ export class MetadataTransactionBuffer {
     builder.finish(offset, undefined, true);
   }
 
-  static createMetadataTransactionBuffer(builder: flatbuffers.Builder, size: number, signatureOffset: flatbuffers.Offset, signerOffset: flatbuffers.Offset, version: number, type: number, maxFeeOffset: flatbuffers.Offset, deadlineOffset: flatbuffers.Offset, targetKeyOffset: flatbuffers.Offset, scopedMetadataKeyOffset: flatbuffers.Offset, targetIdOffset: flatbuffers.Offset, valueSizeDelta: number, valueSize: number, valueOffset: flatbuffers.Offset): flatbuffers.Offset {
+  static createMetadataTransactionBuffer(builder:flatbuffers.Builder, size:number, signatureOffset:flatbuffers.Offset, signerOffset:flatbuffers.Offset, version:number, type:number, maxFeeOffset:flatbuffers.Offset, deadlineOffset:flatbuffers.Offset, targetKeyOffset:flatbuffers.Offset, scopedMetadataKeyOffset:flatbuffers.Offset, targetIdOffset:flatbuffers.Offset, valueSizeDeltaOffset:flatbuffers.Offset, valueSizeOffset:flatbuffers.Offset, valueOffset:flatbuffers.Offset):flatbuffers.Offset {
     MetadataTransactionBuffer.startMetadataTransactionBuffer(builder);
     MetadataTransactionBuffer.addSize(builder, size);
     MetadataTransactionBuffer.addSignature(builder, signatureOffset);
@@ -360,8 +392,8 @@ export class MetadataTransactionBuffer {
     MetadataTransactionBuffer.addTargetKey(builder, targetKeyOffset);
     MetadataTransactionBuffer.addScopedMetadataKey(builder, scopedMetadataKeyOffset);
     MetadataTransactionBuffer.addTargetId(builder, targetIdOffset);
-    MetadataTransactionBuffer.addValueSizeDelta(builder, valueSizeDelta);
-    MetadataTransactionBuffer.addValueSize(builder, valueSize);
+    MetadataTransactionBuffer.addValueSizeDelta(builder, valueSizeDeltaOffset);
+    MetadataTransactionBuffer.addValueSize(builder, valueSizeOffset);
     MetadataTransactionBuffer.addValue(builder, valueOffset);
     return MetadataTransactionBuffer.endMetadataTransactionBuffer(builder);
   }

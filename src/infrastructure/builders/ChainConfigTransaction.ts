@@ -14,7 +14,7 @@ const {
     CatapultConfigTransactionBuffer,
 } = ChainConfigTransactionBufferPackage.Buffers;
 
-import {flatbuffers} from 'flatbuffers';
+import * as flatbuffers from 'flatbuffers';
 import { Convert } from '../../core/format';
 
 export default class ChainConfigTransaction extends VerifiableTransaction {

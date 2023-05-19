@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import {expect} from 'chai';
-import {Crypto} from '../../../src/core/crypto';
+import {Crypto, DerivationScheme} from '../../../src/core/crypto';
 import {Convert as convert} from '../../../src/core/format';
 import { WalletAlgorithm } from '../../../src/model/model';
 
@@ -287,7 +287,7 @@ describe('crypto tests', () => {
             const mainAlgo = WalletAlgorithm.Pass_6k;
             const expectedPrivateKey = '8fac70ea9aca3ae3418e25c0d31d9a0723e0a1790ae8fa97747c00dc0037472e';
 
-            // Act:
+            // Act:describe('Encrypt private key edge-cases', () => {
             const result = Crypto.passwordToPrivateKey(common, walletAccount, mainAlgo);
 
             // Assert:
@@ -477,5 +477,59 @@ describe('crypto tests', () => {
         expect(encrypted.length).equal(128);
         expect(salt.toString().length).equal(32 * 2);
         expect(decrypted).equal(privateKey);
+    });
+
+    describe('ED25519 SHA2 Scheme', () => {
+        it('Can encode and decode message', () => {
+            const senderPriv = 'E1C8521608F4896CA26A0C2DE739310EA4B06861D126CF4D6922064678A1969B';
+            const recipientPublic = '645C6BB6526E209ED33162472BF75F06172309DC72214AE07CE68EB5A6496B4E';
+            const message = 'Sirius is awesome !';
+            const encryptedMessage = Crypto.encode(senderPriv, recipientPublic, message, DerivationScheme.Ed25519Sha2);
+            const senderPublic = '3FD283D8543C12B81917C154CDF4EFD3D48E553E6D7BC77E29CB168138CED17D';
+            const recipientPriv = 'A22A4BBF126A2D7D7ECE823174DFD184C5DE0FDE4CB2075D30CFA409F7EF8908';
+            const expectedMessage = 'Sirius is awesome !';
+            const decrypted = Crypto.decode(recipientPriv, senderPublic, encryptedMessage, DerivationScheme.Ed25519Sha2);
+    
+            expect(decrypted).equal(expectedMessage);
+        });
+
+        it('Can encode a message and failed decode with wrong key', () => {
+            const senderPriv = 'E1C8521608F4896CA26A0C2DE739310EA4B06861D126CF4D6922064678A1969B';
+            const recipientPublic = '645C6BB6526E209ED33162472BF75F06172309DC72214AE07CE68EB5A6496B4E';
+            const message = 'Sirius is awesome !';
+            const encryptedMessage = Crypto.encode(senderPriv, recipientPublic, message, DerivationScheme.Ed25519Sha2);
+            const senderPublic = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
+            const recipientPriv = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
+            const expectedMessage = 'Sirius is awesome !';
+            const decrypted = Crypto.decode(recipientPriv, senderPublic, encryptedMessage, DerivationScheme.Ed25519Sha2);
+    
+            expect(decrypted).not.equal(expectedMessage);
+        });
+
+        it('Can encode a message and failed decode with wrong scheme, sha2 encrypt, sha3 decrypt', () => {
+            const senderPriv = 'E1C8521608F4896CA26A0C2DE739310EA4B06861D126CF4D6922064678A1969B';
+            const recipientPublic = '12AAD2D33020C3EAE12592875CD7D2FF54A61DD03C1FAADB84A083D41F75C229';
+            const message = 'Sirius is awesome !';
+            const encryptedMessage = Crypto.encode(senderPriv, recipientPublic, message, DerivationScheme.Ed25519Sha2);
+            const senderPublic = '3FD283D8543C12B81917C154CDF4EFD3D48E553E6D7BC77E29CB168138CED17D';
+            const recipientPriv = 'A22A4BBF126A2D7D7ECE823174DFD184C5DE0FDE4CB2075D30CFA409F7EF8908';
+            const expectedMessage = 'Sirius is awesome !';
+            const decrypted = Crypto.decode(recipientPriv, senderPublic, encryptedMessage, DerivationScheme.Ed25519Sha3);
+
+            expect(decrypted).not.equal(expectedMessage);
+        });
+
+        it('Can encode a message and failed decode with wrong scheme, sha3 encrypt, sha2 decrypt', () => {
+            const senderPriv = 'E1C8521608F4896CA26A0C2DE739310EA4B06861D126CF4D6922064678A1969B';
+            const recipientPublic = '645C6BB6526E209ED33162472BF75F06172309DC72214AE07CE68EB5A6496B4E';
+            const message = 'Sirius is awesome !';
+            const encryptedMessage = Crypto.encode(senderPriv, recipientPublic, message, DerivationScheme.Ed25519Sha3);
+            const senderPublic = '9F784BF20318AE3CA6246C0EC2207FE095FFF7A84B6787E7E3C2CE4C3B92A2EA';
+            const recipientPriv = 'A22A4BBF126A2D7D7ECE823174DFD184C5DE0FDE4CB2075D30CFA409F7EF8908';
+            const expectedMessage = 'Sirius is awesome !';
+            const decrypted = Crypto.decode(recipientPriv, senderPublic, encryptedMessage, DerivationScheme.Ed25519Sha2);
+
+            expect(decrypted).not.equal(expectedMessage);
+        });
     });
 });

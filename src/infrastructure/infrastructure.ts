@@ -40,3 +40,4 @@ export * from './NetworkHttp';
 export * from './NodeHttp';
 export * from './RequestOptions';
 export * from './transaction/NamespaceMosaicIdGenerator';
+export * from './transaction/TransactionMapUtility';

@@ -25,7 +25,7 @@ import { LinkAction } from './LinkAction';
 import { Transaction } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
-import { TransactionVersion } from './TransactionVersion';
+import { TransactionTypeVersion } from './TransactionTypeVersion';
 import { calculateFee } from './FeeCalculationStrategy';
 
 /**
@@ -156,7 +156,7 @@ export class AccountLinkTransactionBuilder extends TransactionBuilder {
     public build(): AccountLinkTransaction {
         return new AccountLinkTransaction(
             this._networkType,
-            this._version || TransactionVersion.LINK_ACCOUNT,
+            this._version || TransactionTypeVersion.LINK_ACCOUNT,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(AccountLinkTransaction.calculateSize(), this._feeCalculationStrategy),
             this._remoteAccountKey,

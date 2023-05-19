@@ -23,7 +23,7 @@ const {
     AliasTransactionBuffer,
 } = MosaicAliasTransactionBufferPackage.Buffers;
 
-import {flatbuffers} from 'flatbuffers';
+import * as flatbuffers from 'flatbuffers';
 
 /**
  * @module transactions/MosaicAliasTransaction

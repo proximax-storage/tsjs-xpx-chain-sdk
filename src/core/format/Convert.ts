@@ -87,11 +87,34 @@ export class Convert {
      * @param {Uint8Array} input A uint8 array.
      * @returns {string} A hex encoded string corresponding to the input.
      */
-    public static uint8ToHex = (input) => {
+    public static uint8ArrayToHex = (input: Uint8Array) => {
         let s = '';
         for (const byte of input) {
             s += utilities.Nibble_To_Char_Map[byte >> 4];
             s += utilities.Nibble_To_Char_Map[byte & 0x0F];
+        }
+
+        return s;
+    }
+
+    /**
+     * Convert a uint8 to a hex string.
+     * @param {number} input A uint8 number.
+     * @returns {string} A hex encoded string corresponding to the input.
+     */
+    public static uint8ToHex = (input: number) => {
+
+        if (0xFF < input) {
+            throw Error(`input '${input}' is out uint8 number range`);
+        }
+        else if (0 > input) {
+            throw Error(`input '${input}' is not a valid uint8 number`);
+        }
+
+        let s = input.toString(16).toUpperCase();
+        
+        if(input < 16){
+            s = s.padStart(2, "0");
         }
 
         return s;
@@ -218,6 +241,6 @@ export class Convert {
             hex = "0" + hex;
         }
         let uint8Array = Convert.hexToUint8(hex);
-        return Convert.uint8ToHex(uint8Array.reverse());
+        return Convert.uint8ArrayToHex(uint8Array.reverse());
     }
 }

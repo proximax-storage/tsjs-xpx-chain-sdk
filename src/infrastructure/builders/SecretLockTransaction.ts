@@ -23,7 +23,7 @@ import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableT
 import SecretLockTransactionSchema from '../../infrastructure/schemas/SecretLockTransactionSchema';
 import { TransactionType } from '../../model/transaction/TransactionType';
 
-import {flatbuffers} from 'flatbuffers';
+import * as flatbuffers from 'flatbuffers';
 
 const {
     SecretLockTransactionBuffer,

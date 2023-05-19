@@ -17,7 +17,7 @@
 import { assert, expect } from 'chai';
 import * as CryptoJS from 'crypto-js';
 import { keccak_256, sha3_256 } from 'js-sha3';
-import { Crypto } from '../../src/core/crypto';
+import { DerivationScheme } from '../../src/core/crypto';
 import { Convert as convert } from '../../src/core/format';
 import {
     APIUrl, ConfNetworkMosaic,
@@ -71,7 +71,7 @@ describe('TransactionHttp', () => {
                     .message(PlainMessage.create('test-message'))
                     .build();
 
-                const signedTransaction = transferTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = transferTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -84,10 +84,10 @@ describe('TransactionHttp', () => {
                     .build();
 
                 const aggregateTransaction = factory.aggregateComplete()
-                    .innerTransactions([transferTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .innerTransactions([transferTransaction.toAggregateV1(TestingAccount.publicAccount)])
                     .build();
 
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = aggregateTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -103,22 +103,22 @@ describe('TransactionHttp', () => {
                     .build();
 
                 const aggregateBondedTransaction = factory.aggregateBonded()
-                    .innerTransactions([transferTransaction.toAggregate(MultisigAccount.publicAccount)])
+                    .innerTransactions([transferTransaction.toAggregateV1(MultisigAccount.publicAccount)])
                     .build();
 
-                const signedAggregateBondedTransaction = aggregateBondedTransaction.signWith(CosignatoryAccount, factory.generationHash);
+                const signedAggregateBondedTransaction = aggregateBondedTransaction.preV2SignWith(CosignatoryAccount, factory.generationHash);
                 const hashLockTransaction = factory.hashLock()
                     .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10000000)))
                     .duration(UInt64.fromUint(1000))
                     .transactionHash(signedAggregateBondedTransaction)
                     .build();
 
-                const signedHashLockTransaction = hashLockTransaction.signWith(CosignatoryAccount, factory.generationHash);
+                const signedHashLockTransaction = hashLockTransaction.preV2SignWith(CosignatoryAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, CosignatoryAccount.address, signedHashLockTransaction.hash)
                     .then(() => {
                         validatePartialTransactionAnnouncedCorrectly(listener, MultisigAccount.address, signedAggregateBondedTransaction.hash, (addedAggregateBondedTransaction) => {
                             const cosignatureTransaction = CosignatureTransaction.create(addedAggregateBondedTransaction);
-                            const signedCosignatureTransaction = cosignatureTransaction.signWith(Cosignatory2Account);
+                            const signedCosignatureTransaction = cosignatureTransaction.preV2SignWith(Cosignatory2Account);
                             validatePartialTransactionNotPartialAnyMore(listener, MultisigAccount.address, signedAggregateBondedTransaction.hash, () => {
                                 done();
                             });
@@ -137,7 +137,7 @@ describe('TransactionHttp', () => {
                     .build();
 
                 const aggregateCompleteTransaction = factory.aggregateComplete()
-                    .innerTransactions([transferTransaction.toAggregate(MultisigAccount.publicAccount)])
+                    .innerTransactions([transferTransaction.toAggregateV1(MultisigAccount.publicAccount)])
                     .build();
 
                 const signedAggregateCompleteTransaction = CosignatoryAccount.signTransactionWithCosignatories(aggregateCompleteTransaction, [Cosignatory2Account], factory.generationHash);
@@ -156,23 +156,23 @@ describe('TransactionHttp', () => {
                     .build();
 
                 const aggregateBondedTransaction = factory.aggregateBonded()
-                    .innerTransactions([transferTransaction.toAggregate(MultilevelMultisigAccount.publicAccount)])
+                    .innerTransactions([transferTransaction.toAggregateV1(MultilevelMultisigAccount.publicAccount)])
                     .build();
 
-                const signedAggregateBondedTransaction = aggregateBondedTransaction.signWith(Cosignatory4Account, factory.generationHash);
+                const signedAggregateBondedTransaction = aggregateBondedTransaction.preV2SignWith(Cosignatory4Account, factory.generationHash);
                 const hashLockTransaction = factory.hashLock()
                     .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10000000)))
                     .duration(UInt64.fromUint(1000))
                     .transactionHash(signedAggregateBondedTransaction)
                     .build();
 
-                const signedHashLockTransaction = hashLockTransaction.signWith(Cosignatory4Account, factory.generationHash);
+                const signedHashLockTransaction = hashLockTransaction.preV2SignWith(Cosignatory4Account, factory.generationHash);
                 validateTransactionConfirmed(listener, Cosignatory4Account.address, signedHashLockTransaction.hash)
                     .then(() => {
                         validatePartialTransactionAnnouncedCorrectly(listener, MultilevelMultisigAccount.address, signedAggregateBondedTransaction.hash, (addedAggregateBondedTransaction) => {
                             const cosignatureTransaction = CosignatureTransaction.create(addedAggregateBondedTransaction);
-                            const signedCosignatureTransaction1 = cosignatureTransaction.signWith(Cosignatory2Account);
-                            const signedCosignatureTransaction2 = cosignatureTransaction.signWith(Cosignatory3Account);
+                            const signedCosignatureTransaction1 = cosignatureTransaction.preV2SignWith(Cosignatory2Account);
+                            const signedCosignatureTransaction2 = cosignatureTransaction.preV2SignWith(Cosignatory3Account);
                             validatePartialTransactionNotPartialAnyMore(listener, MultilevelMultisigAccount.address, signedAggregateBondedTransaction.hash, () => {
                                 done();
                             });
@@ -192,7 +192,7 @@ describe('TransactionHttp', () => {
                     .build();
 
                 const aggregateCompleteTransaction = factory.aggregateComplete()
-                    .innerTransactions([transferTransaction.toAggregate(MultilevelMultisigAccount.publicAccount)])
+                    .innerTransactions([transferTransaction.toAggregateV1(MultilevelMultisigAccount.publicAccount)])
                     .build();
 
                 const signedAggregateCompleteTransaction = Cosignatory4Account.signTransactionWithCosignatories(aggregateCompleteTransaction, [Cosignatory2Account, Cosignatory3Account], factory.generationHash);
@@ -209,10 +209,10 @@ describe('TransactionHttp', () => {
                     .build();
                 // initiator, delivers this to other cosigners
                 const aggregateCompleteTransaction = factory.aggregateComplete()
-                    .innerTransactions([transferTransaction.toAggregate(MultilevelMultisigAccount.publicAccount)])
+                    .innerTransactions([transferTransaction.toAggregateV1(MultilevelMultisigAccount.publicAccount)])
                     .build();
 
-                const signedAggregateCompleteTransaction = aggregateCompleteTransaction.signWith(Cosignatory4Account, factory.generationHash);
+                const signedAggregateCompleteTransaction = aggregateCompleteTransaction.preV2SignWith(Cosignatory4Account, factory.generationHash);
 
                 // second cosigner, cosign and send back to the initiator
                 const cosignedTwo = CosignatureTransaction.signTransactionPayload(Cosignatory2Account, signedAggregateCompleteTransaction.payload, factory.generationHash);
@@ -222,8 +222,8 @@ describe('TransactionHttp', () => {
 
                 // initiator combines all the signatures and the transaction into single signed transaction and announces
                 const cosignatureSignedTransactions = [
-                    new CosignatureSignedTransaction(cosignedTwo.parentHash, cosignedTwo.signature, cosignedTwo.signer),
-                    new CosignatureSignedTransaction(cosignedThree.parentHash, cosignedThree.signature, cosignedThree.signer)
+                    CosignatureSignedTransaction.create(cosignedTwo.parentHash, cosignedTwo.signature, DerivationScheme.Ed25519Sha3, cosignedTwo.signer),
+                    CosignatureSignedTransaction.create(cosignedThree.parentHash, cosignedThree.signature, DerivationScheme.Ed25519Sha3, cosignedThree.signer)
                 ];
                 const deserializedAggregateCompleteTransaction = TransactionMapping.createFromPayload(signedAggregateCompleteTransaction.payload) as AggregateTransaction;
                 const signedDeserializedAggregateCompleteTransaction = deserializedAggregateCompleteTransaction.signTransactionGivenSignatures(Cosignatory4Account, cosignatureSignedTransactions, factory.generationHash);
@@ -247,7 +247,7 @@ describe('TransactionHttp', () => {
                     .linkAction(LinkAction.Link)
                     .remoteAccountKey(linkAccountPubKey)
                     .build();
-                const signedTransaction = accountLinkTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = accountLinkTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -258,10 +258,10 @@ describe('TransactionHttp', () => {
                     .remoteAccountKey(linkAccountPubKey)
                     .build();
                 const aggregateTransaction = factory.aggregateComplete()
-                    .innerTransactions([accountLinkTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .innerTransactions([accountLinkTransaction.toAggregateV1(TestingAccount.publicAccount)])
                     .build();
 
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = aggregateTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -276,7 +276,7 @@ describe('TransactionHttp', () => {
                     .duration(UInt64.fromUint(1000))
                     .build();
 
-                const signedTransaction = registerNamespaceTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = registerNamespaceTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -288,10 +288,10 @@ describe('TransactionHttp', () => {
                     .build();
 
                 const aggregateTransaction = factory.aggregateComplete()
-                    .innerTransactions([registerNamespaceTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .innerTransactions([registerNamespaceTransaction.toAggregateV1(TestingAccount.publicAccount)])
                     .build();
 
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = aggregateTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -313,7 +313,7 @@ describe('TransactionHttp', () => {
                     }))
                     .build();
 
-                const signedTransaction = mosaicDefinitionTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = mosaicDefinitionTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 console.log(mosaicId.toHex());
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
@@ -334,7 +334,7 @@ describe('TransactionHttp', () => {
                     }))
                     .build();
 
-                const signedTransaction = mosaicDefinitionTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = mosaicDefinitionTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 console.log(mosaicId.toHex());
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash).then(() => {
                     const mosaicMetadataTransaction = factory.mosaicMetadata()
@@ -345,18 +345,18 @@ describe('TransactionHttp', () => {
                         .build();
 
                     const aggregateBondedTxn = factory.aggregateBonded()
-                        .innerTransactions([mosaicMetadataTransaction.toAggregate(TestingAccount.publicAccount)])
+                        .innerTransactions([mosaicMetadataTransaction.toAggregateV1(TestingAccount.publicAccount)])
                         .build();
 
-                    const signedMetadataTransaction = aggregateBondedTxn.signWith(TestingAccount, factory.generationHash);
+                    const signedMetadataTransaction = aggregateBondedTxn.preV2SignWith(TestingAccount, factory.generationHash);
                     
-                    const lockhashTransaction = factory.lockFunds()
+                    const lockhashTransaction = factory.hashLock()
                         .duration(UInt64.fromUint(1000))
                         .transactionHash(signedMetadataTransaction)
                         .mosaic(new Mosaic(new NamespaceId("prx.xpx"), UInt64.fromUint(10000000)))
                         .build();
 
-                    const signedLockhashTransaction = lockhashTransaction.signWith(TestingAccount, factory.generationHash);
+                    const signedLockhashTransaction = lockhashTransaction.preV2SignWith(TestingAccount, factory.generationHash);
 
                     validateTransactionConfirmed(listener, TestingAccount.address, signedLockhashTransaction.hash)
                         .then(() => {
@@ -384,7 +384,7 @@ describe('TransactionHttp', () => {
                     }))
                     .build();
 
-                const signedTransaction = mosaicDefinitionTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = mosaicDefinitionTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 console.log(mosaicId.toHex());
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash).then(() => {
                     const mosaicModifyLevyTransaction = factory.mosaicModifyLevy()
@@ -392,7 +392,7 @@ describe('TransactionHttp', () => {
                         .mosaicLevy(MosaicLevy.createWithAbsoluteFee(TestingAccount.address, mosaicId, 50))
                         .build();
 
-                    const signedMosaicModifyLevyTransaction = mosaicModifyLevyTransaction.signWith(TestingAccount, factory.generationHash);
+                    const signedMosaicModifyLevyTransaction = mosaicModifyLevyTransaction.preV2SignWith(TestingAccount, factory.generationHash);
 
                     validateTransactionConfirmed(listener, TestingAccount.address, signedMosaicModifyLevyTransaction.hash)
                         .then(() => done()).catch((reason) => fail(reason));
@@ -417,10 +417,10 @@ describe('TransactionHttp', () => {
                     .build();
 
                 const aggregateTransaction = factory.aggregateComplete()
-                    .innerTransactions([mosaicDefinitionTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .innerTransactions([mosaicDefinitionTransaction.toAggregateV1(TestingAccount.publicAccount)])
                     .build();
 
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = aggregateTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -442,7 +442,7 @@ describe('TransactionHttp', () => {
                     }))
                     .build();
 
-                const signedTransaction = mosaicDefinitionTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = mosaicDefinitionTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -463,10 +463,10 @@ describe('TransactionHttp', () => {
                     .build();
 
                 const aggregateTransaction = factory.aggregateComplete()
-                    .innerTransactions([mosaicDefinitionTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .innerTransactions([mosaicDefinitionTransaction.toAggregateV1(TestingAccount.publicAccount)])
                     .build();
 
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = aggregateTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -481,7 +481,7 @@ describe('TransactionHttp', () => {
                     .address(TestingAccount.address)
                     .build();
 
-                const signedTransaction = addressAliasTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = addressAliasTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -493,7 +493,7 @@ describe('TransactionHttp', () => {
                     .address(TestingAccount.address)
                     .build();
 
-                const signedTransaction = addressAliasTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = addressAliasTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -506,7 +506,7 @@ describe('TransactionHttp', () => {
                     .build();
 
                 console.log(mosaicAliasTransaction);
-                const signedTransaction = mosaicAliasTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = mosaicAliasTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -518,7 +518,7 @@ describe('TransactionHttp', () => {
                     .mosaicId(ConfTestingMosaicId)
                     .build();
 
-                const signedTransaction = mosaicAliasTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = mosaicAliasTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -533,7 +533,7 @@ describe('TransactionHttp', () => {
                     .delta(UInt64.fromUint(10))
                     .build();
 
-                const signedTransaction = mosaicSupplyChangeTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = mosaicSupplyChangeTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -546,10 +546,10 @@ describe('TransactionHttp', () => {
                     .build();
 
                 const aggregateTransaction = factory.aggregateComplete()
-                    .innerTransactions([mosaicSupplyChangeTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .innerTransactions([mosaicSupplyChangeTransaction.toAggregateV1(TestingAccount.publicAccount)])
                     .build();
 
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = aggregateTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -567,7 +567,7 @@ describe('TransactionHttp', () => {
                     .modifications([addressRestrictionFilter])
                     .build();
 
-                const signedTransaction = addressModification.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = addressModification.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -584,10 +584,10 @@ describe('TransactionHttp', () => {
                     .build();
 
                 const aggregateTransaction = factory.aggregateComplete()
-                    .innerTransactions([addressModification.toAggregate(TestingAccount.publicAccount)])
+                    .innerTransactions([addressModification.toAggregateV1(TestingAccount.publicAccount)])
                     .build();
 
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = aggregateTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -605,7 +605,7 @@ describe('TransactionHttp', () => {
                     .modifications([mosaicRestrictionFilter])
                     .build();
 
-                const signedTransaction = addressModification.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = addressModification.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -622,10 +622,10 @@ describe('TransactionHttp', () => {
                     .build();
 
                 const aggregateTransaction = factory.aggregateComplete()
-                    .innerTransactions([addressModification.toAggregate(TestingAccount.publicAccount)])
+                    .innerTransactions([addressModification.toAggregateV1(TestingAccount.publicAccount)])
                     .build();
 
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = aggregateTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -643,7 +643,7 @@ describe('TransactionHttp', () => {
                     .modifications([operationRestrictionFilter])
                     .build();
 
-                const signedTransaction = addressModification.signWith(Cosignatory2Account, factory.generationHash);
+                const signedTransaction = addressModification.preV2SignWith(Cosignatory2Account, factory.generationHash);
 
                 validateTransactionConfirmed(listener, Cosignatory2Account.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
@@ -661,10 +661,10 @@ describe('TransactionHttp', () => {
                     .build();
 
                 const aggregateTransaction = factory.aggregateComplete()
-                    .innerTransactions([addressModification.toAggregate(Cosignatory2Account.publicAccount)])
+                    .innerTransactions([addressModification.toAggregateV1(Cosignatory2Account.publicAccount)])
                     .build();
 
-                const signedTransaction = aggregateTransaction.signWith(Cosignatory2Account, factory.generationHash);
+                const signedTransaction = aggregateTransaction.preV2SignWith(Cosignatory2Account, factory.generationHash);
                 validateTransactionConfirmed(listener, Cosignatory2Account.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -687,7 +687,7 @@ describe('TransactionHttp', () => {
                     signedTransaction,
                     ConfNetworkType);
 
-                const signedHashLockTransaction = hashLockTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedHashLockTransaction = hashLockTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedHashLockTransaction.hash);
                 transactionHttp.announce(signedHashLockTransaction);
             });
@@ -703,52 +703,52 @@ describe('TransactionHttp', () => {
                     ConfNetworkType,
                 );
                 const aggregateTransaction = AggregateTransaction.createComplete(Deadline.create(),
-                    [mosaicAliasTransaction.toAggregate(TestingAccount.publicAccount)],
+                    [mosaicAliasTransaction.toAggregateV1(TestingAccount.publicAccount)],
                     ConfNetworkType,
                     [],
                 );
-                const signedTransaction = aggregateTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = aggregateTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionAnnounceCorrectly(TestingAccount.address, done, signedTransaction.hash);
                 transactionHttp.announce(signedTransaction);
             });
         });
     */
-        describe('LockFundsTransaction', () => {
+        describe('LockHashTransaction', () => {
             it('standalone', (done) => {
                 const aggregateTransaction = factory.aggregateBonded()
                     .build();
 
                 const signedTransaction = TestingAccount.sign(aggregateTransaction, factory.generationHash);
-                const lockFundsTransaction = factory.lockFunds()
+                const lockHashTransaction = factory.hashLock()
                     .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * Math.pow(10, ConfNetworkMosaicDivisibility))))
                     .duration(UInt64.fromUint(10000))
                     .transactionHash(signedTransaction)
                     .build();
 
-                const signedLockFundsTransaction = lockFundsTransaction.signWith(TestingAccount, factory.generationHash);
-                validateTransactionConfirmed(listener, TestingAccount.address, signedLockFundsTransaction.hash)
+                const signedLockHashTransaction = lockHashTransaction.preV2SignWith(TestingAccount, factory.generationHash);
+                validateTransactionConfirmed(listener, TestingAccount.address, signedLockHashTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
-                transactionHttp.announce(signedLockFundsTransaction);
+                transactionHttp.announce(signedLockHashTransaction);
             });
 
             it('aggregate', (done) => {
                 const aggregateTransaction = factory.aggregateBonded()
                     .build();
                 const signedTransaction = TestingAccount.sign(aggregateTransaction, factory.generationHash);
-                const lockFundsTransaction = factory.lockFunds()
+                const lockHashTransaction = factory.hashLock()
                     .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * Math.pow(10, ConfNetworkMosaicDivisibility))))
                     .duration(UInt64.fromUint(10))
                     .transactionHash(signedTransaction)
                     .build();
 
-                const aggregateLockFundsTransaction = factory.aggregateComplete()
-                    .innerTransactions([lockFundsTransaction.toAggregate(TestingAccount.publicAccount)])
+                const aggregateLockHashTransaction = factory.aggregateComplete()
+                    .innerTransactions([lockHashTransaction.toAggregateV1(TestingAccount.publicAccount)])
                     .build();
 
-                const signedAggregateLockFundsTransaction = aggregateLockFundsTransaction.signWith(TestingAccount, factory.generationHash);
-                validateTransactionConfirmed(listener, TestingAccount.address, signedAggregateLockFundsTransaction.hash)
+                const signedAggregateLockHashTransaction = aggregateLockHashTransaction.preV2SignWith(TestingAccount, factory.generationHash);
+                validateTransactionConfirmed(listener, TestingAccount.address, signedAggregateLockHashTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
-                transactionHttp.announce(signedAggregateLockFundsTransaction);
+                transactionHttp.announce(signedAggregateLockHashTransaction);
             });
         });
 
@@ -761,7 +761,7 @@ describe('TransactionHttp', () => {
 
                 const aggregateTransaction = factory.aggregateComplete()
                     .innerTransactions([
-                        transaction.toAggregate(TestingAccount.publicAccount),
+                        transaction.toAggregateV1(TestingAccount.publicAccount),
                     ])
                     .build();
                 const signedTransaction = TestingAccount.sign(aggregateTransaction, factory.generationHash);
@@ -782,7 +782,7 @@ describe('TransactionHttp', () => {
                         .recipient(TestingRecipient.address)
                         .build();
 
-                    const signedTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
+                    const signedTransaction = secretLockTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                     validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                         .then(() => done()).catch((reason) => fail(reason));
                     transactionHttp.announce(signedTransaction);
@@ -798,9 +798,9 @@ describe('TransactionHttp', () => {
                         .build();
 
                     const aggregateSecretLockTransaction = factory.aggregateComplete()
-                        .innerTransactions([secretLockTransaction.toAggregate(TestingAccount.publicAccount)])
+                        .innerTransactions([secretLockTransaction.toAggregateV1(TestingAccount.publicAccount)])
                         .build();
-                    const signedTransaction = aggregateSecretLockTransaction.signWith(TestingAccount, factory.generationHash);
+                    const signedTransaction = aggregateSecretLockTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                     validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                         .then(() => done()).catch((reason) => fail(reason));
                     transactionHttp.announce(signedTransaction);
@@ -816,7 +816,7 @@ describe('TransactionHttp', () => {
                         .recipient(TestingRecipient.address)
                         .build();
 
-                    const signedTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
+                    const signedTransaction = secretLockTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                     validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                         .then(() => done()).catch((reason) => fail(reason));
                     transactionHttp.announce(signedTransaction);
@@ -832,10 +832,10 @@ describe('TransactionHttp', () => {
                         .build();
 
                     const aggregateSecretLockTransaction = factory.aggregateComplete()
-                        .innerTransactions([secretLockTransaction.toAggregate(TestingAccount.publicAccount)])
+                        .innerTransactions([secretLockTransaction.toAggregateV1(TestingAccount.publicAccount)])
                         .build();
 
-                    const signedTransaction = aggregateSecretLockTransaction.signWith(TestingAccount, factory.generationHash);
+                    const signedTransaction = aggregateSecretLockTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                     validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                         .then(() => done()).catch((reason) => fail(reason));
                     transactionHttp.announce(signedTransaction);
@@ -852,7 +852,7 @@ describe('TransactionHttp', () => {
                         .recipient(TestingRecipient.address)
                         .build();
 
-                    const signedTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
+                    const signedTransaction = secretLockTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                     validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                         .then(() => done()).catch((reason) => fail(reason));
                     transactionHttp.announce(signedTransaction);
@@ -868,10 +868,10 @@ describe('TransactionHttp', () => {
                         .build();
 
                     const aggregateSecretLockTransaction = factory.aggregateComplete()
-                        .innerTransactions([secretLockTransaction.toAggregate(TestingAccount.publicAccount)])
+                        .innerTransactions([secretLockTransaction.toAggregateV1(TestingAccount.publicAccount)])
                         .build();
 
-                    const signedTransaction = aggregateSecretLockTransaction.signWith(TestingAccount, factory.generationHash);
+                    const signedTransaction = aggregateSecretLockTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                     validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                         .then(() => done()).catch((reason) => fail(reason));
                     transactionHttp.announce(signedTransaction);
@@ -888,7 +888,7 @@ describe('TransactionHttp', () => {
                         .recipient(TestingRecipient.address)
                         .build();
 
-                    const signedTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
+                    const signedTransaction = secretLockTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                     validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                         .then(() => done()).catch((reason) => fail(reason));
                     transactionHttp.announce(signedTransaction);
@@ -904,10 +904,10 @@ describe('TransactionHttp', () => {
                         .build();
 
                     const aggregateSecretLockTransaction = factory.aggregateComplete()
-                        .innerTransactions([secretLockTransaction.toAggregate(TestingAccount.publicAccount)])
+                        .innerTransactions([secretLockTransaction.toAggregateV1(TestingAccount.publicAccount)])
                         .build();
 
-                    const signedTransaction = aggregateSecretLockTransaction.signWith(TestingAccount, factory.generationHash);
+                    const signedTransaction = aggregateSecretLockTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                     validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                         .then(() => done()).catch((reason) => fail(reason));
                     transactionHttp.announce(signedTransaction);
@@ -920,7 +920,7 @@ describe('TransactionHttp', () => {
                 it('standalone', (done) => {
                     const secretSeed = randomBytes(20);
                     const secret = sha3_256.create().update(secretSeed).hex();
-                    const proof = convert.uint8ToHex(secretSeed);
+                    const proof = convert.uint8ArrayToHex(secretSeed);
                     const secretLockTransaction = factory.secretLock()
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
                         .duration(UInt64.fromUint(100))
@@ -929,7 +929,7 @@ describe('TransactionHttp', () => {
                         .recipient(TestingRecipient.address)
                         .build();
 
-                    const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
+                    const signedSecretLockTransaction = secretLockTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                     validateTransactionConfirmed(listener, TestingAccount.address, signedSecretLockTransaction.hash)
                         .then(() => {
                             const secretProofTransaction = factory.secretProof()
@@ -939,7 +939,7 @@ describe('TransactionHttp', () => {
                                 .proof(proof)
                                 .build();
 
-                            const signedSecretProofTransaction = secretProofTransaction.signWith(TestingRecipient, factory.generationHash);
+                            const signedSecretProofTransaction = secretProofTransaction.preV2SignWith(TestingRecipient, factory.generationHash);
                             validateTransactionConfirmed(listener, TestingRecipient.address, signedSecretProofTransaction.hash)
                                 .then(() => {
                                     done();
@@ -956,7 +956,7 @@ describe('TransactionHttp', () => {
                 it('aggregate', (done) => {
                     const secretSeed = randomBytes(20);
                     const secret = sha3_256.create().update(secretSeed).hex();
-                    const proof = convert.uint8ToHex(secretSeed);
+                    const proof = convert.uint8ArrayToHex(secretSeed);
                     const secretLockTransaction = factory.secretLock()
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
                         .duration(UInt64.fromUint(100))
@@ -965,7 +965,7 @@ describe('TransactionHttp', () => {
                         .recipient(TestingRecipient.address)
                         .build();
 
-                    const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
+                    const signedSecretLockTransaction = secretLockTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                     validateTransactionConfirmed(listener, TestingAccount.address, signedSecretLockTransaction.hash)
                         .then(() => {
                             const secretProofTransaction = factory.secretProof()
@@ -976,10 +976,10 @@ describe('TransactionHttp', () => {
                                 .build();
 
                             const aggregateSecretProofTransaction = factory.aggregateComplete()
-                                .innerTransactions([secretProofTransaction.toAggregate(TestingRecipient.publicAccount)])
+                                .innerTransactions([secretProofTransaction.toAggregateV1(TestingRecipient.publicAccount)])
                                 .build();
 
-                            const signedAggregateSecretProofTransaction = aggregateSecretProofTransaction.signWith(TestingRecipient, factory.generationHash);
+                            const signedAggregateSecretProofTransaction = aggregateSecretProofTransaction.preV2SignWith(TestingRecipient, factory.generationHash);
                             validateTransactionConfirmed(listener, TestingRecipient.address, signedAggregateSecretProofTransaction.hash)
                                 .then(() => {
                                     done();
@@ -997,7 +997,7 @@ describe('TransactionHttp', () => {
                 it('standalone', (done) => {
                     const secretSeed = randomBytes(20);
                     const secret = keccak_256.create().update(secretSeed).hex();
-                    const proof = convert.uint8ToHex(secretSeed);
+                    const proof = convert.uint8ArrayToHex(secretSeed);
                     const secretLockTransaction = factory.secretLock()
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
                         .duration(UInt64.fromUint(100))
@@ -1006,7 +1006,7 @@ describe('TransactionHttp', () => {
                         .recipient(TestingRecipient.address)
                         .build();
 
-                    const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
+                    const signedSecretLockTransaction = secretLockTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                     validateTransactionConfirmed(listener, TestingAccount.address, signedSecretLockTransaction.hash)
                         .then(() => {
                             const secretProofTransaction = factory.secretProof()
@@ -1016,7 +1016,7 @@ describe('TransactionHttp', () => {
                                 .proof(proof)
                                 .build();
 
-                            const signedSecretProofTransaction = secretProofTransaction.signWith(TestingRecipient, factory.generationHash);
+                            const signedSecretProofTransaction = secretProofTransaction.preV2SignWith(TestingRecipient, factory.generationHash);
                             validateTransactionConfirmed(listener, TestingRecipient.address, signedSecretProofTransaction.hash)
                                 .then(() => {
                                     done();
@@ -1033,7 +1033,7 @@ describe('TransactionHttp', () => {
                 it('aggregate', (done) => {
                     const secretSeed = randomBytes(20);
                     const secret = keccak_256.create().update(secretSeed).hex();
-                    const proof = convert.uint8ToHex(secretSeed);
+                    const proof = convert.uint8ArrayToHex(secretSeed);
                     const secretLockTransaction = factory.secretLock()
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
                         .duration(UInt64.fromUint(100))
@@ -1042,7 +1042,7 @@ describe('TransactionHttp', () => {
                         .recipient(TestingRecipient.address)
                         .build();
 
-                    const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
+                    const signedSecretLockTransaction = secretLockTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                     validateTransactionConfirmed(listener, TestingAccount.address, signedSecretLockTransaction.hash)
                         .then(() => {
                             const secretProofTransaction = factory.secretProof()
@@ -1052,10 +1052,10 @@ describe('TransactionHttp', () => {
                                 .proof(proof)
                                 .build();
                             const aggregateSecretProofTransaction = factory.aggregateComplete()
-                                .innerTransactions([secretProofTransaction.toAggregate(TestingRecipient.publicAccount)])
+                                .innerTransactions([secretProofTransaction.toAggregateV1(TestingRecipient.publicAccount)])
                                 .build();
 
-                            const signedAggregateSecretProofTransaction = aggregateSecretProofTransaction.signWith(TestingRecipient, factory.generationHash);
+                            const signedAggregateSecretProofTransaction = aggregateSecretProofTransaction.preV2SignWith(TestingRecipient, factory.generationHash);
                             validateTransactionConfirmed(listener, TestingRecipient.address, signedAggregateSecretProofTransaction.hash)
                                 .then(() => {
                                     done();
@@ -1073,7 +1073,7 @@ describe('TransactionHttp', () => {
             describe('HashType: Op_Hash_160', () => {
                 it('standalone', (done) => {
                     const secretSeed = randomBytes(20);
-                    const proof = convert.uint8ToHex(secretSeed);
+                    const proof = convert.uint8ArrayToHex(secretSeed);
                     const secret = CryptoJS.RIPEMD160(CryptoJS.enc.Hex.parse(CryptoJS.SHA256(CryptoJS.enc.Hex.parse(proof)).toString(CryptoJS.enc.Hex))).toString(CryptoJS.enc.Hex);
                     const secretLockTransaction = factory.secretLock()
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
@@ -1083,7 +1083,7 @@ describe('TransactionHttp', () => {
                         .recipient(TestingRecipient.address)
                         .build();
 
-                    const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
+                    const signedSecretLockTransaction = secretLockTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                     validateTransactionConfirmed(listener, TestingAccount.address, signedSecretLockTransaction.hash)
                         .then(() => {
                             const secretProofTransaction = factory.secretProof()
@@ -1093,7 +1093,7 @@ describe('TransactionHttp', () => {
                                 .proof(proof)
                                 .build();
 
-                            const signedSecretProofTransaction = secretProofTransaction.signWith(TestingRecipient, factory.generationHash);
+                            const signedSecretProofTransaction = secretProofTransaction.preV2SignWith(TestingRecipient, factory.generationHash);
                             validateTransactionConfirmed(listener, TestingRecipient.address, signedSecretProofTransaction.hash)
                                 .then(() => {
                                     done();
@@ -1109,7 +1109,7 @@ describe('TransactionHttp', () => {
 
                 it('aggregate', (done) => {
                     const secretSeed = randomBytes(20);
-                    const proof = convert.uint8ToHex(secretSeed);
+                    const proof = convert.uint8ArrayToHex(secretSeed);
                     const secret = CryptoJS.RIPEMD160(CryptoJS.enc.Hex.parse(CryptoJS.SHA256(CryptoJS.enc.Hex.parse(proof)).toString(CryptoJS.enc.Hex))).toString(CryptoJS.enc.Hex);
                     const secretLockTransaction = factory.secretLock()
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
@@ -1119,7 +1119,7 @@ describe('TransactionHttp', () => {
                         .recipient(TestingRecipient.address)
                         .build();
 
-                    const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
+                    const signedSecretLockTransaction = secretLockTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                     validateTransactionConfirmed(listener, TestingAccount.address, signedSecretLockTransaction.hash)
                         .then(() => {
                             const secretProofTransaction = factory.secretProof()
@@ -1130,10 +1130,10 @@ describe('TransactionHttp', () => {
                                 .build();
 
                             const aggregateSecretProofTransaction = factory.aggregateComplete()
-                                .innerTransactions([secretProofTransaction.toAggregate(TestingRecipient.publicAccount)])
+                                .innerTransactions([secretProofTransaction.toAggregateV1(TestingRecipient.publicAccount)])
                                 .build();
 
-                            const signedAggregateSecretProofTransaction = aggregateSecretProofTransaction.signWith(TestingRecipient, factory.generationHash);
+                            const signedAggregateSecretProofTransaction = aggregateSecretProofTransaction.preV2SignWith(TestingRecipient, factory.generationHash);
                             validateTransactionConfirmed(listener, TestingRecipient.address, signedAggregateSecretProofTransaction.hash)
                                 .then(() => {
                                     done();
@@ -1151,7 +1151,7 @@ describe('TransactionHttp', () => {
             describe('HashType: Op_Hash_256', () => {
                 it('standalone', (done) => {
                     const secretSeed = randomBytes(20);
-                    const proof = convert.uint8ToHex(secretSeed);
+                    const proof = convert.uint8ArrayToHex(secretSeed);
                     const secret = CryptoJS.SHA256(CryptoJS.enc.Hex.parse(CryptoJS.SHA256(CryptoJS.enc.Hex.parse(proof)).toString(CryptoJS.enc.Hex))).toString(CryptoJS.enc.Hex);
                     const secretLockTransaction = factory.secretLock()
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
@@ -1161,7 +1161,7 @@ describe('TransactionHttp', () => {
                         .recipient(TestingRecipient.address)
                         .build();
 
-                    const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
+                    const signedSecretLockTransaction = secretLockTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                     validateTransactionConfirmed(listener, TestingAccount.address, signedSecretLockTransaction.hash)
                         .then(() => {
                             const secretProofTransaction = factory.secretProof()
@@ -1171,7 +1171,7 @@ describe('TransactionHttp', () => {
                                 .proof(proof)
                                 .build();
 
-                            const signedSecretProofTransaction = secretProofTransaction.signWith(TestingRecipient, factory.generationHash);
+                            const signedSecretProofTransaction = secretProofTransaction.preV2SignWith(TestingRecipient, factory.generationHash);
                             validateTransactionConfirmed(listener, TestingRecipient.address, signedSecretProofTransaction.hash)
                                 .then(() => {
                                     done();
@@ -1187,7 +1187,7 @@ describe('TransactionHttp', () => {
 
                 it('aggregate', (done) => {
                     const secretSeed = randomBytes(20);
-                    const proof = convert.uint8ToHex(secretSeed);
+                    const proof = convert.uint8ArrayToHex(secretSeed);
                     const secret = CryptoJS.SHA256(CryptoJS.enc.Hex.parse(CryptoJS.SHA256(CryptoJS.enc.Hex.parse(proof)).toString(CryptoJS.enc.Hex))).toString(CryptoJS.enc.Hex);
                     const secretLockTransaction = factory.secretLock()
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
@@ -1197,7 +1197,7 @@ describe('TransactionHttp', () => {
                         .recipient(TestingRecipient.address)
                         .build();
 
-                    const signedSecretLockTransaction = secretLockTransaction.signWith(TestingAccount, factory.generationHash);
+                    const signedSecretLockTransaction = secretLockTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                     validateTransactionConfirmed(listener, TestingAccount.address, signedSecretLockTransaction.hash)
                         .then(() => {
                             const secretProofTransaction = factory.secretProof()
@@ -1208,10 +1208,10 @@ describe('TransactionHttp', () => {
                                 .build();
 
                             const aggregateSecretProofTransaction = factory.aggregateComplete()
-                                .innerTransactions([secretProofTransaction.toAggregate(TestingRecipient.publicAccount)])
+                                .innerTransactions([secretProofTransaction.toAggregateV1(TestingRecipient.publicAccount)])
                                 .build();
 
-                            const signedAggregateSecretProofTransaction = aggregateSecretProofTransaction.signWith(TestingRecipient, factory.generationHash);
+                            const signedAggregateSecretProofTransaction = aggregateSecretProofTransaction.preV2SignWith(TestingRecipient, factory.generationHash);
                             validateTransactionConfirmed(listener, TestingRecipient.address, signedAggregateSecretProofTransaction.hash)
                                 .then(() => {
                                     done();
@@ -1236,7 +1236,7 @@ describe('TransactionHttp', () => {
                         .supportedEntityVersions(nemesisBlockInfo.config.supportedEntityVersions)
                         .build();
 
-                    const signedTransaction = chainConfigTransaction.signWith(NemesisAccount, factory.generationHash);
+                    const signedTransaction = chainConfigTransaction.preV2SignWith(NemesisAccount, factory.generationHash);
                     validateTransactionConfirmed(listener, NemesisAccount.address, signedTransaction.hash)
                         .then(() => done()).catch((reason) => fail(reason));
                     transactionHttp.announce(signedTransaction);
@@ -1251,7 +1251,7 @@ describe('TransactionHttp', () => {
                     .newBlockchainVersion(UInt64.fromHex('0001000200030004'))
                     .build();
 
-                const signedTransaction = chainUpgradeTransaction.signWith(NemesisAccount, factory.generationHash);
+                const signedTransaction = chainUpgradeTransaction.preV2SignWith(NemesisAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, NemesisAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -1272,7 +1272,7 @@ describe('TransactionHttp', () => {
                 const addExchangeOfferTransaction = factory.addExchangeOffer()
                     .offers(offers)
                     .build();
-                const signedTransaction = addExchangeOfferTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = addExchangeOfferTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -1292,9 +1292,9 @@ describe('TransactionHttp', () => {
                     .offers(offers)
                     .build();
                 const aggregateComplete = factory.aggregateComplete()
-                    .innerTransactions([addExchangeOfferTransaction.toAggregate(CosignatoryAccount.publicAccount)])
+                    .innerTransactions([addExchangeOfferTransaction.toAggregateV1(CosignatoryAccount.publicAccount)])
                     .build();
-                const signedTransaction = aggregateComplete.signWith(CosignatoryAccount, factory.generationHash);
+                const signedTransaction = aggregateComplete.preV2SignWith(CosignatoryAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, CosignatoryAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -1315,7 +1315,7 @@ describe('TransactionHttp', () => {
                 const exchangeOfferTransaction = factory.exchangeOffer()
                     .offers(offers)
                     .build();
-                const signedTransaction = exchangeOfferTransaction.signWith(CosignatoryAccount, factory.generationHash);
+                const signedTransaction = exchangeOfferTransaction.preV2SignWith(CosignatoryAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, CosignatoryAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -1335,9 +1335,9 @@ describe('TransactionHttp', () => {
                     .offers(offers)
                     .build();
                 const aggregateComplete = factory.aggregateComplete()
-                    .innerTransactions([exchangeOfferTransaction.toAggregate(TestingAccount.publicAccount)])
+                    .innerTransactions([exchangeOfferTransaction.toAggregateV1(TestingAccount.publicAccount)])
                     .build();
-                const signedTransaction = aggregateComplete.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = aggregateComplete.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -1355,7 +1355,7 @@ describe('TransactionHttp', () => {
                 const exchangeOfferTransaction = factory.removeExchangeOffer()
                     .offers(offers)
                     .build();
-                const signedTransaction = exchangeOfferTransaction.signWith(TestingAccount, factory.generationHash);
+                const signedTransaction = exchangeOfferTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, TestingAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -1372,9 +1372,9 @@ describe('TransactionHttp', () => {
                     .offers(offers)
                     .build();
                 const aggregateComplete = factory.aggregateComplete()
-                    .innerTransactions([exchangeOfferTransaction.toAggregate(CosignatoryAccount.publicAccount)])
+                    .innerTransactions([exchangeOfferTransaction.toAggregateV1(CosignatoryAccount.publicAccount)])
                     .build();
-                const signedTransaction = aggregateComplete.signWith(CosignatoryAccount, factory.generationHash);
+                const signedTransaction = aggregateComplete.preV2SignWith(CosignatoryAccount, factory.generationHash);
                 validateTransactionConfirmed(listener, CosignatoryAccount.address, signedTransaction.hash)
                     .then(() => done()).catch((reason) => fail(reason));
                 transactionHttp.announce(signedTransaction);
@@ -1472,7 +1472,7 @@ describe('TransactionHttp', () => {
 
     describe('announceAggregateBonded', () => {
         it('should return success when announceAggregateBonded', (done) => {
-            const payload = new SignedTransaction('', '0'.repeat(64), '', TransactionType.AGGREGATE_BONDED, factory.networkType);
+            const payload = new SignedTransaction('', '0'.repeat(64), '', TransactionType.AGGREGATE_BONDED_V1, factory.networkType);
             transactionHttp.announceAggregateBonded(payload)
                 .subscribe((transactionAnnounceResponse) => {
                     expect(transactionAnnounceResponse.message)
@@ -1489,7 +1489,7 @@ describe('TransactionHttp', () => {
 
             const aggTx = factory.aggregateComplete()
                 .innerTransactions([
-                    tx.toAggregate(TestingAccount.publicAccount),
+                    tx.toAggregateV1(TestingAccount.publicAccount),
                 ])
                 .build();
 
@@ -1504,7 +1504,7 @@ describe('TransactionHttp', () => {
 
     describe('announceAggregateBondedCosignature', () => {
         it('should return success when announceAggregateBondedCosignature', (done) => {
-            const payload = new CosignatureSignedTransaction('', '', '');
+            const payload = CosignatureSignedTransaction.create('', '', DerivationScheme.Ed25519Sha3, '');
             transactionHttp.announceAggregateBondedCosignature(payload)
                 .subscribe((transactionAnnounceResponse) => {
                     expect(transactionAnnounceResponse.message)
@@ -1560,15 +1560,15 @@ describe('TransactionHttp', () => {
 
             const signedTransaction = TestingAccount.sign(aggregateTransaction, factory.generationHash);
 
-            const lockFundsTransaction = factory.lockFunds()
+            const lockHashTransaction = factory.hashLock()
                 .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(0)))
                 .duration(UInt64.fromUint(10000))
                 .transactionHash(signedTransaction)
                 .build();
 
-            const signedLockFundsTransactions = lockFundsTransaction.signWith(TestingAccount, factory.generationHash);
+            const signedLockHashTransactions = lockHashTransaction.preV2SignWith(TestingAccount, factory.generationHash);
 
-            validateTransactionConfirmed(listener, TestingAccount.address, signedLockFundsTransactions.hash)
+            validateTransactionConfirmed(listener, TestingAccount.address, signedLockHashTransactions.hash)
                 .then(() => {
                     fail('should not be called');
                 }).catch((reason) => {
@@ -1576,7 +1576,7 @@ describe('TransactionHttp', () => {
                     done();
                 });
 
-            transactionHttp.announce(signedLockFundsTransactions);
+            transactionHttp.announce(signedLockHashTransactions);
         });
     });
 });

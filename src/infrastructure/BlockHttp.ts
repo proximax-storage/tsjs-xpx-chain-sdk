@@ -32,7 +32,8 @@ import {Http} from './Http';
 import { NetworkHttp } from './NetworkHttp';
 import {TransactionQueryParams} from './TransactionQueryParams';
 import { CreateStatementFromDTO } from './receipt/CreateReceiptFromDTO';
-import {CreateTransactionFromDTO, extractBeneficiary} from './transaction/CreateTransactionFromDTO';
+import {CreateTransactionFromDTO} from './transaction/CreateTransactionFromDTO';
+import {TransactionMapUtility} from './transaction/TransactionMapUtility';
 import { RequestOptions } from './RequestOptions';
 import { Pagination } from '../model/Pagination';
 import { NetworkType } from '../model/model';
@@ -102,7 +103,7 @@ export class BlockHttp extends Http implements BlockRepository {
                 blockDTO.block.blockTransactionsHash,
                 blockDTO.block.blockReceiptsHash,
                 blockDTO.block.stateHash,
-                extractBeneficiary(blockDTO, networkType),
+                TransactionMapUtility.extractBeneficiary(blockDTO, networkType),
             );
         }));
     }
@@ -185,7 +186,7 @@ export class BlockHttp extends Http implements BlockRepository {
                         blockDTO.block.blockTransactionsHash,
                         blockDTO.block.blockReceiptsHash,
                         blockDTO.block.stateHash,
-                        extractBeneficiary(blockDTO, networkType),
+                        TransactionMapUtility.extractBeneficiary(blockDTO, networkType),
                     );
                 });
             }));

@@ -159,7 +159,7 @@ describe('Transaction', () => {
         });
     });
 
-    describe('toAggregate', () => {
+    describe('toAggregateV1', () => {
         it('should throw exception when adding an aggregated transaction as inner transaction', () => {
             const transaction = new FakeTransaction(TransactionType.TRANSFER,
                 NetworkType.MIJIN_TEST,
@@ -172,12 +172,12 @@ describe('Transaction', () => {
 
             const aggregateTransaction = AggregateTransaction.createComplete(
                 Deadline.create(),
-                [transaction.toAggregate(account.publicAccount)],
+                [transaction.toAggregateV1(account.publicAccount)],
                 NetworkType.MIJIN_TEST,
                 []);
 
             expect(() => {
-                aggregateTransaction.toAggregate(account.publicAccount);
+                aggregateTransaction.toAggregateV1(account.publicAccount);
             }).to.throw(Error, 'Inner transaction cannot be an aggregated transaction.');
         });
     });
@@ -245,7 +245,7 @@ describe('Transaction', () => {
 });
 
 class FakeTransaction extends Transaction {
-    public signWith(account: Account): SignedTransaction {
+    public preV2SignWith(account: Account): SignedTransaction {
         throw new Error('Method not implemented.');
     }
 

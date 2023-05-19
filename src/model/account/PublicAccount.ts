@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import { KeyPair, SignSchema } from '../../core/crypto';
+import { KeyPair, DerivationScheme } from '../../core/crypto';
 import { Convert as convert} from '../../core/format';
-import { NetworkType } from '../blockchain/NetworkType';
+import { NetworkType } from '../blockchain/NetworkType'; 
 import { Address } from './Address';
 
 const Hash512 = 64;
@@ -31,6 +31,7 @@ export class PublicAccount {
      * @internal
      * @param publicKey
      * @param address
+     * @param version
      */
     constructor(
                 /**
@@ -40,23 +41,34 @@ export class PublicAccount {
                 /**
                  * The account address.
                  */
-                public readonly address: Address) {
-
+                public readonly address: Address, 
+                /**
+                 * The account version.
+                 */
+                public readonly version?: number) {
     }
 
     /**
      * Create a PublicAccount from a public key and network type.
      * @param publicKey Public key
      * @param networkType Network type
-     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @param version Account version
      * @returns {PublicAccount}
      */
-    static createFromPublicKey(publicKey: string, networkType: NetworkType, signSchema = SignSchema.SHA3): PublicAccount {
+    static createFromPublicKey(publicKey: string, networkType: NetworkType, version?: number): PublicAccount {
         if (publicKey == null || (publicKey.length !== 64 && publicKey.length !== 66)) {
             throw new Error('Not a valid public key');
         }
-        const address = Address.createFromPublicKey(publicKey, networkType, signSchema);
-        return new PublicAccount(publicKey, address);
+
+        if(publicKey.length === 66 && !publicKey.startsWith("0x")){
+            throw new Error('Not a valid public key');
+        }
+        else if(publicKey.length === 66){
+            publicKey = publicKey.substring(2);
+        }
+
+        const address = Address.createFromPublicKey(publicKey, networkType);
+        return new PublicAccount(publicKey, address, version);
     }
 
     /**
@@ -64,10 +76,10 @@ export class PublicAccount {
      *
      * @param {string} data - The data to verify.
      * @param {string} signature - The signature to verify.
-     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @param {DerivationScheme} dSchema The derivation scheme
      * @return {boolean}  - True if the signature is valid, false otherwise.
      */
-    public verifySignature(data: string, signature: string, signSchema: SignSchema = SignSchema.SHA3): boolean {
+    public verifySignature(data: string, signature: string): boolean {
         if (!signature) {
             throw new Error('Missing argument');
         }
@@ -79,13 +91,18 @@ export class PublicAccount {
         if (!convert.isHexString(signature)) {
             throw new Error('Signature must be hexadecimal only');
         }
+
+        if(!this.version){
+            throw new Error('Account version missing, please specify a version');
+        }
         // Convert signature key to Uint8Array
         const convertedSignature = convert.hexToUint8(signature);
 
         // Convert to Uint8Array
         const convertedData = convert.hexToUint8(convert.utf8ToHex(data));
+        const dScheme = PublicAccount.getDerivationSchemeFromAccVersion(this.version);
 
-        return KeyPair.verify(convert.hexToUint8(this.publicKey), convertedData, convertedSignature, signSchema);
+        return KeyPair.verify(convert.hexToUint8(this.publicKey), convertedData, convertedSignature, dScheme);
     }
 
     /**
@@ -93,10 +110,10 @@ export class PublicAccount {
      *
      * @param {string} hexString - The data to verify.
      * @param {string} signature - The signature to verify.
-     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @param {DerivationScheme} dSchema The derivation scheme
      * @return {boolean}  - True if the signature is valid, false otherwise.
      */
-    public verifySignatureWithHexString(hexString: string, signature: string, signSchema: SignSchema = SignSchema.SHA3): boolean {
+    public verifySignatureWithHexString(hexString: string, signature: string): boolean {
         if (!convert.isHexString(hexString)) {
             throw new Error('HexString must be hexadecimal only');
         }
@@ -112,13 +129,18 @@ export class PublicAccount {
         if (!convert.isHexString(signature)) {
             throw new Error('Signature must be hexadecimal only');
         }
+
+        if(!this.version){
+            throw new Error('Account version missing, please specify a version');
+        }
         // Convert signature key to Uint8Array
         const convertedSignature = convert.hexToUint8(signature);
 
         // Convert to Uint8Array
         const convertedData = convert.hexToUint8(hexString);
+        const dScheme = PublicAccount.getDerivationSchemeFromAccVersion(this.version);
 
-        return KeyPair.verify(convert.hexToUint8(this.publicKey), convertedData, convertedSignature, signSchema);
+        return KeyPair.verify(convert.hexToUint8(this.publicKey), convertedData, convertedSignature, dScheme);
     }
 
     /**
@@ -138,5 +160,25 @@ export class PublicAccount {
             publicKey: this.publicKey,
             address: this.address.toDTO(),
         };
+    }
+
+    public static getDerivationSchemeFromAccVersion(accVersion: number){
+
+        if(accVersion === 2){
+            return DerivationScheme.Ed25519Sha2;
+        }
+        else{
+            return DerivationScheme.Ed25519Sha3;
+        }
+    }
+
+    public static getAccVersionFromDerivationScheme(dScheme: DerivationScheme){
+
+        if(dScheme === DerivationScheme.Ed25519Sha2){
+            return 2;
+        }
+        else{
+            return 1;
+        }
     }
 }

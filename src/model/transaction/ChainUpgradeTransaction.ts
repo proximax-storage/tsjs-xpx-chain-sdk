@@ -11,7 +11,7 @@ import { PublicAccount } from '../account/PublicAccount';
 import { TransactionInfo } from './TransactionInfo';
 import { Builder } from '../../infrastructure/builders/ChainUpgradeTransaction';
 import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
-import { TransactionVersion } from './TransactionVersion';
+import { TransactionTypeVersion } from './TransactionTypeVersion';
 import { calculateFee, FeeCalculationStrategy } from './FeeCalculationStrategy';
 
 export class ChainUpgradeTransaction extends Transaction {
@@ -123,7 +123,7 @@ export class ChainUpgradeTransactionBuilder extends TransactionBuilder {
     public build(): ChainUpgradeTransaction {
         return new ChainUpgradeTransaction(
             this._networkType,
-            this._version || TransactionVersion.CHAIN_UPGRADE,
+            this._version || TransactionTypeVersion.CHAIN_UPGRADE,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(ChainUpgradeTransaction.calculateSize(), this._feeCalculationStrategy),
             this._upgradePeriod,

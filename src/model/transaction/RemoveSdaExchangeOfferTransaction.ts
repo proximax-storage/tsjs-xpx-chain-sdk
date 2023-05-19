@@ -8,7 +8,7 @@ import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
 import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
-import { TransactionVersion } from './TransactionVersion';
+import { TransactionTypeVersion } from './TransactionTypeVersion';
 import { AggregateTransactionInfo } from './AggregateTransactionInfo';
 import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
 import { Builder } from '../../infrastructure/builders/RemoveSdaExchangeOfferTransaction';
@@ -114,7 +114,7 @@ export class RemoveSdaExchangeOfferTransactionBuilder extends TransactionBuilder
     public build(): RemoveSdaExchangeOfferTransaction {
         return new RemoveSdaExchangeOfferTransaction(
             this._networkType,
-            this._version || TransactionVersion.REMOVE_SDA_EXCHANGE_OFFER,
+            this._version || TransactionTypeVersion.REMOVE_SDA_EXCHANGE_OFFER,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._sdaExchangeOffers,
             this._maxFee ? this._maxFee : calculateFee(RemoveSdaExchangeOfferTransaction.calculateSize(this._sdaExchangeOffers.length), this._feeCalculationStrategy),
