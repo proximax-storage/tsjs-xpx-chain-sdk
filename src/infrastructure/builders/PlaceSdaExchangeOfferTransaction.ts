@@ -10,7 +10,7 @@ import {PlaceSdaExchangeOfferTransactionBuffer} from '../buffers/PlaceSdaExchang
 import {PlaceSdaExchangeOfferBuffer} from '../buffers/PlaceSdaExchangeOfferBuffer';
 import {SdaExchangeOffer} from "../../model/transaction/SdaExchangeOffer"
 
-const { flatbuffers } = require('flatbuffers');
+import * as flatbuffers from 'flatbuffers';
 
 /**
  * @module transactions/PlaceSdaExchangeOfferTransaction

@@ -9,7 +9,7 @@ import {RemoveSdaExchangeOfferTransactionBuffer} from '../buffers/RemoveSdaExcha
 import {RemoveSdaExchangeOfferBuffer} from '../buffers/RemoveSdaExchangeOfferBuffer';
 import {RemoveSdaExchangeOffer} from "../../model/transaction/RemoveSdaExchangeOffer"
 
-const { flatbuffers } = require('flatbuffers');
+import * as flatbuffers from 'flatbuffers';
 
 /**
  * @module transactions/RemoveSdaExchangeOfferTransaction
