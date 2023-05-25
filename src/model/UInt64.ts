@@ -91,6 +91,10 @@ export class UInt64 {
         return uint64.toHex(this.toDTO());
     }
 
+    public toBigInt(): BigInt{
+        return BigInt("0x" + this.toHex());
+    }
+
     /**
      * Compact higher and lower uint parts into a uint
      * @returns {number}
