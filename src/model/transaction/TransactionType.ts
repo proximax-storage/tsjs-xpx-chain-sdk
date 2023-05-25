@@ -227,5 +227,24 @@ export enum TransactionType {
     * Liquidity Provider transasction type
     */
     Create_Liquidity_Provider = 0x4169,
-	Manual_Rate_Change        = 0x4269
+	Manual_Rate_Change        = 0x4269,
+    // ------------------------storage transactions type-------------------------------------
+
+    ReplicatorOnboarding           = 0x4662,
+	PrepareBcDrive                 = 0x4162,
+	DataModification               = 0x4262,
+	DataModificationApproval       = 0x4462,
+	DataModificationSingleApproval = 0x4B62,
+	DataModificationCancel         = 0x4562,
+	StoragePayment                 = 0x4A62,
+	DownloadPayment                = 0x4962,
+	Download                       = 0x4362,
+	FinishDownload                 = 0x4862,
+	VerificationPayment            = 0x4C62,
+	EndDriveVerificationV2         = 0x4F62,
+	DownloadApproval               = 0x4D62,
+	DriveClosure                   = 0x4E62,
+	ReplicatorOffboarding          = 0x4762,
+
+    // --------------------------------------------------------------------------------------
 }

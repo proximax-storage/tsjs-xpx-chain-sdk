@@ -226,5 +226,25 @@ export enum TransactionTypeVersion {
     REMOVE_SDA_EXCHANGE_OFFER = 1,
 
     Create_Liquidity_Provider = 1,
-	Manual_Rate_Change        = 1
+	Manual_Rate_Change        = 1,
+    
+    // ------------------------storage transactions type-------------------------------------
+
+    ReplicatorOnboarding           = 1,
+	PrepareBcDrive                 = 1,
+	DataModification               = 1,
+	DataModificationApproval       = 1,
+	DataModificationSingleApproval = 1,
+	DataModificationCancel         = 1,
+	StoragePayment                 = 1,
+	DownloadPayment                = 1,
+	Download                       = 1,
+	FinishDownload                 = 1,
+	VerificationPayment            = 1,
+	EndDriveVerificationV2         = 1,
+	DownloadApproval               = 1,
+	DriveClosure                   = 1,
+	ReplicatorOffboarding          = 1,
+
+    // --------------------------------------------------------------------------------------
 }
