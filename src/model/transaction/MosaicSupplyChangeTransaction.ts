@@ -25,7 +25,7 @@ import { Deadline } from './Deadline';
 import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
-import { TransactionVersion } from './TransactionVersion';
+import { TransactionTypeVersion } from './TransactionTypeVersion';
 import { calculateFee } from './FeeCalculationStrategy';
 
 /**
@@ -174,7 +174,7 @@ export class MosaicSupplyChangeTransactionBuilder extends TransactionBuilder {
     public build() {
         return new MosaicSupplyChangeTransaction(
             this._networkType,
-            this._version || TransactionVersion.MOSAIC_SUPPLY_CHANGE,
+            this._version || TransactionTypeVersion.MOSAIC_SUPPLY_CHANGE,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(MosaicSupplyChangeTransaction.calculateSize(), this._feeCalculationStrategy),
             this._mosaicId,

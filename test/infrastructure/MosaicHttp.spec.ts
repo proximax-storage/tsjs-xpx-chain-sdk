@@ -148,7 +148,7 @@ describe('MosaicHttp', () => {
         const mosaicId = new MosaicId([66666,99999]);
 
         const dto = {
-            address: Convert.uint8ToHex(RawAddress.stringToAddress(address.plain())),
+            address: Convert.uint8ArrayToHex(RawAddress.stringToAddress(address.plain())),
             publicKey: publicAccount.publicKey,
             amount: UInt64.fromUint(999).toDTO(),
         };

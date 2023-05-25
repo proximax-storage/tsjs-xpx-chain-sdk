@@ -49,7 +49,7 @@ export abstract class Message {
         let payload = "";
         try {
             let uint8Array = new TextEncoder().encode(message);
-            payload = convert.uint8ToHex(uint8Array);
+            payload = convert.uint8ArrayToHex(uint8Array);
         } catch (e) {
             
         }

@@ -48,7 +48,7 @@ export class NamespaceService {
         return this.namespaceHttp.getNamespace(id).pipe(
             mergeMap((namespaceInfo: NamespaceInfo) => this.namespaceHttp
                 .getNamespacesName(namespaceInfo.levels).pipe(
-                    map((names) => Object.assign(
+                    map((names: NamespaceName[]) => Object.assign(
                         {__proto__: Object.getPrototypeOf(namespaceInfo)},
                         namespaceInfo,
                         {name: this.extractFullNamespace(namespaceInfo, names)})

@@ -104,7 +104,7 @@ export class RawUInt64 {
     public static toHex = (uint64) => {
         const uint32Array = new Uint32Array(uint64);
         const uint8Array = Convert.uint32ToUint8(uint32Array).reverse();
-        return Convert.uint8ToHex(uint8Array);
+        return Convert.uint8ArrayToHex(uint8Array);
     }
 
     /**

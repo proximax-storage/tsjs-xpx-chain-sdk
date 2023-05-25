@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { SignSchema } from '../../core/crypto';
+import { DerivationScheme } from '../../core/crypto';
 import {CosignatureTransaction as CosignaturetransactionLibrary} from '../../infrastructure/builders/CosignatureTransaction';
 import {Account} from '../account/Account';
+import {PublicAccount} from '../account/PublicAccount';
 import {AggregateTransaction} from './AggregateTransaction';
 import {CosignatureSignedTransaction} from './CosignatureSignedTransaction';
 import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
@@ -56,29 +57,45 @@ export class CosignatureTransaction {
      * @param generationHash - Network generation hash
      * @returns {CosignatureSignedTransaction}
      */
-    public static signTransactionPayload(account: Account, payload: string, generationHash: string, signSchema = SignSchema.SHA3): CosignatureSignedTransaction {
+    public static signTransactionPayload(account: Account, payload: string, generationHash: string): CosignatureSignedTransaction {
         /**
          * For aggregated complete transaction, cosignatories are gathered off chain announced.
          */
+        const dScheme = PublicAccount.getDerivationSchemeFromAccVersion(account.version);
         const transactionHash = VerifiableTransaction.createTransactionHash(payload, Array.from(Convert.hexToUint8(generationHash)));
         const aggregateSignatureTransaction = new CosignaturetransactionLibrary(transactionHash);
-        const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account, signSchema);
-        return new CosignatureSignedTransaction(signedTransactionRaw.parentHash,
-            signedTransactionRaw.signature,
+        const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account, dScheme);
+        return CosignatureSignedTransaction.create(signedTransactionRaw.parentHash,
+            signedTransactionRaw.signature, dScheme,
             signedTransactionRaw.signer);
     }
 
     /**
      * Serialize and sign transaction creating a new SignedTransaction
      * @param account
-     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @param {DerivationScheme} dScheme The derivation scheme
      * @returns {CosignatureSignedTransaction}
      */
-    public signWith(account: Account, signSchema: SignSchema = SignSchema.SHA3): CosignatureSignedTransaction {
+    public signWith(account: Account): CosignatureSignedTransaction {
+        const dScheme = PublicAccount.getDerivationSchemeFromAccVersion(account.version);
         const aggregateSignatureTransaction = new CosignaturetransactionLibrary(this.transactionToCosign.transactionInfo!.hash);
-        const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account, signSchema);
-        return new CosignatureSignedTransaction(signedTransactionRaw.parentHash,
-            signedTransactionRaw.signature,
+        const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account, dScheme);
+        return CosignatureSignedTransaction.create(signedTransactionRaw.parentHash,
+            signedTransactionRaw.signature, dScheme,
+            signedTransactionRaw.signer);
+    }
+
+    /**
+     * Serialize and sign transaction creating a new SignedTransaction
+     * @param account
+     * @param {DerivationScheme} dScheme The derivation scheme
+     * @returns {CosignatureSignedTransaction}
+     */
+    public preV2SignWith(account: Account): CosignatureSignedTransaction {
+        const aggregateSignatureTransaction = new CosignaturetransactionLibrary(this.transactionToCosign.transactionInfo!.hash);
+        const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account, DerivationScheme.Ed25519Sha3);
+        return CosignatureSignedTransaction.create(signedTransactionRaw.parentHash,
+            signedTransactionRaw.signature, DerivationScheme.Ed25519Sha3,
             signedTransactionRaw.signer);
     }
 }

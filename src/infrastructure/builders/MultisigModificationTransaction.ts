@@ -19,7 +19,7 @@ import ModifyMultisigAccountTransactionBufferPackage from '../buffers/MultisigMo
 import MultisigModificationTransactionSchema from '../schemas/MultisigModificationTransactionSchema';
 import { VerifiableTransaction } from './VerifiableTransaction';
 
-import {flatbuffers} from 'flatbuffers';
+import * as flatbuffers from 'flatbuffers';
 
 const {
     ModifyMultisigAccountTransactionBuffer,

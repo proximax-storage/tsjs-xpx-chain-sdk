@@ -26,7 +26,7 @@ import { Deadline } from './Deadline';
 import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
-import { TransactionVersion } from './TransactionVersion';
+import { TransactionTypeVersion } from './TransactionTypeVersion';
 import { calculateFee } from './FeeCalculationStrategy';
 
 export class MosaicAliasTransaction extends Transaction {
@@ -171,7 +171,7 @@ export class MosaicAliasTransactionBuilder extends TransactionBuilder {
     public build() {
         return new MosaicAliasTransaction(
             this._networkType,
-            this._version || TransactionVersion.MOSAIC_ALIAS,
+            this._version || TransactionTypeVersion.MOSAIC_ALIAS,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(MosaicAliasTransaction.calculateSize(), this._feeCalculationStrategy),
             this._actionType,

@@ -8,7 +8,7 @@ import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
 import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
-import { TransactionVersion } from './TransactionVersion';
+import { TransactionTypeVersion } from './TransactionTypeVersion';
 import { AggregateTransactionInfo } from './AggregateTransactionInfo';
 import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
 import { Builder } from '../../infrastructure/builders/MosaicMetadataTransaction';
@@ -153,7 +153,7 @@ export class MosaicMetadataTransaction extends Transaction {
                 value: this.value,
                 oldValue: this.oldValue,
                 valueSize: this.valueSize,
-                valueDifferences: Convert.uint8ToHex(this.valueDifferences) 
+                valueDifferences: Convert.uint8ArrayToHex(this.valueDifferences) 
             }
         }
     }
@@ -240,6 +240,7 @@ export class MosaicMetadataTransactionBuilder extends TransactionBuilder {
     public calculateDifferences(){
         if(this._value !== undefined && this._value !== null && this._oldValue !== undefined && this._oldValue !== null){
             this._valueSizeDelta = (Convert.utf8ToHex(this._value).length /2) - (Convert.utf8ToHex(this._oldValue).length / 2);
+            console.log(this._valueSizeDelta);
             this._valueSize = Math.max(Convert.utf8ToHex(this._value).length/2, Convert.utf8ToHex(this._oldValue).length/2, 0);
 
             let valueUint8Array = new Uint8Array(this._valueSize);
@@ -260,7 +261,7 @@ export class MosaicMetadataTransactionBuilder extends TransactionBuilder {
     public build(): MosaicMetadataTransaction {
         return new MosaicMetadataTransaction(
             this._networkType,
-            this._version || TransactionVersion.MOSAIC_METADATA_V2,
+            this._version || TransactionTypeVersion.MOSAIC_METADATA_V2,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(MosaicMetadataTransaction.calculateSize(this._valueSize), this._feeCalculationStrategy),
             this._scopedMetadataKey,

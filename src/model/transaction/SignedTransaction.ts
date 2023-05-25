@@ -72,7 +72,7 @@ export class SignedTransaction {
         const signature = transactionPayload.substring(8, 136);
         const signer = transactionPayload.substring(136, 200);
         const networkType = extractNetwork(transactionPayload.substring(200, 208));
-        const type = parseInt(convert.uint8ToHex(convert.hexToUint8(transactionPayload.substring(208, 212)).reverse()), 16);
+        const type = parseInt(convert.uint8ArrayToHex(convert.hexToUint8(transactionPayload.substring(208, 212)).reverse()), 16);
 
         if(signature === "0".repeat(128) || signer === "0".repeat(64) ){
             throw new Error('No signature found in payload');

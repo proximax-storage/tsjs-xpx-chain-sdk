@@ -16,6 +16,7 @@
  */
 export * from './accountDTO';
 export * from './accountExchangeDTO';
+export * from './accountSdaExchangeDTO';
 export * from './accountIds';
 export * from './accountInfoDTO';
 export * from './accountLinkTransactionBodyDTO';
@@ -115,7 +116,7 @@ export * from './heightInfoDTO';
 export * from './inflationReceiptDTO';
 export * from './inflationReceiptDTOAllOf';
 export * from './exchangeInlineResponse200';
-export * from './inlineResponse2001';
+export * from './driveInlineResponse2001';
 export * from './joinToDriveTransactionDTO';
 export * from './linkActionEnum';
 export * from './merklePathItem';
@@ -175,6 +176,8 @@ export * from './nodeInfoDTO';
 export * from './nodeTimeDTO';
 export * from './offerDTO';
 export * from './offerInfoDTO';
+export * from './sdaOfferInfoDTO';
+export * from './sdaOfferInfoWithOwnerDTO';
 export * from './offerTypeEnum';
 export * from './paymentsDTO';
 export * from './prepareDriveTransactionBodyDTO';
@@ -207,6 +210,7 @@ export * from './transactionDTO';
 export * from './transactionHashes';
 export * from './transactionIds';
 export * from './transactionInfoDTO';
+export * from './transactionSearchDTO';
 export * from './transactionMetaDTO';
 export * from './transactionPayload';
 export * from './transactionStatementDTO';
@@ -220,6 +224,7 @@ export * from './verifiableEntityDTO';
 
 import { AccountDTO } from './accountDTO';
 import { AccountExchangeDTO } from './accountExchangeDTO';
+import { AccountSdaExchangeDTO } from './accountSdaExchangeDTO';
 import { AccountIds } from './accountIds';
 import { AccountInfoDTO } from './accountInfoDTO';
 import { AccountLinkTransactionBodyDTO } from './accountLinkTransactionBodyDTO';
@@ -304,6 +309,8 @@ import { EntityTypeEnum } from './entityTypeEnum';
 import { ExchangeOfferTransactionBodyDTO } from './exchangeOfferTransactionBodyDTO';
 import { ExchangeOfferTransactionDTO } from './exchangeOfferTransactionDTO';
 import { ExchangesDTO } from './exchangesDTO';
+import { SdaOfferInfoDTO } from './sdaOfferInfoDTO';
+import { SdaOfferInfoWithOwnerDTO } from './sdaOfferInfoWithOwnerDTO';
 import { FailureVerificationDTO } from './failureVerificationDTO';
 import { FieldDTO } from './fieldDTO';
 import { FileDTO } from './fileDTO';
@@ -319,7 +326,7 @@ import { HeightInfoDTO } from './heightInfoDTO';
 import { InflationReceiptDTO } from './inflationReceiptDTO';
 import { InflationReceiptDTOAllOf } from './inflationReceiptDTOAllOf';
 import { ExchangeInlineResponse200 } from './exchangeInlineResponse200';
-import { InlineResponse2001 } from './inlineResponse2001';
+import { DriveInlineResponse2001 } from './driveInlineResponse2001';
 import { JoinToDriveTransactionDTO } from './joinToDriveTransactionDTO';
 import { LinkActionEnum } from './linkActionEnum';
 import { MerklePathItem } from './merklePathItem';
@@ -468,6 +475,7 @@ let enumsMap: {[index: string]: any} = {
 let typeMap: {[index: string]: any} = {
     "AccountDTO": AccountDTO,
     "AccountExchangeDTO": AccountExchangeDTO,
+    "AccountSdaExchangeDTO": AccountSdaExchangeDTO,
     "AccountIds": AccountIds,
     "AccountInfoDTO": AccountInfoDTO,
     "AccountLinkTransactionBodyDTO": AccountLinkTransactionBodyDTO,
@@ -546,6 +554,8 @@ let typeMap: {[index: string]: any} = {
     "ExchangeOfferTransactionBodyDTO": ExchangeOfferTransactionBodyDTO,
     "ExchangeOfferTransactionDTO": ExchangeOfferTransactionDTO,
     "ExchangesDTO": ExchangesDTO,
+    "SdaOfferInfoDTO": SdaOfferInfoDTO,
+    "SdaOfferInfoWithOwnerDTO": SdaOfferInfoWithOwnerDTO,
     "FailureVerificationDTO": FailureVerificationDTO,
     "FieldDTO": FieldDTO,
     "FileDTO": FileDTO,
@@ -560,7 +570,7 @@ let typeMap: {[index: string]: any} = {
     "InflationReceiptDTO": InflationReceiptDTO,
     "InflationReceiptDTOAllOf": InflationReceiptDTOAllOf,
     "ExchangeInlineResponse200": ExchangeInlineResponse200,
-    "InlineResponse2001": InlineResponse2001,
+    "DriveInlineResponse2001": DriveInlineResponse2001,
     "JoinToDriveTransactionDTO": JoinToDriveTransactionDTO,
     "MerklePathItem": MerklePathItem,
     "MerkleProofInfo": MerkleProofInfo,

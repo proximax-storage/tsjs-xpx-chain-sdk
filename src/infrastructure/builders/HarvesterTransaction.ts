@@ -10,7 +10,7 @@
  import HarvesterTransactionSchema from '../schemas/HarvesterTransactionSchema';
  import {HarvesterTransactionBuffer} from '../buffers/HarvesterTransactionBuffer';
  
- const { flatbuffers } = require('flatbuffers');
+ import * as flatbuffers from 'flatbuffers';
  
  export default class HarvesterTransaction extends VerifiableTransaction {
      constructor(bytes) {

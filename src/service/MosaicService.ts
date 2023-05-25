@@ -21,7 +21,7 @@ import { AccountHttp } from '../infrastructure/AccountHttp';
 import { MosaicHttp } from '../infrastructure/MosaicHttp';
 import { ChainHttp } from '../infrastructure/ChainHttp';
 import { Address } from '../model/account/Address';
-import { MosaicInfo } from '../model/model';
+import { MosaicInfo, AccountInfo } from '../model/model';
 import { Mosaic } from '../model/mosaic/Mosaic';
 import { MosaicId } from '../model/mosaic/MosaicId';
 import { UInt64 } from '../model/UInt64';
@@ -51,8 +51,8 @@ export class MosaicService {
      */
     mosaicsView(mosaicIds: MosaicId[]): Observable<MosaicView[]> {
         return observableOf(mosaicIds).pipe(
-            mergeMap((_) => this.mosaicHttp.getMosaics(mosaicIds).pipe(
-                mergeMap((_) => _),
+            mergeMap((_: MosaicId[]) => this.mosaicHttp.getMosaics(mosaicIds).pipe(
+                mergeMap((_: MosaicInfo[]) => _),
                 map((mosaicInfo: MosaicInfo) => {
                     return new MosaicView(mosaicInfo);
                 }),
@@ -66,13 +66,15 @@ export class MosaicService {
      */
     mosaicsAmountView(mosaics: Mosaic[]): Observable<MosaicAmountView[]> {
         return observableOf(mosaics).pipe(
-            mergeMap((_) => _),
-            mergeMap((mosaic: Mosaic) => this.mosaicsView([mosaic.id]).pipe(
-                filter((_) => _.length !== 0),
-                map<MosaicView[], MosaicAmountView>((mosaicViews) => {
-                    return new MosaicAmountView(mosaicViews[0].mosaicInfo, mosaic.amount);
-                }),
-            toArray())));
+            mergeMap((_: Mosaic[]) => _),
+            mergeMap((mosaic: Mosaic) => 
+                this.mosaicsView([mosaic.id]).pipe(
+                    filter((_: MosaicView[]) => _.length !== 0),
+                    map<MosaicView[], MosaicAmountView>((mosaicViews) => {
+                        return new MosaicAmountView(mosaicViews[0].mosaicInfo, mosaic.amount);
+                    }),
+                toArray())
+            ));
     }
 
     /**
@@ -82,8 +84,8 @@ export class MosaicService {
      */
     mosaicsAmountViewFromAddress(address: Address): Observable<MosaicAmountView[]> {
         return observableOf(address).pipe(
-            mergeMap((_) => this.accountHttp.getAccountInfo(_)),
-            mergeMap((_) => this.mosaicsAmountView(_.mosaics)));
+            mergeMap((_: Address) => this.accountHttp.getAccountInfo(_)),
+            mergeMap((_: AccountInfo) => this.mosaicsAmountView(_.mosaics)));
     }
 
     /**

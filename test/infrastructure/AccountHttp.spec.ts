@@ -25,7 +25,7 @@ describe('AccountHttp', () => {
         const dto = {
             meta: 'some-meta',
             account: {
-                address: Convert.uint8ToHex(RawAddress.stringToAddress(address.plain())),
+                address: Convert.uint8ArrayToHex(RawAddress.stringToAddress(address.plain())),
                 addressHeight: UInt64.fromUint(666).toDTO(),
                 publicKey: publicAccount.publicKey,
                 publicKeyHeight: UInt64.fromUint(777).toDTO(),
@@ -67,7 +67,7 @@ describe('AccountHttp', () => {
         const dto = {
             meta: 'some-meta',
             account: {
-                address: Convert.uint8ToHex(RawAddress.stringToAddress(address.plain())),
+                address: Convert.uint8ArrayToHex(RawAddress.stringToAddress(address.plain())),
                 addressHeight: UInt64.fromUint(666).toDTO(),
                 publicKey: publicAccount.publicKey,
                 publicKeyHeight: UInt64.fromUint(777).toDTO(),
@@ -143,7 +143,7 @@ describe('AccountHttp', () => {
 
     describe('getAccountsNames', () => {
         const dto = {
-            address: Convert.uint8ToHex(RawAddress.stringToAddress(address.plain())),
+            address: Convert.uint8ArrayToHex(RawAddress.stringToAddress(address.plain())),
             names: ['some.name']
         };
         beforeEach(() => {

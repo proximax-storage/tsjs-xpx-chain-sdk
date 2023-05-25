@@ -20,7 +20,8 @@ import { Convert as convert } from '../format/Convert';
 import { KeyPair } from './KeyPair';
 import { encode as utf8encode } from 'utf8';
 import * as utility from './Utilities';
-import { SignSchema } from './SignSchema';
+import { DerivationScheme } from './DerivationScheme';
+import {randomBytes} from "@noble/hashes/utils"
 const CryptoJS = require('crypto-js');
 import { generateMnemonic, validateMnemonic, entropyToMnemonic, mnemonicToEntropy } from 'bip39';
 export class Crypto {
@@ -48,7 +49,7 @@ export class Crypto {
         const encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Hex.parse(privateKey), key, encIv);
         // Result
         return {
-            encrypted: convert.uint8ToHex(iv) + encrypted.ciphertext,
+            encrypted: convert.uint8ArrayToHex(iv) + encrypted.ciphertext,
             salt:  salt.toString(),
         };
     }
@@ -189,8 +190,8 @@ export class Crypto {
      *
      * @return {Uint8Array} - A random key
      */
-    public static randomKey = () => {
-        return Crypto.randomBytes(32);
+    public static randomKey(): Uint8Array{
+        return randomBytes(32);
     }
 
     /**
@@ -201,7 +202,7 @@ export class Crypto {
      *
      * @return {object} - The encoded data
      */
-    public static encodePrivateKey = (privateKey, password) => {
+    public static encodePrivateKey = (privateKey: string, password: string) => {
         // Errors
         if (!privateKey || !password) { throw new Error('Missing argument !'); }
         // Processing
@@ -210,7 +211,7 @@ export class Crypto {
         // Result
         return {
             ciphertext: CryptoJS.enc.Hex.stringify(r.ciphertext),
-            iv: convert.uint8ToHex(r.iv),
+            iv: convert.uint8ArrayToHex(r.iv),
         };
     }
 
@@ -222,22 +223,23 @@ export class Crypto {
      * @param {string} msg - A text message
      * @param {Uint8Array} iv - An initialization vector
      * @param {Uint8Array} salt - A salt
-     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @param {DerivationScheme} dScheme The Derivation Schema
      * @return {string} - The encoded message
      */
-    public static _encode = (senderPriv, recipientPub, msg, iv, salt, signSchema: SignSchema = SignSchema.SHA3) => {
+    public static _encode = (senderPriv, recipientPub, msg, iv, salt, dScheme: DerivationScheme = DerivationScheme.Ed25519Sha3) => {
         // Errors
         if (!senderPriv || !recipientPub || !msg || !iv || !salt) { throw new Error('Missing argument !'); }
         // Processing
-        const keyPair = KeyPair.createKeyPairFromPrivateKeyString(senderPriv, signSchema);
+        const keyPair = KeyPair.createKeyPairFromPrivateKeyString(senderPriv, dScheme);
         const pk = convert.hexToUint8(recipientPub);
-        const encKey = utility.ua2words(KeyPair.deriveSharedKey(keyPair, pk, salt, signSchema), 32);
+        const sharedKey = KeyPair.deriveSharedKey(keyPair.privateKey, pk, salt, dScheme);
+        const encKey = utility.ua2words(sharedKey, 32);
         const encIv = {
             iv: utility.ua2words(iv, 16),
         };
         const encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Hex.parse(convert.utf8ToHex(msg)), encKey, encIv);
         // Result
-        const result = convert.uint8ToHex(salt) + convert.uint8ToHex(iv) + CryptoJS.enc.Hex.stringify(encrypted.ciphertext);
+        const result = convert.uint8ArrayToHex(salt) + convert.uint8ArrayToHex(iv) + CryptoJS.enc.Hex.stringify(encrypted.ciphertext);
         return result;
     }
 
@@ -247,16 +249,16 @@ export class Crypto {
      * @param {string} senderPriv - A sender private key
      * @param {string} recipientPub - A recipient public key
      * @param {string} msg - A text message
-     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @param {DerivationScheme} dScheme The Derivation Schema
      * @return {string} - The encoded message
      */
-    public static encode = (senderPriv, recipientPub, msg, signSchema: SignSchema = SignSchema.SHA3) => {
+    public static encode = (senderPriv: string, recipientPub: string, msg: string, dScheme: DerivationScheme = DerivationScheme.Ed25519Sha3) => {
         // Errors
         if (!senderPriv || !recipientPub || !msg) { throw new Error('Missing argument !'); }
         // Processing
         const iv = Crypto.randomBytes(16);
         const salt = Crypto.randomBytes(32);
-        const encoded = Crypto._encode(senderPriv, recipientPub, msg, iv, salt, signSchema);
+        const encoded = Crypto._encode(senderPriv, recipientPub, msg, iv, salt, dScheme);
         // Result
         return encoded;
     }
@@ -267,16 +269,17 @@ export class Crypto {
      * @param {string} recipientPrivate - A recipient private key
      * @param {string} senderPublic - A sender public key
      * @param {Uint8Array} _payload - An encrypted message payload in bytes
-     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @param {DerivationScheme} dScheme The Derivation Schema
      * @return {string} - The decoded payload as hex
      */
-    public static _decode = (recipientPrivate, senderPublic, payload, iv, salt, signSchema: SignSchema = SignSchema.SHA3) => {
+    public static _decode = (recipientPrivate: string, senderPublic: string, payload: Uint8Array, iv: Uint8Array, salt: Uint8Array, dScheme: DerivationScheme = DerivationScheme.Ed25519Sha3) => {
         // Error
         if (!recipientPrivate || !senderPublic || !payload) { throw new Error('Missing argument !'); }
         // Processing
-        const keyPair = KeyPair.createKeyPairFromPrivateKeyString(recipientPrivate, signSchema);
+        const keyPair = KeyPair.createKeyPairFromPrivateKeyString(recipientPrivate, dScheme);
         const pk = convert.hexToUint8(senderPublic);
-        const encKey = utility.ua2words(KeyPair.deriveSharedKey(keyPair, pk, salt, signSchema), 32);
+        const sharedKey = KeyPair.deriveSharedKey(keyPair.privateKey, pk, salt, dScheme);
+        const encKey = utility.ua2words(sharedKey, 32);
         const encIv = {
             iv: utility.ua2words(iv, 16),
         };
@@ -294,10 +297,10 @@ export class Crypto {
      * @param {string} recipientPrivate - A recipient private key
      * @param {string} senderPublic - A sender public key
      * @param {string} _payload - An encrypted message payload
-     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @param {DerivationScheme} dScheme The Derivation Schema
      * @return {string} - The decoded payload as hex
      */
-    public static decode = (recipientPrivate, senderPublic, _payload, signSchema: SignSchema = SignSchema.SHA3) => {
+    public static decode = (recipientPrivate: string, senderPublic: string, _payload: string, dScheme: DerivationScheme = DerivationScheme.Ed25519Sha3) => {
         // Error
         if (!recipientPrivate || !senderPublic || !_payload) { throw new Error('Missing argument !'); }
         // Processing
@@ -305,7 +308,7 @@ export class Crypto {
         const payload = new Uint8Array(binPayload.buffer, 48);
         const salt = new Uint8Array(binPayload.buffer, 0, 32);
         const iv = new Uint8Array(binPayload.buffer, 32, 16);
-        const decoded = Crypto._decode(recipientPrivate, senderPublic, payload, iv, salt, signSchema);
+        const decoded = Crypto._decode(recipientPrivate, senderPublic, payload, iv, salt, dScheme);
         return utf8encode(String.fromCharCode.apply(null, convert.hexToUint8(decoded)));
     }
 
@@ -315,9 +318,8 @@ export class Crypto {
      *
      * @return {Uint8Array}
      */
-    public static randomBytes = (length) => {
-        const crypto = require('crypto');
-        return crypto.randomBytes(length);
+    public static randomBytes(length): Uint8Array{
+        return randomBytes(length);
     }
 
     public static randomMnemonic = (strength?: number,

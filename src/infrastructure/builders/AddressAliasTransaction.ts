@@ -23,7 +23,7 @@ const {
     AliasTransactionBuffer,
 } = AddressAliasTransactionBufferPackage.Buffers;
 
-import {flatbuffers} from 'flatbuffers';
+import * as flatbuffers from 'flatbuffers';
 
 /**
  * @module transactions/AddressAliasTransaction

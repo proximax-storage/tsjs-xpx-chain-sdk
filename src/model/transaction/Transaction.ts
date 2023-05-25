@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { SignSchema } from '../../core/crypto';
+import { DerivationScheme } from '../../core/crypto';
 import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
 import { Account } from '../account/Account';
 import { PublicAccount } from '../account/PublicAccount';
@@ -29,7 +29,8 @@ import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
 import { TransactionTypeAltName } from './TransactionTypeAltName';
 import { FeeCalculationStrategy, DefaultFeeCalculationStrategy } from './FeeCalculationStrategy';
-import { ucwords } from '../../core/format/Utilities'
+import { ucwords } from '../../core/format/Utilities';
+import { TransactionVersion } from './TransactionVersion';
 
 /**
  * An abstract transaction class that serves as the base class of all NEM transactions.
@@ -37,6 +38,7 @@ import { ucwords } from '../../core/format/Utilities'
 export abstract class Transaction {
 
     public readonly transactionName: string;
+    public version: TransactionVersion;
 
     /**
      * @description get the byte size of the common transaction header
@@ -73,11 +75,11 @@ export abstract class Transaction {
                 /**
                  * The network type.
                  */
-                public readonly networkType: NetworkType,
+                networkType: NetworkType,
                 /**
                  * The transaction version number.
                  */
-                public readonly version: number,
+                version: number,
                 /**
                  * The deadline to include the transaction.
                  */
@@ -86,7 +88,7 @@ export abstract class Transaction {
                  * A sender of a transaction must specify during the transaction definition a max_fee,
                  * meaning the maximum fee the account allows to spend for this transaction.
                  */
-                public readonly maxFee: UInt64,
+                public maxFee: UInt64,
                 /**
                  * The transaction signature (missing if part of an aggregate transaction).
                  */
@@ -99,6 +101,7 @@ export abstract class Transaction {
                  * Transactions meta data object contains additional information about the transaction.
                  */
                 public readonly transactionInfo?: TransactionInfo | AggregateTransactionInfo) {
+        this.version = TransactionVersion.createInit(networkType, version);
         this.transactionName = Transaction.extractTransactionName(type);
     }
 
@@ -106,18 +109,37 @@ export abstract class Transaction {
      * Serialize and sign transaction creating a new SignedTransaction
      * @param account - The account to sign the transaction
      * @param generationHash - Network generation hash hex
-     * @param {SignSchema} signSchema The Sign Schema. (KECCAK_REVERSED_KEY / SHA3)
+     * @param {DerivationScheme} dScheme The derivation scheme
      * @returns {SignedTransaction}
      */
-    public signWith(account: Account, generationHash: string, signSchema: SignSchema = SignSchema.SHA3): SignedTransaction {
+    public signWith(account: Account, generationHash: string): SignedTransaction {
+        this.version.dScheme = PublicAccount.getDerivationSchemeFromAccVersion(account.version);
         const transaction = this.buildTransaction();
-        const signedTransactionRaw = transaction.signTransaction(account, generationHash, signSchema);
+        const signedTransactionRaw = transaction.signTransaction(account, generationHash, this.version.dScheme);
         return new SignedTransaction(
             signedTransactionRaw.payload,
             signedTransactionRaw.hash,
             account.publicKey,
             this.type,
-            this.networkType);
+            this.version.networkType);
+    }
+
+    /**
+     * Serialize and sign transaction creating a new SignedTransaction
+     * @param account - The account to sign the transaction
+     * @param generationHash - Network generation hash hex
+     * @returns {SignedTransaction}
+     */
+    public preV2SignWith(account: Account, generationHash: string): SignedTransaction {
+        this.version.dScheme = DerivationScheme.Unset;
+        const transaction = this.buildTransaction();
+        const signedTransactionRaw = transaction.signTransaction(account, generationHash, DerivationScheme.Ed25519Sha3);
+        return new SignedTransaction(
+            signedTransactionRaw.payload,
+            signedTransactionRaw.hash,
+            account.publicKey,
+            this.type,
+            this.version.networkType);
     }
 
     /**
@@ -139,9 +161,31 @@ export abstract class Transaction {
      * @returns InnerTransaction
      */
     public toAggregate(signer: PublicAccount): InnerTransaction {
-        if (this.type === TransactionType.AGGREGATE_BONDED || this.type === TransactionType.AGGREGATE_COMPLETE) {
+        if(!signer.version){
+            throw new Error("Signer missing version, please specify to aggregate transaction");
+        }
+        
+        if ([TransactionType.AGGREGATE_BONDED_V1, TransactionType.AGGREGATE_BONDED_V2, 
+            TransactionType.AGGREGATE_COMPLETE_V1, TransactionType.AGGREGATE_COMPLETE_V2].includes(this.type)) {
             throw new Error('Inner transaction cannot be an aggregated transaction.');
         }
+
+        this.version.dScheme = PublicAccount.getDerivationSchemeFromAccVersion(signer.version);
+        return Object.assign({__proto__: Object.getPrototypeOf(this)}, this, {signer});
+    }
+
+    /**
+     * Convert an aggregate transaction to an inner transaction including transaction signer.
+     * @param signer - Transaction signer.
+     * @returns InnerTransaction
+     */
+    public toAggregateV1(signer: PublicAccount): InnerTransaction {
+        if ([TransactionType.AGGREGATE_BONDED_V1, TransactionType.AGGREGATE_BONDED_V2, 
+            TransactionType.AGGREGATE_COMPLETE_V1, TransactionType.AGGREGATE_COMPLETE_V2].includes(this.type)) {
+            throw new Error('Inner transaction cannot be an aggregated transaction.');
+        }
+
+        this.version.dScheme = DerivationScheme.Unset;
         return Object.assign({__proto__: Object.getPrototypeOf(this)}, this, {signer});
     }
 
@@ -187,7 +231,7 @@ export abstract class Transaction {
      * @internal
      */
     public versionToDTO(): number {
-        return (this.networkType << 24) + this.version;
+        return this.version.convertToDTO();
     }
 
     /**
@@ -235,7 +279,7 @@ export abstract class Transaction {
     public toJSON() {
         const commonTransactionObject = {
             type: this.type,
-            networkType: this.networkType,
+            networkType: this.version.networkType,
             version: this.versionToDTO(),
             maxFee: this.maxFee.toDTO(),
             deadline: this.deadline.toDTO(),

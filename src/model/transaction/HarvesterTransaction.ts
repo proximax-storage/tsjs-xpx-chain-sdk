@@ -25,7 +25,7 @@ import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline'
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
-import { TransactionVersion } from './TransactionVersion';
+import { TransactionTypeVersion } from './TransactionTypeVersion';
 import { calculateFee } from './FeeCalculationStrategy';
 
 /**
@@ -151,12 +151,12 @@ export class HarvesterTransaction extends Transaction {
 export class HarvesterTransactionBuilder extends TransactionBuilder {
     private _harvesterKey: PublicAccount;
     private _transactionType: number;
-    private _transactionVersion: number;
+    private _transactionTypeVersion: number;
 
-    constructor(transactionType: number, transactionVersion: number) {
+    constructor(transactionType: number, transactionTypeVersion: number) {
         super();
         this._transactionType = transactionType;
-        this._transactionVersion = transactionVersion;
+        this._transactionTypeVersion = transactionTypeVersion;
     }
 
     public harvesterKey(harvesterKey: PublicAccount) {
@@ -168,7 +168,7 @@ export class HarvesterTransactionBuilder extends TransactionBuilder {
         return new HarvesterTransaction(
             this._networkType,
             this._transactionType,
-            this._transactionVersion,
+            this._transactionTypeVersion,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(HarvesterTransaction.calculateSize(), this._feeCalculationStrategy),
             this._harvesterKey,
@@ -182,14 +182,14 @@ export class HarvesterTransactionBuilder extends TransactionBuilder {
 export class AddHarvesterTransactionBuilder extends HarvesterTransactionBuilder {
 
     constructor(){
-        super(TransactionType.ADD_HARVESTER, TransactionVersion.ADD_HARVESTER);
+        super(TransactionType.ADD_HARVESTER, TransactionTypeVersion.ADD_HARVESTER);
     }
 }
 
 export class RemoveHarvesterTransactionBuilder extends HarvesterTransactionBuilder {
 
     constructor(){
-        super(TransactionType.REMOVE_HARVESTER, TransactionVersion.REMOVE_HARVESTER);
+        super(TransactionType.REMOVE_HARVESTER, TransactionTypeVersion.REMOVE_HARVESTER);
     }
 }
 

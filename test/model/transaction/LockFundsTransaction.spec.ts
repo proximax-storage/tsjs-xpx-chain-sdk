@@ -19,42 +19,42 @@ import {NetworkType} from '../../../src/model/blockchain/NetworkType';
 import {NetworkCurrencyMosaic} from '../../../src/model/mosaic/NetworkCurrencyMosaic';
 import {AggregateTransaction} from '../../../src/model/transaction/AggregateTransaction';
 import {Deadline} from '../../../src/model/transaction/Deadline';
-import {LockFundsTransaction} from '../../../src/model/transaction/LockFundsTransaction';
+import {HashLockTransaction} from '../../../src/model/transaction/HashLockTransaction';
 import {UInt64} from '../../../src/model/UInt64';
 import {TestingAccount} from '../../conf/conf.spec';
 import { DefaultFeeCalculationStrategy } from '../../../src/model/transaction/FeeCalculationStrategy';
 import { XpxMosaicProperties } from '../../../src/model/mosaic/NetworkMosaic';
 
-describe('LockFundsTransaction', () => {
+describe('HashLockTransaction', () => {
     const account = TestingAccount;
     const generationHash = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
     it('should default maxFee field be set according to DefaultFeeCalculationStrategy', () => {
-        const aggregateTransaction = AggregateTransaction.createBonded(
+        const aggregateTransaction = AggregateTransaction.createBondedV1(
             Deadline.create(),
             [],
             NetworkType.MIJIN_TEST,
             [],
         );
-        const signedTransaction = account.sign(aggregateTransaction, generationHash);
-        const lockFundsTransaction = LockFundsTransaction.create(Deadline.create(),
+        const signedTransaction = account.preV2Sign(aggregateTransaction, generationHash);
+        const lockHashTransaction = HashLockTransaction.create(Deadline.create(),
             NetworkCurrencyMosaic.createRelative(10),
             UInt64.fromUint(10),
             signedTransaction,
             NetworkType.MIJIN_TEST,
         );
 
-        expect(lockFundsTransaction.maxFee.compact()).to.be.equal(lockFundsTransaction.size * DefaultFeeCalculationStrategy);
+        expect(lockHashTransaction.maxFee.compact()).to.be.equal(lockHashTransaction.size * DefaultFeeCalculationStrategy);
     });
 
     it('should filled maxFee override transaction maxFee', () => {
-        const aggregateTransaction = AggregateTransaction.createBonded(
+        const aggregateTransaction = AggregateTransaction.createBondedV1(
             Deadline.create(),
             [],
             NetworkType.MIJIN_TEST,
             [],
         );
-        const signedTransaction = account.sign(aggregateTransaction, generationHash);
-        const lockFundsTransaction = LockFundsTransaction.create(Deadline.create(),
+        const signedTransaction = account.preV2Sign(aggregateTransaction, generationHash);
+        const lockHashTransaction = HashLockTransaction.create(Deadline.create(),
             NetworkCurrencyMosaic.createRelative(10),
             UInt64.fromUint(10),
             signedTransaction,
@@ -62,19 +62,19 @@ describe('LockFundsTransaction', () => {
             new UInt64([1, 0])
         );
 
-        expect(lockFundsTransaction.maxFee.higher).to.be.equal(0);
-        expect(lockFundsTransaction.maxFee.lower).to.be.equal(1);
+        expect(lockHashTransaction.maxFee.higher).to.be.equal(0);
+        expect(lockHashTransaction.maxFee.lower).to.be.equal(1);
     });
 
     it('creation with an aggregate bonded tx', () => {
-        const aggregateTransaction = AggregateTransaction.createBonded(
+        const aggregateTransaction = AggregateTransaction.createBondedV1(
             Deadline.create(),
             [],
             NetworkType.MIJIN_TEST,
             [],
         );
-        const signedTransaction = account.sign(aggregateTransaction, generationHash);
-        const transaction = LockFundsTransaction.create(Deadline.create(),
+        const signedTransaction = account.preV2Sign(aggregateTransaction, generationHash);
+        const transaction = HashLockTransaction.create(Deadline.create(),
             NetworkCurrencyMosaic.createRelative(10),
             UInt64.fromUint(10),
             signedTransaction,
@@ -91,9 +91,9 @@ describe('LockFundsTransaction', () => {
             NetworkType.MIJIN_TEST,
             [],
         );
-        const signedTransaction = account.sign(aggregateTransaction, generationHash);
+        const signedTransaction = account.preV2Sign(aggregateTransaction, generationHash);
         expect(() => {
-            LockFundsTransaction.create(Deadline.create(),
+            HashLockTransaction.create(Deadline.create(),
                 NetworkCurrencyMosaic.createRelative(10),
                 UInt64.fromUint(10),
                 signedTransaction,
@@ -102,21 +102,21 @@ describe('LockFundsTransaction', () => {
     });
 
     describe('size', () => {
-        it('should return 178 for LockFundsTransaction transaction byte size', () => {
-            const aggregateTransaction = AggregateTransaction.createBonded(
+        it('should return 178 for HashLockTransaction transaction byte size', () => {
+            const aggregateTransaction = AggregateTransaction.createBondedV1(
                 Deadline.create(),
                 [],
                 NetworkType.MIJIN_TEST,
                 [],
             );
-            const signedTransaction = account.sign(aggregateTransaction, generationHash);
-            const lockFundsTransaction = LockFundsTransaction.create(Deadline.create(),
+            const signedTransaction = account.preV2Sign(aggregateTransaction, generationHash);
+            const lockHashTransaction = HashLockTransaction.create(Deadline.create(),
                 NetworkCurrencyMosaic.createRelative(10),
                 UInt64.fromUint(10),
                 signedTransaction,
                 NetworkType.MIJIN_TEST,
             );
-            expect(lockFundsTransaction.size).to.be.equal(178);
+            expect(lockHashTransaction.size).to.be.equal(178);
         });
     });
 });

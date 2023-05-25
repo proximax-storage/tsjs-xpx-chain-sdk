@@ -44,7 +44,7 @@ describe('hasher', () => {
                     sha3Hasher.func(hash, inputBuffer, length);
 
                     // Assert:
-                    expect(convert.uint8ToHex(hash), `hashing ${inputHex}`).equal(expectedHash);
+                    expect(convert.uint8ArrayToHex(hash), `hashing ${inputHex}`).equal(expectedHash);
                 }
             });
         });
@@ -71,7 +71,7 @@ describe('hasher', () => {
                     hasher.finalize(hash);
 
                     // Assert:
-                    expect(convert.uint8ToHex(hash), `hashing ${inputHex}`).equal(expectedHash);
+                    expect(convert.uint8ArrayToHex(hash), `hashing ${inputHex}`).equal(expectedHash);
                 }
             });
 
@@ -90,7 +90,7 @@ describe('hasher', () => {
                 hasher.finalize(hash);
 
                 // Assert:
-                expect(convert.uint8ToHex(hash), `hashing ${inputHex}`).equal(expectedHash);
+                expect(convert.uint8ArrayToHex(hash), `hashing ${inputHex}`).equal(expectedHash);
             });
 
             it('cannot hash unsupported data type', () => {
@@ -119,7 +119,7 @@ describe('hasher', () => {
                 hasher.finalize(hash);
 
                 // Assert:
-                expect(convert.uint8ToHex(hash), `hashing ${inputHex}`).equal(expectedHash);
+                expect(convert.uint8ArrayToHex(hash), `hashing ${inputHex}`).equal(expectedHash);
             });
         });
     }

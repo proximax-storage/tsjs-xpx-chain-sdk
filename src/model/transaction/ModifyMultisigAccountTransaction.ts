@@ -24,7 +24,7 @@ import { MultisigCosignatoryModification } from './MultisigCosignatoryModificati
 import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
-import { TransactionVersion } from './TransactionVersion';
+import { TransactionTypeVersion } from './TransactionTypeVersion';
 import { calculateFee } from './FeeCalculationStrategy';
 
 /**
@@ -184,7 +184,7 @@ export class ModifyMultisigAccountTransactionBuilder extends TransactionBuilder 
     public build(): ModifyMultisigAccountTransaction {
         return new ModifyMultisigAccountTransaction(
             this._networkType,
-            this._version || TransactionVersion.MODIFY_MULTISIG_ACCOUNT,
+            this._version || TransactionTypeVersion.MODIFY_MULTISIG_ACCOUNT,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(ModifyMultisigAccountTransaction.calculateSize(this._modifications.length), this._feeCalculationStrategy),
             this._minApprovalDelta,

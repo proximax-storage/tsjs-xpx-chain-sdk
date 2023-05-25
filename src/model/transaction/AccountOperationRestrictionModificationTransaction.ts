@@ -25,7 +25,7 @@ import { Deadline } from './Deadline';
 import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
-import { TransactionVersion } from './TransactionVersion';
+import { TransactionTypeVersion } from './TransactionTypeVersion';
 import { calculateFee } from './FeeCalculationStrategy';
 
 export class AccountOperationRestrictionModificationTransaction extends Transaction {
@@ -159,7 +159,7 @@ export class AccountOperationRestrictionModificationTransactionBuilder extends T
     public build(): AccountOperationRestrictionModificationTransaction {
         return new AccountOperationRestrictionModificationTransaction(
             this._networkType,
-            this._version || TransactionVersion.MODIFY_ACCOUNT_RESTRICTION_ENTITY_TYPE,
+            this._version || TransactionTypeVersion.MODIFY_ACCOUNT_RESTRICTION_ENTITY_TYPE,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(AccountOperationRestrictionModificationTransaction.calculateSize(this._modifications.length), this._feeCalculationStrategy),
             this._restrictionType,

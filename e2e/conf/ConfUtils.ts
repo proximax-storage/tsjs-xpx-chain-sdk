@@ -1,5 +1,5 @@
 import { SeedAccount, APIUrl, ConfNetworkMosaic, AllTestingAccounts, TestAccount, TestingAccount, ConfTestingNamespaceId, ConfTestingMosaicNonce, ConfTestingMosaicProperties, TestingRecipient, ConfAccountHttp, ConfTransactionHttp, ConfNamespaceHttp, ConfMosaicHttp, Configuration, ConfTestingMosaicId } from "./conf.spec";
-import { Account, PlainMessage, UInt64, MultisigCosignatoryModification, MultisigCosignatoryModificationType, Address, Mosaic, MosaicId, AccountInfo, NamespaceId, RegisterNamespaceTransaction, CosignatureTransaction, AccountRestrictionModification, RestrictionModificationType, RestrictionType, MosaicSupplyType } from "../../src/model/model";
+import { Account, PlainMessage, UInt64, MultisigCosignatoryModification, MultisigCosignatoryModificationType, Address, Mosaic, MosaicId, AccountInfo, NamespaceId, RegisterNamespaceTransaction, CosignatureTransaction, AccountRestrictionModification, RestrictionModificationType, RestrictionType, MosaicSupplyType, MultisigAccountInfo } from "../../src/model/model";
 import { forkJoin } from "rxjs";
 import { TransactionHttp, Listener, AccountHttp } from "../../src/infrastructure/infrastructure";
 import { Test } from "mocha";
@@ -32,8 +32,10 @@ export class ConfUtils {
 
     public static prepareE2eTestData() {
         return Promise.all(Array.from(AllTestingAccounts.values()).filter(ta => ta.conf.seed).map(ta =>
-            ConfUtils.seed(ta).then(accInfo =>
-                ConfUtils.checkIfNeedPubKey(ta, accInfo)
+            ConfUtils.seed(ta).then(accInfo =>{
+               return accInfo ? ConfUtils.checkIfNeedPubKey(ta, accInfo): undefined;
+            }
+                
         ))).then(accInfos => {
             // get all the msig roots; will traverse them with bfs, so all other in the middle nodes will be processed automatically
             const msigAccounts: TestAccount[] = Array.from(AllTestingAccounts.values()).filter(ta => ta.hasCosignatories() && !ta.isCosignatory());
@@ -58,16 +60,20 @@ export class ConfUtils {
 
     public static convertToMultisigIfNotConvertedYet(ta: TestAccount) {
         const accountHttp = ConfAccountHttp;
-        return accountHttp.getMultisigAccountInfo(ta.acc.address).toPromise().then(msigInfo => {
-            if (msigInfo.cosignatories && msigInfo.cosignatories.length > 0) {
-                console.log(ta.conf.alias + " already is msig");
-                return Promise.resolve();
-            } else {// it is not msig just yet, we need to convert it now
-                return ConfUtils.convertToMultisig(ta);
-            }
-        }, error => { // it is not msig just yet, we need to convert it now
-            return ConfUtils.convertToMultisig(ta);
-        });
+        return accountHttp.getMultisigAccountInfo(ta.acc.address).subscribe(
+            {
+                 next: (msigInfo: MultisigAccountInfo) => {
+                    if (msigInfo && msigInfo.cosignatories && msigInfo.cosignatories.length > 0) {
+                        console.log(ta.conf.alias + " already is msig");
+                        return Promise.resolve();
+                    } else {// it is not msig just yet, we need to convert it now
+                        return ConfUtils.convertToMultisig(ta);
+                    }
+                }, 
+                error: (error) => { // it is not msig just yet, we need to convert it now
+                    return ConfUtils.convertToMultisig(ta);
+                }
+            });
     }
 
     public static checkIfNeedPubKey(ta: TestAccount, accountInfo: AccountInfo) {
@@ -181,18 +187,18 @@ export class ConfUtils {
                         .build();
 
                     const aggregateBonded = factory.aggregateBonded()
-                        .innerTransactions([convertIntoMultisigTransaction.toAggregate(ta.acc.publicAccount)])
+                        .innerTransactions([convertIntoMultisigTransaction.toAggregateV1(ta.acc.publicAccount)])
                         .build();
 
-                    const signedAggregateBonded = aggregateBonded.signWith(ta.acc, factory.generationHash);
+                    const signedAggregateBonded = aggregateBonded.preV2SignWith(ta.acc, factory.generationHash);
 
-                    const lockFunds = factory.lockFunds()
+                    const hashLock = factory.hashLock()
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
                         .duration(UInt64.fromUint(50))
                         .transactionHash(signedAggregateBonded)
                         .build();
 
-                    const signedLockFunds = lockFunds.signWith(ta.acc, factory.generationHash);
+                    const signedHashLock = hashLock.preV2SignWith(ta.acc, factory.generationHash);
                     listener.cosignatureAdded(ta.acc.address).subscribe(tx => {
                         console.log(tx);
                     });
@@ -226,8 +232,8 @@ export class ConfUtils {
                             resolve();
                         }, signedAggregateBonded.hash);
                         transactionHttp.announceAggregateBonded(signedAggregateBonded);
-                    }, signedLockFunds.hash);
-                    transactionHttp.announce(signedLockFunds);
+                    }, signedHashLock.hash);
+                    transactionHttp.announce(signedHashLock);
                 });
             });
         });
@@ -272,7 +278,7 @@ export class ConfUtils {
                             .duration(UInt64.fromUint(1000))
                             .build();
 
-                        const signedRegisterNamespaceTransaction = registerNamespaceTransaction.signWith(TestingAccount, factory.generationHash);
+                        const signedRegisterNamespaceTransaction = registerNamespaceTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                         this.waitForConfirmation(listener, TestingAccount.address, () => {
                             listener.close();
                             resolve();
@@ -300,14 +306,14 @@ export class ConfUtils {
                             .mosaicProperties(ConfTestingMosaicProperties)
                             .build();
 
-                        const signedMosaicDefinitionTransaction = mosaicDefinitionTransaction.signWith(TestingAccount, factory.generationHash);
+                        const signedMosaicDefinitionTransaction = mosaicDefinitionTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                         this.waitForConfirmation(listener, TestingAccount.address, () => {
                             const mosaicSupplyChangeTransaction = factory.mosaicSupplyChange()
                                 .mosaicId(ConfTestingMosaicId)
                                 .direction(MosaicSupplyType.Increase)
                                 .delta(UInt64.fromUint(1000000000 * 10^ConfTestingMosaicProperties.divisibility))
                                 .build();
-                                const signedMosaicSupplyChangeTransaction = mosaicSupplyChangeTransaction.signWith(TestingAccount, factory.generationHash);
+                                const signedMosaicSupplyChangeTransaction = mosaicSupplyChangeTransaction.preV2SignWith(TestingAccount, factory.generationHash);
                                 this.waitForConfirmation(listener, TestingAccount.address, () => {
                                     listener.close();
                                     resolve();

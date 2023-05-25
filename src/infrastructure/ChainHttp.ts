@@ -19,7 +19,7 @@ import {from as observableFrom, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {BlockchainScore} from '../model/blockchain/BlockchainScore';
 import {UInt64} from '../model/UInt64';
-import { ChainRoutesApi } from './api';
+import { BlockchainScoreResponse, ChainRoutesApi, HeightInfoResponse } from './api';
 import { ChainRepository } from './ChainRepository';
 import {Http} from './Http';
 import { RequestOptions } from './RequestOptions';
@@ -50,9 +50,12 @@ export class ChainHttp extends Http implements ChainRepository {
      * @returns Observable<UInt64>
      */
     public getBlockchainHeight(requestOptions?: RequestOptions): Observable<UInt64> {
-        return observableFrom(this.chainRoutesApi.getBlockchainHeight(requestOptions)).pipe(map(response => {
-            return new UInt64(response.body.height);
-        }));
+        return observableFrom(this.chainRoutesApi.getBlockchainHeight(requestOptions))
+        .pipe(
+            map((response: HeightInfoResponse) => {
+                return new UInt64(response.body.height);
+            })
+        );
     }
 
     /**
@@ -60,12 +63,15 @@ export class ChainHttp extends Http implements ChainRepository {
      * @returns Observable<BlockchainScore>
      */
     public getBlockchainScore(requestOptions?: RequestOptions): Observable<BlockchainScore> {
-        return observableFrom(this.chainRoutesApi.getBlockchainScore(requestOptions)).pipe(map(response => {
-            const blockchainScoreDTO = response.body;
-            return new BlockchainScore(
-                new UInt64(blockchainScoreDTO.scoreLow),
-                new UInt64(blockchainScoreDTO.scoreHigh),
-            );
-        }));
+        return observableFrom(this.chainRoutesApi.getBlockchainScore(requestOptions))
+        .pipe(
+            map((response: BlockchainScoreResponse) => {
+                const blockchainScoreDTO = response.body;
+                return new BlockchainScore(
+                    new UInt64(blockchainScoreDTO.scoreLow),
+                    new UInt64(blockchainScoreDTO.scoreHigh),
+                );
+            })
+        );
     }
 }

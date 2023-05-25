@@ -25,7 +25,7 @@ import { HashType, HashTypeLengthValidator } from './HashType';
 import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
 import { TransactionType } from './TransactionType';
-import { TransactionVersion } from './TransactionVersion';
+import { TransactionTypeVersion } from './TransactionTypeVersion';
 import { calculateFee } from './FeeCalculationStrategy';
 import { Base32 } from '../../core/format/Base32';
 import { Convert } from '../../core/format/Convert';
@@ -151,7 +151,7 @@ export class SecretProofTransaction extends Transaction {
                 ...parent.transaction,
                 hashAlgorithm: this.hashType,
                 secret: this.secret,
-                recipient: Convert.uint8ToHex(Base32.Base32Decode(this.recipient.plain())),
+                recipient: Convert.uint8ArrayToHex(Base32.Base32Decode(this.recipient.plain())),
                 proof: this.proof,
             }
         }
@@ -205,7 +205,7 @@ export class SecretProofTransactionBuilder extends TransactionBuilder {
     public build(): SecretProofTransaction {
         return new SecretProofTransaction(
             this._networkType,
-            this._version || TransactionVersion.SECRET_PROOF,
+            this._version || TransactionTypeVersion.SECRET_PROOF,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(SecretProofTransaction.calculateSize(this._proof), this._feeCalculationStrategy),
             this._hashType,

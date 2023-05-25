@@ -1,4 +1,5 @@
 /*
+ * Copyright 2023 ProximaX
  * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {sha3_256} from 'js-sha3';
+import {sha3_256} from "@noble/hashes/sha3"
 import * as utilities from './Utilities';
 
 export class IdGenerator {
@@ -23,11 +24,12 @@ export class IdGenerator {
      * @param {object} ownerPublicId The public id.
      * @returns {module:coders/uint64~uint64} The mosaic id.
      */
-    public static generateMosaicId = (nonce, ownerPublicId) => {
+    public static generateMosaicId = (nonce: Uint8Array, ownerPublicId: Uint8Array) => {
         const hash = sha3_256.create();
+
         hash.update(nonce);
         hash.update(ownerPublicId);
-        const result = new Uint32Array(hash.arrayBuffer());
+        const result = new Uint32Array(hash.digest().buffer);
         return [result[0], result[1] & 0x7FFFFFFF];
     }
 

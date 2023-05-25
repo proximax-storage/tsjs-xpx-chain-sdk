@@ -1,6 +1,5 @@
 /*
  * Copyright 2023 ProximaX
- * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,189 +14,85 @@
  * limitations under the License.
  */
 
+import { DerivationScheme } from "../../core/crypto";
+import { Convert } from "../../core/format";
+import { NetworkType, TransactionTypeVersion } from "../model";
+
 /**
- * Static class containing transaction version constants.
+ * Static class containing transaction version.
  *
- * Transaction format versions are defined in catapult-server in
- * each transaction's plugin source code.
- *
- * You can check out the implemented version for each transaction at the Sirius blockchain network config
+ * Currently transaction version contain: 
+ * network type (uint8)
+ * derivation scheme (uint8)
+ * empty byte (uint8) - blank
+ * transaction type version (uint8)
  */
 export class TransactionVersion {
 
     /**
-     * Transfer Transaction transaction version.
-     * @type {number}
+     * @param {NetworkType} - Network type
+     * @param {DerivationScheme} - Derivation scheme
+     * @param {number} - Transaction type version
      */
-    public static readonly TRANSFER = 3;
+    constructor(
+        public readonly networkType: NetworkType,
+        public dScheme: DerivationScheme,
+        public readonly txnTypeVersion: TransactionTypeVersion
+    ){}
 
-    /**
-     * Register namespace transaction version.
-     * @type {number}
-     */
-    public static readonly REGISTER_NAMESPACE = 2;
+    public convertToDTO(){
+        return (this.networkType << 24) + (this.dScheme << 16) + this.txnTypeVersion;
+    }
 
-    /**
-     * Mosaic definition transaction version.
-     * @type {number}
-     */
-    public static readonly MOSAIC_DEFINITION = 3;
+    public static createInit(networkType: NetworkType, txnTypeVersion: TransactionTypeVersion){
+        return new TransactionVersion(networkType, DerivationScheme.Unset, txnTypeVersion);
+    }
 
-    /**
-     * Mosaic supply change transaction.
-     * @type {number}
-     */
-    public static readonly MOSAIC_SUPPLY_CHANGE = 2;
+    public static createFromUint32(version: number){
+        if(version > 0xFFFFFFFF){
+            throw new Error("Invalid version number range, must be within uint32 number");
+        }
+        let hexString = version.toString(16);
+        let filledHexString = hexString.padStart(8, "0");
 
-    /**
-     * Modify multisig account transaction version.
-     * @type {number}
-     */
-    public static readonly MODIFY_MULTISIG_ACCOUNT = 3;
+        return new TransactionVersion(
+            parseInt(filledHexString.substring(0, 2), 16),
+            parseInt(filledHexString.substring(2, 4), 16),
+            parseInt(filledHexString.substring(6), 16)
+        )
+    }
 
-    /**
-     * Aggregate complete transaction version.
-     * @type {number}
-     */
-    public static readonly AGGREGATE_COMPLETE = 3;
+    public static createFromHex(hexString: string){
+        if(!Convert.isHexString(hexString)){
+            throw new Error("Invalid hex string");
+        }
 
-    /**
-     * Aggregate bonded transaction version
-     * @type {number}
-     */
-    public static readonly AGGREGATE_BONDED = 3;
+        if(hexString.length !== 8){
+            throw new Error("Invalid hex string length");
+        }
 
-    /**
-     * Lock transaction version
-     * @type {number}
-     */
-    public static readonly LOCK = 1;
+        return new TransactionVersion(
+            parseInt(hexString.substring(0, 2), 16),
+            parseInt(hexString.substring(2, 4), 16),
+            parseInt(hexString.substring(6), 16)
+        )
+    }
 
-    /**
-     * Secret Lock transaction version
-     * @type {number}
-     */
-    public static readonly SECRET_LOCK = 1;
+    public static createFromPayloadHex(hexString: string){
+        if(!Convert.isHexString(hexString)){
+            throw new Error("Invalid hex string");
+        }
 
-    /**
-     * Secret Proof transaction version
-     * @type {number}
-     */
-    public static readonly SECRET_PROOF = 1;
+        if(hexString.length !== 8){
+            throw new Error("Invalid hex string length");
+        }
 
-    /**
-     * Address Alias transaction version
-     * @type {number}
-     */
-    public static readonly ADDRESS_ALIAS = 1;
+        let hexStringReversed = Convert.hexReverse(hexString);
 
-    /**
-     * Mosaic Alias transaction version
-     * @type {number}
-     */
-    public static readonly MOSAIC_ALIAS = 1;
-
-    /**
-     * Account Restriction address transaction version
-     * @type {number}
-     */
-    public static readonly MODIFY_ACCOUNT_RESTRICTION_ADDRESS = 1;
-
-    /**
-     * Account Restriction mosaic transaction version
-     * @type {number}
-     */
-    public static readonly MODIFY_ACCOUNT_RESTRICTION_MOSAIC = 1;
-
-    /**
-     * Account Restriction operation transaction version
-     * @type {number}
-     */
-    public static readonly MODIFY_ACCOUNT_RESTRICTION_ENTITY_TYPE = 1;
-
-    /**
-     * Link account transaction version
-     * @type {number}
-     */
-    public static readonly LINK_ACCOUNT = 2;
-
-    /**
-     * Modify metadata transactions version
-     * @deprecated
-     * @type {number}
-     */
-    public static readonly MODIFY_METADATA = 1;
-
-    /**
-     * Modify account metadata nem transactions version
-     * @type {number}
-     */
-     public static readonly ACCOUNT_METADATA_V2 = 1;
-
-     /**
-     * Modify mosaic metadata nem transactions version
-     * @type {number}
-     */
-    public static readonly MOSAIC_METADATA_V2 = 1;
-
-    
-     /**
-     * Modify namespace metadata nem transactions version
-     * @type {number}
-     */
-    public static readonly NAMESPACE_METADATA_V2 = 1;
-
-    /**
-     * Modify mosaic modify levy transactions version
-     * @type {number}
-     */
-    public static readonly MOSAIC_MODIFY_LEVY = 1;
-
-    /**
-     * Modify remove mosaic levy transactions version
-     * @type {number}
-     */
-     public static readonly MOSAIC_REMOVE_LEVY = 1;
-
-    /**
-     * Chain configuration transaction version
-     * @type {number}
-     */
-    public static readonly CHAIN_CONFIG = 1;
-
-    /**
-     * Chain upgrade transaction version
-     * @type {number}
-     */
-    public static readonly CHAIN_UPGRADE = 1;
-
-    /**
-     * Add exchange transaction version
-     * @type {number}
-     */
-    public static readonly ADD_EXCHANGE_OFFER = 4;
-
-    /**
-     * Exchange transaction version
-     * @type {number}
-     */
-    public static readonly EXCHANGE_OFFER = 2;
-
-    /**
-     * Remove exchange transaction version
-     * @type {number}
-     */
-    public static readonly REMOVE_EXCHANGE_OFFER = 2;
-
-    /**
-    * Add harvester transaction version
-    * @type {number}
-    */
-     public static readonly ADD_HARVESTER = 1;
-
-     /**
-     * Remove harvester transaction version
-     * @type {number}
-     */
-     public static readonly REMOVE_HARVESTER = 1;
+        return new TransactionVersion(
+            parseInt(hexStringReversed.substring(0, 2), 16),
+            parseInt(hexStringReversed.substring(2, 4), 16),
+            parseInt(hexStringReversed.substring(6), 16)
+        )
+    }
 }

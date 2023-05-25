@@ -11,10 +11,12 @@ import { AccountAddressRestrictionModificationTransactionBuilder } from "./Accou
 import { AccountMosaicRestrictionModificationTransactionBuilder } from "./AccountMosaicRestrictionModificationTransaction";
 import { AccountOperationRestrictionModificationTransactionBuilder } from "./AccountOperationRestrictionModificationTransaction";
 import { AddressAliasTransactionBuilder } from "./AddressAliasTransaction";
-import { AggregateBondedTransactionBuilder, AggregateCompleteTransactionBuilder } from "./AggregateTransaction";
+import { 
+    AggregateBondedTransactionBuilder, AggregateCompleteTransactionBuilder, 
+    AggregateBondedV1TransactionBuilder, AggregateCompleteV1TransactionBuilder 
+} from "./AggregateTransaction";
 import { ChainConfigTransactionBuilder } from "./ChainConfigTransaction";
 import { ChainUpgradeTransactionBuilder } from "./ChainUpgradeTransaction";
-import { LockFundsTransactionBuilder } from "./LockFundsTransaction";
 import { HashLockTransactionBuilder } from "./HashLockTransaction";
 import { AccountMetadataTransactionBuilder } from "./AccountMetadataTransaction";
 import { MosaicMetadataTransactionBuilder } from "./MosaicMetadataTransaction";
@@ -33,6 +35,8 @@ import { ExchangeOfferTransactionBuilder } from "./ExchangeOfferTransaction";
 import { AddExchangeOfferTransactionBuilder } from "./AddExchangeOfferTransaction";
 import { RemoveExchangeOfferTransactionBuilder } from "./RemoveExchangeOfferTransaction";
 import { AddHarvesterTransactionBuilder, RemoveHarvesterTransactionBuilder } from "./HarvesterTransaction";
+import { PlaceSdaExchangeOfferTransactionBuilder } from "./PlaceSdaExchangeOfferTransaction";
+import { RemoveSdaExchangeOfferTransactionBuilder } from "./RemoveSdaExchangeOfferTransaction";
 
 
 export class TransactionBuilderFactory {
@@ -141,6 +145,18 @@ export class TransactionBuilderFactory {
         return builder;
     }
 
+    public aggregateBondedV1(): AggregateBondedV1TransactionBuilder {
+        const builder = new AggregateBondedV1TransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public aggregateCompleteV1(): AggregateCompleteV1TransactionBuilder {
+        const builder = new AggregateCompleteV1TransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
     public chainConfig(): ChainConfigTransactionBuilder {
         const builder = new ChainConfigTransactionBuilder();
         builder.networkType(this.networkType)
@@ -154,12 +170,6 @@ export class TransactionBuilderFactory {
         builder.networkType(this.networkType)
             .generationHash(this.generationHash)
             .createNewDeadlineFn(this.createNewDeadlineFn);
-        return builder;
-    }
-
-    public lockFunds(): LockFundsTransactionBuilder {
-        const builder = new LockFundsTransactionBuilder();
-        this.configureBuilder(builder);
         return builder;
     }
 
@@ -270,6 +280,18 @@ export class TransactionBuilderFactory {
         this.configureBuilder(builder);
         return builder;
     }
+
+    public placeSdaExchangeOffer(): PlaceSdaExchangeOfferTransactionBuilder{
+        const builder = new PlaceSdaExchangeOfferTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public removeSdaExchangeOffer(): RemoveSdaExchangeOfferTransactionBuilder{
+        const builder = new RemoveSdaExchangeOfferTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }    
 }
 
 

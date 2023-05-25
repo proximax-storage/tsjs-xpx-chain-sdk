@@ -23,7 +23,7 @@ import AccountLinkTransactionBufferPackage from '../buffers/AccountLinkTransacti
 import AccountLinkTransactionSchema from '../schemas/AccountLinkTransactionSchema';
 import {VerifiableTransaction} from './VerifiableTransaction';
 
-import {flatbuffers} from 'flatbuffers';
+import * as flatbuffers from 'flatbuffers';
 
 const {
     AccountLinkTransactionBuffer,

@@ -58,6 +58,11 @@ export * from './exchange/OfferInfo';
 export * from './harvester/HarvesterInfo';
 export * from './harvester/HarvesterSearch';
 export * from './harvester/HarvesterMetaInfo';
+// ExchangeSda
+export * from './exchangeSda/AccountSdaExchanges';
+export * from './exchangeSda/SdaOfferInfoWithOwner';
+export * from './exchangeSda/SdaOfferInfo';
+export * from './exchangeSda/SdaExchangeOfferType';
 
 // Metadata
 // export * from './metadata/AddressMetadata';
@@ -154,7 +159,6 @@ export * from './transaction/HashType';
 export * from './transaction/HexadecimalMessage';
 export * from './transaction/InnerTransaction';
 export * from './transaction/LinkAction';
-export * from './transaction/LockFundsTransaction';
 export * from './transaction/Message';
 export * from './transaction/MessageType';
 export * from './transaction/MosaicMetadataTransaction';
@@ -168,9 +172,13 @@ export * from './transaction/MultisigCosignatoryModification';
 export * from './transaction/MultisigCosignatoryModificationType';
 export * from './transaction/NamespaceMetadataTransaction';
 export * from './transaction/PlainMessage';
+export * from './transaction/PlaceSdaExchangeOfferTransaction';
 export * from './transaction/RegisterNamespaceTransaction';
 export * from './transaction/RemoveExchangeOffer';
 export * from './transaction/RemoveExchangeOfferTransaction';
+export * from './transaction/RemoveSdaExchangeOffer';
+export * from './transaction/RemoveSdaExchangeOfferTransaction';
+export * from './transaction/SdaExchangeOffer';
 export * from './transaction/SecretLockTransaction';
 export * from './transaction/SecretProofTransaction';
 export * from './transaction/SignedTransaction';
@@ -185,11 +193,14 @@ export * from './transaction/TransactionInfo';
 export * from './transaction/TransactionStatus';
 export * from './transaction/TransactionStatusError';
 export * from './transaction/TransactionType';
+export * from './transaction/TransactionTypeAltName';
+export * from './transaction/TransactionTypeVersion';
 export * from './transaction/TransactionVersion';
 export * from './transaction/TransferTransaction';
 export * from './transaction/TransactionSearch';
 export * from './transaction/HarvesterTransaction';
 export * from './transaction/UnknownTransaction';
+export * from './transaction/TransactionSizeInfo';
 
 // Upgrade
 export * from './upgrade/ChainUpgrade';

@@ -15,7 +15,7 @@
  */
 
 import {from as observableFrom , Observable, of as observableOf} from 'rxjs';
-import { flatMap, map, mergeMap, toArray} from 'rxjs/operators';
+import { map, mergeMap, toArray} from 'rxjs/operators';
 import { TransactionMapping } from '../core/utils/TransactionMapping';
 import { AccountHttp } from '../infrastructure/AccountHttp';
 import { AggregateTransaction as AggregatedTransactionCore} from '../infrastructure/builders/AggregateTransaction';
@@ -26,7 +26,7 @@ import { ModifyMultisigAccountTransaction } from '../model/transaction/ModifyMul
 import { MultisigCosignatoryModificationType } from '../model/transaction/MultisigCosignatoryModificationType';
 import { SignedTransaction } from '../model/transaction/SignedTransaction';
 import { TransactionType } from '../model/transaction/TransactionType';
-import { CosignatureSignedTransaction, PublicAccount } from '../model/model';
+import { CosignatureSignedTransaction, MultisigAccountInfo, PublicAccount } from '../model/model';
 
 /**
  * Aggregated Transaction service
@@ -55,22 +55,22 @@ export class AggregateTransactionService {
             signers.push(signedTransaction.signer);
         }
         return observableFrom(aggregateTransaction.innerTransactions).pipe(
-            mergeMap((innerTransaction) => this.accountHttp.getMultisigAccountInfo(innerTransaction.signer.address)
+            mergeMap((innerTransaction: InnerTransaction) => this.accountHttp.getMultisigAccountInfo(innerTransaction.signer.address)
                 .pipe(
                     /**
                      * For multisig account, we need to get the graph info in case it has multiple levels
                      */
-                    mergeMap((_) => _.minApproval !== 0 && _.minRemoval !== 0 ?
+                    mergeMap((_: MultisigAccountInfo) => _.minApproval !== 0 && _.minRemoval !== 0 ?
                         this.accountHttp.getMultisigAccountGraphInfo(_.account.address)
                         .pipe(
-                            map((graphInfo) => this.validateCosignatories(graphInfo, signers, innerTransaction)),
+                            map((graphInfo: MultisigAccountGraphInfo) => this.validateCosignatories(graphInfo, signers, innerTransaction)),
                         ) : observableOf(signers.find((s) => s === _.account.publicKey ) !== undefined),
                         ),
                     ),
                 ),
             toArray(),
         ).pipe(
-            flatMap((results) => {
+            mergeMap((results: boolean[]) => {
                 return observableOf(results.every((isComplete) => isComplete));
             }),
         );
@@ -162,15 +162,43 @@ export class AggregateTransactionService {
     public static addCosignatures(signedTransaction: SignedTransaction, cosignatures: CosignatureSignedTransaction[]): SignedTransaction {
         // re-create the transaction from payload to determine the type - only allow aggregate complete transaction as an input
         const recreatedSignedTx = TransactionMapping.createFromPayload(signedTransaction.payload);
-        if (recreatedSignedTx.type !== TransactionType.AGGREGATE_COMPLETE) {
-            throw new Error('Only serialized signed aggregate complete transaction allowed.');
+        if (recreatedSignedTx.type !== TransactionType.AGGREGATE_COMPLETE_V2) {
+            throw new Error('Only serialized signed aggregate complete v2 transaction allowed.');
         }
         const recreatedSignedAggregateComplete = recreatedSignedTx as AggregateTransaction;
 
         const signedTransactionRaw = AggregatedTransactionCore.appendSignatures(
             signedTransaction,
             cosignatures.filter(cosignature => ! recreatedSignedAggregateComplete.signedByAccount(
-                    PublicAccount.createFromPublicKey(cosignature.signer, recreatedSignedAggregateComplete.networkType))));
+                    PublicAccount.createFromPublicKey(cosignature.signer, recreatedSignedAggregateComplete.version.networkType))));
+
+        return new SignedTransaction(
+            signedTransactionRaw.payload,
+            signedTransaction.hash,
+            signedTransaction.signer,
+            signedTransaction.type,
+            signedTransaction.networkType
+        );
+    }
+
+    /**
+     * Appends cosignatures to a signed aggregate transaction, if they are not yet added
+     *
+     * @param signedTransaction
+     * @param cosignatures
+     */
+    public static addCosignaturesV1(signedTransaction: SignedTransaction, cosignatures: CosignatureSignedTransaction[]): SignedTransaction {
+        // re-create the transaction from payload to determine the type - only allow aggregate complete transaction as an input
+        const recreatedSignedTx = TransactionMapping.createFromPayload(signedTransaction.payload);
+        if (recreatedSignedTx.type !== TransactionType.AGGREGATE_COMPLETE_V1) {
+            throw new Error('Only serialized signed aggregate complete v1 transaction allowed.');
+        }
+        const recreatedSignedAggregateComplete = recreatedSignedTx as AggregateTransaction;
+
+        const signedTransactionRaw = AggregatedTransactionCore.appendSignaturesV1(
+            signedTransaction,
+            cosignatures.filter(cosignature => ! recreatedSignedAggregateComplete.signedByAccount(
+                    PublicAccount.createFromPublicKey(cosignature.signer, recreatedSignedAggregateComplete.version.networkType))));
 
         return new SignedTransaction(
             signedTransactionRaw.payload,

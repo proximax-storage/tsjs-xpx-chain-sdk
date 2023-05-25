@@ -1,4 +1,5 @@
 /*
+ * Copyright 2023 ProximaX
  * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,5 +18,6 @@
 export * from './Crypto';
 export * from './KeyPair';
 export * from './SHA3Hasher';
+export * from './SHA2Hasher';
 export * from './nacl_catapult';
-export * from './SignSchema';
+export * from './DerivationScheme';

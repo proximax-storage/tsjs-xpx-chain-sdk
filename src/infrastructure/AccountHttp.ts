@@ -16,7 +16,7 @@
  */
 
 import {from as observableFrom, Observable} from 'rxjs';
-import {map, mergeMap, switchMap, switchMapTo, tap, toArray, take, flatMap} from 'rxjs/operators';
+import {map, mergeMap} from 'rxjs/operators';
 import { DtoMapping } from '../core/utils/DtoMapping';
 import {AccountInfo} from '../model/account/AccountInfo';
 import { AccountNames } from '../model/account/AccountNames';
@@ -37,7 +37,18 @@ import {AccountRepository} from './AccountRepository';
 import { AccountInfoDTO,
          AccountRoutesApi,
          TransactionRoutesApi,
-         MosaicDTO } from './api';
+         AccountInfoResponse,
+         AccountsInfoResponse,
+         MosaicDTO, 
+         AccountPropertiesInfoResponse,
+         AccountsPropertiesInfoResponse,
+         AccountsNamesResponse,
+         AccountNamesDTO,
+         MultisigAccountInfoResponse,
+         MultisigAccountGraphInfoResponse,
+         MultisigAccountGraphInfoDTO,
+         TransactionSearchResponse
+        } from './api';
 import {Http} from './Http';
 import {NetworkHttp} from './NetworkHttp';
 import {TransactionQueryParams} from './TransactionQueryParams';
@@ -45,6 +56,7 @@ import {CreateTransactionFromDTO} from './transaction/CreateTransactionFromDTO';
 import {TransactionGroupType} from '../model/transaction/TransactionGroupType'
 import { RequestOptions } from './RequestOptions';
 import { Pagination } from '../model/Pagination';
+import { NetworkType } from '../model/model';
 
 /**
  * Account http repository.
@@ -76,22 +88,24 @@ export class AccountHttp extends Http implements AccountRepository {
      * @returns Observable<AccountInfo>
      */
     public getAccountInfo(address: Address, requestOptions?: RequestOptions): Observable<AccountInfo> {
-        return observableFrom(this.accountRoutesApi.getAccountInfo(address.plain(), requestOptions)).pipe(map(response => {
-            const accountInfoDTO = response.body;
-            return new AccountInfo(
-                accountInfoDTO.meta,
-                Address.createFromEncoded(accountInfoDTO.account.address),
-                new UInt64(accountInfoDTO.account.addressHeight),
-                accountInfoDTO.account.publicKey,
-                new UInt64(accountInfoDTO.account.publicKeyHeight),
-                accountInfoDTO.account.accountType.valueOf(),
-                accountInfoDTO.account.linkedAccountKey,
-                accountInfoDTO.account.mosaics.map((mosaicDTO) => new Mosaic(
-                    new MosaicId(mosaicDTO.id),
-                    new UInt64(mosaicDTO.amount),
-                )),
-            );
-        }));
+        return observableFrom(this.accountRoutesApi.getAccountInfo(address.plain(), requestOptions)).pipe(
+            map((response: AccountInfoResponse) => {
+                const accountInfoDTO = response.body;
+                return new AccountInfo(
+                    accountInfoDTO.meta,
+                    Address.createFromEncoded(accountInfoDTO.account.address),
+                    new UInt64(accountInfoDTO.account.addressHeight),
+                    accountInfoDTO.account.publicKey,
+                    new UInt64(accountInfoDTO.account.publicKeyHeight),
+                    accountInfoDTO.account.accountType.valueOf(),
+                    accountInfoDTO.account.linkedAccountKey,
+                    accountInfoDTO.account.mosaics.map((mosaicDTO) => new Mosaic(
+                        new MosaicId(mosaicDTO.id),
+                        new UInt64(mosaicDTO.amount),
+                    )),
+                );
+            })
+        );
     }
 
     /**
@@ -101,7 +115,7 @@ export class AccountHttp extends Http implements AccountRepository {
      */
     public getAccountRestrictions(address: Address, requestOptions?: RequestOptions): Observable<AccountRestrictionsInfo> {
         return observableFrom(this.accountRoutesApi.getAccountProperties(address.plain(), requestOptions))
-            .pipe(map(response => {
+            .pipe(map((response: AccountPropertiesInfoResponse) => {
             return DtoMapping.extractAccountRestrictionFromDto(response.body);
         }));
     }
@@ -117,7 +131,7 @@ export class AccountHttp extends Http implements AccountRepository {
         };
         return observableFrom(
             this.accountRoutesApi.getAccountPropertiesFromAccounts(accountIds, requestOptions))
-                .pipe(map(response => {
+                .pipe(map((response: AccountsPropertiesInfoResponse) => {
             return response.body.map((restriction) => {
                 return DtoMapping.extractAccountRestrictionFromDto(restriction);
             });
@@ -134,21 +148,22 @@ export class AccountHttp extends Http implements AccountRepository {
             addresses: addresses.map((address) => address.plain()),
         };
         return observableFrom(
-            this.accountRoutesApi.getAccountsInfo(accountIdsBody, requestOptions)).pipe(map(response => {
-            return response.body.map((accountInfoDTO: AccountInfoDTO) => {
-                return new AccountInfo(
-                    accountInfoDTO.meta,
-                    Address.createFromEncoded(accountInfoDTO.account.address),
-                    new UInt64(accountInfoDTO.account.addressHeight),
-                    accountInfoDTO.account.publicKey,
-                    new UInt64(accountInfoDTO.account.publicKeyHeight),
-                    accountInfoDTO.account.accountType.valueOf(),
-                    accountInfoDTO.account.linkedAccountKey,
-                    accountInfoDTO.account.mosaics.map((mosaicDTO: MosaicDTO) =>
-                        new Mosaic(new MosaicId(mosaicDTO.id), new UInt64(mosaicDTO.amount))),
-                );
-            });
-        }));
+            this.accountRoutesApi.getAccountsInfo(accountIdsBody, requestOptions))
+            .pipe(map((response: AccountsInfoResponse) => {
+                return response.body.map((accountInfoDTO: AccountInfoDTO) => {
+                    return new AccountInfo(
+                        accountInfoDTO.meta,
+                        Address.createFromEncoded(accountInfoDTO.account.address),
+                        new UInt64(accountInfoDTO.account.addressHeight),
+                        accountInfoDTO.account.publicKey,
+                        new UInt64(accountInfoDTO.account.publicKeyHeight),
+                        accountInfoDTO.account.accountType.valueOf(),
+                        accountInfoDTO.account.linkedAccountKey,
+                        accountInfoDTO.account.mosaics.map((mosaicDTO: MosaicDTO) =>
+                            new Mosaic(new MosaicId(mosaicDTO.id), new UInt64(mosaicDTO.amount))),
+                    );
+                });
+            }));
     }
 
     public getAccountsNames(addresses: Address[], requestOptions?: RequestOptions): Observable<AccountNames[]> {
@@ -156,8 +171,8 @@ export class AccountHttp extends Http implements AccountRepository {
             addresses: addresses.map((address) => address.plain()),
         };
         return observableFrom(
-            this.accountRoutesApi.getAccountsNames(accountIdsBody, requestOptions)).pipe(map(response => {
-            return response.body.map((accountName) => {
+            this.accountRoutesApi.getAccountsNames(accountIdsBody, requestOptions)).pipe(map((response: AccountsNamesResponse) => {
+            return response.body.map((accountName: AccountNamesDTO) => {
                 return new AccountNames(
                     Address.createFromEncoded(accountName.address),
                     accountName.names.map((name) => {
@@ -174,18 +189,18 @@ export class AccountHttp extends Http implements AccountRepository {
      */
     public getMultisigAccountInfo(address: Address, requestOptions?: RequestOptions): Observable<MultisigAccountInfo> {
         return this.getNetworkTypeObservable(requestOptions).pipe(
-            mergeMap((networkType) => observableFrom(
+            mergeMap((networkType: NetworkType) => observableFrom(
                 this.accountRoutesApi.getAccountMultisig(address.plain(), requestOptions))
-                    .pipe(map(response => {
+                    .pipe(map((response: MultisigAccountInfoResponse) => {
                         const multisigAccountInfoDTO = response.body;
                 return new MultisigAccountInfo(
                     PublicAccount.createFromPublicKey(multisigAccountInfoDTO.multisig.account, networkType),
                     multisigAccountInfoDTO.multisig.minApproval,
                     multisigAccountInfoDTO.multisig.minRemoval,
                     multisigAccountInfoDTO.multisig.cosignatories
-                        .map((cosigner) => PublicAccount.createFromPublicKey(cosigner, networkType)),
+                        .map((cosigner: string) => PublicAccount.createFromPublicKey(cosigner, networkType)),
                     multisigAccountInfoDTO.multisig.multisigAccounts
-                        .map((multisigAccount) => PublicAccount.createFromPublicKey(multisigAccount, networkType)),
+                        .map((multisigAccount: string) => PublicAccount.createFromPublicKey(multisigAccount, networkType)),
                 );
             }))));
     }
@@ -197,11 +212,11 @@ export class AccountHttp extends Http implements AccountRepository {
      */
     public getMultisigAccountGraphInfo(address: Address, requestOptions?: RequestOptions): Observable<MultisigAccountGraphInfo> {
         return this.getNetworkTypeObservable(requestOptions).pipe(
-            mergeMap((networkType) => observableFrom(
+            mergeMap((networkType: NetworkType) => observableFrom(
                 this.accountRoutesApi.getAccountMultisigGraph(address.plain(), requestOptions))
-                    .pipe(map(response => {
+                    .pipe(map((response: MultisigAccountGraphInfoResponse) => {
                 const multisigAccounts = new Map<number, MultisigAccountInfo[]>();
-                response.body.map((multisigAccountGraphInfoDTO) => {
+                response.body.map((multisigAccountGraphInfoDTO: MultisigAccountGraphInfoDTO) => {
                     multisigAccounts.set(multisigAccountGraphInfoDTO.level,
                         multisigAccountGraphInfoDTO.multisigEntries.map((multisigAccountInfoDTO) => {
                             return new MultisigAccountInfo(
@@ -229,7 +244,7 @@ export class AccountHttp extends Http implements AccountRepository {
         const plainAddress = publicAccount.address.plain();
         return observableFrom(
             this.accountRoutesApi.transactions(plainAddress, txnQueryParams, requestOptions)).pipe(
-            map(response => {
+            map((response: TransactionSearchResponse) => {
                 let transactions : Transaction[] = [];
                 transactions = response.body.data.map((transactionDTO) => {
                     return CreateTransactionFromDTO(transactionDTO);
@@ -248,7 +263,7 @@ export class AccountHttp extends Http implements AccountRepository {
         const plainAddress = publicAccount.address.plain();
         return observableFrom(
             this.accountRoutesApi.transactions(plainAddress, txnQueryParams, requestOptions)).pipe(
-            map(response => {
+            map((response: TransactionSearchResponse) => {
                 let transactions : Transaction[] = [];
                 transactions = response.body.data.map((transactionDTO) => {
                     return CreateTransactionFromDTO(transactionDTO);
@@ -274,7 +289,7 @@ export class AccountHttp extends Http implements AccountRepository {
         const plainAddress = accountId instanceof PublicAccount ? (accountId as PublicAccount).address.plain() : (accountId as Address).plain();
         return observableFrom(
             this.accountRoutesApi.incomingTransactions(plainAddress, txnQueryParams, requestOptions)).pipe(
-            map(response => {
+            map((response: TransactionSearchResponse) => {
                 if(response.body.data.length){
                     return response.body.data.map((transactionDTO) => {
                         return CreateTransactionFromDTO(transactionDTO);
@@ -297,7 +312,7 @@ export class AccountHttp extends Http implements AccountRepository {
         const plainAddress = accountId instanceof PublicAccount ? (accountId as PublicAccount).address.plain() : (accountId as Address).plain();
         return observableFrom(
             this.accountRoutesApi.incomingTransactions(plainAddress, txnQueryParams, requestOptions)).pipe(
-            map(response => {
+            map((response: TransactionSearchResponse) => {
                 let transactions : Transaction[] = [];
                 transactions = response.body.data.map((transactionDTO) => {
                     return CreateTransactionFromDTO(transactionDTO);
@@ -322,7 +337,7 @@ export class AccountHttp extends Http implements AccountRepository {
     public outgoingTransactions(publicAccount: PublicAccount, txnQueryParams?: TransactionQueryParams, requestOptions?: RequestOptions): Observable <Transaction[]> {
         return observableFrom(
             this.accountRoutesApi.outgoingTransactions(publicAccount.publicKey, txnQueryParams, requestOptions)).pipe(
-            map(response => {
+            map((response: TransactionSearchResponse) => {
                 if(response.body.data.length){
                     return response.body.data.map((transactionDTO) => {
                         return CreateTransactionFromDTO(transactionDTO);
@@ -344,7 +359,7 @@ export class AccountHttp extends Http implements AccountRepository {
      public outgoingTransactionsWithPagination(publicAccount: PublicAccount, txnQueryParams?: TransactionQueryParams, requestOptions?: RequestOptions): Observable <TransactionSearch> {
         return observableFrom(
             this.accountRoutesApi.outgoingTransactions(publicAccount.publicKey, txnQueryParams, requestOptions)).pipe(
-            map(response => {
+            map((response: TransactionSearchResponse) => {
                 let transactions : Transaction[] = [];
                 transactions = response.body.data.map((transactionDTO) => {
                     return CreateTransactionFromDTO(transactionDTO);
@@ -371,7 +386,7 @@ export class AccountHttp extends Http implements AccountRepository {
         const plainAddress = publicAccount.address.plain();
         return observableFrom(
             this.accountRoutesApi.unconfirmedTransactions(plainAddress, txnQueryParams, requestOptions)).pipe(
-            map(response => {
+            map((response: TransactionSearchResponse) => {
                 if(response.body.data.length){
                     return response.body.data.map((transactionDTO) => {
                         return CreateTransactionFromDTO(transactionDTO);
@@ -396,7 +411,7 @@ export class AccountHttp extends Http implements AccountRepository {
         return observableFrom(
             this.accountRoutesApi.unconfirmedTransactions(plainAddress, txnQueryParams, requestOptions))
             .pipe(
-            map(response => {
+            map((response: TransactionSearchResponse) => {
                 let transactions : Transaction[] = [];
                 transactions = response.body.data.map((transactionDTO) => {
                     return CreateTransactionFromDTO(transactionDTO);
@@ -425,7 +440,7 @@ export class AccountHttp extends Http implements AccountRepository {
         let firstObservable = observableFrom(
             this.accountRoutesApi.partialTransactions(plainAddress, txnQueryParams, requestOptions))
             .pipe(                                   
-                map(response => {
+                map((response: TransactionSearchResponse) => {
                     if(response.body.data.length){
                         return response.body.data.map((transactionDTO) => {
                                 return CreateTransactionFromDTO(transactionDTO) as AggregateTransaction;

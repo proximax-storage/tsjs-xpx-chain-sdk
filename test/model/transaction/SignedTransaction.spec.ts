@@ -48,10 +48,10 @@ describe('SignedTransaction', () => {
             '5441900D8D3E65BF27ABE158BCD37C0A708BF6524A07EB09046A30030000004869',
             '231AA7700DC158CFC85606E0E2AC80F409923C6F3A845577C7D8D7A51A99E883',
             'C2F93346E27CE6AD1A9F8F5E3066F8326593A406BDF357ACB041E2F9AB402EFE',
-            TransactionType.AGGREGATE_COMPLETE,
+            TransactionType.AGGREGATE_COMPLETE_V1,
             NetworkType.MIJIN_TEST,
         );
-        expect(signedTransaction.type).to.be.equal(TransactionType.AGGREGATE_COMPLETE);
+        expect(signedTransaction.type).to.be.equal(TransactionType.AGGREGATE_COMPLETE_V1);
     });
 
     [
@@ -61,7 +61,7 @@ describe('SignedTransaction', () => {
     ].forEach((item) => {
         it('throws exception if string hasn\'t 64 character long', () => {
             expect(() => {
-                new SignedTransaction('', item, publicKey, TransactionType.AGGREGATE_BONDED, NetworkType.MIJIN_TEST);
+                new SignedTransaction('', item, publicKey, TransactionType.AGGREGATE_BONDED_V1, NetworkType.MIJIN_TEST);
             }).to.throw(Error);
         });
     });

@@ -8,7 +8,7 @@ import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
 import { Transaction, TransactionBuilder } from './Transaction';
 import { TransactionInfo } from './TransactionInfo';
-import { TransactionVersion } from './TransactionVersion';
+import { TransactionTypeVersion } from './TransactionTypeVersion';
 import { AggregateTransactionInfo } from './AggregateTransactionInfo';
 import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
 import { Builder } from '../../infrastructure/builders/ExchangeOfferTransaction';
@@ -118,7 +118,7 @@ export class ExchangeOfferTransactionBuilder extends TransactionBuilder {
     public build(): ExchangeOfferTransaction {
         return new ExchangeOfferTransaction(
             this._networkType,
-            this._version || TransactionVersion.EXCHANGE_OFFER,
+            this._version || TransactionTypeVersion.EXCHANGE_OFFER,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._offers,
             this._maxFee ? this._maxFee : calculateFee(ExchangeOfferTransaction.calculateSize(this._offers.length), this._feeCalculationStrategy),

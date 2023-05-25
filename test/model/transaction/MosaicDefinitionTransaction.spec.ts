@@ -89,7 +89,7 @@ describe('MosaicDefinitionTransaction', () => {
         expect(mosaicDefinitionTransaction.mosaicProperties.supplyMutable).to.be.equal(true);
         expect(mosaicDefinitionTransaction.mosaicProperties.transferable).to.be.equal(true);
 
-        const signedTransaction = mosaicDefinitionTransaction.signWith(account, generationHash);
+        const signedTransaction = mosaicDefinitionTransaction.preV2SignWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
             244,
@@ -119,7 +119,7 @@ describe('MosaicDefinitionTransaction', () => {
         expect(mosaicDefinitionTransaction.mosaicProperties.supplyMutable).to.be.equal(false);
         expect(mosaicDefinitionTransaction.mosaicProperties.transferable).to.be.equal(false);
 
-        const signedTransaction = mosaicDefinitionTransaction.signWith(account, generationHash);
+        const signedTransaction = mosaicDefinitionTransaction.preV2SignWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
             244,
@@ -182,7 +182,7 @@ describe('MosaicDefinitionTransaction', () => {
         expect(mosaicDefinitionTransaction.mosaicProperties.supplyMutable).to.be.equal(false);
         expect(mosaicDefinitionTransaction.mosaicProperties.transferable).to.be.equal(false);
 
-        const signedTransaction = mosaicDefinitionTransaction.signWith(account, generationHash);
+        const signedTransaction = mosaicDefinitionTransaction.preV2SignWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
             244,
@@ -209,7 +209,7 @@ describe('MosaicDefinitionTransaction', () => {
         expect(mosaicDefinitionTransaction.mosaicProperties.supplyMutable).to.be.equal(false);
         expect(mosaicDefinitionTransaction.mosaicProperties.transferable).to.be.equal(false);
 
-        const signedTransaction = mosaicDefinitionTransaction.signWith(account, generationHash);
+        const signedTransaction = mosaicDefinitionTransaction.preV2SignWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
             244,

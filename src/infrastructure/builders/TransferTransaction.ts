@@ -23,7 +23,7 @@ import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableT
 import TransferTransactionSchema from '../../infrastructure/schemas/TransferTransactionSchema';
 import { TransactionType } from '../../model/transaction/TransactionType';
 
-import {flatbuffers} from 'flatbuffers';
+import * as flatbuffers from 'flatbuffers';
 import { MessageType } from '../../model/transaction/MessageType';
 
 const {

@@ -22,7 +22,7 @@ const {
     MosaicSupplyChangeTransactionBuffer,
 } = MosaicSupplyChangeTransactionBufferPackage.Buffers;
 
-import {flatbuffers} from 'flatbuffers';
+import * as flatbuffers from 'flatbuffers';
 
 /**
  * @module transactions/MosaicSupplyChangeTransaction
