@@ -82,11 +82,9 @@ export class RawAddress {
                                         networkIdentifier: number): Uint8Array => {
 
         // step 1: sha3 hash of the public key
-        // const publicKeyHash = sha3_256.create().update(publicKey).digest() : sha512_256.create().update(publicKey).digest();
         const publicKeyHash = sha3_256.create().update(publicKey).digest()
 
         // step 2: ripemd160 hash of (1)
-        // CryptoJS.RIPEMD160(Buffer.from(publicKeyHash))
         const ripemdHash = ripemd160.create().update(publicKeyHash).digest();
 
         // step 3: add network identifier byte in front of (2)
@@ -95,9 +93,6 @@ export class RawAddress {
         RawArray.copy(decodedAddress, ripemdHash, RawAddress.constants.sizes.ripemd160, 1);
 
         // step 4: concatenate (3) and the checksum of (3)
-        // const hash = 
-        //     sha3_256.create().update(decodedAddress.subarray(0, RawAddress.constants.sizes.ripemd160 + 1)).digest() :
-        //     sha512_256.create().update(decodedAddress.subarray(0, RawAddress.constants.sizes.ripemd160 + 1)).digest();
         const hash = sha3_256.create().update(decodedAddress.subarray(0, RawAddress.constants.sizes.ripemd160 + 1)).digest();
         RawArray.copy(decodedAddress, RawArray.uint8View(hash),
             RawAddress.constants.sizes.checksum, RawAddress.constants.sizes.ripemd160 + 1);
@@ -111,7 +106,7 @@ export class RawAddress {
      * @returns {boolean} true if the decoded address is valid, false otherwise.
      */
     public static isValidAddress = (decoded: Uint8Array): boolean => {
-        const hash = sha3_256.create(); // sha3_256.create() : sha512_256.create();
+        const hash = sha3_256.create();
         const checksumBegin = RawAddress.constants.sizes.addressDecoded - RawAddress.constants.sizes.checksum;
         hash.update(decoded.subarray(0, checksumBegin));
         const checksum = new Uint8Array(RawAddress.constants.sizes.checksum);
