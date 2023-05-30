@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Builder } from '../../../infrastructure/builders/storage/NewReplicatorOnboardingTransaction';
+import { Builder } from '../../../infrastructure/builders/storage/ReplicatorOffboardingTransaction';
 import {VerifiableTransaction} from '../../../infrastructure/builders/VerifiableTransaction';
 import { PublicAccount } from '../../account/PublicAccount';
 import { NetworkType } from '../../blockchain/NetworkType';
@@ -26,7 +26,7 @@ import { TransactionType } from '../TransactionType';
 import { TransactionTypeVersion } from '../TransactionTypeVersion';
 import { calculateFee } from '../FeeCalculationStrategy';
 
-export class NewReplicatorOnboardingTransaction extends Transaction {
+export class ReplicatorOffboardingTransaction extends Transaction {
 
     /**
      * Create a new replicator onboarding transaction object
@@ -34,21 +34,21 @@ export class NewReplicatorOnboardingTransaction extends Transaction {
      * @param capacity - The replicator capacity
      * @param networkType - The network type.
      * @param maxFee - (Optional) Max fee defined by the sender
-     * @returns {NewReplicatorOnboardingTransaction}
+     * @returns {ReplicatorOffboardingTransaction}
      */
     public static create(deadline: Deadline,
-                         capacity: UInt64,
+                         driveKey: PublicAccount,
                          networkType: NetworkType,
-                         maxFee?: UInt64): NewReplicatorOnboardingTransaction {
+                         maxFee?: UInt64): ReplicatorOffboardingTransaction {
 
         // if(capacity.equals([0,0])){
         //     throw new Error("capacity should be positive")
         // }
         
-        return new NewReplicatorOnboardingTransactionBuilder()
+        return new ReplicatorOffboardingTransactionBuilder()
             .networkType(networkType)
             .deadline(deadline)
-            .capacity(capacity)
+            .driveKey(driveKey)
             .maxFee(maxFee)
             .build();
     }
@@ -67,38 +67,38 @@ export class NewReplicatorOnboardingTransaction extends Transaction {
                 version: number,
                 deadline: Deadline,
                 maxFee: UInt64,
-                public readonly capacity: UInt64,
+                public readonly driveKey: PublicAccount,
                 signature?: string,
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
-        super(TransactionType.ReplicatorOnboarding,
+        super(TransactionType.ReplicatorOffboarding,
               networkType, version, deadline, maxFee, signature, signer, transactionInfo);
     }
 
     /**
      * @override Transaction.size()
-     * @description get the byte size of a NewReplicatorOnboardingTransaction
+     * @description get the byte size of a ReplicatorOffboardingTransaction
      * @returns {number}
-     * @memberof NewReplicatorOnboardingTransaction
+     * @memberof ReplicatorOffboardingTransaction
      */
     public get size(): number {
-        return NewReplicatorOnboardingTransaction.calculateSize();
+        return ReplicatorOffboardingTransaction.calculateSize();
     }
 
     public static calculateSize(): number {
         const baseByteSize = Transaction.getHeaderSize();
 
         // set static byte size fields
-        const capacity = 8;
+        const driveKeySize = 32;
 
-        return baseByteSize + capacity;
+        return baseByteSize + driveKeySize;
     }
 
     /**
      * @override Transaction.toJSON()
      * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
      * @return {Object}
-     * @memberof NewReplicatorOnboardingTransaction
+     * @memberof ReplicatorOffboardingTransaction
      */
     public toJSON() {
         const parent = super.toJSON();
@@ -106,7 +106,7 @@ export class NewReplicatorOnboardingTransaction extends Transaction {
             ...parent,
             transaction: {
                 ...parent.transaction,
-                capacity: this.capacity.toDTO(),
+                driveKey: this.driveKey.toDTO(),
             }
         }
     }
@@ -121,26 +121,26 @@ export class NewReplicatorOnboardingTransaction extends Transaction {
             .addDeadline(this.deadline.toDTO())
             .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
-            .addCapacity(this.capacity.toDTO())
+            .addDriveKey(this.driveKey.publicKey)
             .build();
     }
 }
 
-export class NewReplicatorOnboardingTransactionBuilder extends TransactionBuilder {
-    private _capacity: UInt64;
+export class ReplicatorOffboardingTransactionBuilder extends TransactionBuilder {
+    private _driveKey: PublicAccount;
 
-    public capacity(capacity: UInt64) {
-        this._capacity = capacity;
+    public driveKey(driveKey: PublicAccount) {
+        this._driveKey = driveKey;
         return this;
     }
 
-    public build(): NewReplicatorOnboardingTransaction {
-        return new NewReplicatorOnboardingTransaction(
+    public build(): ReplicatorOffboardingTransaction {
+        return new ReplicatorOffboardingTransaction(
             this._networkType,
-            this._version || TransactionTypeVersion.ReplicatorOnboarding,
+            this._version || TransactionTypeVersion.ReplicatorOffboarding,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._maxFee ? this._maxFee : calculateFee(NewReplicatorOnboardingTransaction.calculateSize(), this._feeCalculationStrategy),
-            this._capacity,
+            this._maxFee ? this._maxFee : calculateFee(ReplicatorOffboardingTransaction.calculateSize(), this._feeCalculationStrategy),
+            this._driveKey,
             this._signature,
             this._signer,
             this._transactionInfo
