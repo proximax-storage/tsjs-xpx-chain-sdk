@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Builder } from '../../../infrastructure/builders/storage/ReplicatorOffboardingTransaction';
+import { Builder } from '../../../infrastructure/builders/storage/NewPrepareBcDriveTransaction';
 import {VerifiableTransaction} from '../../../infrastructure/builders/VerifiableTransaction';
 import { PublicAccount } from '../../account/PublicAccount';
 import { NetworkType } from '../../blockchain/NetworkType';
@@ -26,25 +26,31 @@ import { TransactionType } from '../TransactionType';
 import { TransactionTypeVersion } from '../TransactionTypeVersion';
 import { calculateFee } from '../FeeCalculationStrategy';
 
-export class ReplicatorOffboardingTransaction extends Transaction {
+export class NewPrepareBcDriveTransaction extends Transaction {
 
     /**
      * Create a new replicator onboarding transaction object
      * @param deadline - The deadline to include the transaction.
-     * @param driveKey - Public key of the drive
+     * @param driveSize - Size of drive
+     * @param verificationFeeAmount - Amount of XPXs to transfer to the drive
+     * @param replicatorCount - Number of replicators 
      * @param networkType - The network type.
      * @param maxFee - (Optional) Max fee defined by the sender
-     * @returns {ReplicatorOffboardingTransaction}
+     * @returns {NewPrepareBcDriveTransaction}
      */
     public static create(deadline: Deadline,
-                         driveKey: PublicAccount,
+                         driveSize: UInt64,
+                         verificationFeeAmount: UInt64,
+                         replicatorCount: number, 
                          networkType: NetworkType,
-                         maxFee?: UInt64): ReplicatorOffboardingTransaction {
+                         maxFee?: UInt64): NewPrepareBcDriveTransaction {
         
-        return new ReplicatorOffboardingTransactionBuilder()
+        return new NewPrepareBcDriveTransactionBuilder()
             .networkType(networkType)
             .deadline(deadline)
-            .driveKey(driveKey)
+            .driveSize(driveSize)
+            .verificationFeeAmount(verificationFeeAmount)
+            .replicatorCount(replicatorCount)
             .maxFee(maxFee)
             .build();
     }
@@ -54,7 +60,9 @@ export class ReplicatorOffboardingTransaction extends Transaction {
      * @param version
      * @param deadline
      * @param maxFee
-     * @param driveKey
+     * @param driveSize
+     * @param verificationFeeAmount
+     * @param replicatorCount
      * @param signature
      * @param signer
      * @param transactionInfo
@@ -63,38 +71,58 @@ export class ReplicatorOffboardingTransaction extends Transaction {
                 version: number,
                 deadline: Deadline,
                 maxFee: UInt64,
-                public readonly driveKey: PublicAccount,
+                public readonly driveSize: UInt64,
+                public readonly verificationFeeAmount: UInt64,
+                public readonly replicatorCount: number,
                 signature?: string,
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
-        super(TransactionType.ReplicatorOffboarding,
+
+        super(TransactionType.PrepareBcDrive,
               networkType, version, deadline, maxFee, signature, signer, transactionInfo);
+
+        if(driveSize.toBigInt() <= BigInt(0)){
+            throw new Error("driveSize should be positive value")
+        }
+
+        if(verificationFeeAmount.toBigInt() <= BigInt(0)){
+            throw new Error("verificationFeeAmount should be positive value")
+        }
+
+        if(replicatorCount <= 0){
+            throw new Error("replicatorCount should be positive value")
+        }
+        else if(replicatorCount > 0xFFFF){
+            throw new Error("replicatorCount out of range, should be uint16 value")
+        }
     }
 
     /**
      * @override Transaction.size()
-     * @description get the byte size of a ReplicatorOffboardingTransaction
+     * @description get the byte size of a NewPrepareBcDriveTransaction
      * @returns {number}
-     * @memberof ReplicatorOffboardingTransaction
+     * @memberof NewPrepareBcDriveTransaction
      */
     public get size(): number {
-        return ReplicatorOffboardingTransaction.calculateSize();
+        return NewPrepareBcDriveTransaction.calculateSize();
     }
 
     public static calculateSize(): number {
         const baseByteSize = Transaction.getHeaderSize();
 
         // set static byte size fields
-        const driveKeySize = 32;
+        const driveSizeSize = 8;
+        const verificationFeeAmountSize = 8;
+        const replicatorCountSize = 2;
 
-        return baseByteSize + driveKeySize;
+        return baseByteSize + driveSizeSize + verificationFeeAmountSize + replicatorCountSize;
     }
 
     /**
      * @override Transaction.toJSON()
      * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
      * @return {Object}
-     * @memberof ReplicatorOffboardingTransaction
+     * @memberof NewPrepareBcDriveTransaction
      */
     public toJSON() {
         const parent = super.toJSON();
@@ -102,7 +130,9 @@ export class ReplicatorOffboardingTransaction extends Transaction {
             ...parent,
             transaction: {
                 ...parent.transaction,
-                driveKey: this.driveKey.toDTO(),
+                driveSize: this.driveSize.toDTO(),
+                verificationFeeAmount: this.verificationFeeAmount.toDTO(),
+                replicatorCount: this.replicatorCount,
             }
         }
     }
@@ -117,26 +147,42 @@ export class ReplicatorOffboardingTransaction extends Transaction {
             .addDeadline(this.deadline.toDTO())
             .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
-            .addDriveKey(this.driveKey.publicKey)
+            .addDriveSize(this.driveSize.toDTO())
+            .addVerificationFeeAmount(this.verificationFeeAmount.toDTO())
+            .addReplicatorCount(this.replicatorCount)
             .build();
     }
 }
 
-export class ReplicatorOffboardingTransactionBuilder extends TransactionBuilder {
-    private _driveKey: PublicAccount;
+export class NewPrepareBcDriveTransactionBuilder extends TransactionBuilder {
+    private _driveSize: UInt64;
+    private _verificationFeeAmount: UInt64;
+    private _replicatorCount: number;
 
-    public driveKey(driveKey: PublicAccount) {
-        this._driveKey = driveKey;
+    public driveSize(driveSize: UInt64) {
+        this._driveSize = driveSize;
         return this;
     }
 
-    public build(): ReplicatorOffboardingTransaction {
-        return new ReplicatorOffboardingTransaction(
+    public verificationFeeAmount(verificationFeeAmount: UInt64) {
+        this._verificationFeeAmount = verificationFeeAmount;
+        return this;
+    }
+
+    public replicatorCount(replicatorCount: number) {
+        this._replicatorCount = replicatorCount;
+        return this;
+    }
+
+    public build(): NewPrepareBcDriveTransaction {
+        return new NewPrepareBcDriveTransaction(
             this._networkType,
-            this._version || TransactionTypeVersion.ReplicatorOffboarding,
+            this._version || TransactionTypeVersion.PrepareBcDrive,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._maxFee ? this._maxFee : calculateFee(ReplicatorOffboardingTransaction.calculateSize(), this._feeCalculationStrategy),
-            this._driveKey,
+            this._maxFee ? this._maxFee : calculateFee(NewPrepareBcDriveTransaction.calculateSize(), this._feeCalculationStrategy),
+            this._driveSize,
+            this._verificationFeeAmount,
+            this._replicatorCount,
             this._signature,
             this._signer,
             this._transactionInfo

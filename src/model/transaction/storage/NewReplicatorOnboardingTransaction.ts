@@ -31,7 +31,7 @@ export class NewReplicatorOnboardingTransaction extends Transaction {
     /**
      * Create a new replicator onboarding transaction object
      * @param deadline - The deadline to include the transaction.
-     * @param capacity - The replicator capacity
+     * @param capacity - The Storage Size that the Replicator provides
      * @param networkType - The network type.
      * @param maxFee - (Optional) Max fee defined by the sender
      * @returns {NewReplicatorOnboardingTransaction}
@@ -40,10 +40,6 @@ export class NewReplicatorOnboardingTransaction extends Transaction {
                          capacity: UInt64,
                          networkType: NetworkType,
                          maxFee?: UInt64): NewReplicatorOnboardingTransaction {
-
-        // if(capacity.equals([0,0])){
-        //     throw new Error("capacity should be positive")
-        // }
         
         return new NewReplicatorOnboardingTransactionBuilder()
             .networkType(networkType)
@@ -71,8 +67,13 @@ export class NewReplicatorOnboardingTransaction extends Transaction {
                 signature?: string,
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
+
         super(TransactionType.ReplicatorOnboarding,
               networkType, version, deadline, maxFee, signature, signer, transactionInfo);
+
+        if(capacity.toBigInt() <= BigInt(0)){
+            throw new Error("capacity should be positive value")
+        }      
     }
 
     /**

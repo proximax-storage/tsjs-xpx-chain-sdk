@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Builder } from '../../../infrastructure/builders/storage/ReplicatorOffboardingTransaction';
+import { Builder } from '../../../infrastructure/builders/storage/NewDownloadTransaction';
 import {VerifiableTransaction} from '../../../infrastructure/builders/VerifiableTransaction';
 import { PublicAccount } from '../../account/PublicAccount';
 import { NetworkType } from '../../blockchain/NetworkType';
@@ -25,26 +25,36 @@ import { TransactionInfo } from '../TransactionInfo';
 import { TransactionType } from '../TransactionType';
 import { TransactionTypeVersion } from '../TransactionTypeVersion';
 import { calculateFee } from '../FeeCalculationStrategy';
+import { Convert } from '../../../core/format/Convert';
 
-export class ReplicatorOffboardingTransaction extends Transaction {
+export class NewDownloadTransaction extends Transaction {
 
     /**
      * Create a new replicator onboarding transaction object
      * @param deadline - The deadline to include the transaction.
      * @param driveKey - Public key of the drive
+     * @param downloadSize - Prepaid Download Size in Mb   
+     * @param feedbackFeeAmount - XPXs to lock for future payment for
+     * @param listOfPublicKeys - List of public keys
      * @param networkType - The network type.
      * @param maxFee - (Optional) Max fee defined by the sender
-     * @returns {ReplicatorOffboardingTransaction}
+     * @returns {NewDownloadTransaction}
      */
     public static create(deadline: Deadline,
                          driveKey: PublicAccount,
+                         downloadSize: UInt64,
+                         feedbackFeeAmount: UInt64,
+                         listOfPublicKeys: PublicAccount[],
                          networkType: NetworkType,
-                         maxFee?: UInt64): ReplicatorOffboardingTransaction {
+                         maxFee?: UInt64): NewDownloadTransaction {
         
-        return new ReplicatorOffboardingTransactionBuilder()
+        return new NewDownloadTransactionBuilder()
             .networkType(networkType)
             .deadline(deadline)
             .driveKey(driveKey)
+            .downloadSize(downloadSize)
+            .feedbackFeeAmount(feedbackFeeAmount)
+            .listOfPublicKeys(listOfPublicKeys)
             .maxFee(maxFee)
             .build();
     }
@@ -54,7 +64,10 @@ export class ReplicatorOffboardingTransaction extends Transaction {
      * @param version
      * @param deadline
      * @param maxFee
-     * @param driveKey
+     * @param driveKey - Public key of the drive
+     * @param downloadSize - Prepaid Download Size in Mb   
+     * @param feedbackFeeAmount - XPXs to lock for future payment for
+     * @param listOfPublicKeys - List of public keys
      * @param signature
      * @param signer
      * @param transactionInfo
@@ -64,37 +77,53 @@ export class ReplicatorOffboardingTransaction extends Transaction {
                 deadline: Deadline,
                 maxFee: UInt64,
                 public readonly driveKey: PublicAccount,
+                public readonly downloadSize: UInt64,
+                public readonly feedbackFeeAmount: UInt64,
+                public readonly listOfPublicKeys: PublicAccount[],
                 signature?: string,
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
-        super(TransactionType.ReplicatorOffboarding,
+
+        super(TransactionType.Download,
               networkType, version, deadline, maxFee, signature, signer, transactionInfo);
+
+        if(downloadSize.toBigInt() <= BigInt(0)){
+            throw new Error("downloadSize should be positive value")
+        }
+
+        if(feedbackFeeAmount.toBigInt() <= BigInt(0)){
+            throw new Error("feedbackFeeAmount should be positive value")
+        }
     }
 
     /**
      * @override Transaction.size()
-     * @description get the byte size of a ReplicatorOffboardingTransaction
+     * @description get the byte size of a NewDownloadTransaction
      * @returns {number}
-     * @memberof ReplicatorOffboardingTransaction
+     * @memberof NewDownloadTransaction
      */
     public get size(): number {
-        return ReplicatorOffboardingTransaction.calculateSize();
+        return NewDownloadTransaction.calculateSize(this.listOfPublicKeys.length);
     }
 
-    public static calculateSize(): number {
+    public static calculateSize(totalPublicKeys: number): number {
         const baseByteSize = Transaction.getHeaderSize();
 
         // set static byte size fields
         const driveKeySize = 32;
+        const downloadSizeSize = 8;
+        const feedbackFeeAmountSize = 8;
+        const publicKeysSize = 2;
+        const totalPublicKeysSize = totalPublicKeys * 32;
 
-        return baseByteSize + driveKeySize;
+        return baseByteSize + driveKeySize + downloadSizeSize + feedbackFeeAmountSize + publicKeysSize + totalPublicKeysSize;
     }
 
     /**
      * @override Transaction.toJSON()
      * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
      * @return {Object}
-     * @memberof ReplicatorOffboardingTransaction
+     * @memberof NewDownloadTransaction
      */
     public toJSON() {
         const parent = super.toJSON();
@@ -102,7 +131,12 @@ export class ReplicatorOffboardingTransaction extends Transaction {
             ...parent,
             transaction: {
                 ...parent.transaction,
-                driveKey: this.driveKey.toDTO(),
+                driveKey: this.driveKey.publicKey,
+                downloadSize: this.downloadSize.toDTO(),
+                feedbackFeeAmount: this.feedbackFeeAmount.toDTO(),
+                listOfPublicKeys: this.listOfPublicKeys.map((publicKey) => {
+                    return publicKey.toDTO();
+                })
             }
         }
     }
@@ -118,25 +152,49 @@ export class ReplicatorOffboardingTransaction extends Transaction {
             .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addDriveKey(this.driveKey.publicKey)
+            .addDownloadSize(this.downloadSize.toDTO())
+            .addFeedbackFeeAmount(this.feedbackFeeAmount.toDTO())
+            .addListOfPublicKeys(this.listOfPublicKeys.map((data) => data.publicKey))
             .build();
     }
 }
 
-export class ReplicatorOffboardingTransactionBuilder extends TransactionBuilder {
+export class NewDownloadTransactionBuilder extends TransactionBuilder {
     private _driveKey: PublicAccount;
+    private _downloadSize: UInt64;
+    private _feedbackFeeAmount: UInt64;
+    private _listOfPublicKeys: PublicAccount[];
 
     public driveKey(driveKey: PublicAccount) {
         this._driveKey = driveKey;
         return this;
     }
 
-    public build(): ReplicatorOffboardingTransaction {
-        return new ReplicatorOffboardingTransaction(
+    public downloadSize(downloadSize: UInt64) {
+        this._downloadSize = downloadSize;
+        return this;
+    }
+
+    public feedbackFeeAmount(feedbackFeeAmount: UInt64) {
+        this._feedbackFeeAmount = feedbackFeeAmount;
+        return this;
+    }
+
+    public listOfPublicKeys(listOfPublicKeys: PublicAccount[]) {
+        this._listOfPublicKeys = listOfPublicKeys;
+        return this;
+    }
+
+    public build(): NewDownloadTransaction {
+        return new NewDownloadTransaction(
             this._networkType,
-            this._version || TransactionTypeVersion.ReplicatorOffboarding,
+            this._version || TransactionTypeVersion.Download,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._maxFee ? this._maxFee : calculateFee(ReplicatorOffboardingTransaction.calculateSize(), this._feeCalculationStrategy),
+            this._maxFee ? this._maxFee : calculateFee(NewDownloadTransaction.calculateSize(this._listOfPublicKeys.length), this._feeCalculationStrategy),
             this._driveKey,
+            this._downloadSize,
+            this._feedbackFeeAmount,
+            this._listOfPublicKeys,
             this._signature,
             this._signer,
             this._transactionInfo

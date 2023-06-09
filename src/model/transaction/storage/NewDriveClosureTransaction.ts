@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Builder } from '../../../infrastructure/builders/storage/ReplicatorOffboardingTransaction';
+import { Builder } from '../../../infrastructure/builders/storage/NewDriveClosureTransaction';
 import {VerifiableTransaction} from '../../../infrastructure/builders/VerifiableTransaction';
 import { PublicAccount } from '../../account/PublicAccount';
 import { NetworkType } from '../../blockchain/NetworkType';
@@ -26,22 +26,24 @@ import { TransactionType } from '../TransactionType';
 import { TransactionTypeVersion } from '../TransactionTypeVersion';
 import { calculateFee } from '../FeeCalculationStrategy';
 
-export class ReplicatorOffboardingTransaction extends Transaction {
+export class NewDriveClosureTransaction extends Transaction {
 
     /**
      * Create a new replicator onboarding transaction object
      * @param deadline - The deadline to include the transaction.
-     * @param driveKey - Public key of the drive
+     * @param driveSize - Size of drive
+     * @param verificationFeeAmount - Amount of XPXs to transfer to the drive
+     * @param replicatorCount - Number of replicators 
      * @param networkType - The network type.
      * @param maxFee - (Optional) Max fee defined by the sender
-     * @returns {ReplicatorOffboardingTransaction}
+     * @returns {NewDriveClosureTransaction}
      */
     public static create(deadline: Deadline,
                          driveKey: PublicAccount,
                          networkType: NetworkType,
-                         maxFee?: UInt64): ReplicatorOffboardingTransaction {
+                         maxFee?: UInt64): NewDriveClosureTransaction {
         
-        return new ReplicatorOffboardingTransactionBuilder()
+        return new NewDriveClosureTransactionBuilder()
             .networkType(networkType)
             .deadline(deadline)
             .driveKey(driveKey)
@@ -54,7 +56,9 @@ export class ReplicatorOffboardingTransaction extends Transaction {
      * @param version
      * @param deadline
      * @param maxFee
-     * @param driveKey
+     * @param driveSize
+     * @param verificationFeeAmount
+     * @param replicatorCount
      * @param signature
      * @param signer
      * @param transactionInfo
@@ -67,18 +71,19 @@ export class ReplicatorOffboardingTransaction extends Transaction {
                 signature?: string,
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
-        super(TransactionType.ReplicatorOffboarding,
+
+        super(TransactionType.DriveClosure,
               networkType, version, deadline, maxFee, signature, signer, transactionInfo);
     }
 
     /**
      * @override Transaction.size()
-     * @description get the byte size of a ReplicatorOffboardingTransaction
+     * @description get the byte size of a NewDriveClosureTransaction
      * @returns {number}
-     * @memberof ReplicatorOffboardingTransaction
+     * @memberof NewDriveClosureTransaction
      */
     public get size(): number {
-        return ReplicatorOffboardingTransaction.calculateSize();
+        return NewDriveClosureTransaction.calculateSize();
     }
 
     public static calculateSize(): number {
@@ -94,7 +99,7 @@ export class ReplicatorOffboardingTransaction extends Transaction {
      * @override Transaction.toJSON()
      * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
      * @return {Object}
-     * @memberof ReplicatorOffboardingTransaction
+     * @memberof NewDriveClosureTransaction
      */
     public toJSON() {
         const parent = super.toJSON();
@@ -102,7 +107,7 @@ export class ReplicatorOffboardingTransaction extends Transaction {
             ...parent,
             transaction: {
                 ...parent.transaction,
-                driveKey: this.driveKey.toDTO(),
+                driveKey: this.driveKey.toDTO()
             }
         }
     }
@@ -122,7 +127,7 @@ export class ReplicatorOffboardingTransaction extends Transaction {
     }
 }
 
-export class ReplicatorOffboardingTransactionBuilder extends TransactionBuilder {
+export class NewDriveClosureTransactionBuilder extends TransactionBuilder {
     private _driveKey: PublicAccount;
 
     public driveKey(driveKey: PublicAccount) {
@@ -130,12 +135,12 @@ export class ReplicatorOffboardingTransactionBuilder extends TransactionBuilder 
         return this;
     }
 
-    public build(): ReplicatorOffboardingTransaction {
-        return new ReplicatorOffboardingTransaction(
+    public build(): NewDriveClosureTransaction {
+        return new NewDriveClosureTransaction(
             this._networkType,
-            this._version || TransactionTypeVersion.ReplicatorOffboarding,
+            this._version || TransactionTypeVersion.DriveClosure,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._maxFee ? this._maxFee : calculateFee(ReplicatorOffboardingTransaction.calculateSize(), this._feeCalculationStrategy),
+            this._maxFee ? this._maxFee : calculateFee(NewDriveClosureTransaction.calculateSize(), this._feeCalculationStrategy),
             this._driveKey,
             this._signature,
             this._signer,

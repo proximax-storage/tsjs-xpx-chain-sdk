@@ -2,7 +2,7 @@
 
 import * as flatbuffers from 'flatbuffers';
 
-import { KeysBuffer } from '../../catapult/buffers/keys-buffer.js';
+import { KeysBuffer } from './KeysBuffer';
 
 
 export class DownloadTransactionBuffer {

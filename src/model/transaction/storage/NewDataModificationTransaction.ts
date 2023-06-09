@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Builder } from '../../../infrastructure/builders/storage/ReplicatorOffboardingTransaction';
+import { Builder } from '../../../infrastructure/builders/storage/NewDataModificationTransaction';
 import {VerifiableTransaction} from '../../../infrastructure/builders/VerifiableTransaction';
 import { PublicAccount } from '../../account/PublicAccount';
 import { NetworkType } from '../../blockchain/NetworkType';
@@ -25,26 +25,36 @@ import { TransactionInfo } from '../TransactionInfo';
 import { TransactionType } from '../TransactionType';
 import { TransactionTypeVersion } from '../TransactionTypeVersion';
 import { calculateFee } from '../FeeCalculationStrategy';
+import { Convert } from '../../../core/format/Convert';
 
-export class ReplicatorOffboardingTransaction extends Transaction {
+export class NewDataModificationTransaction extends Transaction {
 
     /**
      * Create a new replicator onboarding transaction object
      * @param deadline - The deadline to include the transaction.
-     * @param driveKey - Public key of the drive
+     * @param driveKey - The drive key
+     * @param downloadDataCdi - The download data CDI hash
+     * @param uploadSize - The upload size
+     * @param feedbackFeeAmount - The feedback fee amount.
      * @param networkType - The network type.
      * @param maxFee - (Optional) Max fee defined by the sender
-     * @returns {ReplicatorOffboardingTransaction}
+     * @returns {NewDataModificationTransaction}
      */
     public static create(deadline: Deadline,
                          driveKey: PublicAccount,
+                         downloadDataCdi: string,
+                         uploadSize: UInt64,
+                         feedbackFeeAmount: UInt64,
                          networkType: NetworkType,
-                         maxFee?: UInt64): ReplicatorOffboardingTransaction {
+                         maxFee?: UInt64): NewDataModificationTransaction {
         
-        return new ReplicatorOffboardingTransactionBuilder()
+        return new NewDataModificationTransactionBuilder()
             .networkType(networkType)
             .deadline(deadline)
             .driveKey(driveKey)
+            .downloadDataCdi(downloadDataCdi)
+            .uploadSize(uploadSize)
+            .feedbackFeeAmount(feedbackFeeAmount)
             .maxFee(maxFee)
             .build();
     }
@@ -54,7 +64,10 @@ export class ReplicatorOffboardingTransaction extends Transaction {
      * @param version
      * @param deadline
      * @param maxFee
-     * @param driveKey
+     * @param driveKey - Public key of the drive
+     * @param downloadDataCdi - Download data CDI of modification hash
+     * @param uploadSize - Size of upload in MB
+     * @param feedbackFeeAmount - Amount of XPXs to transfer to the drive
      * @param signature
      * @param signer
      * @param transactionInfo
@@ -64,21 +77,37 @@ export class ReplicatorOffboardingTransaction extends Transaction {
                 deadline: Deadline,
                 maxFee: UInt64,
                 public readonly driveKey: PublicAccount,
+                public readonly downloadDataCdi: string,
+                public readonly uploadSize: UInt64,
+                public readonly feedbackFeeAmount: UInt64,
                 signature?: string,
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
-        super(TransactionType.ReplicatorOffboarding,
+
+        super(TransactionType.DataModification,
               networkType, version, deadline, maxFee, signature, signer, transactionInfo);
+    
+        if(!Convert.isHexString(downloadDataCdi) && downloadDataCdi.length !== 64 ){
+            throw new Error("downloadDataCdi should be 32 bytes hash string")
+        }
+
+        if(uploadSize.toBigInt() <= BigInt(0)){
+            throw new Error("uploadSize should be positive value")
+        }
+
+        if(feedbackFeeAmount.toBigInt() <= BigInt(0)){
+            throw new Error("feedbackFeeAmount should be positive value")
+        }
     }
 
     /**
      * @override Transaction.size()
-     * @description get the byte size of a ReplicatorOffboardingTransaction
+     * @description get the byte size of a NewDataModificationTransaction
      * @returns {number}
-     * @memberof ReplicatorOffboardingTransaction
+     * @memberof NewDataModificationTransaction
      */
     public get size(): number {
-        return ReplicatorOffboardingTransaction.calculateSize();
+        return NewDataModificationTransaction.calculateSize();
     }
 
     public static calculateSize(): number {
@@ -86,15 +115,18 @@ export class ReplicatorOffboardingTransaction extends Transaction {
 
         // set static byte size fields
         const driveKeySize = 32;
+        const downloadDataCdiSize = 32;
+        const uploadSizeSize = 8;
+        const feedbackFeeAmountSize = 8;
 
-        return baseByteSize + driveKeySize;
+        return baseByteSize + driveKeySize + downloadDataCdiSize + uploadSizeSize + feedbackFeeAmountSize;
     }
 
     /**
      * @override Transaction.toJSON()
      * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
      * @return {Object}
-     * @memberof ReplicatorOffboardingTransaction
+     * @memberof NewDataModificationTransaction
      */
     public toJSON() {
         const parent = super.toJSON();
@@ -103,6 +135,9 @@ export class ReplicatorOffboardingTransaction extends Transaction {
             transaction: {
                 ...parent.transaction,
                 driveKey: this.driveKey.toDTO(),
+                downloadDataCdi: this.downloadDataCdi,
+                uploadSize: this.uploadSize.toDTO(),
+                feedbackFeeAmount: this.feedbackFeeAmount.toDTO()
             }
         }
     }
@@ -118,25 +153,49 @@ export class ReplicatorOffboardingTransaction extends Transaction {
             .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addDriveKey(this.driveKey.publicKey)
+            .addDownloadDataCdi(this.downloadDataCdi)
+            .addUploadSize(this.uploadSize.toDTO())
+            .addFeedbackFeeAmount(this.feedbackFeeAmount.toDTO())
             .build();
     }
 }
 
-export class ReplicatorOffboardingTransactionBuilder extends TransactionBuilder {
+export class NewDataModificationTransactionBuilder extends TransactionBuilder {
     private _driveKey: PublicAccount;
+    private _downloadDataCdi: string;
+    private _uploadSize: UInt64;
+    private _feedbackFeeAmount: UInt64;
 
     public driveKey(driveKey: PublicAccount) {
         this._driveKey = driveKey;
         return this;
     }
 
-    public build(): ReplicatorOffboardingTransaction {
-        return new ReplicatorOffboardingTransaction(
+    public downloadDataCdi(downloadDataCdi: string) {
+        this._downloadDataCdi = downloadDataCdi;
+        return this;
+    }
+
+    public uploadSize(uploadSize: UInt64) {
+        this._uploadSize = uploadSize;
+        return this;
+    }
+
+    public feedbackFeeAmount(feedbackFeeAmount: UInt64) {
+        this._feedbackFeeAmount = feedbackFeeAmount;
+        return this;
+    }
+
+    public build(): NewDataModificationTransaction {
+        return new NewDataModificationTransaction(
             this._networkType,
-            this._version || TransactionTypeVersion.ReplicatorOffboarding,
+            this._version || TransactionTypeVersion.DataModification,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._maxFee ? this._maxFee : calculateFee(ReplicatorOffboardingTransaction.calculateSize(), this._feeCalculationStrategy),
+            this._maxFee ? this._maxFee : calculateFee(NewDataModificationTransaction.calculateSize(), this._feeCalculationStrategy),
             this._driveKey,
+            this._downloadDataCdi,
+            this._uploadSize,
+            this._feedbackFeeAmount,
             this._signature,
             this._signer,
             this._transactionInfo

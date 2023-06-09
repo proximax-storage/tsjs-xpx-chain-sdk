@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Builder } from '../../../infrastructure/builders/storage/ReplicatorOffboardingTransaction';
+import { Builder } from '../../../infrastructure/builders/storage/NewStoragePaymentTransaction';
 import {VerifiableTransaction} from '../../../infrastructure/builders/VerifiableTransaction';
 import { PublicAccount } from '../../account/PublicAccount';
 import { NetworkType } from '../../blockchain/NetworkType';
@@ -26,25 +26,28 @@ import { TransactionType } from '../TransactionType';
 import { TransactionTypeVersion } from '../TransactionTypeVersion';
 import { calculateFee } from '../FeeCalculationStrategy';
 
-export class ReplicatorOffboardingTransaction extends Transaction {
+export class NewStoragePaymentTransaction extends Transaction {
 
     /**
      * Create a new replicator onboarding transaction object
      * @param deadline - The deadline to include the transaction.
      * @param driveKey - Public key of the drive
+     * @param storageUnits - Amount of storage units to transfer to the drive
      * @param networkType - The network type.
      * @param maxFee - (Optional) Max fee defined by the sender
-     * @returns {ReplicatorOffboardingTransaction}
+     * @returns {NewStoragePaymentTransaction}
      */
     public static create(deadline: Deadline,
                          driveKey: PublicAccount,
+                         storageUnits: UInt64,
                          networkType: NetworkType,
-                         maxFee?: UInt64): ReplicatorOffboardingTransaction {
+                         maxFee?: UInt64): NewStoragePaymentTransaction {
         
-        return new ReplicatorOffboardingTransactionBuilder()
+        return new NewStoragePaymentTransactionBuilder()
             .networkType(networkType)
             .deadline(deadline)
             .driveKey(driveKey)
+            .storageUnits(storageUnits)
             .maxFee(maxFee)
             .build();
     }
@@ -54,7 +57,8 @@ export class ReplicatorOffboardingTransaction extends Transaction {
      * @param version
      * @param deadline
      * @param maxFee
-     * @param driveKey
+     * @param driveKey - Public key of the drive
+     * @param storageUnits - Amount of storage units to transfer to the drive
      * @param signature
      * @param signer
      * @param transactionInfo
@@ -64,21 +68,27 @@ export class ReplicatorOffboardingTransaction extends Transaction {
                 deadline: Deadline,
                 maxFee: UInt64,
                 public readonly driveKey: PublicAccount,
+                public readonly storageUnits: UInt64,
                 signature?: string,
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
-        super(TransactionType.ReplicatorOffboarding,
+
+        super(TransactionType.StoragePayment,
               networkType, version, deadline, maxFee, signature, signer, transactionInfo);
+
+        if(storageUnits.toBigInt() <= BigInt(0)){
+            throw new Error("storageUnits should be positive value")
+        }
     }
 
     /**
      * @override Transaction.size()
-     * @description get the byte size of a ReplicatorOffboardingTransaction
+     * @description get the byte size of a NewStoragePaymentTransaction
      * @returns {number}
-     * @memberof ReplicatorOffboardingTransaction
+     * @memberof NewStoragePaymentTransaction
      */
     public get size(): number {
-        return ReplicatorOffboardingTransaction.calculateSize();
+        return NewStoragePaymentTransaction.calculateSize();
     }
 
     public static calculateSize(): number {
@@ -86,15 +96,16 @@ export class ReplicatorOffboardingTransaction extends Transaction {
 
         // set static byte size fields
         const driveKeySize = 32;
+        const storageUnitsSize = 8;
 
-        return baseByteSize + driveKeySize;
+        return baseByteSize + driveKeySize + storageUnitsSize;
     }
 
     /**
      * @override Transaction.toJSON()
      * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
      * @return {Object}
-     * @memberof ReplicatorOffboardingTransaction
+     * @memberof NewStoragePaymentTransaction
      */
     public toJSON() {
         const parent = super.toJSON();
@@ -103,6 +114,7 @@ export class ReplicatorOffboardingTransaction extends Transaction {
             transaction: {
                 ...parent.transaction,
                 driveKey: this.driveKey.toDTO(),
+                storageUnits: this.storageUnits.toDTO()
             }
         }
     }
@@ -118,25 +130,33 @@ export class ReplicatorOffboardingTransaction extends Transaction {
             .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addDriveKey(this.driveKey.publicKey)
+            .addStorageUnits(this.storageUnits.toDTO())
             .build();
     }
 }
 
-export class ReplicatorOffboardingTransactionBuilder extends TransactionBuilder {
+export class NewStoragePaymentTransactionBuilder extends TransactionBuilder {
     private _driveKey: PublicAccount;
+    private _storageUnits: UInt64;
 
     public driveKey(driveKey: PublicAccount) {
         this._driveKey = driveKey;
         return this;
     }
 
-    public build(): ReplicatorOffboardingTransaction {
-        return new ReplicatorOffboardingTransaction(
+    public storageUnits(storageUnits: UInt64) {
+        this._storageUnits = storageUnits;
+        return this;
+    }
+
+    public build(): NewStoragePaymentTransaction {
+        return new NewStoragePaymentTransaction(
             this._networkType,
-            this._version || TransactionTypeVersion.ReplicatorOffboarding,
+            this._version || TransactionTypeVersion.StoragePayment,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._maxFee ? this._maxFee : calculateFee(ReplicatorOffboardingTransaction.calculateSize(), this._feeCalculationStrategy),
+            this._maxFee ? this._maxFee : calculateFee(NewStoragePaymentTransaction.calculateSize(), this._feeCalculationStrategy),
             this._driveKey,
+            this._storageUnits,
             this._signature,
             this._signer,
             this._transactionInfo
