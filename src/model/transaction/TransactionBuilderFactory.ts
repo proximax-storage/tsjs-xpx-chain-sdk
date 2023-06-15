@@ -37,6 +37,8 @@ import { RemoveExchangeOfferTransactionBuilder } from "./RemoveExchangeOfferTran
 import { AddHarvesterTransactionBuilder, RemoveHarvesterTransactionBuilder } from "./HarvesterTransaction";
 import { PlaceSdaExchangeOfferTransactionBuilder } from "./PlaceSdaExchangeOfferTransaction";
 import { RemoveSdaExchangeOfferTransactionBuilder } from "./RemoveSdaExchangeOfferTransaction";
+import { CreateLiquidityProviderTransactionBuilder } from "./liquidityProvider/CreateLiquidityProviderTransaction";
+import { ManualRateChangeTransactionBuilder } from "./liquidityProvider/ManualRateChangeTransaction";
 
 
 export class TransactionBuilderFactory {
@@ -291,7 +293,19 @@ export class TransactionBuilderFactory {
         const builder = new RemoveSdaExchangeOfferTransactionBuilder();
         this.configureBuilder(builder);
         return builder;
-    }    
+    }
+    
+    public createLiquidityProvider(): CreateLiquidityProviderTransactionBuilder{
+        const builder = new CreateLiquidityProviderTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public manualRateChange(): ManualRateChangeTransactionBuilder{
+        const builder = new ManualRateChangeTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
 }
 
 
