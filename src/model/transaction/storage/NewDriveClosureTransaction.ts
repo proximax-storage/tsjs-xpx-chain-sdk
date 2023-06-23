@@ -72,7 +72,7 @@ export class NewDriveClosureTransaction extends Transaction {
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
 
-        super(TransactionType.DriveClosure,
+        super(TransactionType.Drive_Closure,
               networkType, version, deadline, maxFee, signature, signer, transactionInfo);
     }
 
@@ -138,7 +138,7 @@ export class NewDriveClosureTransactionBuilder extends TransactionBuilder {
     public build(): NewDriveClosureTransaction {
         return new NewDriveClosureTransaction(
             this._networkType,
-            this._version || TransactionTypeVersion.DriveClosure,
+            this._version || TransactionTypeVersion.Drive_Closure,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(NewDriveClosureTransaction.calculateSize(), this._feeCalculationStrategy),
             this._driveKey,

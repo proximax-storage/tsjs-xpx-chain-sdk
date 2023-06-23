@@ -74,7 +74,7 @@ export class NewDataModificationCancelTransaction extends Transaction {
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
 
-        super(TransactionType.DataModificationCancel,
+        super(TransactionType.Data_Modification_Cancel,
               networkType, version, deadline, maxFee, signature, signer, transactionInfo);
 
         if(!Convert.isHexString(downloadDataCdi) || downloadDataCdi.length !== 64){
@@ -153,7 +153,7 @@ export class NewDataModificationCancelTransactionBuilder extends TransactionBuil
     public build(): NewDataModificationCancelTransaction {
         return new NewDataModificationCancelTransaction(
             this._networkType,
-            this._version || TransactionTypeVersion.DataModificationCancel,
+            this._version || TransactionTypeVersion.Data_Modification_Cancel,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(NewDataModificationCancelTransaction.calculateSize(), this._feeCalculationStrategy),
             this._driveKey,

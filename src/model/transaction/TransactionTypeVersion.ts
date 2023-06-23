@@ -227,24 +227,24 @@ export enum TransactionTypeVersion {
 
     Create_Liquidity_Provider = 1,
 	Manual_Rate_Change        = 1,
-    
+
     // ------------------------storage transactions type-------------------------------------
 
-    ReplicatorOnboarding           = 1,
-	PrepareBcDrive                 = 1,
-	DataModification               = 1,
-	DataModificationApproval       = 1,
-	DataModificationSingleApproval = 1,
-	DataModificationCancel         = 1,
-	StoragePayment                 = 1,
-	DownloadPayment                = 1,
-	Download                       = 1,
-	FinishDownload                 = 1,
-	VerificationPayment            = 1,
-	EndDriveVerificationV2         = 1,
-	DownloadApproval               = 1,
-	DriveClosure                   = 1,
-	ReplicatorOffboarding          = 1,
+    Replicator_Onboarding             = 1,
+	Prepare_Bc_Drive                  = 1,
+	Data_Modification                 = 1,
+	Data_Modification_Approval        = 1,
+	Data_Modification_Single_Approval = 1,
+	Data_Modification_Cancel          = 1,
+	Storage_Payment                   = 1,
+	Download_Payment                  = 1,
+	Download                          = 1,
+	Finish_Download                   = 1,
+	Verification_Payment              = 1,
+	End_Drive_Verification_V2         = 1,
+	Download_Approval                 = 1,
+	Drive_Closure                     = 1,
+	Replicator_Offboarding            = 1,
 
     // --------------------------------------------------------------------------------------
 }

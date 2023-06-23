@@ -67,7 +67,7 @@ export class ReplicatorOffboardingTransaction extends Transaction {
                 signature?: string,
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
-        super(TransactionType.ReplicatorOffboarding,
+        super(TransactionType.Replicator_Offboarding,
               networkType, version, deadline, maxFee, signature, signer, transactionInfo);
     }
 
@@ -133,7 +133,7 @@ export class ReplicatorOffboardingTransactionBuilder extends TransactionBuilder 
     public build(): ReplicatorOffboardingTransaction {
         return new ReplicatorOffboardingTransaction(
             this._networkType,
-            this._version || TransactionTypeVersion.ReplicatorOffboarding,
+            this._version || TransactionTypeVersion.Replicator_Offboarding,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(ReplicatorOffboardingTransaction.calculateSize(), this._feeCalculationStrategy),
             this._driveKey,

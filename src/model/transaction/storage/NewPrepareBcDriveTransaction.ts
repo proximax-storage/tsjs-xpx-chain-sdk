@@ -78,7 +78,7 @@ export class NewPrepareBcDriveTransaction extends Transaction {
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
 
-        super(TransactionType.PrepareBcDrive,
+        super(TransactionType.Prepare_Bc_Drive,
               networkType, version, deadline, maxFee, signature, signer, transactionInfo);
 
         if(driveSize.toBigInt() <= BigInt(0)){
@@ -177,7 +177,7 @@ export class NewPrepareBcDriveTransactionBuilder extends TransactionBuilder {
     public build(): NewPrepareBcDriveTransaction {
         return new NewPrepareBcDriveTransaction(
             this._networkType,
-            this._version || TransactionTypeVersion.PrepareBcDrive,
+            this._version || TransactionTypeVersion.Prepare_Bc_Drive,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(NewPrepareBcDriveTransaction.calculateSize(), this._feeCalculationStrategy),
             this._driveSize,

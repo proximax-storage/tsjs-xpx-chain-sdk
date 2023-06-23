@@ -73,7 +73,7 @@ export class NewStoragePaymentTransaction extends Transaction {
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
 
-        super(TransactionType.StoragePayment,
+        super(TransactionType.Storage_Payment,
               networkType, version, deadline, maxFee, signature, signer, transactionInfo);
 
         if(storageUnits.toBigInt() <= BigInt(0)){
@@ -152,7 +152,7 @@ export class NewStoragePaymentTransactionBuilder extends TransactionBuilder {
     public build(): NewStoragePaymentTransaction {
         return new NewStoragePaymentTransaction(
             this._networkType,
-            this._version || TransactionTypeVersion.StoragePayment,
+            this._version || TransactionTypeVersion.Storage_Payment,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(NewStoragePaymentTransaction.calculateSize(), this._feeCalculationStrategy),
             this._driveKey,

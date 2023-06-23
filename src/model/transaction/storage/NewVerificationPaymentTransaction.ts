@@ -73,7 +73,7 @@ export class NewVerificationPaymentTransaction extends Transaction {
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
 
-        super(TransactionType.VerificationPayment,
+        super(TransactionType.Verification_Payment,
               networkType, version, deadline, maxFee, signature, signer, transactionInfo);
 
         if(verificationFeeAmount.toBigInt() <= BigInt(0)){
@@ -152,7 +152,7 @@ export class NewVerificationPaymentTransactionBuilder extends TransactionBuilder
     public build(): NewVerificationPaymentTransaction {
         return new NewVerificationPaymentTransaction(
             this._networkType,
-            this._version || TransactionTypeVersion.VerificationPayment,
+            this._version || TransactionTypeVersion.Verification_Payment,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(NewVerificationPaymentTransaction.calculateSize(), this._feeCalculationStrategy),
             this._driveKey,

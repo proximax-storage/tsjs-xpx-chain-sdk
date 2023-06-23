@@ -68,7 +68,7 @@ export class NewReplicatorOnboardingTransaction extends Transaction {
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
 
-        super(TransactionType.ReplicatorOnboarding,
+        super(TransactionType.Replicator_Onboarding,
               networkType, version, deadline, maxFee, signature, signer, transactionInfo);
 
         if(capacity.toBigInt() <= BigInt(0)){
@@ -138,7 +138,7 @@ export class NewReplicatorOnboardingTransactionBuilder extends TransactionBuilde
     public build(): NewReplicatorOnboardingTransaction {
         return new NewReplicatorOnboardingTransaction(
             this._networkType,
-            this._version || TransactionTypeVersion.ReplicatorOnboarding,
+            this._version || TransactionTypeVersion.Replicator_Onboarding,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(NewReplicatorOnboardingTransaction.calculateSize(), this._feeCalculationStrategy),
             this._capacity,

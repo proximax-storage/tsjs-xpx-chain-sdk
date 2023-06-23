@@ -84,7 +84,7 @@ export class NewDataModificationTransaction extends Transaction {
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
 
-        super(TransactionType.DataModification,
+        super(TransactionType.Data_Modification,
               networkType, version, deadline, maxFee, signature, signer, transactionInfo);
     
         if(!Convert.isHexString(downloadDataCdi) && downloadDataCdi.length !== 64 ){
@@ -189,7 +189,7 @@ export class NewDataModificationTransactionBuilder extends TransactionBuilder {
     public build(): NewDataModificationTransaction {
         return new NewDataModificationTransaction(
             this._networkType,
-            this._version || TransactionTypeVersion.DataModification,
+            this._version || TransactionTypeVersion.Data_Modification,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(NewDataModificationTransaction.calculateSize(), this._feeCalculationStrategy),
             this._driveKey,

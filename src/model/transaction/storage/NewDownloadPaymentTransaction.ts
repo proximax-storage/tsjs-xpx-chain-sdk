@@ -79,7 +79,7 @@ export class NewDownloadPaymentTransaction extends Transaction {
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
 
-        super(TransactionType.DownloadPayment,
+        super(TransactionType.Download_Payment,
               networkType, version, deadline, maxFee, signature, signer, transactionInfo);
 
         if(!Convert.isHexString(downloadChannelId) && downloadChannelId.length !== 64){
@@ -175,7 +175,7 @@ export class NewDownloadPaymentTransactionBuilder extends TransactionBuilder {
     public build(): NewDownloadPaymentTransaction {
         return new NewDownloadPaymentTransaction(
             this._networkType,
-            this._version || TransactionTypeVersion.DownloadPayment,
+            this._version || TransactionTypeVersion.Download_Payment,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(NewDownloadPaymentTransaction.calculateSize(), this._feeCalculationStrategy),
             this._downloadChannelId,

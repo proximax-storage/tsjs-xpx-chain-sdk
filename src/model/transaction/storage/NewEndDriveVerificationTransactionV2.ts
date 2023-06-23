@@ -94,7 +94,7 @@ export class NewEndDriveVerificationV2Transaction extends Transaction {
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
 
-        super(TransactionType.EndDriveVerificationV2,
+        super(TransactionType.End_Drive_Verification_V2,
               networkType, version, deadline, maxFee, signature, signer, transactionInfo);
 
         if(!Convert.isHexString(verificationTrigger) && verificationTrigger.length !== 64){
@@ -223,7 +223,7 @@ export class NewEndDriveVerificationV2TransactionBuilder extends TransactionBuil
     public build(): NewEndDriveVerificationV2Transaction {
         return new NewEndDriveVerificationV2Transaction(
             this._networkType,
-            this._version || TransactionTypeVersion.EndDriveVerificationV2,
+            this._version || TransactionTypeVersion.End_Drive_Verification_V2,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(NewEndDriveVerificationV2Transaction.calculateSize(this._keys.length, this._signatures.length), this._feeCalculationStrategy),
             this._driveKey,
