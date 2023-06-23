@@ -223,6 +223,8 @@ export enum TransactionTypeVersion {
      * Remove SDA exchange offer transaction version
      * @type {number}
      */
-    REMOVE_SDA_EXCHANGE_OFFER = 1
+    REMOVE_SDA_EXCHANGE_OFFER = 1,
 
+    Create_Liquidity_Provider = 1,
+	Manual_Rate_Change        = 1
 }

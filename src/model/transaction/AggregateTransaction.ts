@@ -210,7 +210,7 @@ export class AggregateTransaction extends Transaction {
     public signTransactionWithCosignatories(initiatorAccount: Account,
                                             cosignatories: Account[],
                                             generationHash: string) {
-        this.version.dScheme = PublicAccount.getDerivationSchemeFromAccVersion(initiatorAccount.version);
+        this.version.signatureDScheme = PublicAccount.getDerivationSchemeFromAccVersion(initiatorAccount.version);
         const aggregateTransaction = this.buildTransaction();
         const signedTransactionRaw = aggregateTransaction
                 .signTransactionWithCosigners(initiatorAccount, cosignatories, generationHash);
@@ -228,7 +228,7 @@ export class AggregateTransaction extends Transaction {
     public signTransactionWithCosignatoriesV1(initiatorAccount: Account,
                     cosignatories: Account[],
                     generationHash: string) {
-        this.version.dScheme = DerivationScheme.Unset;
+        this.version.signatureDScheme = DerivationScheme.Unset;
         const aggregateTransaction = this.buildTransaction();
         const signedTransactionRaw = aggregateTransaction
                 .signTransactionWithCosignersV1(initiatorAccount, cosignatories, generationHash);
@@ -248,7 +248,7 @@ export class AggregateTransaction extends Transaction {
     public signTransactionGivenSignatures(initiatorAccount: Account,
                                           cosignatureSignedTransactions: CosignatureSignedTransaction[],
                                           generationHash: string) {
-        this.version.dScheme = PublicAccount.getDerivationSchemeFromAccVersion(initiatorAccount.version);
+        this.version.signatureDScheme = PublicAccount.getDerivationSchemeFromAccVersion(initiatorAccount.version);
         
         const aggregateTransaction = this.buildTransaction();
         const signedTransactionRaw = aggregateTransaction.signTransactionGivenSignatures(initiatorAccount,
@@ -271,7 +271,7 @@ export class AggregateTransaction extends Transaction {
                                         cosignatureSignedTransactions: CosignatureSignedTransaction[],
                                         generationHash: string) {
 
-        this.version.dScheme = DerivationScheme.Unset;
+        this.version.signatureDScheme = DerivationScheme.Unset;
 
         const aggregateTransaction = this.buildTransaction();
         const signedTransactionRaw = aggregateTransaction.signTransactionGivenSignaturesV1(initiatorAccount,

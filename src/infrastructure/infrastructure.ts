@@ -29,6 +29,7 @@ export * from './MetadataHttp';
 export * from './MosaicHttp';
 export * from './NamespaceHttp';
 export * from './TransactionHttp';
+export * from './LiquidityProviderHttp';
 export * from './Listener';
 export * from './PageQueryParams';
 export * from './PaginationQueryParams';

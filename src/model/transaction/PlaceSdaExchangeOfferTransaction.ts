@@ -18,7 +18,7 @@ import { SdaExchangeOffer } from './SdaExchangeOffer';
 
 export class PlaceSdaExchangeOfferTransaction extends Transaction {
 
-    sdaExchangeOffers: SdaExchangeOffer[];
+    offers: SdaExchangeOffer[];
     
     /**
      * Create PlaceSdaExchangeOfferTransaction object
@@ -33,7 +33,7 @@ export class PlaceSdaExchangeOfferTransaction extends Transaction {
             .networkType(networkType)
             .deadline(deadline)
             .maxFee(maxFee)
-            .sdaExchangeOffers(sdaExchangeOffers)
+            .offers(sdaExchangeOffers)
             .build();
     }
 
@@ -41,13 +41,13 @@ export class PlaceSdaExchangeOfferTransaction extends Transaction {
         networkType: NetworkType,
         version: number,
         deadline: Deadline,
-        sdaExchangeOffers: SdaExchangeOffer[],
         maxFee: UInt64,
+        sdaExchangeOffers: SdaExchangeOffer[],
         signature?: string,
         signer?: PublicAccount,
         transactionInfo?: TransactionInfo | AggregateTransactionInfo) {
         super(TransactionType.PLACE_SDA_EXCHANGE_OFFER, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
-        this.sdaExchangeOffers = sdaExchangeOffers || [];
+        this.offers = sdaExchangeOffers || [];
     }
 
     /**
@@ -57,7 +57,7 @@ export class PlaceSdaExchangeOfferTransaction extends Transaction {
      * @memberof PlaceSdaExchangeOfferTransaction
      */
     public get size(): number {
-        return PlaceSdaExchangeOfferTransaction.calculateSize(this.sdaExchangeOffers.length);
+        return PlaceSdaExchangeOfferTransaction.calculateSize(this.offers.length);
     }
 
     public static calculateSize(offersCount: number): number {
@@ -85,7 +85,7 @@ export class PlaceSdaExchangeOfferTransaction extends Transaction {
             ...parent,
             transaction: {
                 ...parent.transaction,
-                sdaExchangeOffers: this.sdaExchangeOffers.map(offer => offer.toDTO())
+                sdaExchangeOffers: this.offers.map(offer => offer.toDTO())
             }
         }
     }
@@ -101,16 +101,16 @@ export class PlaceSdaExchangeOfferTransaction extends Transaction {
             .addVersion(this.versionToDTO())
             .addDeadline(this.deadline.toDTO())
             .addMaxFee(this.maxFee.toDTO())
-            .addSdaExchangeOffers(this.sdaExchangeOffers)
+            .addOffers(this.offers)
             .build();
     }
 }
 
 export class PlaceSdaExchangeOfferTransactionBuilder extends TransactionBuilder {
-    private _sdaExchangeOffers: SdaExchangeOffer[];
+    private _offers: SdaExchangeOffer[];
 
-    public sdaExchangeOffers(sdaExchangeOffers: SdaExchangeOffer[]) {
-        this._sdaExchangeOffers = sdaExchangeOffers;
+    public offers(sdaExchangeOffers: SdaExchangeOffer[]) {
+        this._offers = sdaExchangeOffers;
         return this;
     }
 
@@ -119,8 +119,8 @@ export class PlaceSdaExchangeOfferTransactionBuilder extends TransactionBuilder 
             this._networkType,
             this._version || TransactionTypeVersion.PLACE_SDA_EXCHANGE_OFFER,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._sdaExchangeOffers,
-            this._maxFee ? this._maxFee : calculateFee(PlaceSdaExchangeOfferTransaction.calculateSize(this._sdaExchangeOffers.length), this._feeCalculationStrategy),
+            this._maxFee ? this._maxFee : calculateFee(PlaceSdaExchangeOfferTransaction.calculateSize(this._offers.length), this._feeCalculationStrategy),
+            this._offers,
             this._signature,
             this._signer,
             this._transactionInfo

@@ -27,7 +27,7 @@ export class Builder {
     version: any;
     type: any;
     deadline: any;
-    sdaExchangeOffers: RemoveSdaExchangeOffer[];
+    offers: RemoveSdaExchangeOffer[];
 
     constructor() {
         this.maxFee = [0, 0];
@@ -59,8 +59,8 @@ export class Builder {
         return this;
     }
 
-    addSdaExchangeOffers(sdaExchangeOffers: RemoveSdaExchangeOffer[]) {
-        this.sdaExchangeOffers = sdaExchangeOffers;
+    addOffers(sdaExchangeOffers: RemoveSdaExchangeOffer[]) {
+        this.offers = sdaExchangeOffers;
         return this;
     }
 
@@ -70,7 +70,7 @@ export class Builder {
 
         // Create offers
         const offersArray:any[] = [];
-        this.sdaExchangeOffers.forEach(offer => {
+        this.offers.forEach(offer => {
             const mosaicIdGiveVector = RemoveSdaExchangeOfferBuffer
                 .createMosaicIdGiveVector(builder, offer.mosaicIdGive.id.toDTO());
             const mosaicIdGetVector = RemoveSdaExchangeOfferBuffer
@@ -100,7 +100,7 @@ export class Builder {
         RemoveSdaExchangeOfferTransactionBuffer.addType(builder, this.type);
         RemoveSdaExchangeOfferTransactionBuffer.addMaxFee(builder, feeVector);
         RemoveSdaExchangeOfferTransactionBuffer.addDeadline(builder, deadlineVector);
-        RemoveSdaExchangeOfferTransactionBuffer.addSdaOfferCount(builder, this.sdaExchangeOffers.length);
+        RemoveSdaExchangeOfferTransactionBuffer.addSdaOfferCount(builder, this.offers.length);
         RemoveSdaExchangeOfferTransactionBuffer.addSdaOffers(builder, offersVector);
 
         // Calculate size

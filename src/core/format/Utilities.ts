@@ -182,6 +182,6 @@ export const decodeBlock = (input, inputOffset, output, outputOffset) => {
 
 export const ucwords = (data: string) =>{
 
-    return data.trim().replace("_", " ").toLowerCase().split(" ")
+    return data.trim().replaceAll("_", " ").toLowerCase().split(" ")
                 .map(word => word.charAt(0).toUpperCase() + word.substring(1)).join(" ");
 }

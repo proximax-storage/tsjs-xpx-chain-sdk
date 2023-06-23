@@ -79,7 +79,7 @@ export const CreateTransactionFromPayload = (transactionBinary: string): Transac
     // Transaction byte data
     const transactionVersion = TransactionVersion.createFromPayloadHex(transactionBinary.substring(versionOffset, typeOffset));
     // const networkType = transactionVersion.networkType;//extractNetworkFromHexPayload(transactionBinary.substring(versionOffset, typeOffset));
-    // const dScheme = transactionVersion.dScheme;
+    // const dScheme = transactionVersion.signatureDScheme;
     // const accountVersion = PublicAccount.getAccVersionFromDerivationScheme(dScheme);
     const type = extractNumberFromHexReverse(transactionBinary.substring(typeOffset, feeOffset));
     const maxFee = UInt64.fromHex(reverseHexString(transactionBinary.substring(feeOffset, deadlineOffset)));
@@ -104,7 +104,7 @@ const CreateTransaction = (type: number, transactionData: string, txnVersion: Tr
     const factory = new TransactionBuilderFactory();
     factory.networkType = txnVersion.networkType;
     factory.createNewDeadlineFn = () => Deadline.createFromDTO(deadline);
-    // const accVersion = PublicAccount.getAccVersionFromDerivationScheme(transactionVersion.dScheme);
+    // const signatureDScheme = PublicAccount.getAccVersionFromDerivationScheme(transactionVersion.signatureDScheme);
 
     switch (type) {
         case TransactionType.MODIFY_ACCOUNT_RESTRICTION_ADDRESS:
@@ -347,7 +347,7 @@ const CreateTransaction = (type: number, transactionData: string, txnVersion: Tr
                     UInt64.fromHex(reverseHexString(hashLockMosaic.substring(16))),
                 ))
                 .duration(UInt64.fromHex(reverseHexString(hashLockDuration)))
-                .transactionHash(new TransactionHash(hashLockHash, txnVersion.dScheme ? TransactionType.AGGREGATE_BONDED_V2 : TransactionType.AGGREGATE_BONDED_V1))
+                .transactionHash(new TransactionHash(hashLockHash, txnVersion.signatureDScheme ? TransactionType.AGGREGATE_BONDED_V2 : TransactionType.AGGREGATE_BONDED_V1))
                 .build();
 
         case TransactionType.AGGREGATE_COMPLETE_V1:
@@ -419,7 +419,7 @@ const CreateTransaction = (type: number, transactionData: string, txnVersion: Tr
                         txVersion,
                         deadline,
                     );
-                    return transaction.toAggregate(PublicAccount.createFromPublicKey(innerTransaction.substring(0, 64), txVersion.networkType, txVersion.dScheme));
+                    return transaction.toAggregate(PublicAccount.createFromPublicKey(innerTransaction.substring(0, 64), txVersion.networkType, txVersion.signatureDScheme));
                 }))
                 .cosignatures(completeV2CosignatureArray ? completeV2CosignatureArray.map((cosignature) =>{
                     const dScheme = parseInt(cosignature.substring(0, 2), 16);
@@ -449,7 +449,7 @@ const CreateTransaction = (type: number, transactionData: string, txnVersion: Tr
                         txVersion,
                         deadline,
                         );
-                    return transaction.toAggregate(PublicAccount.createFromPublicKey(innerTransaction.substring(0, 64), txVersion.networkType, txVersion.dScheme));
+                    return transaction.toAggregate(PublicAccount.createFromPublicKey(innerTransaction.substring(0, 64), txVersion.networkType, txVersion.signatureDScheme));
                 }))
                 .cosignatures(bondedV2ConsignatureArray ? bondedV2ConsignatureArray.map((cosignature) =>{
                     const dScheme = parseInt(cosignature.substring(0, 2), 16);
@@ -605,7 +605,7 @@ const CreateTransaction = (type: number, transactionData: string, txnVersion: Tr
         case TransactionType.PLACE_SDA_EXCHANGE_OFFER:
             const placeSdaOffersArray =  transactionData.substring(2).match(/.{144}/g) || [];
             return factory.placeSdaExchangeOffer()
-                .sdaExchangeOffers(placeSdaOffersArray.map(o => {
+                .offers(placeSdaOffersArray.map(o => {
                     const giveMosaicId = o.substring(0, 16);
                     const giveAmount = o.substring(16, 32);
                     const getMosaicId = o.substring(32, 48);
@@ -625,7 +625,7 @@ const CreateTransaction = (type: number, transactionData: string, txnVersion: Tr
         case TransactionType.REMOVE_SDA_EXCHANGE_OFFER:
             const removeSdaOffersArray =  transactionData.substring(2).match(/.{32}/g) || [];
             return factory.removeSdaExchangeOffer()
-                .sdaExchangeOffers(removeSdaOffersArray.map(o => {
+                .offers(removeSdaOffersArray.map(o => {
                     const giveMosaicId = o.substring(0, 16);
                     const getMosaicId = o.substring(16, 32);
 
@@ -635,6 +635,27 @@ const CreateTransaction = (type: number, transactionData: string, txnVersion: Tr
                     )})
                 )
                 .build();
+
+        case TransactionType.Create_Liquidity_Provider:
+            return factory.createLiquidityProvider()
+                    .providerMosaicId(new MosaicId(UInt64.fromHex(reverseHexString(transactionData.substring(0, 16))).toDTO()))
+                    .currencyDeposit(UInt64.fromHex(reverseHexString(transactionData.substring(16, 32))))
+                    .initialMosaicsMinting(UInt64.fromHex(reverseHexString(transactionData.substring(32, 48))))
+                    .slashingPeriod(extractNumberFromHexReverse(transactionData.substring(48, 56)))
+                    .windowSize(extractNumberFromHexReverse(transactionData.substring(56, 60)))
+                    .slashingAccount(PublicAccount.createFromPublicKey(transactionData.substring(60, 124), txnVersion.networkType))
+                    .alpha(extractNumberFromHexReverse(transactionData.substring(124, 132)))
+                    .beta(extractNumberFromHexReverse(transactionData.substring(132, 140)))
+                    .build();
+
+        case TransactionType.Manual_Rate_Change:
+            return factory.manualRateChange()
+                    .providerMosaicId(new MosaicId(UInt64.fromHex(reverseHexString(transactionData.substring(0, 16))).toDTO()))
+                    .currencyBalanceIncrease(extractHexNumberToBoolean(transactionData.substring(16, 18)))
+                    .currencyBalanceChange(UInt64.fromHex(reverseHexString(transactionData.substring(18, 34))))
+                    .mosaicBalanceIncrease(extractHexNumberToBoolean(transactionData.substring(34, 36)))
+                    .mosaicBalanceChange(UInt64.fromHex(reverseHexString(transactionData.substring(36, 52))))
+                    .build();
 
         default:
             return new UnknownTransaction(
@@ -668,6 +689,15 @@ const extractValueSizeDelta = (hexValue: string): number => {
  */
 const extractNumberFromHexReverse = (hexValue: string): number => {
     return parseInt(convert.uint8ArrayToHex(convert.hexToUint8(hexValue).reverse()), 16);
+};
+
+/**
+ * @internal
+ * @param hexValue - Hex representation of the number
+ * @returns {boolean}
+ */
+const extractHexNumberToBoolean = (hexValue: string): boolean => {
+    return parseInt(hexValue, 16) === 1 ?  true: false;
 };
 
 /**

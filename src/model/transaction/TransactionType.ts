@@ -221,5 +221,11 @@ export enum TransactionType {
     /**
     * Remove SDA exchange offer transaction type
     */
-    REMOVE_SDA_EXCHANGE_OFFER = 0x426A
+    REMOVE_SDA_EXCHANGE_OFFER = 0x426A,
+
+    /*
+    * Liquidity Provider transasction type
+    */
+    Create_Liquidity_Provider = 0x4169,
+	Manual_Rate_Change        = 0x4269
 }
