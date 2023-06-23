@@ -28,7 +28,6 @@ import { TransactionType } from '../TransactionType';
 import { TransactionTypeVersion } from '../TransactionTypeVersion';
 import { calculateFee } from '../FeeCalculationStrategy';
 
-
 export class CreateLiquidityProviderTransaction extends Transaction {
     /**
      * Create a create liquidity provider transaction object
@@ -103,7 +102,7 @@ export class CreateLiquidityProviderTransaction extends Transaction {
                 signature?: string,
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
-        super(TransactionType.CreateLiquidityProvider, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
+        super(TransactionType.Create_Liquidity_Provider, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
 
         if(slashingPeriod > 0xFFFFFFFF || slashingPeriod <= 0){
             throw new Error("slashingPeriod out of range, should be uint32 positive number");
@@ -183,6 +182,7 @@ export class CreateLiquidityProviderTransaction extends Transaction {
             .addDeadline(this.deadline.toDTO())
             .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
+            .addType(this.type)
             .addProviderMosaicId(this.providerMosaicId.id.toDTO())
             .addCurrencyDeposit(this.currencyDeposit.toDTO())
             .addInitialMosaicsMinting(this.initialMosaicsMinting.toDTO())
@@ -248,7 +248,7 @@ export class CreateLiquidityProviderTransactionBuilder extends TransactionBuilde
     public build(): CreateLiquidityProviderTransaction {
         return new CreateLiquidityProviderTransaction(
             this._networkType,
-            this._version || TransactionTypeVersion.CreateLiquidityProvider,
+            this._version || TransactionTypeVersion.Create_Liquidity_Provider,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(CreateLiquidityProviderTransaction.calculateSize(), this._feeCalculationStrategy),
             this._providerMosaicId,

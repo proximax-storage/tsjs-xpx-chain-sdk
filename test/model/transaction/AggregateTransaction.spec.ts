@@ -465,8 +465,8 @@ describe('AggregateTransaction', () => {
             []
         );
 
-        expect(aggregateTransaction.innerTransactions[0].version.dScheme).to.be.equal(1);
-        expect(aggregateTransaction.innerTransactions[1].version.dScheme).to.be.equal(2);
+        expect(aggregateTransaction.innerTransactions[0].version.signatureDScheme).to.be.equal(1);
+        expect(aggregateTransaction.innerTransactions[1].version.signatureDScheme).to.be.equal(2);
     });
 
     it('Should create signed transaction with cosignatories - Aggregated CompleteV1', () => {

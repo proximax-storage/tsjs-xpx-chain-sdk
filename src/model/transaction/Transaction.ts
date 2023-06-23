@@ -113,9 +113,9 @@ export abstract class Transaction {
      * @returns {SignedTransaction}
      */
     public signWith(account: Account, generationHash: string): SignedTransaction {
-        this.version.dScheme = PublicAccount.getDerivationSchemeFromAccVersion(account.version);
+        this.version.signatureDScheme = PublicAccount.getDerivationSchemeFromAccVersion(account.version);
         const transaction = this.buildTransaction();
-        const signedTransactionRaw = transaction.signTransaction(account, generationHash, this.version.dScheme);
+        const signedTransactionRaw = transaction.signTransaction(account, generationHash, this.version.signatureDScheme);
         return new SignedTransaction(
             signedTransactionRaw.payload,
             signedTransactionRaw.hash,
@@ -131,7 +131,7 @@ export abstract class Transaction {
      * @returns {SignedTransaction}
      */
     public preV2SignWith(account: Account, generationHash: string): SignedTransaction {
-        this.version.dScheme = DerivationScheme.Unset;
+        this.version.signatureDScheme = DerivationScheme.Unset;
         const transaction = this.buildTransaction();
         const signedTransactionRaw = transaction.signTransaction(account, generationHash, DerivationScheme.Ed25519Sha3);
         return new SignedTransaction(
@@ -170,7 +170,7 @@ export abstract class Transaction {
             throw new Error('Inner transaction cannot be an aggregated transaction.');
         }
 
-        this.version.dScheme = PublicAccount.getDerivationSchemeFromAccVersion(signer.version);
+        this.version.signatureDScheme = PublicAccount.getDerivationSchemeFromAccVersion(signer.version);
         return Object.assign({__proto__: Object.getPrototypeOf(this)}, this, {signer});
     }
 
@@ -185,7 +185,7 @@ export abstract class Transaction {
             throw new Error('Inner transaction cannot be an aggregated transaction.');
         }
 
-        this.version.dScheme = DerivationScheme.Unset;
+        this.version.signatureDScheme = DerivationScheme.Unset;
         return Object.assign({__proto__: Object.getPrototypeOf(this)}, this, {signer});
     }
 

@@ -202,6 +202,9 @@ export * from './transaction/HarvesterTransaction';
 export * from './transaction/UnknownTransaction';
 export * from './transaction/TransactionSizeInfo';
 
+export * from './transaction/liquidityProvider/CreateLiquidityProviderTransaction';
+export * from './transaction/liquidityProvider/ManualRateChangeTransaction';
+
 // Upgrade
 export * from './upgrade/ChainUpgrade';
 

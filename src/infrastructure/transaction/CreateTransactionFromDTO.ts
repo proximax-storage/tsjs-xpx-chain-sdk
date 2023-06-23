@@ -80,6 +80,8 @@ import { MosaicNonce } from '../../model/mosaic/MosaicNonce';
 import { MosaicLevy } from '../../model/mosaic/MosaicLevy';
 import { TransactionMapUtility } from "./TransactionMapUtility";
 import { TransactionVersion } from "../../model/transaction/TransactionVersion";
+import { CreateLiquidityProviderTransaction } from '../../model/transaction/liquidityProvider/CreateLiquidityProviderTransaction';
+import { ManualRateChangeTransaction } from '../../model/transaction/liquidityProvider/ManualRateChangeTransaction';
 
 interface IsAggregatedInfo{
     isEmbedded: boolean;
@@ -96,7 +98,7 @@ export const CreateTransactionFromDTO = (transactionDTO): Transaction | InnerTra
 
     const transactionVersion = TransactionVersion.createFromUint32(transactionDTO.transaction.version);
     const networkType = transactionVersion.networkType;
-    const dScheme = transactionVersion.dScheme;
+    const dScheme = transactionVersion.signatureDScheme;
     const signerVersion = dScheme ? dScheme : 1;
     const transactionTypeVersion = transactionVersion.txnTypeVersion;
 
@@ -223,7 +225,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isA
 
     const transactionVersion = TransactionVersion.createFromUint32(transactionDTO.version);
     const networkType = transactionVersion.networkType;
-    const dScheme = transactionVersion.dScheme;
+    const dScheme = transactionVersion.signatureDScheme;
     const signerVersion = dScheme ? dScheme: 1;
     const transactionTypeVersion = transactionVersion.txnTypeVersion;
 
@@ -772,14 +774,14 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isA
                 networkType,
                 transactionTypeVersion,
                 isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-                transactionDTO.sdaOffers.map(o => new SdaExchangeOffer(
+                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                transactionDTO.offers.map(o => new SdaExchangeOffer(
                     new MosaicId(o.mosaicIdGive),
                     new UInt64(o.mosaicAmountGive),
                     new MosaicId(o.mosaicIdGet),
                     new UInt64(o.mosaicAmountGet),
                     new UInt64(o.duration)
                 )),
-                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
                 isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
                 transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
                                 networkType, signerVersion) : undefined,
@@ -791,11 +793,48 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isA
                 networkType,
                 transactionTypeVersion,
                 isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
-                transactionDTO.sdaOffers.map(o => new RemoveSdaExchangeOffer(
+                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                transactionDTO.offers.map(o => new RemoveSdaExchangeOffer(
                     new MosaicId(o.mosaicIdGive),
                     new MosaicId(o.mosaicIdGet)
                 )),
+                isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType, signerVersion) : undefined,
+                transactionInfo,
+            );
+            txn = removeSdaExchangeOfferTxn;
+        } else if (transactionDTO.type === TransactionType.Create_Liquidity_Provider) {
+            const removeSdaExchangeOfferTxn = new CreateLiquidityProviderTransaction(
+                networkType,
+                transactionTypeVersion,
+                isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
                 isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                new MosaicId(transactionDTO.providerMosaicId),
+                new UInt64(transactionDTO.currencyDeposit),
+                new UInt64(transactionDTO.initialMosaicsMinting),
+                transactionDTO.slashingPeriod,
+                transactionDTO.windowSize,
+                PublicAccount.createFromPublicKey(transactionDTO.slashingAccount, networkType),
+                transactionDTO.alpha,
+                transactionDTO.beta,
+                isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType, signerVersion) : undefined,
+                transactionInfo,
+            );
+            txn = removeSdaExchangeOfferTxn;
+        } else if (transactionDTO.type === TransactionType.Manual_Rate_Change){
+            const removeSdaExchangeOfferTxn = new ManualRateChangeTransaction(
+                networkType,
+                transactionTypeVersion,
+                isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                new MosaicId(transactionDTO.providerMosaicId),
+                transactionDTO.currencyBalanceIncrease ? true : false,
+                new UInt64(transactionDTO.currencyBalanceChange),
+                transactionDTO.mosaicBalanceIncrease ? true : false,
+                new UInt64(transactionDTO.mosaicBalanceChange),
                 isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
                 transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
                                 networkType, signerVersion) : undefined,
@@ -807,7 +846,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isA
             throw new Error('Unimplemented transaction with type ' + transactionDTO.type);
         }
 
-        txn!.version.dScheme = dScheme;
+        txn!.version.signatureDScheme = dScheme;
 
         if(isAggregatedInfo.isEmbedded && isAggregatedInfo.isV2){
             return txn!.toAggregate(txn!.signer!);

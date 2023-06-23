@@ -89,7 +89,7 @@ export class ManualRateChangeTransaction extends Transaction {
                 signature?: string,
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
-        super(TransactionType.ManualRateChange, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
+        super(TransactionType.Manual_Rate_Change, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
     }
 
     /**
@@ -146,6 +146,7 @@ export class ManualRateChangeTransaction extends Transaction {
             .addDeadline(this.deadline.toDTO())
             .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
+            .addType(this.type)
             .addProviderMosaicId(this.providerMosaicId.id.toDTO())
             .addCurrencyBalanceIncrease(this.currencyBalanceIncrease)
             .addCurrencyBalanceChange(this.currencyBalanceChange.toDTO())
@@ -191,7 +192,7 @@ export class ManualRateChangeTransactionBuilder extends TransactionBuilder {
     public build(): ManualRateChangeTransaction {
         return new ManualRateChangeTransaction(
             this._networkType,
-            this._version || TransactionTypeVersion.ManualRateChange,
+            this._version || TransactionTypeVersion.Manual_Rate_Change,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(ManualRateChangeTransaction.calculateSize(), this._feeCalculationStrategy),
             this._providerMosaicId,

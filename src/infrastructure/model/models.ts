@@ -437,6 +437,8 @@ import { HarvesterInfoDTO } from './harvesterInfoDTO';
 import { HarvesterInfoWithMetaDTO } from './harvesterInfoWithMetaDTO';
 import { HarvesterSearchDTO } from './harvesterSearchDTO';
 import { InlineHarvesterInfoDTO } from './inlineHarvesterInfoDTO';
+import { LiquidityProviderInlineDTO } from './liquidityProvider/liquidityProviderInlineDTO';
+import { LiquidityProviderSearchDTO } from './liquidityProvider/liquidityProviderSearchDTO';
 
 /* tslint:disable:no-unused-variable */
 let primitives = [
@@ -668,7 +670,9 @@ let typeMap: {[index: string]: any} = {
     "InlineHarvesterInfoDTO": InlineHarvesterInfoDTO,
     "HarvesterInfoDTO": HarvesterInfoDTO,
     "HarvesterInfoWithMetaDTO": HarvesterInfoWithMetaDTO,
-    "HarvesterSearchDTO": HarvesterSearchDTO
+    "HarvesterSearchDTO": HarvesterSearchDTO,
+    "LiquidityProviderInlineDTO": LiquidityProviderInlineDTO,
+    "LiquidityProviderSearchDTO": LiquidityProviderSearchDTO
 }
 
 export class ObjectSerializer {

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2016",
+    "target": "esnext",
     "noImplicitAny": false,
     "strictNullChecks": true,
     "preserveConstEnums": true,
@@ -13,7 +13,7 @@
     "outDir": "dist",
     "allowJs": false,
     "lib": [
-      "es2017",
+      "esnext",
       "dom"
     ],
     "typeRoots": [
@@ -25,7 +25,8 @@
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "./dist/**/*"
   ],
   "include": [
     "test/**/*.spec.ts",

@@ -47,6 +47,9 @@ import { TransactionRoutesApi } from './transactionRoutesApi';
 export * from './upgradeRoutesApi';
 import { UpgradeRoutesApi } from './upgradeRoutesApi';
 export * from './harvesterRoutesApi';
+import { HarvesterRoutesApi } from './harvesterRoutesApi';
+export * from './liquidityProviderRoutesApi';
+import { LiquidityProviderRoutesApi } from './liquidityProviderRoutesApi';
 import * as fs from 'fs';
 import * as http from 'http';
 
@@ -83,5 +86,7 @@ export const APIS = [
     NodeRoutesApi, 
     ServiceRoutesApi, 
     TransactionRoutesApi, 
-    UpgradeRoutesApi
+    UpgradeRoutesApi,
+    HarvesterRoutesApi,
+    LiquidityProviderRoutesApi
 ];
