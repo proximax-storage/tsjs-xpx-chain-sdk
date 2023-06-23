@@ -36,12 +36,12 @@ export class TransactionVersion {
      */
     constructor(
         public readonly networkType: NetworkType,
-        public dScheme: DerivationScheme,
+        public signatureDScheme: DerivationScheme,
         public readonly txnTypeVersion: TransactionTypeVersion
     ){}
 
     public convertToDTO(){
-        return (this.networkType << 24) + (this.dScheme << 16) + this.txnTypeVersion;
+        return (this.networkType << 24) + (this.signatureDScheme << 16) + this.txnTypeVersion;
     }
 
     public static createInit(networkType: NetworkType, txnTypeVersion: TransactionTypeVersion){

@@ -22,7 +22,7 @@ import { DerivationScheme } from '../../core/crypto/DerivationScheme';
 export class AggregateV2TransactionCosignature {
 
     /**
-     * @param dScheme
+     * @param signatureDScheme
      * @param signature
      * @param signer
      */
@@ -30,7 +30,7 @@ export class AggregateV2TransactionCosignature {
                 /**
                  * The derivation scheme of cosigner.
                  */
-                public readonly dScheme: DerivationScheme,
+                public readonly signatureDScheme: DerivationScheme,
                 /**
                  * The signature of aggregate transaction done by the cosigner.
                  */
@@ -47,7 +47,7 @@ export class AggregateV2TransactionCosignature {
      */
     public toDTO() {
         return {
-            derivationScheme: this.dScheme,
+            derivationScheme: this.signatureDScheme,
             signature: this.signature,
             signer: this.signer.toDTO(),
         };

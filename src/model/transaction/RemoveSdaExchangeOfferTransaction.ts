@@ -1,4 +1,4 @@
-// Copyright 2019 ProximaX Limited. All rights reserved.
+// Copyright 2023 ProximaX Limited. All rights reserved.
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file
 
@@ -18,7 +18,7 @@ import { RemoveSdaExchangeOffer } from './RemoveSdaExchangeOffer';
 
 export class RemoveSdaExchangeOfferTransaction extends Transaction {
 
-    sdaExchangeOffers: RemoveSdaExchangeOffer[];
+    offers: RemoveSdaExchangeOffer[];
 
     /**
      * Create RemoveSdaExchangeOfferTransaction object
@@ -33,7 +33,7 @@ export class RemoveSdaExchangeOfferTransaction extends Transaction {
             .networkType(networkType)
             .deadline(deadline)
             .maxFee(maxFee)
-            .sdaExchangeOffers(sdaExchangeOffers)
+            .offers(sdaExchangeOffers)
             .build();
     }
 
@@ -41,13 +41,13 @@ export class RemoveSdaExchangeOfferTransaction extends Transaction {
         networkType: NetworkType,
         version: number,
         deadline: Deadline,
-        sdaExchangeOffers: RemoveSdaExchangeOffer[],
         maxFee: UInt64,
+        sdaExchangeOffers: RemoveSdaExchangeOffer[],
         signature?: string,
         signer?: PublicAccount,
         transactionInfo?: TransactionInfo | AggregateTransactionInfo) {
         super(TransactionType.REMOVE_SDA_EXCHANGE_OFFER, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
-        this.sdaExchangeOffers = sdaExchangeOffers || [];
+        this.offers = sdaExchangeOffers || [];
     }
 
     /**
@@ -57,7 +57,7 @@ export class RemoveSdaExchangeOfferTransaction extends Transaction {
      * @memberof RemoveSdaExchangeOfferTransaction
      */
     public get size(): number {
-        return RemoveSdaExchangeOfferTransaction.calculateSize(this.sdaExchangeOffers.length);
+        return RemoveSdaExchangeOfferTransaction.calculateSize(this.offers.length);
     }
 
     public static calculateSize(offersLength: number): number {
@@ -82,7 +82,7 @@ export class RemoveSdaExchangeOfferTransaction extends Transaction {
             ...parent,
             transaction: {
                 ...parent.transaction,
-                sdaExchangeOffers: this.sdaExchangeOffers.map(offer => offer.toDTO())
+                sdaExchangeOffers: this.offers.map(offer => offer.toDTO())
             }
         }
     }
@@ -98,16 +98,16 @@ export class RemoveSdaExchangeOfferTransaction extends Transaction {
             .addVersion(this.versionToDTO())
             .addDeadline(this.deadline.toDTO())
             .addMaxFee(this.maxFee.toDTO())
-            .addSdaExchangeOffers(this.sdaExchangeOffers)
+            .addOffers(this.offers)
             .build();
     }
 }
 
 export class RemoveSdaExchangeOfferTransactionBuilder extends TransactionBuilder {
-    private _sdaExchangeOffers: RemoveSdaExchangeOffer[];
+    private _offers: RemoveSdaExchangeOffer[];
 
-    public sdaExchangeOffers(_sdaExchangeOffers: RemoveSdaExchangeOffer[]) {
-        this._sdaExchangeOffers = _sdaExchangeOffers;
+    public offers(_sdaExchangeOffers: RemoveSdaExchangeOffer[]) {
+        this._offers = _sdaExchangeOffers;
         return this;
     }
 
@@ -116,8 +116,8 @@ export class RemoveSdaExchangeOfferTransactionBuilder extends TransactionBuilder
             this._networkType,
             this._version || TransactionTypeVersion.REMOVE_SDA_EXCHANGE_OFFER,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._sdaExchangeOffers,
-            this._maxFee ? this._maxFee : calculateFee(RemoveSdaExchangeOfferTransaction.calculateSize(this._sdaExchangeOffers.length), this._feeCalculationStrategy),
+            this._maxFee ? this._maxFee : calculateFee(RemoveSdaExchangeOfferTransaction.calculateSize(this._offers.length), this._feeCalculationStrategy),
+            this._offers,
             this._signature,
             this._signer,
             this._transactionInfo
