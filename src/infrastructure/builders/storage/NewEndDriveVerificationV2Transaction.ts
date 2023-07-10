@@ -50,7 +50,7 @@ export class Builder {
 
     constructor() {
         this.fee = [0, 0];
-        this.version = 1;
+        this.type = TransactionType.End_Drive_Verification_V2;
     }
 
     addSize(size: number) {

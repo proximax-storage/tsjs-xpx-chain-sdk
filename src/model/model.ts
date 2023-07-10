@@ -205,6 +205,29 @@ export * from './transaction/TransactionSizeInfo';
 export * from './transaction/liquidityProvider/CreateLiquidityProviderTransaction';
 export * from './transaction/liquidityProvider/ManualRateChangeTransaction';
 
+export * from './transaction/storage/DataModificationApprovalTransaction';
+export * from './transaction/storage/DataModificationSingleApprovalTransaction';
+export * from './transaction/storage/DownloadApprovalTransaction';
+export * from './transaction/storage/NewDataModificationCancelTransaction';
+export * from './transaction/storage/NewDataModificationTransaction';
+export * from './transaction/storage/NewDownloadPaymentTransaction';
+export * from './transaction/storage/NewDownloadTransaction';
+export * from './transaction/storage/NewDriveClosureTransaction';
+export * from './transaction/storage/NewEndDriveVerificationTransactionV2';
+export * from './transaction/storage/NewFinishDownloadTransaction';
+export * from './transaction/storage/NewPrepareBcDriveTransaction';
+export * from './transaction/storage/NewReplicatorOnboardingTransaction';
+export * from './transaction/storage/NewStoragePaymentTransaction';
+export * from './transaction/storage/NewVerificationPaymentTransaction';
+export * from './transaction/storage/ReplicatorOffboardingTransaction';
+
+// Storage
+export * from './storage/DriveInfo';
+export * from './storage/DriveInfoSearch';
+export * from './storage/DownloadChannel';
+export * from './storage/DownloadChannelSearch';
+export * from './storage/Replicator';
+export * from './storage/ReplicatorSearch';
 // Upgrade
 export * from './upgrade/ChainUpgrade';
 

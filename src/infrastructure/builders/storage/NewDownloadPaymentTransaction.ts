@@ -44,7 +44,7 @@ export class Builder {
 
     constructor() {
         this.fee = [0, 0];
-        this.version = 1;
+        this.type = TransactionType.Download_Payment;
     }
 
     addSize(size: number) {

@@ -91,7 +91,7 @@ export class NewDownloadTransaction extends Transaction {
             throw new Error("downloadSize should be positive value")
         }
 
-        if(feedbackFeeAmount.toBigInt() <= BigInt(0)){
+        if(feedbackFeeAmount.toBigInt() < BigInt(0)){
             throw new Error("feedbackFeeAmount should be positive value")
         }
     }

@@ -222,6 +222,22 @@ export * from './upgradeDTO';
 export * from './uploadInfoDTO';
 export * from './verifiableEntityDTO';
 
+/*
+    Storage DTO export
+*/
+export * from "./storage/downloadChannelInlineInfoDTO";
+export * from "./storage/driveInfoInlineDTO";
+export * from "./storage/replicatorInlineDTO";
+export * from "./storage/downloadChannelInlineInfoMetaIdDTO";
+export * from "./storage/driveInfoInlineMetaIdDTO";
+export * from "./storage/replicatorInlineMetaIdDTO";
+export * from "./storage/downloadChannelInfoDTO";
+export * from "./storage/driveInfoDTO";
+export * from "./storage/replicatorDTO";
+/*
+    Storage DTO export end    
+*/
+
 import { AccountDTO } from './accountDTO';
 import { AccountExchangeDTO } from './accountExchangeDTO';
 import { AccountSdaExchangeDTO } from './accountSdaExchangeDTO';
@@ -439,6 +455,22 @@ import { HarvesterSearchDTO } from './harvesterSearchDTO';
 import { InlineHarvesterInfoDTO } from './inlineHarvesterInfoDTO';
 import { LiquidityProviderInlineDTO } from './liquidityProvider/liquidityProviderInlineDTO';
 import { LiquidityProviderSearchDTO } from './liquidityProvider/liquidityProviderSearchDTO';
+/*
+    Storage DTO import
+*/
+import { DownloadChannelInlineInfoDTO } from "./storage/downloadChannelInlineInfoDTO";
+import { DriveInfoInlineDTO } from "./storage/driveInfoInlineDTO";
+import { ReplicatorInlineDTO } from "./storage/replicatorInlineDTO";
+import { DownloadChannelInlineInfoMetaIdDTO } from "./storage/downloadChannelInlineInfoMetaIdDTO";
+import { DriveInfoInlineMetaIdDTO } from "./storage/driveInfoInlineMetaIdDTO";
+import { ReplicatorInlineMetaIdDTO } from "./storage/replicatorInlineMetaIdDTO";
+import { DownloadChannelInfoDTO } from "./storage/downloadChannelInfoDTO";
+import { DriveInfoDTO } from "./storage/driveInfoDTO";
+import { ReplicatorDTO } from "./storage/replicatorDTO";
+
+/*
+    Storage DTO export end    
+*/
 
 /* tslint:disable:no-unused-variable */
 let primitives = [
@@ -672,7 +704,16 @@ let typeMap: {[index: string]: any} = {
     "HarvesterInfoWithMetaDTO": HarvesterInfoWithMetaDTO,
     "HarvesterSearchDTO": HarvesterSearchDTO,
     "LiquidityProviderInlineDTO": LiquidityProviderInlineDTO,
-    "LiquidityProviderSearchDTO": LiquidityProviderSearchDTO
+    "LiquidityProviderSearchDTO": LiquidityProviderSearchDTO,
+    DriveInfoInlineDTO,
+    ReplicatorInlineDTO,
+    DownloadChannelInlineInfoDTO,
+    DriveInfoDTO,
+    DownloadChannelInfoDTO,
+    ReplicatorDTO,
+    DownloadChannelInlineInfoMetaIdDTO,
+    ReplicatorInlineMetaIdDTO,
+    DriveInfoInlineMetaIdDTO
 }
 
 export class ObjectSerializer {
