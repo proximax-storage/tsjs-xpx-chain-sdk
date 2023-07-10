@@ -247,4 +247,16 @@ export enum TransactionType {
 	Replicator_Offboarding          = 0x4762,
 
     // --------------------------------------------------------------------------------------
+    // ---------------------------deprecated storage type------------------------------------
+    Prepare_Drive                     = 0x415A,
+	Join_To_Drive                     = 0x425A,
+	Drive_File_System                 = 0x435A,
+	Files_Deposit                     = 0x445A,
+	End_Drive                         = 0x455A,
+	Drive_Files_Reward                = 0x465A,
+	Start_Drive_Verification          = 0x475A,
+	End_Drive_Verification            = 0x485A,
+	Start_File_Download               = 0x495A,
+	End_File_Download                 = 0x4A5A
+    //---------------------------------------------------------------------------------------
 }
