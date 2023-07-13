@@ -91,7 +91,7 @@ export class UInt64 {
         return uint64.toHex(this.toDTO());
     }
 
-    public toBigInt(): BigInt{
+    public toBigInt(): bigint{
         return BigInt("0x" + this.toHex());
     }
 

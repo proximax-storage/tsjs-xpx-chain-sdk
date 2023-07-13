@@ -82,6 +82,20 @@ import { TransactionMapUtility } from "./TransactionMapUtility";
 import { TransactionVersion } from "../../model/transaction/TransactionVersion";
 import { CreateLiquidityProviderTransaction } from '../../model/transaction/liquidityProvider/CreateLiquidityProviderTransaction';
 import { ManualRateChangeTransaction } from '../../model/transaction/liquidityProvider/ManualRateChangeTransaction';
+import { NewReplicatorOnboardingTransaction } from '../../model/transaction/storage/NewReplicatorOnboardingTransaction';
+import { NewPrepareBcDriveTransaction } from '../../model/transaction/storage/NewPrepareBcDriveTransaction';
+import { NewDataModificationTransaction } from '../../model/transaction/storage/NewDataModificationTransaction';
+import { ReplicatorOffboardingTransaction } from '../../model/transaction/storage/ReplicatorOffboardingTransaction';
+import { NewDriveClosureTransaction } from '../../model/transaction/storage/NewDriveClosureTransaction';
+import { NewEndDriveVerificationV2Transaction } from '../../model/transaction/storage/NewEndDriveVerificationTransactionV2';
+import { NewVerificationPaymentTransaction } from '../../model/transaction/storage/NewVerificationPaymentTransaction';
+import { NewFinishDownloadTransaction } from '../../model/transaction/storage/NewFinishDownloadTransaction';
+import { NewDownloadTransaction } from '../../model/transaction/storage/NewDownloadTransaction';
+import { NewDownloadPaymentTransaction } from '../../model/transaction/storage/NewDownloadPaymentTransaction';
+import { NewStoragePaymentTransaction } from '../../model/transaction/storage/NewStoragePaymentTransaction';
+import { NewDataModificationCancelTransaction } from '../../model/transaction/storage/NewDataModificationCancelTransaction';
+import { DataModificationSingleApprovalTransaction } from '../../model/transaction/storage/DataModificationSingleApprovalTransaction';
+import { DataModificationApprovalTransaction, DownloadApprovalTransaction } from '../../model/model';
 
 interface IsAggregatedInfo{
     isEmbedded: boolean;
@@ -841,7 +855,280 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isA
                 transactionInfo,
             );
             txn = removeSdaExchangeOfferTxn;
-        } 
+        } else if (transactionDTO.type === TransactionType.Replicator_Onboarding){
+            const replicatorOnboardingTxn = new NewReplicatorOnboardingTransaction(
+                networkType,
+                transactionTypeVersion,
+                isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                new UInt64(transactionDTO.capacity),
+                isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType, signerVersion) : undefined,
+                transactionInfo,
+            );
+            txn = replicatorOnboardingTxn;
+
+        } else if (transactionDTO.type === TransactionType.Prepare_Bc_Drive){
+            const prepareBcDriveTxn = new NewPrepareBcDriveTransaction(
+                networkType,
+                transactionTypeVersion,
+                isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                new UInt64(transactionDTO.driveSize),
+                new UInt64(transactionDTO.verificationFeeAmount),
+                transactionDTO.replicatorCount,
+                isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType, signerVersion) : undefined,
+                transactionInfo,
+            );
+            txn = prepareBcDriveTxn;
+
+        } else if (transactionDTO.type === TransactionType.Data_Modification){
+            const newDataModificationTxn = new NewDataModificationTransaction(
+                networkType,
+                transactionTypeVersion,
+                isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                PublicAccount.createFromPublicKey(transactionDTO.driveKey,
+                    networkType),
+                transactionDTO.downloadDataCdi,
+                new UInt64(transactionDTO.uploadSize),
+                new UInt64(transactionDTO.feedbackFeeAmount),
+                isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType, signerVersion) : undefined,
+                transactionInfo,
+            );
+            txn = newDataModificationTxn;
+
+        } else if (transactionDTO.type === TransactionType.Data_Modification_Approval){
+        
+            const newDataModificationApprovalTxn = new DataModificationApprovalTransaction(
+                networkType,
+                transactionTypeVersion,
+                isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                PublicAccount.createFromPublicKey(transactionDTO.driveKey,
+                    networkType),
+                transactionDTO.dataModificationId,
+                transactionDTO.modificationStatus,
+                transactionDTO.fileStructureCdi,
+                new UInt64(transactionDTO.fileStructureSizeBytes),
+                new UInt64(transactionDTO.metaFilesSizeBytes),
+                new UInt64(transactionDTO.usedDriveSizeBytes),
+                transactionDTO.judgingKeysCount,
+                transactionDTO.overlappingKeysCount,
+                transactionDTO.judgedKeysCount,
+                transactionDTO.opinions.length,
+                transactionDTO.publicKeys.map((pk)=> PublicAccount.createFromPublicKey(pk,
+                    networkType)),
+                transactionDTO.signatures,
+                new Uint8Array(transactionDTO.presentOpinions),
+                transactionDTO.opinions.map((data)=> new UInt64(data)),
+                isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType, signerVersion) : undefined,
+                transactionInfo,
+            );
+            txn = newDataModificationApprovalTxn;
+            
+        } else if (transactionDTO.type === TransactionType.Data_Modification_Single_Approval){
+            const dataModificationSingleApprovalTransaction = new DataModificationSingleApprovalTransaction(
+                networkType,
+                transactionTypeVersion,
+                isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                PublicAccount.createFromPublicKey(transactionDTO.driveKey,
+                    networkType),
+                transactionDTO.dataModificationId,
+                transactionDTO.publicKeysCount,
+                transactionDTO.publicKeys.map((pk)=> PublicAccount.createFromPublicKey(pk,
+                    networkType)),
+                transactionDTO.opinions.map((data)=> new UInt64(data)),
+                isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType, signerVersion) : undefined,
+                transactionInfo,
+            );
+            txn = dataModificationSingleApprovalTransaction;
+
+        } else if (transactionDTO.type === TransactionType.Data_Modification_Cancel){
+            const newDataModificationCancelTransaction = new NewDataModificationCancelTransaction(
+                networkType,
+                transactionTypeVersion,
+                isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                PublicAccount.createFromPublicKey(transactionDTO.driveKey,
+                    networkType),
+                transactionDTO.downloadDataCdi,
+                isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType, signerVersion) : undefined,
+                transactionInfo,
+            );
+            txn = newDataModificationCancelTransaction;
+
+        } else if (transactionDTO.type === TransactionType.Storage_Payment){
+            const newStoragePaymentTransaction = new NewStoragePaymentTransaction(
+                networkType,
+                transactionTypeVersion,
+                isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                PublicAccount.createFromPublicKey(transactionDTO.driveKey,
+                    networkType),
+                new UInt64(transactionDTO.storageUnits),
+                isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType, signerVersion) : undefined,
+                transactionInfo,
+            );
+            txn = newStoragePaymentTransaction;
+
+        } else if (transactionDTO.type === TransactionType.Download_Payment){
+            const newDownloadPaymentTransaction = new NewDownloadPaymentTransaction(
+                networkType,
+                transactionTypeVersion,
+                isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                transactionDTO.downloadChannelId,
+                new UInt64(transactionDTO.downloadSize),
+                new UInt64(transactionDTO.feedbackFeeAmount),
+                isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType, signerVersion) : undefined,
+                transactionInfo,
+            );
+            txn = newDownloadPaymentTransaction;
+
+        } else if (transactionDTO.type === TransactionType.Download){
+            const newDownloadTransaction = new NewDownloadTransaction(
+                networkType,
+                transactionTypeVersion,
+                isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                PublicAccount.createFromPublicKey(transactionDTO.driveKey,
+                    networkType),
+                new UInt64(transactionDTO.downloadSize),
+                new UInt64(transactionDTO.feedbackFeeAmount),
+                transactionDTO.listOfPublicKeys.map((pk) => PublicAccount.createFromPublicKey(pk,
+                    networkType)),
+                isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType, signerVersion) : undefined,
+                transactionInfo,
+            );
+            txn = newDownloadTransaction;
+
+        } else if (transactionDTO.type === TransactionType.Finish_Download){
+            const newFinishDownloadTransaction = new NewFinishDownloadTransaction(
+                networkType,
+                transactionTypeVersion,
+                isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                transactionDTO.downloadChannelId,
+                new UInt64(transactionDTO.feedbackFeeAmount),
+                isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType, signerVersion) : undefined,
+                transactionInfo,
+            );
+            txn = newFinishDownloadTransaction;
+
+        } else if (transactionDTO.type === TransactionType.Verification_Payment){
+            const newVerificationPaymentTransaction = new NewVerificationPaymentTransaction(
+                networkType,
+                transactionTypeVersion,
+                isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                PublicAccount.createFromPublicKey(transactionDTO.driveKey,
+                    networkType),
+                new UInt64(transactionDTO.verificationFeeAmount),
+                isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType, signerVersion) : undefined,
+                transactionInfo,
+            );
+            txn = newVerificationPaymentTransaction;
+
+        } else if (transactionDTO.type === TransactionType.End_Drive_Verification_V2){
+
+            const endDriveVerificationV2Txn = new NewEndDriveVerificationV2Transaction(
+                networkType,
+                transactionTypeVersion,
+                isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                PublicAccount.createFromPublicKey(transactionDTO.driveKey,
+                    networkType),
+                transactionDTO.verificationTrigger,
+                transactionDTO.shardId,
+                transactionDTO.publicKeys.map((pk) => PublicAccount.createFromPublicKey(pk,
+                    networkType)),
+                transactionDTO.signatures.map((signature) => signature),
+                transactionDTO.opinions,
+                isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType, signerVersion) : undefined,
+                transactionInfo,
+            );
+            txn = endDriveVerificationV2Txn;
+
+        } else if (transactionDTO.type === TransactionType.Download_Approval){
+
+            const downloadApprovalTxn = new DownloadApprovalTransaction(
+                networkType,
+                transactionTypeVersion,
+                isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                transactionDTO.downloadChannelId,
+                transactionDTO.approvalTrigger,
+                transactionDTO.judgingKeysCount, 
+                transactionDTO.overlappingKeysCount, 
+                transactionDTO.judgedKeysCount, 
+                transactionDTO.opinions.length, 
+                transactionDTO.publicKeys.map((pk) => PublicAccount.createFromPublicKey(pk,
+                    networkType)),
+                transactionDTO.signatures, 
+                new Uint8Array(transactionDTO.presentOpinions), 
+                transactionDTO.opinions.map((opinion: number[])=> new UInt64(opinion)),
+                isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                    networkType, signerVersion) : undefined,
+                transactionInfo
+            )
+            txn = downloadApprovalTxn;
+
+        } else if (transactionDTO.type === TransactionType.Drive_Closure){
+            const driveClosureTxn = new NewDriveClosureTransaction(
+                networkType,
+                transactionTypeVersion,
+                isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                PublicAccount.createFromPublicKey(transactionDTO.driveKey,
+                    networkType),
+                isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType, signerVersion) : undefined,
+                transactionInfo,
+            );
+            txn = driveClosureTxn;
+
+        } else if (transactionDTO.type === TransactionType.Replicator_Offboarding){
+            const replicatorOffboardingTxn = new ReplicatorOffboardingTransaction(
+                networkType,
+                transactionTypeVersion,
+                isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
+                PublicAccount.createFromPublicKey(transactionDTO.driveKey,
+                    networkType),
+                isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                                networkType, signerVersion) : undefined,
+                transactionInfo,
+            );
+            txn = replicatorOffboardingTxn;
+        }
         else{
             throw new Error('Unimplemented transaction with type ' + transactionDTO.type);
         }
@@ -860,6 +1147,8 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isA
         
     } catch (error) {
 
+        console.log(error);
+        
         let unknownTxnData = cloneAndRemoveTxnBaseData(transactionDTO);
 
         return new UnknownTransaction(

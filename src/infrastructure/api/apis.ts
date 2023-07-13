@@ -40,8 +40,8 @@ export * from './networkRoutesApi';
 import { NetworkRoutesApi } from './networkRoutesApi';
 export * from './nodeRoutesApi';
 import { NodeRoutesApi } from './nodeRoutesApi';
-export * from './serviceRoutesApi';
-import { ServiceRoutesApi } from './serviceRoutesApi';
+export * from './storageRoutesApi';
+import { StorageRoutesApi } from './storageRoutesApi';
 export * from './transactionRoutesApi';
 import { TransactionRoutesApi } from './transactionRoutesApi';
 export * from './upgradeRoutesApi';
@@ -84,7 +84,7 @@ export const APIS = [
     NamespaceRoutesApi, 
     NetworkRoutesApi, 
     NodeRoutesApi, 
-    ServiceRoutesApi, 
+    StorageRoutesApi, 
     TransactionRoutesApi, 
     UpgradeRoutesApi,
     HarvesterRoutesApi,

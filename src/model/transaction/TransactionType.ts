@@ -227,5 +227,36 @@ export enum TransactionType {
     * Liquidity Provider transasction type
     */
     Create_Liquidity_Provider = 0x4169,
-	Manual_Rate_Change        = 0x4269
+	Manual_Rate_Change        = 0x4269,
+    // ------------------------storage transactions type-------------------------------------
+
+    Replicator_Onboarding           = 0x4662,
+	Prepare_Bc_Drive                 = 0x4162,
+	Data_Modification               = 0x4262,
+	Data_Modification_Approval       = 0x4462,
+	Data_Modification_Single_Approval = 0x4B62,
+	Data_Modification_Cancel         = 0x4562,
+	Storage_Payment                 = 0x4A62,
+	Download_Payment                = 0x4962,
+	Download                       = 0x4362,
+	Finish_Download                 = 0x4862,
+	Verification_Payment            = 0x4C62,
+	End_Drive_Verification_V2         = 0x4F62,
+	Download_Approval               = 0x4D62,
+	Drive_Closure                   = 0x4E62,
+	Replicator_Offboarding          = 0x4762,
+
+    // --------------------------------------------------------------------------------------
+    // ---------------------------deprecated storage type------------------------------------
+    Prepare_Drive                     = 0x415A,
+	Join_To_Drive                     = 0x425A,
+	Drive_File_System                 = 0x435A,
+	Files_Deposit                     = 0x445A,
+	End_Drive                         = 0x455A,
+	Drive_Files_Reward                = 0x465A,
+	Start_Drive_Verification          = 0x475A,
+	End_Drive_Verification            = 0x485A,
+	Start_File_Download               = 0x495A,
+	End_File_Download                 = 0x4A5A
+    //---------------------------------------------------------------------------------------
 }
