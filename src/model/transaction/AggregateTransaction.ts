@@ -23,6 +23,7 @@ import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { UInt64 } from '../UInt64';
 import { AggregateTransactionCosignature } from './AggregateTransactionCosignature';
+import { AggregateV2TransactionCosignature } from './AggregateV2TransactionCosignature';
 import { CosignatureSignedTransaction } from './CosignatureSignedTransaction';
 import { Deadline } from './Deadline';
 import { InnerTransaction } from './InnerTransaction';
@@ -62,7 +63,7 @@ export class AggregateTransaction extends Transaction {
                 /**
                  * The array of transaction cosigners signatures.
                  */
-                public readonly cosignatures: AggregateTransactionCosignature[],
+                public readonly cosignatures: AggregateTransactionCosignature[] | AggregateV2TransactionCosignature[],
                 signature?: string,
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
@@ -81,7 +82,7 @@ export class AggregateTransaction extends Transaction {
     public static createComplete(deadline: Deadline,
                                  innerTransactions: InnerTransaction[],
                                  networkType: NetworkType,
-                                 cosignatures: AggregateTransactionCosignature[] = [],
+                                 cosignatures: AggregateV2TransactionCosignature[] = [],
                                  maxFee?: UInt64): AggregateTransaction {
         return new AggregateCompleteTransactionBuilder()
             .networkType(networkType)
@@ -127,7 +128,7 @@ export class AggregateTransaction extends Transaction {
     public static createBonded(deadline: Deadline,
                                innerTransactions: InnerTransaction[],
                                networkType: NetworkType,
-                               cosignatures: AggregateTransactionCosignature[] = [],
+                               cosignatures: AggregateV2TransactionCosignature[] = [],
                                maxFee?: UInt64): AggregateTransaction {
         return new AggregateBondedTransactionBuilder()
             .networkType(networkType)
@@ -315,10 +316,10 @@ export class AggregateTransaction extends Transaction {
 }
 
 export class AggregateCompleteTransactionBuilder extends TransactionBuilder {
-    private _cosignatures: AggregateTransactionCosignature[] = [];
+    private _cosignatures: AggregateV2TransactionCosignature[] = [];
     private _innerTransactions: InnerTransaction[] = [];
 
-    public cosignatures(cosignatures: AggregateTransactionCosignature[]) {
+    public cosignatures(cosignatures: AggregateV2TransactionCosignature[]) {
         this._cosignatures = cosignatures;
         return this;
     }
@@ -375,10 +376,10 @@ export class AggregateCompleteV1TransactionBuilder extends TransactionBuilder {
 }
 
 export class AggregateBondedTransactionBuilder extends TransactionBuilder {
-    private _cosignatures: AggregateTransactionCosignature[] = [];
+    private _cosignatures: AggregateV2TransactionCosignature[] = [];
     private _innerTransactions: InnerTransaction[] = [];
 
-    public cosignatures(cosignatures: AggregateTransactionCosignature[]) {
+    public cosignatures(cosignatures: AggregateV2TransactionCosignature[]) {
         this._cosignatures = cosignatures;
         return this;
     }
