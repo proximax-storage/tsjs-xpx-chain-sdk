@@ -38,8 +38,8 @@ describe('MosaicInfo', () => {
                 NetworkType.MIJIN_TEST),
             revision: 1,
             properties: [
-                new UInt64([6, 0]), // divisibility
                 new UInt64([3, 0]), // flags
+                new UInt64([6, 0]), // divisibility
                 new UInt64([1000, 0]), // duration
             ],
         },
@@ -114,6 +114,9 @@ describe('MosaicInfo', () => {
                 MosaicProperties.create({
                     supplyMutable: true,
                     transferable: false,
+                    restrictable: false,
+                    supplyForceImmutable: false,
+                    disableLocking: false,
                     divisibility: mosaicInfoDTO.mosaic.properties[1].compact(),
                     duration: mosaicInfoDTO.mosaic.properties[2],
                 }),
@@ -133,6 +136,9 @@ describe('MosaicInfo', () => {
                 MosaicProperties.create({
                     supplyMutable: false,
                     transferable: false,
+                    restrictable: false,
+                    supplyForceImmutable: false,
+                    disableLocking: false,
                     divisibility: mosaicInfoDTO.mosaic.properties[1].compact(),
                     duration: mosaicInfoDTO.mosaic.properties[2],
                 }),
@@ -153,6 +159,9 @@ describe('MosaicInfo', () => {
                 MosaicProperties.create({
                     supplyMutable: false,
                     transferable: true,
+                    restrictable: false,
+                    supplyForceImmutable: false,
+                    disableLocking: false,
                     divisibility: mosaicInfoDTO.mosaic.properties[1].compact(),
                     duration: mosaicInfoDTO.mosaic.properties[2],
                 }),
@@ -171,6 +180,9 @@ describe('MosaicInfo', () => {
                 MosaicProperties.create({
                     supplyMutable: false,
                     transferable: false,
+                    restrictable: false,
+                    supplyForceImmutable: false,
+                    disableLocking: false,
                     divisibility: mosaicInfoDTO.mosaic.properties[1].compact(),
                     duration: mosaicInfoDTO.mosaic.properties[2],
                 }),

@@ -190,6 +190,9 @@ describe('SerializeTransactionToJSON', () => {
             MosaicProperties.create({
                 supplyMutable: false,
                 transferable: false,
+                restrictable: false,
+                supplyForceImmutable: false,
+                disableLocking: false,
                 divisibility: 3,
                 duration: UInt64.fromUint(1000),
             }),
@@ -214,6 +217,9 @@ describe('SerializeTransactionToJSON', () => {
             MosaicProperties.create({
                 supplyMutable: false,
                 transferable: false,
+                restrictable: true,
+                supplyForceImmutable: true,
+                disableLocking: true,
                 divisibility: 3,
             }),
             NetworkType.MIJIN_TEST,

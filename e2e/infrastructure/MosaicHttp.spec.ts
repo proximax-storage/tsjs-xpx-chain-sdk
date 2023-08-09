@@ -101,6 +101,9 @@ describe('MosaicHttp', () => {
                 .mosaicProperties(MosaicProperties.create({
                     supplyMutable: true,
                     transferable: true,
+                    restrictable: true,
+                    supplyForceImmutable: true,
+                    disableLocking: true,
                     divisibility: mosaicDivisibility,
                     duration: mosaicDuration,
                 }))

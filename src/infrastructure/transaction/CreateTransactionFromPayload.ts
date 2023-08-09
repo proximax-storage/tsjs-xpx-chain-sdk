@@ -224,6 +224,9 @@ const CreateTransaction = (type: number, transactionData: string, txnVersion: Tr
                 .mosaicProperties(MosaicProperties.create({
                     supplyMutable: (flags & 1) === 1,
                     transferable: (flags & 2) === 2,
+                    restrictable: (flags & 4) === 4,
+                    supplyForceImmutable: (flags & 8) === 8,
+                    disableLocking: (flags & 16) === 16,
                     divisibility: extractNumberFromHexReverse(divisibility),
                     duration: duration ? UInt64.fromHex(reverseHexString(duration)) : undefined,
                 }))

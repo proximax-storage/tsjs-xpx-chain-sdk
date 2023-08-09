@@ -39,6 +39,9 @@ describe('MosaicView', () => {
             MosaicProperties.create({
                 supplyMutable: true,
                 transferable: true,
+                restrictable: true,
+                supplyForceImmutable: true,
+                disableLocking: true,
                 divisibility: 2,
                 duration: UInt64.fromUint(1000),
             }));

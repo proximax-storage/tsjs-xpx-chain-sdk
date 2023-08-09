@@ -37,6 +37,9 @@ export const XpxMosaicProperties = new KnownMosaicProperties(
     MosaicProperties.create({
         supplyMutable: false,
         transferable: true,
+        restrictable: false,
+        supplyForceImmutable: false,
+        disableLocking: false,
         divisibility: 6
     })
 );

@@ -24,7 +24,8 @@ import { MosaicPropertyType } from './MosaicPropertyType';
 export class MosaicProperties {
 
     /**
-     * The creator can choose between a definition that allows a mosaic supply change at a later point or an immutable supply.
+     * The creator can choose between a definition that allows a mosaic supply change at a later point 
+     * when having 100% supply of it or an immutable supply.
      * Allowed values for the property are "true" and "false". The default value is "false".
      */
     public readonly supplyMutable: boolean;
@@ -37,6 +38,16 @@ export class MosaicProperties {
      * Allowed values for the property are thus "true" and "false". The default value is "true".
      */
     public readonly transferable: boolean;
+
+    public readonly restrictable: boolean;
+
+    /**
+     * The creator can choose between a definition that allows a mosaic supply change at a later point or an immutable supply.
+     * Allowed values for the property are "true" and "false". The default value is "false".
+     */
+    public readonly supplyForceImmutable: boolean;
+
+    public readonly disableLocking: boolean;
 
     /**
      * @param flags
@@ -59,10 +70,13 @@ export class MosaicProperties {
                  * Duration is optional when defining the mosaic
                  */
                 public readonly duration?: UInt64) {
-        let binaryFlags = '00' + (flags.lower >>> 0).toString(2);
-        binaryFlags = binaryFlags.slice(- 2);
-        this.supplyMutable = binaryFlags[1] === '1';
-        this.transferable = binaryFlags[0] === '1';
+        let flagsNum = flags.compact();
+
+        this.supplyMutable = (flagsNum & 1) === 1;
+        this.transferable = (flagsNum & 2) === 2;
+        this.restrictable = (flagsNum & 4) === 4;
+        this.supplyForceImmutable = (flagsNum & 8) === 8;
+        this.disableLocking = (flagsNum & 16) === 16;
     }
 
     /**
@@ -73,10 +87,21 @@ export class MosaicProperties {
     public static create(params: {
         supplyMutable: boolean,
         transferable: boolean,
+        restrictable: boolean,
+        supplyForceImmutable: boolean,
+        disableLocking : boolean,
         divisibility: number,
         duration?: UInt64,
     }) {
-        const flags = (params.supplyMutable ? 1 : 0) + (params.transferable ? 2 : 0);
+        const flagsBinaryString = (params.disableLocking ? "1": "0") + 
+                                  (params.supplyForceImmutable ? "1": "0") +
+                                  (params.restrictable ? "1": "0") + 
+                                  (params.transferable ? "1": "0") + 
+                                  (params.supplyMutable ? "1": "0");
+        
+        
+        const flags = parseInt(flagsBinaryString, 2);
+
         return new MosaicProperties(UInt64.fromUint(flags), params.divisibility, params.duration);
     }
 
@@ -84,14 +109,28 @@ export class MosaicProperties {
      * Create DTO object
      */
     toDTO() {
+        const flags =   (this.disableLocking ? 16: 0) + 
+                        (this.supplyForceImmutable ? 8: 0) +
+                        (this.restrictable ? 4: 0) + 
+                        (this.transferable ? 2: 0) + 
+                        (this.supplyMutable ? 1: 0);
+
         const dto = [
-            {id: MosaicPropertyType.MosaicFlags, value: UInt64.fromUint((this.supplyMutable ? 1 : 0) +
-                                        (this.transferable ? 2 : 0)).toDTO()},
-            {id: MosaicPropertyType.Divisibility, value: UInt64.fromUint(this.divisibility).toDTO()},
+            {   
+                id: MosaicPropertyType.MosaicFlags, 
+                value: UInt64.fromUint(flags).toDTO()
+            },
+            {   
+                id: MosaicPropertyType.Divisibility, 
+                value: UInt64.fromUint(this.divisibility).toDTO()
+            }
         ];
 
         if (this.duration !== undefined) {
-            dto.push({id: MosaicPropertyType.Duration, value: this.duration.toDTO()});
+            dto.push({
+                id: MosaicPropertyType.Duration, 
+                value: this.duration.toDTO()
+            });
         }
 
         return dto;

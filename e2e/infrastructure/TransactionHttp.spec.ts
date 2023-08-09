@@ -308,6 +308,9 @@ describe('TransactionHttp', () => {
                     .mosaicProperties(MosaicProperties.create({
                         supplyMutable: true,
                         transferable: true,
+                        restrictable: true,
+                        supplyForceImmutable: true,
+                        disableLocking: true,
                         divisibility: 3,
                         duration: UInt64.fromUint(1000),
                     }))
@@ -329,6 +332,9 @@ describe('TransactionHttp', () => {
                     .mosaicProperties(MosaicProperties.create({
                         supplyMutable: true,
                         transferable: true,
+                        restrictable: true,
+                        supplyForceImmutable: true,
+                        disableLocking: true,
                         divisibility: 3,
                         duration: UInt64.fromUint(1000),
                     }))
@@ -379,6 +385,9 @@ describe('TransactionHttp', () => {
                     .mosaicProperties(MosaicProperties.create({
                         supplyMutable: true,
                         transferable: true,
+                        restrictable: true,
+                        supplyForceImmutable: true,
+                        disableLocking: true,
                         divisibility: 3,
                         duration: UInt64.fromUint(1000),
                     }))
@@ -411,6 +420,9 @@ describe('TransactionHttp', () => {
                     .mosaicProperties(MosaicProperties.create({
                         supplyMutable: true,
                         transferable: true,
+                        restrictable: true,
+                        supplyForceImmutable: true,
+                        disableLocking: true,
                         divisibility: 3,
                         duration: UInt64.fromUint(1000),
                     }))
@@ -437,6 +449,9 @@ describe('TransactionHttp', () => {
                     .mosaicProperties(MosaicProperties.create({
                         supplyMutable: true,
                         transferable: true,
+                        restrictable: true,
+                        supplyForceImmutable: true,
+                        disableLocking: true,
                         divisibility: 3,
                         duration: UInt64.fromUint(60000),
                     }))
@@ -457,6 +472,9 @@ describe('TransactionHttp', () => {
                     .mosaicProperties(MosaicProperties.create({
                         supplyMutable: true,
                         transferable: true,
+                        restrictable: true,
+                        supplyForceImmutable: true,
+                        disableLocking: true,
                         divisibility: 3,
                         duration: UInt64.fromUint(1000),
                     }))

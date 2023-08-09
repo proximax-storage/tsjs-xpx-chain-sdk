@@ -106,8 +106,18 @@ export class Builder {
         return this;
     }
 
-    addLevyMutable() {
+    addRestrictable() {
         this.flags += 4;
+        return this;
+    }
+
+    addSupplyForceImmutable() {
+        this.flags += 8;
+        return this;
+    }
+
+    addDisableLocking() {
+        this.flags += 16;
         return this;
     }
 

@@ -24,7 +24,7 @@ describe('MosaicProperties', () => {
     it('should createComplete an MosaicProperties object with constructor', () => {
         const propertiesDTO = [
             new UInt64([
-                7,
+                31,
                 0,
             ]),
             new UInt64([
@@ -48,6 +48,9 @@ describe('MosaicProperties', () => {
 
         expect(mosaicProperties.supplyMutable).to.be.equal(true);
         expect(mosaicProperties.transferable).to.be.equal(true);
+        expect(mosaicProperties.restrictable).to.be.equal(true);
+        expect(mosaicProperties.supplyForceImmutable).to.be.equal(true);
+        expect(mosaicProperties.disableLocking).to.be.equal(true);
     });
 
     it('should createComplete an MosaicProperties object with static method', () => {
@@ -56,6 +59,9 @@ describe('MosaicProperties', () => {
         const mosaicProperties = MosaicProperties.create({
             supplyMutable: false,
             transferable: false,
+            restrictable: false,
+            supplyForceImmutable: false,
+            disableLocking: false,
             divisibility: 10,
             duration,
         });
@@ -65,12 +71,18 @@ describe('MosaicProperties', () => {
 
         expect(mosaicProperties.supplyMutable).to.be.equal(false);
         expect(mosaicProperties.transferable).to.be.equal(false);
+        expect(mosaicProperties.restrictable).to.be.equal(false);
+        expect(mosaicProperties.supplyForceImmutable).to.be.equal(false);
+        expect(mosaicProperties.disableLocking).to.be.equal(false);
     });
 
     it('should createComplete an MosaicProperties object without duration', () => {
         const mosaicProperties = MosaicProperties.create({
             supplyMutable: false,
             transferable: false,
+            restrictable: false,
+            supplyForceImmutable: false,
+            disableLocking: false,
             divisibility: 10,
         });
 
@@ -79,5 +91,8 @@ describe('MosaicProperties', () => {
 
         expect(mosaicProperties.supplyMutable).to.be.equal(false);
         expect(mosaicProperties.transferable).to.be.equal(false);
+        expect(mosaicProperties.restrictable).to.be.equal(false);
+        expect(mosaicProperties.supplyForceImmutable).to.be.equal(false);
+        expect(mosaicProperties.disableLocking).to.be.equal(false);
     });
 });

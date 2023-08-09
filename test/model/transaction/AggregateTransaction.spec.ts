@@ -156,6 +156,9 @@ describe('AggregateTransaction', () => {
             MosaicProperties.create({
                 supplyMutable: true,
                 transferable: true,
+                restrictable: true,
+                supplyForceImmutable: true,
+                disableLocking: true,
                 divisibility: 3,
                 duration: UInt64.fromUint(1000),
             }),
@@ -176,8 +179,8 @@ describe('AggregateTransaction', () => {
         expect(signedTransaction.payload.substring(
             324,
             signedTransaction.payload.length,
-            //          030000904D41        01000000000000000103030C000000
-        )).to.be.equal('030000904D41E6DE84B8010000000000000001030302E803000000000000');
+            //          030000904D41        0100000000000000011F030C000000
+        )).to.be.equal('030000904D41E6DE84B80100000000000000011F0302E803000000000000');
     });
 
     it('should createComplete an AggregateTransaction object with MosaicSupplyChangeTransaction', () => {
