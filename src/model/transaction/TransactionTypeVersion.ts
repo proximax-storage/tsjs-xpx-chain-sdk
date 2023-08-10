@@ -41,7 +41,7 @@ export enum TransactionTypeVersion {
      * Mosaic definition transaction version.
      * @type {number}
      */
-    MOSAIC_DEFINITION = 3,
+    MOSAIC_DEFINITION = 4,
 
     /**
      * Mosaic supply change transaction.
@@ -213,6 +213,8 @@ export enum TransactionTypeVersion {
      */
     AGGREGATE_BONDED_V2 = 1,
 
+    Account_V2_Upgrade = 1,
+
     /**
      * Place SDA exchange transaction version.
      * @type {number}
@@ -246,5 +248,17 @@ export enum TransactionTypeVersion {
 	Drive_Closure                     = 1,
 	Replicator_Offboarding            = 1,
 
+    // --------------------------------------------------------------------------------------
+    // ----------------------------symbol merge type-----------------------------------------
+    NetworkConfig_Absolute_Height       = 1,
+	Node_Key_Link                       = 1,
+	Vrf_Key_Link                        = 1,
+	Lock_Fund_Transfer                  = 1,
+	Lock_Fund_Cancel_Unlock             = 1,
+	Account_Address_Restriction         = 1,
+	Account_Mosaic_Restriction          = 1,
+	Account_Operation_Restriction       = 1,
+	Mosaic_Global_Restriction           = 1,
+	Mosaic_Address_Restriction          = 1,
     // --------------------------------------------------------------------------------------
 }
