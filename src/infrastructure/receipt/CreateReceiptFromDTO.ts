@@ -128,12 +128,19 @@ const createResolutionStatement = (statementDTO, resolutionType): ResolutionStat
  * @constructor
  */
 const createTransactionStatement = (statementDTO, networkType): TransactionStatement => {
+
+    const knownReceiptTypes = Object.values(ReceiptType);
+
     return new TransactionStatement(
         statementDTO.height,
         new ReceiptSource(statementDTO.source.primaryId, statementDTO.source.secondaryId),
-        statementDTO.receipts.map((receipt) => {
-            return CreateReceiptFromDTO(receipt, networkType);
-        }),
+        statementDTO.receipts
+            .filter((receipt)=>{
+                return knownReceiptTypes.includes(receipt.type);
+            })
+            .map((receipt) => {
+                return CreateReceiptFromDTO(receipt, networkType);
+            }),
     );
 };
 
