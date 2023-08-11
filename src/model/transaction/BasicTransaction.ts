@@ -24,15 +24,12 @@ import { TransactionInfo } from './TransactionInfo';
 import { DerivationScheme } from '../../core/crypto';
 
 /**
- * An unknown transaction class that hold the transaction dto with issue, 
- * these transaction exist at the blockchain.
+ * A known transaction class that hold the basic transaction, without any extra details. 
  */
-export class UnknownTransaction extends Transaction{
+export class BasicTransaction extends Transaction{
 
     /**
      * @constructor
-     * @param unknownPayload
-     * @param unknownData
      * @param type
      * @param networkType
      * @param version
@@ -43,9 +40,6 @@ export class UnknownTransaction extends Transaction{
      * @param transactionInfo
      */
     constructor(
-            public readonly unknownPayload: string,
-            public readonly unknownData: Object,
-            
             /**
              * The transaction type.
              */
@@ -89,22 +83,22 @@ export class UnknownTransaction extends Transaction{
 
     /**
      * @override Transaction.size()
-     * @description get the byte size of a UnknownTransaction, will return error
-     * @returns {never}
-     * @memberof UnknownTransaction
+     * @description get the byte size of a BasicTransaction, will return error
+     * @returns {number}
+     * @memberof BasicTransaction
      */
-    public get size(): never {
-        throw new Error("Cannot get size of UnknownTransaction");
+    public get size(): number {
+        return Transaction.getHeaderSize();
     }
 
     /**
      * @override Transaction.buildTransaction()
-     * @description buildTransaction of UnknownTransaction, will return error
+     * @description buildTransaction of BasicTransaction, will return error
      * @returns {never}
-     * @memberof UnknownTransaction
+     * @memberof BasicTransaction
      */
     protected buildTransaction(): never {
-        throw new Error("Cannot buildTransaction from UnknownTransaction");
+        throw new Error("SDK not yet implemented transaction");
     }
 
     /**
@@ -112,72 +106,17 @@ export class UnknownTransaction extends Transaction{
      * @override Transaction.toAggregate()
      * @internal
      * @param signer - Transaction signer.
-     * @returns never
+     * @returns {never}
      */
     public toAggregate(signer: PublicAccount): never {
-        throw new Error('Cannot create inner transaction from UnknownTransaction.');
-    }
-
-    /**
-     * Convert an aggregate transaction to an inner transaction including transaction signer, will return error
-     * @override Transaction.toAggregateV1()
-     * @internal
-     * @param signer - Transaction signer.
-     * @returns never
-     */
-    public toAggregateV1(signer: PublicAccount): never {
-        throw new Error('Cannot create inner transaction from UnknownTransaction.');
-    }
-
-    /**
-     * Serialize and sign transaction creating a new SignedTransaction
-     * @override Transaction.preV2SignWith()
-     * @internal
-     * @param account - The account to sign the transaction
-     * @param generationHash - Network generation hash hex
-     * @param {DerivationScheme} dScheme The Sign Schema. (SHA2 / SHA3)
-     * @returns {never}
-     */
-    public preV2SignWith(): never {
-        throw new Error('Cannot sign UnknownTransaction');
-    }
-
-    /**
-     * @override Transaction.aggregateTransaction()
-     * @internal
-     * @returns {never}
-     */
-    public aggregateTransaction(): never {
-        throw new Error('Cannot aggregate UnknownTransaction');
-    }
-
-    /**
-     * @override Transaction.reapplyGiven()
-     * @internal
-     * @description reapply a given value to the transaction in an immutable way
-     * @returns {never}
-     * @memberof UnknownTransaction
-     */
-    public reapplyGiven(): never {
-        throw new Error('Cannot update UnknownTransaction');
-    }
-
-    /**
-     * @override Transaction.reapplyGiven()
-     * @internal
-     * @description Serialize a transaction object
-     * @returns {never}
-     * @memberof UnknownTransaction
-     */
-    public serialize(): never {
-        throw new Error('Cannot serialize UnknownTransaction');
+        throw new Error("SDK not yet implemented transaction");
     }
 
     /**
      * @override Transaction.toJSON()
      * @description Create JSON object
      * @returns {Object}
-     * @memberof UnknownTransaction
+     * @memberof BasicTransaction
      */
     public toJSON() {
         const commonTransactionObject = {
@@ -187,9 +126,7 @@ export class UnknownTransaction extends Transaction{
             maxFee: this.maxFee.toDTO(),
             deadline: this.deadline.toDTO(),
             signature: this.signature ? this.signature : '',
-            signer: this.signer!.publicKey,
-            unknownData: this.unknownData,
-            unknownPayload: this.unknownPayload
+            signer: this.signer!.publicKey
         };
 
         return { transaction: commonTransactionObject };

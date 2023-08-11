@@ -96,6 +96,7 @@ import { NewStoragePaymentTransaction } from '../../model/transaction/storage/Ne
 import { NewDataModificationCancelTransaction } from '../../model/transaction/storage/NewDataModificationCancelTransaction';
 import { DataModificationSingleApprovalTransaction } from '../../model/transaction/storage/DataModificationSingleApprovalTransaction';
 import { DataModificationApprovalTransaction, DownloadApprovalTransaction } from '../../model/model';
+import { BasicTransaction } from '../../model/transaction/BasicTransaction';
 
 interface IsAggregatedInfo{
     isEmbedded: boolean;
@@ -1128,7 +1129,21 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isA
                 transactionInfo,
             );
             txn = replicatorOffboardingTxn;
+        } else if(transactionDTO.type === TransactionType.Add_Dbrb_Process){
+            const processTxn = new BasicTransaction(
+                transactionDTO.type, 
+                networkType, 
+                transactionTypeVersion, 
+                isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
+                isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]), 
+                transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
+                    networkType, signerVersion) : undefined, 
+                isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
+                transactionInfo
+            );
+            txn = processTxn;
         }
+
         else{
             throw new Error('Unimplemented transaction with type ' + transactionDTO.type);
         }
