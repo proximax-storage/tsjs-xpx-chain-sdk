@@ -92,4 +92,8 @@ export enum ReceiptType {
      * and a new block triggers the creation of currency mosaics.
      */
     Inflation = 0x5143,
+
+    Offer_Creation = 0xA16A,
+    Offer_Exchange = 0xB26A,
+    Offer_Removal = 0xC36A,
 }

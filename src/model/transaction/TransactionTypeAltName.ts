@@ -28,6 +28,10 @@ export enum TransactionTypeAltName {
     MODIFY_ACCOUNT_METADATA = "Account Metadata v1",
     MODIFY_NAMESPACE_METADATA = "Namespace Metadata v1",
     MOSAIC_METADATA_V2 = "SDA Metadata",
+    NAMESPACE_METADATA_V2 = "Namespace Metadata",
+    ACCOUNT_METADATA_V2 = "Account Metadata",
     MODIFY_MOSAIC_LEVY = "Modify SDA Levy",
-    REMOVE_MOSAIC_LEVY = "Remove SDA Levy"
+    REMOVE_MOSAIC_LEVY = "Remove SDA Levy",
+    Prepare_Bc_Drive = "Prepare BC Drive",
+    Add_Dbrb_Process = "Add DBRB Process",
 }

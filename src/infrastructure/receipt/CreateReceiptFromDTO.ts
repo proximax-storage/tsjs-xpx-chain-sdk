@@ -24,6 +24,9 @@ import { NamespaceId } from '../../model/namespace/NamespaceId';
 import { ArtifactExpiryReceipt } from '../../model/receipt/ArtifactExpiryReceipt';
 import { BalanceChangeReceipt } from '../../model/receipt/BalanceChangeReceipt';
 import { BalanceTransferReceipt } from '../../model/receipt/BalanceTransferReceipt';
+import { OfferCreationReceipt } from '../../model/receipt/OfferCreationReceipt';
+import { OfferExchangeReceipt, ExchangeDetails } from '../../model/receipt/OfferExchangeReceipt';
+import { OfferRemovalReceipt } from '../../model/receipt/OfferRemovalReceipt';
 import { InflationReceipt } from '../../model/receipt/InflationReceipt';
 import { Receipt } from '../../model/receipt/Receipt';
 import { ReceiptSource } from '../../model/receipt/ReceiptSource';
@@ -39,8 +42,6 @@ import {UInt64} from '../../model/UInt64';
  * @param receiptDTO
  * @param networkType
  * @returns {Statement}
- * @see https://github.com/nemtech/catapult-server/blob/master/src/catapult/model/ReceiptType.h
- * @see https://github.com/nemtech/catapult-server/blob/master/src/catapult/model/ReceiptType.cpp
  * @constructor
  */
 export const CreateStatementFromDTO = (receiptDTO, networkType): Statement => {
@@ -76,6 +77,12 @@ export const CreateReceiptFromDTO = (receiptDTO, networkType): Receipt => {
             return  createArtifactExpiryReceipt(receiptDTO);
         case ReceiptType.Inflation:
             return createInflationReceipt(receiptDTO);
+        case ReceiptType.Offer_Creation:
+            return createOfferCreationReceipt(receiptDTO, networkType);
+        case ReceiptType.Offer_Exchange:
+            return createOfferExchangeReceipt(receiptDTO, networkType);
+        case ReceiptType.Offer_Removal:
+            return createOfferRemovalReceipt(receiptDTO, networkType);
         default:
             throw new Error(`Receipt type: ${receiptDTO.type} not recognized.`);
     }
@@ -121,12 +128,19 @@ const createResolutionStatement = (statementDTO, resolutionType): ResolutionStat
  * @constructor
  */
 const createTransactionStatement = (statementDTO, networkType): TransactionStatement => {
+
+    const knownReceiptTypes = Object.values(ReceiptType);
+
     return new TransactionStatement(
         statementDTO.height,
         new ReceiptSource(statementDTO.source.primaryId, statementDTO.source.secondaryId),
-        statementDTO.receipts.map((receipt) => {
-            return CreateReceiptFromDTO(receipt, networkType);
-        }),
+        statementDTO.receipts
+            .filter((receipt)=>{
+                return knownReceiptTypes.includes(receipt.type);
+            })
+            .map((receipt) => {
+                return CreateReceiptFromDTO(receipt, networkType);
+            }),
     );
 };
 
@@ -203,4 +217,65 @@ const extractArtifactId = (receiptType: ReceiptType, id: number[]): MosaicId | N
         default:
             throw new Error('Receipt type is not supported.');
     }
+};
+
+/**
+ * @internal
+ * @param receiptDTO
+ * @returns {OfferCreationReceipt}
+ * @constructor
+ */
+const createOfferCreationReceipt = (receiptDTO, networkType): Receipt => {
+    return new OfferCreationReceipt(
+        PublicAccount.createFromPublicKey(receiptDTO.sender, networkType),
+        new MosaicId(receiptDTO.mosaicIdGive),
+        new MosaicId(receiptDTO.mosaicIdGet),
+        new UInt64(receiptDTO.mosaicAmountGive),
+        new UInt64(receiptDTO.mosaicAmountGet),
+        receiptDTO.version,
+        receiptDTO.type,
+    );
+};
+
+/**
+ * @internal
+ * @param receiptDTO
+ * @returns {OfferExchangeReceipt}
+ * @constructor
+ */
+const createOfferExchangeReceipt = (receiptDTO, networkType): Receipt => {
+    return new OfferExchangeReceipt(
+        PublicAccount.createFromPublicKey(receiptDTO.sender, networkType),
+        new MosaicId(receiptDTO.mosaicIdGive),
+        new MosaicId(receiptDTO.mosaicIdGet),
+        receiptDTO.exchangeDetails.map((exchangeDetail)=>{
+
+            return <ExchangeDetails>{
+                recipient: Address.createFromEncoded(exchangeDetail.recipient),
+				mosaicIdGive: new MosaicId(exchangeDetail.mosaicIdGive),
+				mosaicIdGet: new MosaicId(exchangeDetail.mosaicIdGet),
+				mosaicAmountGive: new UInt64(exchangeDetail.mosaicAmountGive),
+				mosaicAmountGet: new UInt64(exchangeDetail.mosaicAmountGet)
+            };
+        }),
+        receiptDTO.version,
+        receiptDTO.type,
+    );
+};
+
+/**
+ * @internal
+ * @param receiptDTO
+ * @returns {OfferRemovalReceipt}
+ * @constructor
+ */
+const createOfferRemovalReceipt = (receiptDTO, networkType): Receipt => {
+    return new OfferRemovalReceipt(
+        PublicAccount.createFromPublicKey(receiptDTO.sender, networkType),
+        new MosaicId(receiptDTO.mosaicIdGive),
+        new MosaicId(receiptDTO.mosaicIdGet),
+        new UInt64(receiptDTO.mosaicAmountGiveReturned),
+        receiptDTO.version,
+        receiptDTO.type,
+    );
 };
