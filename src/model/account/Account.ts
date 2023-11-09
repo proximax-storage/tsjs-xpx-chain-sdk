@@ -257,6 +257,16 @@ export class Account {
     }
 
     /**
+     * Sign a transaction payload, please make sure the transaction version scheme is correct
+     * @param transaction - The transaction payload to be signed.
+     * @param generationHash - Network generation hash hex
+     * @return {SignedTransaction}
+     */
+    public signTransactionPayload(payload: string, generationHash: string): SignedTransaction {
+        return Transaction.signPayload(payload, this, generationHash);
+    }
+
+    /**
      * Sign transaction with cosignatories creating a new SignedTransaction
      * @param transaction - The aggregate transaction to be signed.
      * @param cosignatories - The array of accounts that will cosign the transaction
