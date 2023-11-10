@@ -122,6 +122,7 @@ export * from './receipt/InflationReceipt';
 export * from './receipt/Receipt';
 export * from './receipt/ReceiptSource';
 export * from './receipt/ReceiptType';
+export * from './receipt/ReceiptGroupType';
 export * from './receipt/ReceiptVersion';
 export * from './receipt/ResolutionEntry';
 export * from './receipt/ResolutionStatement';
