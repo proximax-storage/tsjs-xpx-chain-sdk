@@ -139,7 +139,7 @@ describe('Receipt', () => {
     // it('should createComplete a balance transfer receipt for mosaic levy', () => {
     //     const receiptDTO = {
     //         version: 1,
-    //         type: 4685,
+    //         type: 4941,
     //         sender: account.publicKey,
     //         recipient: '9103B60AAF2762688300000000000000000000000000000000',
     //         mosaicId: [481110499, 231112638],
@@ -164,7 +164,7 @@ describe('Receipt', () => {
     it('should createComplete a balance transfer receipt - Mosaic Rental Fee', () => {
         const receiptDTO = {
             version: 1,
-            type: 4941,
+            type: 4685,
             sender: account.publicKey,
             recipient: '9103B60AAF2762688300000000000000000000000000000000',
             mosaicId: [3646934825, 3576016193],
