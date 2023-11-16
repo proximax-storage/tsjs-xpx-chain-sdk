@@ -255,7 +255,6 @@ export class Attribute {
 // tslint:disable-next-line:max-classes-per-file
 export class ScalarAttribute extends Attribute {
     typeSize: any;
-    name: any;
     /**
      * @constructor
      * @param {string} name schema attribute name
@@ -281,7 +280,6 @@ export class ScalarAttribute extends Attribute {
 // tslint:disable-next-line:max-classes-per-file
 export class ArrayAttribute extends Attribute {
     typeSize: any;
-    name: any;
     /**
      * @constructor
      * @param name - {string}
@@ -307,7 +305,6 @@ export class ArrayAttribute extends Attribute {
 // tslint:disable-next-line:max-classes-per-file
 export class TableAttribute extends Attribute {
     schema: any;
-    name: any;
     /**
      *
      * @param {string} name
@@ -340,7 +337,6 @@ export class TableAttribute extends Attribute {
 // tslint:disable-next-line:max-classes-per-file
 export class TableArrayAttribute extends Attribute {
     schema: any;
-    name: any;
     /**
      * @constructor
      * @param {string} name
