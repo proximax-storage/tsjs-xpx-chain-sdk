@@ -122,6 +122,7 @@ export * from './receipt/InflationReceipt';
 export * from './receipt/Receipt';
 export * from './receipt/ReceiptSource';
 export * from './receipt/ReceiptType';
+export * from './receipt/ReceiptGroupType';
 export * from './receipt/ReceiptVersion';
 export * from './receipt/ResolutionEntry';
 export * from './receipt/ResolutionStatement';
@@ -223,6 +224,10 @@ export * from './transaction/storage/NewReplicatorOnboardingTransaction';
 export * from './transaction/storage/NewStoragePaymentTransaction';
 export * from './transaction/storage/NewVerificationPaymentTransaction';
 export * from './transaction/storage/ReplicatorOffboardingTransaction';
+
+// Liquidity Provider
+export * from './liquidity/LiquidityProvider';
+export * from './liquidity/LiquidityProviderSearch';
 
 // Storage
 export * from './storage/DriveInfo';

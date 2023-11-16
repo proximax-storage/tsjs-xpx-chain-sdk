@@ -68,7 +68,7 @@ export const CreateReceiptFromDTO = (receiptDTO, networkType): Receipt => {
         case ReceiptType.LockSecret_Completed:
         case ReceiptType.LockSecret_Expired:
             return createBalanceChangeReceipt(receiptDTO, networkType);
-        case ReceiptType.Mosaic_Levy:
+        // case ReceiptType.Mosaic_Levy:
         case ReceiptType.Mosaic_Rental_Fee:
         case ReceiptType.Namespace_Rental_Fee:
             return createBalanceTransferReceipt(receiptDTO, networkType);

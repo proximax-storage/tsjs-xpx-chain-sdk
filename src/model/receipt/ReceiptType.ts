@@ -17,10 +17,7 @@
 
 /**
  * Receipt type enums.
- *
- * @see https://github.com/nemtech/catapult-server/blob/master/src/catapult/model/ReceiptType.h
- * @see https://github.com/nemtech/catapult-server/blob/master/src/catapult/model/ReceiptType.cpp
- */
+*/
 export enum ReceiptType {
 
     /**
@@ -38,20 +35,21 @@ export enum ReceiptType {
     /**
      * A collection of state changes for a given source. It is recorded when a state change receipt is issued.
      */
-    Transaction_Group = 0xE143,
+    Transaction_Group = 0xE134,
     /**
      * The mosaicId expiring in this block. It is recorded when a mosaic expires.
      */
     Mosaic_Expired = 0x414D,
-    /**
+    // TODO: Check Mosaic Levy Receipt
+    /*
      * The sender and recipient of the levied mosaic, the mosaicId and amount. It is recorded when a transaction has a levied mosaic.
-     */
-    Mosaic_Levy = 0x124D,
+    */
+    // Mosaic_Levy = 0x134D,
     /**
      * The sender and recipient of the mosaicId and amount representing the cost of registering the mosaic.
      * It is recorded when a mosaic is registered.
      */
-    Mosaic_Rental_Fee = 0x134D,
+    Mosaic_Rental_Fee = 0x124D,
     /**
      * The namespaceId expiring in this block. It is recorded when a namespace expires.
      */
