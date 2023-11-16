@@ -225,6 +225,10 @@ export * from './transaction/storage/NewStoragePaymentTransaction';
 export * from './transaction/storage/NewVerificationPaymentTransaction';
 export * from './transaction/storage/ReplicatorOffboardingTransaction';
 
+// Liquidity Provider
+export * from './liquidity/LiquidityProvider';
+export * from './liquidity/LiquidityProviderSearch';
+
 // Storage
 export * from './storage/DriveInfo';
 export * from './storage/DriveInfoSearch';
