@@ -319,8 +319,8 @@ const CreateTransaction = (type: number, transactionData: string, txnVersion: Tr
 
             case TransactionType.MODIFY_MULTISIG_ACCOUNT:
             // read bytes
-            const minRemovalDelta = extractNumberFromHexReverse(transactionData.substring(0, 2));
-            const minApprovalDelta = extractNumberFromHexReverse(transactionData.substring(2, 4));
+            const minRemovalDelta = extractSignedNumberFromHexReverse(transactionData.substring(0, 2));
+            const minApprovalDelta = extractSignedNumberFromHexReverse(transactionData.substring(2, 4));
             const modificationsCount = extractNumberFromHexReverse(transactionData.substring(4, 6));
 
             const multiSigModificationSubString = transactionData.substring(6);
@@ -679,7 +679,7 @@ const CreateTransaction = (type: number, transactionData: string, txnVersion: Tr
  * @returns {number}
  */
 const extractValueSizeDelta = (hexValue: string): number => {
-    return convert.hexToInt(convert.hexReverse(hexValue))
+    return extractSignedNumberFromHexReverse(hexValue);
 }; 
 
 /**
@@ -689,6 +689,31 @@ const extractValueSizeDelta = (hexValue: string): number => {
  */
 const extractNumberFromHexReverse = (hexValue: string): number => {
     return parseInt(convert.uint8ArrayToHex(convert.hexToUint8(hexValue).reverse()), 16);
+};
+
+/**
+ * @internal
+ * @param hexValue - Hex representation of the number
+ * @returns {number} - Signed number
+ */
+const extractSignedNumberFromHexReverse = (hexValue: string): number => {
+ 
+    const bytesLength = hexValue.length / 2;
+    const unsignedNumber = parseInt(convert.uint8ArrayToHex(convert.hexToUint8(hexValue).reverse()), 16);
+    const binaryString = unsignedNumber.toString(2);
+
+    // compare bits
+    if((bytesLength * 8) > binaryString.length){
+        return unsignedNumber;
+    }
+    else if(binaryString.substring(0, 1) === "0"){
+        return unsignedNumber;
+    }
+
+    const maxValue = parseInt("FF".repeat(bytesLength), 16);
+    const negativeNumber = ~(maxValue - unsignedNumber);
+
+    return negativeNumber;
 };
 
 /**

@@ -69,7 +69,7 @@ export class Deadline {
      * @param chronoUnit
      * @returns {Deadline}
      */
-     public static createForBonded(deadline: number = 2, chronoUnit: ChronoUnit = ChronoUnit.HOURS): Deadline {
+     public static createForBonded(deadline: number = 2, chronoUnit: ChronoUnit = ChronoUnit.HOURS, maximum?: UInt64): Deadline {
         const networkTimeStamp = (new Date()).getTime();
         const timeStampDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(networkTimeStamp), ZoneId.SYSTEM);
         const deadlineDateTime = timeStampDateTime.plus(deadline, chronoUnit);
@@ -82,6 +82,10 @@ export class Deadline {
             (deadlineDateTime.atZone(ZoneId.SYSTEM).toInstant().toEpochMilli() - Deadline.timestampNemesisBlock * 1000),
         );
 
+        if(maximum && adjustedValue.toBigInt() > maximum.toBigInt()){
+            return Deadline.createFromUint64(maximum);
+        }
+
         return new Deadline(deadlineDateTime, adjustedValue);
     } 
 
@@ -92,6 +96,20 @@ export class Deadline {
      */
     public static createFromDTO(value: number[]): Deadline {
         const adjustedValue = new UInt64(value);
+        const dateSeconds = adjustedValue.compact();
+        const deadline = LocalDateTime.ofInstant(
+            Instant.ofEpochMilli(Math.round(dateSeconds + Deadline.timestampNemesisBlock * 1000)),
+            ZoneId.SYSTEM);
+        return new Deadline(deadline, adjustedValue);
+    }
+
+    /**
+     * Create unrestricted deadline model from UInt64
+     * @param UInt64 value
+     * @returns {Deadline}
+     */
+    public static createFromUint64(value: UInt64): Deadline {
+        const adjustedValue = value;
         const dateSeconds = adjustedValue.compact();
         const deadline = LocalDateTime.ofInstant(
             Instant.ofEpochMilli(Math.round(dateSeconds + Deadline.timestampNemesisBlock * 1000)),

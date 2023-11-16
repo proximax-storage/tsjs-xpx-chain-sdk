@@ -240,7 +240,6 @@ export class MosaicMetadataTransactionBuilder extends TransactionBuilder {
     public calculateDifferences(){
         if(this._value !== undefined && this._value !== null && this._oldValue !== undefined && this._oldValue !== null){
             this._valueSizeDelta = (Convert.utf8ToHex(this._value).length /2) - (Convert.utf8ToHex(this._oldValue).length / 2);
-            console.log(this._valueSizeDelta);
             this._valueSize = Math.max(Convert.utf8ToHex(this._value).length/2, Convert.utf8ToHex(this._oldValue).length/2, 0);
 
             let valueUint8Array = new Uint8Array(this._valueSize);

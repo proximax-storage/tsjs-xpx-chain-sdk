@@ -82,6 +82,32 @@ export class VerifiableTransaction {
         };
     }
 
+    /**
+     * @param {KeyPair } keyPair KeyPair instance
+     * @param {string} generationHash Network generation hash hex
+     * @param {DerivationScheme} dScheme The derivation scheme
+     * @returns {module:model/TransactionPayload} - Signed Transaction Payload
+     */
+    static signTransactionPayload(txnPayload: string, keyPair, generationHash, dScheme: DerivationScheme = DerivationScheme.Ed25519Sha3) {
+        const generationHashBytes = Array.from(convert.hexToUint8(generationHash));
+        const byteBuffer = Array.from(convert.hexToUint8(txnPayload));
+        const signingBytes = new Uint8Array(generationHashBytes.concat(byteBuffer.slice(4 + 64 + 32)));
+        const keyPairEncoded = KeyPair.createKeyPairFromPrivateKeyString(keyPair.privateKey, dScheme);
+        const signature = Array.from(KeyPair.sign(keyPair, new Uint8Array(signingBytes), dScheme));
+        const signedTransactionBuffer = byteBuffer
+            .splice(0, 4)
+            .concat(signature)
+            .concat(Array.from(keyPairEncoded.publicKey))
+            .concat(byteBuffer
+                .splice(64 + 32, byteBuffer.length));
+        const uint8Data = Uint8Array.from(signedTransactionBuffer);
+        const payload = convert.uint8ArrayToHex(uint8Data);
+        return {
+            payload,
+            hash: VerifiableTransaction.createTransactionHash(payload, generationHashBytes),
+        };
+    }
+
     serialize() {
         return this.schema.serialize(Array.from(this.bytes));
     }

@@ -31,6 +31,8 @@ import { TransactionTypeAltName } from './TransactionTypeAltName';
 import { FeeCalculationStrategy, DefaultFeeCalculationStrategy } from './FeeCalculationStrategy';
 import { ucwords } from '../../core/format/Utilities';
 import { TransactionVersion } from './TransactionVersion';
+import { extractNetwork } from './Utilities';
+import { Convert as convert } from '../../core/format/Convert';
 
 /**
  * An abstract transaction class that serves as the base class of all NEM transactions.
@@ -140,6 +142,25 @@ export abstract class Transaction {
             account.publicKey,
             this.type,
             this.version.networkType);
+    }
+
+    public static signPayload(txnPayload: string, account: Account, generationHash: string){
+        const networkType = extractNetwork(txnPayload.substring(200, 208));
+        const type = parseInt(convert.uint8ArrayToHex(convert.hexToUint8(txnPayload.substring(208, 212)).reverse()), 16);
+        const signedTransactionRaw = VerifiableTransaction.signTransactionPayload(
+            txnPayload, 
+            account, 
+            generationHash, 
+            account.version
+        );
+        
+        return new SignedTransaction(
+            signedTransactionRaw.payload,
+            signedTransactionRaw.hash,
+            account.publicKey,
+            type,
+            networkType
+        );
     }
 
     /**
