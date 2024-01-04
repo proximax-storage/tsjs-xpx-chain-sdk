@@ -12,7 +12,7 @@ import { LiquidityProviderSearchDTO } from '../model/liquidityProvider/liquidity
 
 import { ObjectSerializer} from '../model/models';
 import { RequestOptions } from '../RequestOptions';
-import { HttpError, RequestFile, TransactionSearchResponse } from './apis';
+import { PaginationQueryParams } from '../PaginationQueryParams';
 
 export interface LiquidityProviderResponse{
     response: AxiosResponse;
@@ -115,8 +115,14 @@ export class LiquidityProviderRoutesApi {
      * Return the liquidity providers information.
      * @summary Get  liquidity providers information
      */
-    public async searchLiquidityProviders (reqOptions?:RequestOptions) : Promise<LiquidityProviderSearchResponse> {
+    public async searchLiquidityProviders (paginationQueryParams?: PaginationQueryParams, reqOptions?:RequestOptions) : Promise<LiquidityProviderSearchResponse> {
         const localVarPath = '/liquidity_providers';
+
+        let localVarQueryParameters: any = {};
+
+        if(paginationQueryParams){
+            localVarQueryParameters = paginationQueryParams.buildQueryParams();
+        }
 
         let requestHeaders = this.combineHeaders(reqOptions);
 
@@ -125,7 +131,8 @@ export class LiquidityProviderRoutesApi {
             headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
-            responseType: 'json'
+            responseType: 'json',
+            params: localVarQueryParameters
         };
 
         return new Promise<LiquidityProviderSearchResponse>((resolve, reject) => {

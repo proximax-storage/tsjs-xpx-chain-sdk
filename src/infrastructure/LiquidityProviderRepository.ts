@@ -18,6 +18,7 @@ import {Observable} from 'rxjs';
 import { LiquidityProvider } from '../model/liquidity/LiquidityProvider';
 import { LiquidityProviderSearch } from '../model/liquidity/LiquidityProviderSearch';
 import { RequestOptions } from './RequestOptions';
+import { PaginationQueryParams } from './PaginationQueryParams';
 
 /**
  * Liquidity Provider interface repository.
@@ -33,7 +34,8 @@ export interface LiquidityProviderRepository {
 
     /**
      * Get liquidity providers info.
+     * @param paginationQueryParams search filter
      * @returns Observable<LiquidityProviderSearch>
      */
-    searchLiquidityProviders(requestOptions?: RequestOptions): Observable<LiquidityProviderSearch>;
+    searchLiquidityProviders(paginationQueryParams: PaginationQueryParams, requestOptions?: RequestOptions): Observable<LiquidityProviderSearch>;
 }

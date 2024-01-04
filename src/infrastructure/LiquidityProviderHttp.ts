@@ -31,6 +31,7 @@ import {NetworkHttp} from './NetworkHttp';
 import { RequestOptions } from './RequestOptions';
 import { LiquidityProviderSearch } from '../model/liquidity/LiquidityProviderSearch';
 import { Pagination } from "../model/Pagination"
+import { PaginationQueryParams } from './PaginationQueryParams';
 
 /**
  * LiquidityProvider http repository.
@@ -97,10 +98,11 @@ export class LiquidityProviderHttp extends Http implements LiquidityProviderRepo
 
     /**
      * Search LiquidityProviders info.
+     * @param paginationQueryParams
      * @returns Observable<LiquidityProviderSearchResponse>
      */
-    public searchLiquidityProviders(requestOptions?: RequestOptions): Observable<LiquidityProviderSearch> {
-        return observableFrom(this.liquidityProviderRoutesApi.searchLiquidityProviders(requestOptions))
+    public searchLiquidityProviders(paginationQueryParams?: PaginationQueryParams, requestOptions?: RequestOptions): Observable<LiquidityProviderSearch> {
+        return observableFrom(this.liquidityProviderRoutesApi.searchLiquidityProviders(paginationQueryParams, requestOptions))
             .pipe(map((response: LiquidityProviderSearchResponse) => {
 
                 const liquidityProviders = response.body.data.map((inlineLPInfo)=> new LiquidityProvider(
