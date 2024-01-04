@@ -26,6 +26,6 @@ export interface HarvesterRepository {
      * @summary Search harvester based on query params
      * @param paginationQueryParams search filter
      */
-     searchHarvesters(offerType: PaginationQueryParams, requestOptions?: RequestOptions): Observable<HarvesterSearch>;
+     searchHarvesters(paginationQueryParams: PaginationQueryParams, requestOptions?: RequestOptions): Observable<HarvesterSearch>;
 
 }

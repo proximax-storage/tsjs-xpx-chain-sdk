@@ -963,7 +963,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isA
                 isAggregatedInfo.isEmbedded ? new UInt64([0,0]) : new UInt64(transactionDTO.maxFee || [0, 0]),
                 PublicAccount.createFromPublicKey(transactionDTO.driveKey,
                     networkType),
-                transactionDTO.downloadDataCdi,
+                transactionDTO.dataModificationId,
                 isAggregatedInfo.isEmbedded ? undefined : transactionDTO.signature,
                 transactionDTO.signer ? PublicAccount.createFromPublicKey(transactionDTO.signer,
                                 networkType, signerVersion) : undefined,

@@ -21,6 +21,6 @@ const schema = new Schema([
 	array('fee', TypeSize.INT),
 	array('deadline', TypeSize.INT),
 	array('driveKey'),
-	array('downloadDataCdi')
+	array('dataModificationId')
 ]);
 export default schema;

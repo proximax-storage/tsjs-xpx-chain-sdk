@@ -39,8 +39,7 @@ export class Builder {
     type: number;
     deadline: number[];
     driveKey: string;
-    downloadDataCdi: string;
-    uploadSize: number[];
+    dataModificationId: string;
     feedbackFeeAmount: number[];
 
     constructor() {
@@ -78,8 +77,8 @@ export class Builder {
         return this;
     }
 
-    addDownloadDataCdi(downloadDataCdi: string) {
-        this.downloadDataCdi = downloadDataCdi;
+    addDataModificationId(dataModificationId: string) {
+        this.dataModificationId = dataModificationId;
         return this;
     }
 
@@ -93,7 +92,7 @@ export class Builder {
         const deadlineVector = DataModificationCancelTransactionBuffer.createDeadlineVector(builder, this.deadline);
         const feeVector = DataModificationCancelTransactionBuffer.createMaxFeeVector(builder, this.fee);
         const driveKeyVector = DataModificationCancelTransactionBuffer.createDriveKeyVector(builder, convert.hexToUint8(this.driveKey));
-        const downloadDataCdiVector = DataModificationCancelTransactionBuffer.createDownloadDataCdiVector(builder, convert.hexToUint8(this.downloadDataCdi));
+        const dataModificationIdVector = DataModificationCancelTransactionBuffer.createDataModificationIdVector(builder, convert.hexToUint8(this.dataModificationId));
    
         DataModificationCancelTransactionBuffer.startDataModificationCancelTransactionBuffer(builder);
         DataModificationCancelTransactionBuffer.addSize(builder, this.size);
@@ -104,7 +103,7 @@ export class Builder {
         DataModificationCancelTransactionBuffer.addMaxFee(builder, feeVector);
         DataModificationCancelTransactionBuffer.addDeadline(builder, deadlineVector);
         DataModificationCancelTransactionBuffer.addDriveKey(builder, driveKeyVector);
-        DataModificationCancelTransactionBuffer.addDownloadDataCdi(builder, downloadDataCdiVector);
+        DataModificationCancelTransactionBuffer.addDataModificationId(builder, dataModificationIdVector);
 
         const codedTransfer = DataModificationCancelTransactionBuffer.endDataModificationCancelTransactionBuffer(builder);
         builder.finish(codedTransfer);

@@ -110,17 +110,17 @@ driveKeyArray():Uint8Array|null {
   return offset ? new Uint8Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
 }
 
-downloadDataCdi(index: number):number|null {
+dataModificationId(index: number):number|null {
   const offset = this.bb!.__offset(this.bb_pos, 20);
   return offset ? this.bb!.readUint8(this.bb!.__vector(this.bb_pos + offset) + index) : 0;
 }
 
-downloadDataCdiLength():number {
+dataModificationIdLength():number {
   const offset = this.bb!.__offset(this.bb_pos, 20);
   return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
 }
 
-downloadDataCdiArray():Uint8Array|null {
+dataModificationIdArray():Uint8Array|null {
   const offset = this.bb!.__offset(this.bb_pos, 20);
   return offset ? new Uint8Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
 }
@@ -231,11 +231,11 @@ static startDriveKeyVector(builder:flatbuffers.Builder, numElems:number) {
   builder.startVector(1, numElems, 1);
 }
 
-static addDownloadDataCdi(builder:flatbuffers.Builder, downloadDataCdiOffset:flatbuffers.Offset) {
-  builder.addFieldOffset(8, downloadDataCdiOffset, 0);
+static addDataModificationId(builder:flatbuffers.Builder, dataModificationIdOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(8, dataModificationIdOffset, 0);
 }
 
-static createDownloadDataCdiVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset {
+static createDataModificationIdVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset {
   builder.startVector(1, data.length, 1);
   for (let i = data.length - 1; i >= 0; i--) {
     builder.addInt8(data[i]!);
@@ -243,7 +243,7 @@ static createDownloadDataCdiVector(builder:flatbuffers.Builder, data:number[]|Ui
   return builder.endVector();
 }
 
-static startDownloadDataCdiVector(builder:flatbuffers.Builder, numElems:number) {
+static startDataModificationIdVector(builder:flatbuffers.Builder, numElems:number) {
   builder.startVector(1, numElems, 1);
 }
 
@@ -252,7 +252,7 @@ static endDataModificationCancelTransactionBuffer(builder:flatbuffers.Builder):f
   return offset;
 }
 
-static createDataModificationCancelTransactionBuffer(builder:flatbuffers.Builder, size:number, signatureOffset:flatbuffers.Offset, signerOffset:flatbuffers.Offset, version:number, type:number, maxFeeOffset:flatbuffers.Offset, deadlineOffset:flatbuffers.Offset, driveKeyOffset:flatbuffers.Offset, downloadDataCdiOffset:flatbuffers.Offset):flatbuffers.Offset {
+static createDataModificationCancelTransactionBuffer(builder:flatbuffers.Builder, size:number, signatureOffset:flatbuffers.Offset, signerOffset:flatbuffers.Offset, version:number, type:number, maxFeeOffset:flatbuffers.Offset, deadlineOffset:flatbuffers.Offset, driveKeyOffset:flatbuffers.Offset, dataModificationIdOffset:flatbuffers.Offset):flatbuffers.Offset {
   DataModificationCancelTransactionBuffer.startDataModificationCancelTransactionBuffer(builder);
   DataModificationCancelTransactionBuffer.addSize(builder, size);
   DataModificationCancelTransactionBuffer.addSignature(builder, signatureOffset);
@@ -262,7 +262,7 @@ static createDataModificationCancelTransactionBuffer(builder:flatbuffers.Builder
   DataModificationCancelTransactionBuffer.addMaxFee(builder, maxFeeOffset);
   DataModificationCancelTransactionBuffer.addDeadline(builder, deadlineOffset);
   DataModificationCancelTransactionBuffer.addDriveKey(builder, driveKeyOffset);
-  DataModificationCancelTransactionBuffer.addDownloadDataCdi(builder, downloadDataCdiOffset);
+  DataModificationCancelTransactionBuffer.addDataModificationId(builder, dataModificationIdOffset);
   return DataModificationCancelTransactionBuffer.endDataModificationCancelTransactionBuffer(builder);
 }
 }
