@@ -69,7 +69,7 @@ export class NewDataModificationCancelTransaction extends Transaction {
                 deadline: Deadline,
                 maxFee: UInt64,
                 public readonly driveKey: PublicAccount,
-                public readonly downloadDataCdi: string,
+                public readonly dataModificationId: string,
                 signature?: string,
                 signer?: PublicAccount,
                 transactionInfo?: TransactionInfo) {
@@ -77,7 +77,7 @@ export class NewDataModificationCancelTransaction extends Transaction {
         super(TransactionType.Data_Modification_Cancel,
               networkType, version, deadline, maxFee, signature, signer, transactionInfo);
 
-        if(!Convert.isHexString(downloadDataCdi) || downloadDataCdi.length !== 64){
+        if(!Convert.isHexString(dataModificationId) || dataModificationId.length !== 64){
             throw new Error("downloadDataCdi should be 32 bytes hexadecimal string")
         }
     }
@@ -115,7 +115,7 @@ export class NewDataModificationCancelTransaction extends Transaction {
             transaction: {
                 ...parent.transaction,
                 driveKey: this.driveKey.toDTO(),
-                downloadDataCdi: this.downloadDataCdi
+                dataModificationId: this.dataModificationId
             }
         }
     }
@@ -131,14 +131,14 @@ export class NewDataModificationCancelTransaction extends Transaction {
             .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addDriveKey(this.driveKey.publicKey)
-            .addDownloadDataCdi(this.downloadDataCdi)
+            .addDataModificationId(this.dataModificationId)
             .build();
     }
 }
 
 export class NewDataModificationCancelTransactionBuilder extends TransactionBuilder {
     private _driveKey: PublicAccount;
-    private _downloadDataCdi: string;
+    private _dataModificationId: string;
 
     public driveKey(driveKey: PublicAccount) {
         this._driveKey = driveKey;
@@ -146,7 +146,7 @@ export class NewDataModificationCancelTransactionBuilder extends TransactionBuil
     }
 
     public downloadDataCdi(downloadDataCdi: string) {
-        this._downloadDataCdi = downloadDataCdi;
+        this._dataModificationId = downloadDataCdi;
         return this;
     }
 
@@ -157,7 +157,7 @@ export class NewDataModificationCancelTransactionBuilder extends TransactionBuil
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
             this._maxFee ? this._maxFee : calculateFee(NewDataModificationCancelTransaction.calculateSize(), this._feeCalculationStrategy),
             this._driveKey,
-            this._downloadDataCdi,
+            this._dataModificationId,
             this._signature,
             this._signer,
             this._transactionInfo
