@@ -22,6 +22,6 @@ const schema = new Schema([
 	array('deadline', TypeSize.INT),
 	array('driveSize', TypeSize.INT),
 	array('verificationFeeAmount', TypeSize.INT),
-	array('replicatorCount', TypeSize.SHORT)
+	ushort('replicatorCount')
 ]);
 export default schema;
