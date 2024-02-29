@@ -173,7 +173,8 @@ export class MosaicRoutesApi {
             headers: requestHeaders,
             url: localVarPath,
             baseURL: this.basePath,
-            responseType: 'json'
+            responseType: 'json',
+            params: localVarQueryParameters
         };
 
         return new Promise<MosaicRichListResponse>((resolve, reject) => {
