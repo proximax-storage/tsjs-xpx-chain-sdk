@@ -42,6 +42,9 @@ describe('MosaicDefinitionTransaction', () => {
                 supplyMutable: true,
                 transferable: true,
                 divisibility: 3,
+                disableLocking: false,
+                restrictable: false,
+                supplyForceImmutable: false,
                 duration: UInt64.fromUint(1000),
             }),
             NetworkType.MIJIN_TEST,
@@ -59,6 +62,9 @@ describe('MosaicDefinitionTransaction', () => {
                 supplyMutable: true,
                 transferable: true,
                 divisibility: 3,
+                disableLocking: false,
+                restrictable: false,
+                supplyForceImmutable: false,
                 duration: UInt64.fromUint(1000),
             }),
             NetworkType.MIJIN_TEST,
@@ -78,6 +84,9 @@ describe('MosaicDefinitionTransaction', () => {
                 supplyMutable: true,
                 transferable: true,
                 divisibility: 3,
+                disableLocking: true,
+                restrictable: true,
+                supplyForceImmutable: true,
                 duration: UInt64.fromUint(1000),
             }),
             NetworkType.MIJIN_TEST,
@@ -88,13 +97,16 @@ describe('MosaicDefinitionTransaction', () => {
         expect(mosaicDefinitionTransaction.mosaicProperties.divisibility).to.be.equal(3);
         expect(mosaicDefinitionTransaction.mosaicProperties.supplyMutable).to.be.equal(true);
         expect(mosaicDefinitionTransaction.mosaicProperties.transferable).to.be.equal(true);
+        expect(mosaicDefinitionTransaction.mosaicProperties.restrictable).to.be.equal(true);
+        expect(mosaicDefinitionTransaction.mosaicProperties.supplyForceImmutable).to.be.equal(true);
+        expect(mosaicDefinitionTransaction.mosaicProperties.disableLocking).to.be.equal(true);
 
         const signedTransaction = mosaicDefinitionTransaction.preV2SignWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
             244,
             signedTransaction.payload.length,
-        )).to.be.equal('E6DE84B8010000000000000001030302E803000000000000');
+        )).to.be.equal('E6DE84B80100000000000000011F0302E803000000000000');
 
     });
 
@@ -108,6 +120,9 @@ describe('MosaicDefinitionTransaction', () => {
                 supplyMutable: false,
                 transferable: false,
                 divisibility: 3,
+                disableLocking: false,
+                restrictable: false,
+                supplyForceImmutable: false,
                 duration: UInt64.fromUint(1000),
             }),
             NetworkType.MIJIN_TEST,
@@ -118,6 +133,9 @@ describe('MosaicDefinitionTransaction', () => {
         expect(mosaicDefinitionTransaction.mosaicProperties.divisibility).to.be.equal(3);
         expect(mosaicDefinitionTransaction.mosaicProperties.supplyMutable).to.be.equal(false);
         expect(mosaicDefinitionTransaction.mosaicProperties.transferable).to.be.equal(false);
+        expect(mosaicDefinitionTransaction.mosaicProperties.supplyForceImmutable).to.be.equal(false);
+        expect(mosaicDefinitionTransaction.mosaicProperties.restrictable).to.be.equal(false);
+        expect(mosaicDefinitionTransaction.mosaicProperties.disableLocking).to.be.equal(false);
 
         const signedTransaction = mosaicDefinitionTransaction.preV2SignWith(account, generationHash);
 
@@ -137,6 +155,9 @@ describe('MosaicDefinitionTransaction', () => {
                 MosaicProperties.create({
                     supplyMutable: true,
                     transferable: true,
+                    disableLocking: false,
+                    restrictable: false,
+                    supplyForceImmutable: false,
                     divisibility: 3,
                     duration: UInt64.fromUint(1000),
                 }),
@@ -155,6 +176,9 @@ describe('MosaicDefinitionTransaction', () => {
                 MosaicProperties.create({
                     supplyMutable: true,
                     transferable: true,
+                    disableLocking: false,
+                    restrictable: false,
+                    supplyForceImmutable: false,
                     divisibility: 3,
                     duration: undefined,
                 }),
@@ -173,6 +197,9 @@ describe('MosaicDefinitionTransaction', () => {
             MosaicProperties.create({
                 supplyMutable: false,
                 transferable: false,
+                disableLocking: false,
+                restrictable: false,
+                supplyForceImmutable: false,
                 divisibility: 3,
             }),
             NetworkType.MIJIN_TEST,
@@ -200,6 +227,9 @@ describe('MosaicDefinitionTransaction', () => {
             MosaicProperties.create({
                 supplyMutable: false,
                 transferable: false,
+                disableLocking: false,
+                restrictable: false,
+                supplyForceImmutable: false,
                 divisibility: 3,
             }),
             NetworkType.MIJIN_TEST,

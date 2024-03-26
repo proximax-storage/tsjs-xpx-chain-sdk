@@ -96,18 +96,8 @@ export class Builder {
         return this;
     }
 
-    addSupplyMutable() {
-        this.flags += 1;
-        return this;
-    }
-
-    addTransferability() {
-        this.flags += 2;
-        return this;
-    }
-
-    addLevyMutable() {
-        this.flags += 4;
+    addFlags(flags: number){
+        this.flags = flags;
         return this;
     }
 

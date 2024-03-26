@@ -29,7 +29,7 @@ export enum TransactionTypeVersion {
      * Transfer Transaction transaction version.
      * @type {number}
      */
-    TRANSFER = 3,
+    TRANSFER = 4,
 
     /**
      * Register namespace transaction version.
@@ -41,13 +41,13 @@ export enum TransactionTypeVersion {
      * Mosaic definition transaction version.
      * @type {number}
      */
-    MOSAIC_DEFINITION = 3,
+    MOSAIC_DEFINITION = 4,
 
     /**
      * Mosaic supply change transaction.
      * @type {number}
      */
-    MOSAIC_SUPPLY_CHANGE = 2,
+    MOSAIC_SUPPLY_CHANGE = 3,
 
     /**
      * Modify multisig account transaction version.
@@ -119,7 +119,7 @@ export enum TransactionTypeVersion {
      * Link account transaction version
      * @type {number}
      */
-    LINK_ACCOUNT = 2,
+    LINK_ACCOUNT = 3,
 
     /**
      * Modify metadata transactions version
@@ -132,7 +132,7 @@ export enum TransactionTypeVersion {
      * Modify account metadata nem transactions version
      * @type {number}
      */
-     ACCOUNT_METADATA_V2 = 1,
+    ACCOUNT_METADATA_V2 = 1,
 
      /**
      * Modify mosaic metadata nem transactions version
@@ -157,13 +157,13 @@ export enum TransactionTypeVersion {
      * Modify remove mosaic levy transactions version
      * @type {number}
      */
-     MOSAIC_REMOVE_LEVY = 1,
+    MOSAIC_REMOVE_LEVY = 1,
 
     /**
      * Chain configuration transaction version
      * @type {number}
      */
-    CHAIN_CONFIG = 1,
+    CHAIN_CONFIG = 2,
 
     /**
      * Chain upgrade transaction version

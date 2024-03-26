@@ -96,4 +96,28 @@ export class MosaicInfo {
     public isTransferable(): boolean {
         return this.properties.transferable;
     }
+
+    /**
+     * Is mosaic restrictable
+     * @returns {boolean}
+     */
+    public isRestrictable(): boolean {
+        return this.properties.restrictable;
+    }
+
+    /**
+     * Is mosaic supply force immutable
+     * @returns {boolean}
+     */
+    public isSupplyForceImmutable(): boolean {
+        return this.properties.supplyForceImmutable;
+    }
+
+    /**
+     * Is mosaic disable locking
+     * @returns {boolean}
+     */
+    public isDisableLocking(): boolean {
+        return this.properties.disableLocking;
+    }
 }

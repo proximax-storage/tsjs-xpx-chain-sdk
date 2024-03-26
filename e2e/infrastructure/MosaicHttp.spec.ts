@@ -101,6 +101,9 @@ describe('MosaicHttp', () => {
                 .mosaicProperties(MosaicProperties.create({
                     supplyMutable: true,
                     transferable: true,
+                    disableLocking: true,
+                    restrictable: true,
+                    supplyForceImmutable: true,
                     divisibility: mosaicDivisibility,
                     duration: mosaicDuration,
                 }))
@@ -174,6 +177,9 @@ describe('MosaicHttp', () => {
                     expect((mosaicInfo.duration as UInt64).equals(mosaicDuration)).to.be.equal(true);
                     expect(mosaicInfo.isSupplyMutable()).to.be.equal(true);
                     expect(mosaicInfo.isTransferable()).to.be.equal(true);
+                    expect(mosaicInfo.isDisableLocking()).to.be.equal(true);
+                    expect(mosaicInfo.isRestrictable()).to.be.equal(true);
+                    expect(mosaicInfo.isSupplyForceImmutable()).to.be.equal(true);
                     done();
                 });
         });
@@ -188,6 +194,9 @@ describe('MosaicHttp', () => {
                     expect((mosaicInfos[0].duration as UInt64).equals(mosaicDuration)).to.be.equal(true);
                     expect(mosaicInfos[0].isSupplyMutable()).to.be.equal(true);
                     expect(mosaicInfos[0].isTransferable()).to.be.equal(true);
+                    expect(mosaicInfos[0].isDisableLocking()).to.be.equal(true);
+                    expect(mosaicInfos[0].isRestrictable()).to.be.equal(true);
+                    expect(mosaicInfos[0].isSupplyForceImmutable()).to.be.equal(true);
                     done();
                 });
         });
@@ -201,6 +210,9 @@ describe('MosaicHttp', () => {
                     expect(mosaicInfos[0].divisibility).to.be.equal(mosaicDivisibility);
                     expect(mosaicInfos[0].isSupplyMutable()).to.be.equal(true);
                     expect(mosaicInfos[0].isTransferable()).to.be.equal(true);
+                    expect(mosaicInfos[0].isDisableLocking()).to.be.equal(true);
+                    expect(mosaicInfos[0].isRestrictable()).to.be.equal(true);
+                    expect(mosaicInfos[0].isSupplyForceImmutable()).to.be.equal(true);
                     done();
                 });
         });
