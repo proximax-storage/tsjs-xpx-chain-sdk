@@ -39,6 +39,9 @@ describe('MosaicAmountView', () => {
             MosaicProperties.create({
                 supplyMutable: true,
                 transferable: true,
+                disableLocking: false,
+                restrictable: false,
+                supplyForceImmutable: false,
                 divisibility: 3,
                 duration: UInt64.fromUint(1000),
             }),

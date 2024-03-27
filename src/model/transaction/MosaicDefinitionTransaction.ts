@@ -21,7 +21,7 @@ import { PublicAccount } from '../account/PublicAccount';
 import { NetworkType } from '../blockchain/NetworkType';
 import { MosaicId } from '../mosaic/MosaicId';
 import { MosaicNonce } from '../mosaic/MosaicNonce';
-import { MosaicProperties } from '../mosaic/MosaicProperties';
+import { MosaicProperties,  } from '../mosaic/MosaicProperties';
 import { UInt64 } from '../UInt64';
 import { Deadline } from './Deadline';
 import { Transaction } from './Transaction';
@@ -154,15 +154,8 @@ export class MosaicDefinitionTransaction extends Transaction {
             .addDivisibility(this.mosaicProperties.divisibility)
             .addDuration(this.mosaicProperties.duration ? this.mosaicProperties.duration.toDTO() : [])
             .addNonce(this.mosaicNonce.toDTO())
-            .addMosaicId(this.mosaicId.id.toDTO());
-
-        if (this.mosaicProperties.supplyMutable === true) {
-            mosaicDefinitionTransaction = mosaicDefinitionTransaction.addSupplyMutable();
-        }
-
-        if (this.mosaicProperties.transferable === true) {
-            mosaicDefinitionTransaction = mosaicDefinitionTransaction.addTransferability();
-        }
+            .addMosaicId(this.mosaicId.id.toDTO())
+            .addFlags(this.mosaicProperties.flags);
 
         return mosaicDefinitionTransaction.build();
     }

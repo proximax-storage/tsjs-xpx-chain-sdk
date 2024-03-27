@@ -280,6 +280,26 @@ export enum TransactionType {
     // --------------------------------------------------------------------------------------
 
     // ----------------------------internal service txn--------------------------------------
-    Add_Dbrb_Process           = 0x416C,
+    Add_Dbrb_Process                    = 0x416C,
+    Remove_Dbrb_Process                 = 0x426C,
+    Remove_Dbrb_Process_By_Network      = 0x436C
     // --------------------------------------------------------------------------------------
+
+    // -------------SC -----------------------
+    // OPERATION_IDENTIFY(16735),
+    // START_OPERATION(16991),
+    // END_OPERATION(17247),
+    // DEPLOY(16736),
+    // START_EXECUTE(16992),
+    // END_EXECUTE(17248),
+    // SUPER_CONTRACT_FILE_SYSTEM(17504),
+    // DEACTIVATE(17760),
+    // DEPLOY_CONTRACT(16750),
+    // MANUAL_CALL(17006),
+    // AUTOMATIC_EXECUTIONS_PAYMENT(17262),
+    // SUCCESSFUL_END_BATCH_EXECUTION(17518),
+    // UNSUCCESSFUL_END_BATCH_EXECUTION(17774)
+    // ---------------------------------------
 }
+
+

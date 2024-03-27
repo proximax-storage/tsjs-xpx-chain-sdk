@@ -24,7 +24,7 @@ import { Mosaic } from '../../model/mosaic/Mosaic';
 import { MosaicId } from '../../model/mosaic/MosaicId';
 import { MosaicLevy } from '../../model/mosaic/MosaicLevy'
 import { MosaicNonce } from '../../model/mosaic/MosaicNonce';
-import { MosaicProperties } from '../../model/mosaic/MosaicProperties';
+import { MosaicProperties, PropertyBit } from '../../model/mosaic/MosaicProperties';
 import { NamespaceId } from '../../model/namespace/NamespaceId';
 import { NamespaceType } from '../../model/namespace/NamespaceType';
 import { AccountRestrictionModification } from '../../model/transaction/AccountRestrictionModification';
@@ -50,6 +50,7 @@ import { TransactionHash } from '../../model/transaction/TransactionHash';
 import { TransactionMapUtility } from "./TransactionMapUtility";
 import { TransactionVersion } from "../../model/transaction/TransactionVersion";
 import {UnknownTransaction} from '../../model/transaction/UnknownTransaction';
+import { hasBit } from "../../model/transaction/Utilities";
 
 /**
  * @internal
@@ -222,8 +223,11 @@ const CreateTransaction = (type: number, transactionData: string, txnVersion: Tr
                 .mosaicNonce(new MosaicNonce(new Uint8Array(nonceArray)))
                 .mosaicId(new MosaicId(UInt64.fromHex(reverseHexString(mosaicId)).toDTO()))
                 .mosaicProperties(MosaicProperties.create({
-                    supplyMutable: (flags & 1) === 1,
-                    transferable: (flags & 2) === 2,
+                    supplyMutable: hasBit(flags, PropertyBit.Supply_Mutable),
+                    transferable: hasBit(flags, PropertyBit.Transferable),
+                    disableLocking: hasBit(flags, PropertyBit.Disable_Locking),
+                    restrictable: hasBit(flags, PropertyBit.Restrictable),
+                    supplyForceImmutable: hasBit(flags, PropertyBit.Supply_Force_Immutable),
                     divisibility: extractNumberFromHexReverse(divisibility),
                     duration: duration ? UInt64.fromHex(reverseHexString(duration)) : undefined,
                 }))

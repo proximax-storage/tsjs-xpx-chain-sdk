@@ -57,6 +57,9 @@ describe('MosaicProperties', () => {
             supplyMutable: false,
             transferable: false,
             divisibility: 10,
+            disableLocking: false,
+            restrictable: false,
+            supplyForceImmutable: false,
             duration,
         });
 
@@ -65,19 +68,28 @@ describe('MosaicProperties', () => {
 
         expect(mosaicProperties.supplyMutable).to.be.equal(false);
         expect(mosaicProperties.transferable).to.be.equal(false);
+        expect(mosaicProperties.restrictable).to.be.equal(false);
+        expect(mosaicProperties.supplyForceImmutable).to.be.equal(false);
+        expect(mosaicProperties.disableLocking).to.be.equal(false);
     });
 
     it('should createComplete an MosaicProperties object without duration', () => {
         const mosaicProperties = MosaicProperties.create({
-            supplyMutable: false,
-            transferable: false,
+            supplyMutable: true,
+            transferable: true,
+            disableLocking: true,
+            restrictable: true,
+            supplyForceImmutable: true,
             divisibility: 10,
         });
 
         expect(mosaicProperties.divisibility).to.be.equal(10);
         deepStrictEqual(mosaicProperties.duration, undefined);
 
-        expect(mosaicProperties.supplyMutable).to.be.equal(false);
-        expect(mosaicProperties.transferable).to.be.equal(false);
+        expect(mosaicProperties.supplyMutable).to.be.equal(true);
+        expect(mosaicProperties.transferable).to.be.equal(true);
+        expect(mosaicProperties.restrictable).to.be.equal(true);
+        expect(mosaicProperties.supplyForceImmutable).to.be.equal(true);
+        expect(mosaicProperties.disableLocking).to.be.equal(true);
     });
 });

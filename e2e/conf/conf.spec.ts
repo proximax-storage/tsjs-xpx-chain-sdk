@@ -181,6 +181,9 @@ const ConfTestingMosaicProperties = MosaicProperties.create({
     supplyMutable: true,
     transferable: true,
     divisibility: 3,
+    disableLocking: false,
+    restrictable: false,
+    supplyForceImmutable: false,
     duration: UInt64.fromUint(100000)},
 );
 const ConfTestingNamespaceId = new NamespaceId('testing');

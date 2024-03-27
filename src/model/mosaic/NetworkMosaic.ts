@@ -37,6 +37,9 @@ export const XpxMosaicProperties = new KnownMosaicProperties(
     MosaicProperties.create({
         supplyMutable: false,
         transferable: true,
+        disableLocking: false,
+        restrictable: false,
+        supplyForceImmutable: false,
         divisibility: 6
     })
 );
@@ -75,6 +78,19 @@ export class NetworkMosaic extends Mosaic {
     public get SUPPLY_MUTABLE() {
         return this._networkMosaicProperties.MOSAIC_PROPERTIES.supplyMutable;
     }
+
+    public get DISABLE_LOCKING() {
+        return this._networkMosaicProperties.MOSAIC_PROPERTIES.disableLocking;
+    }
+
+    public get SUPPLY_FORCE_IMMUTABLE() {
+        return this._networkMosaicProperties.MOSAIC_PROPERTIES.supplyForceImmutable;
+    }
+
+    public get RESTRICTABLE() {
+        return this._networkMosaicProperties.MOSAIC_PROPERTIES.restrictable;
+    }
+
 
     public static createRelativeAmount(amount: UInt64 | number, divisibility: number) {
         if (typeof amount === 'number') {
