@@ -15,8 +15,27 @@
  * limitations under the License.
  */
 
-import {UInt64} from '../UInt64';
+import { UInt64 } from '../UInt64';
 import { MosaicPropertyType } from './MosaicPropertyType';
+import { hasBit } from "../transaction/Utilities"
+
+// bit position
+export enum PropertyBit{
+    Supply_Mutable = 1,
+    Transferable,
+    Restrictable,
+    Supply_Force_Immutable,
+    Disable_Locking
+}
+
+// property value
+export enum PropertyValue{
+    Supply_Mutable = 0x01,
+    Transferable = 0x02,
+    Restrictable = 0x04,
+    Supply_Force_Immutable = 0x08,
+    Disable_Locking = 0x10
+}
 
 /**
  * Mosaic properties model
@@ -37,6 +56,9 @@ export class MosaicProperties {
      * Allowed values for the property are thus "true" and "false". The default value is "true".
      */
     public readonly transferable: boolean;
+    public readonly restrictable: boolean;
+    public readonly supplyForceImmutable: boolean;
+    public readonly disableLocking: boolean;
 
     /**
      * @param flags
@@ -59,10 +81,12 @@ export class MosaicProperties {
                  * Duration is optional when defining the mosaic
                  */
                 public readonly duration?: UInt64) {
-        let binaryFlags = '00' + (flags.lower >>> 0).toString(2);
-        binaryFlags = binaryFlags.slice(- 2);
-        this.supplyMutable = binaryFlags[1] === '1';
-        this.transferable = binaryFlags[0] === '1';
+        const flagNumber = flags.compact();
+        this.supplyMutable = hasBit(flagNumber, PropertyBit.Supply_Mutable);
+        this.transferable = hasBit(flagNumber, PropertyBit.Transferable);
+        this.restrictable = hasBit(flagNumber, PropertyBit.Restrictable);
+        this.supplyForceImmutable = hasBit(flagNumber, PropertyBit.Supply_Force_Immutable);
+        this.disableLocking = hasBit(flagNumber, PropertyBit.Disable_Locking);
     }
 
     /**
@@ -73,11 +97,27 @@ export class MosaicProperties {
     public static create(params: {
         supplyMutable: boolean,
         transferable: boolean,
+        restrictable: boolean,
+        supplyForceImmutable: boolean,
+        disableLocking: boolean,
         divisibility: number,
         duration?: UInt64,
     }) {
-        const flags = (params.supplyMutable ? 1 : 0) + (params.transferable ? 2 : 0);
+        const flags = 
+            (params.supplyMutable ? PropertyValue.Supply_Mutable : 0) +
+            (params.transferable ? PropertyValue.Transferable : 0) + 
+            (params.restrictable ? PropertyValue.Restrictable : 0) + 
+            (params.supplyForceImmutable ? PropertyValue.Supply_Force_Immutable : 0) +
+            (params.disableLocking ? PropertyValue.Disable_Locking : 0);
         return new MosaicProperties(UInt64.fromUint(flags), params.divisibility, params.duration);
+    }
+
+    get flags(): number{
+        return (this.supplyMutable ? PropertyValue.Supply_Mutable : 0) +
+            (this.transferable ? PropertyValue.Transferable : 0) + 
+            (this.restrictable ? PropertyValue.Restrictable : 0) + 
+            (this.supplyForceImmutable ? PropertyValue.Supply_Force_Immutable : 0) +
+            (this.disableLocking ? PropertyValue.Disable_Locking : 0);
     }
 
     /**
@@ -85,9 +125,20 @@ export class MosaicProperties {
      */
     toDTO() {
         const dto = [
-            {id: MosaicPropertyType.MosaicFlags, value: UInt64.fromUint((this.supplyMutable ? 1 : 0) +
-                                        (this.transferable ? 2 : 0)).toDTO()},
-            {id: MosaicPropertyType.Divisibility, value: UInt64.fromUint(this.divisibility).toDTO()},
+            {
+                id: MosaicPropertyType.MosaicFlags, 
+                value: UInt64.fromUint(
+                    (this.supplyMutable ? PropertyValue.Supply_Mutable : 0) +
+                    (this.transferable ? PropertyValue.Transferable : 0) + 
+                    (this.restrictable ? PropertyValue.Restrictable : 0) + 
+                    (this.supplyForceImmutable ? PropertyValue.Supply_Force_Immutable : 0) +
+                    (this.disableLocking ? PropertyValue.Disable_Locking : 0)
+                ).toDTO()
+            },
+            {
+                id: MosaicPropertyType.Divisibility, 
+                value: UInt64.fromUint(this.divisibility).toDTO()
+            },
         ];
 
         if (this.duration !== undefined) {

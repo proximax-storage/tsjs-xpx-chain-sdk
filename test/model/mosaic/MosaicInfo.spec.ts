@@ -114,6 +114,9 @@ describe('MosaicInfo', () => {
                 MosaicProperties.create({
                     supplyMutable: true,
                     transferable: false,
+                    disableLocking: false,
+                    restrictable: false,
+                    supplyForceImmutable: false,
                     divisibility: mosaicInfoDTO.mosaic.properties[1].compact(),
                     duration: mosaicInfoDTO.mosaic.properties[2],
                 }),
@@ -133,6 +136,9 @@ describe('MosaicInfo', () => {
                 MosaicProperties.create({
                     supplyMutable: false,
                     transferable: false,
+                    disableLocking: false,
+                    restrictable: false,
+                    supplyForceImmutable: false,
                     divisibility: mosaicInfoDTO.mosaic.properties[1].compact(),
                     duration: mosaicInfoDTO.mosaic.properties[2],
                 }),
@@ -153,6 +159,9 @@ describe('MosaicInfo', () => {
                 MosaicProperties.create({
                     supplyMutable: false,
                     transferable: true,
+                    disableLocking: false,
+                    restrictable: false,
+                    supplyForceImmutable: false,
                     divisibility: mosaicInfoDTO.mosaic.properties[1].compact(),
                     duration: mosaicInfoDTO.mosaic.properties[2],
                 }),
@@ -171,6 +180,9 @@ describe('MosaicInfo', () => {
                 MosaicProperties.create({
                     supplyMutable: false,
                     transferable: false,
+                    disableLocking: false,
+                    restrictable: false,
+                    supplyForceImmutable: false,
                     divisibility: mosaicInfoDTO.mosaic.properties[1].compact(),
                     duration: mosaicInfoDTO.mosaic.properties[2],
                 }),

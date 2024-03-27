@@ -119,7 +119,7 @@ describe('AggregateTransaction', () => {
         expect(signedTransaction.payload.substring(
             324,
             signedTransaction.payload.length,
-        )).to.be.equal('0300009054419050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1420D000000746573742D6D657373616765');
+        )).to.be.equal('0400009054419050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1420D000000746573742D6D657373616765');
     });
 
     it('should createComplete an AggregateTransaction object with RegisterNamespaceTransaction', () => {
@@ -156,6 +156,9 @@ describe('AggregateTransaction', () => {
             MosaicProperties.create({
                 supplyMutable: true,
                 transferable: true,
+                disableLocking: false,
+                restrictable: false,
+                supplyForceImmutable: false,
                 divisibility: 3,
                 duration: UInt64.fromUint(1000),
             }),
@@ -176,8 +179,8 @@ describe('AggregateTransaction', () => {
         expect(signedTransaction.payload.substring(
             324,
             signedTransaction.payload.length,
-            //          030000904D41        01000000000000000103030C000000
-        )).to.be.equal('030000904D41E6DE84B8010000000000000001030302E803000000000000');
+            //          040000904D41        01000000000000000103030C000000
+        )).to.be.equal('040000904D41E6DE84B8010000000000000001030302E803000000000000');
     });
 
     it('should createComplete an AggregateTransaction object with MosaicSupplyChangeTransaction', () => {
@@ -204,7 +207,7 @@ describe('AggregateTransaction', () => {
         expect(signedTransaction.payload.substring(
             324,
             signedTransaction.payload.length,
-        )).to.be.equal('020000904D424CCCD78612DDF5CA010A00000000000000');
+        )).to.be.equal('030000904D424CCCD78612DDF5CA010A00000000000000');
     });
 
     it('should createComplete an AggregateTransaction object with ModifyMultisigAccountTransaction', () => {
@@ -266,7 +269,7 @@ describe('AggregateTransaction', () => {
         expect(signedTransaction.payload.substring(
             324,
             482,
-        )).to.be.equal('0300009054419050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1420D000000746573742' +
+        )).to.be.equal('0400009054419050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1420D000000746573742' +
             'D6D65737361676568B3FBB18729C1FDE225C57F8CE080FA828F0067E451A3FD81FA628842B0B763');
 
     });

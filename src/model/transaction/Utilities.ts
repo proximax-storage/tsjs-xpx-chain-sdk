@@ -22,3 +22,12 @@ export const extractNetwork = (versionHex: string): NetworkType => {
     }
     throw new Error('Unimplemented network type');
 };
+
+export const hasBit = (numberToCompare:number, bitPosition: number): boolean => {
+    const bitsNumber = bitPosition > 1 ? 1 << (bitPosition-1): 1;
+	return (numberToCompare & bitsNumber) == bitsNumber;
+}
+
+export const hasBits = (numberToCompare:number, bitsNumber: number): boolean => {
+	return (numberToCompare & bitsNumber) == bitsNumber;
+}
