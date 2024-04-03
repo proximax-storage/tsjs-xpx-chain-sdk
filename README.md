@@ -14,9 +14,18 @@ Build with NodeJS 18
 
 - NodeJS 18.X.X
 
+## LTS version 0.10.x
+
+This branch is LTS version for Sirius Chain before the symbol merge upgrade. 
+Please go to the [wiki][wiki] to learn about the code differences.
+
+Future patching will be merged into this branch.
+
 ## Installation
 
-```npm install tsjs-xpx-chain-sdk```
+```npm install tsjs-xpx-chain-sdk@0.10.7```
+
+Make sure the package version in package.json is `~0.10.7`, or you can update it to prevent from using the latest version.
 
 ## Documentation and Getting Started
 
