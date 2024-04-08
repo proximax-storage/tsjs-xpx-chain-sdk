@@ -55,8 +55,8 @@ export class AggregateTransaction extends VerifiableTransaction {
             const signatureTransaction = new CosignatureTransaction(signedTransaction.hash);
             const cosignerDScheme = PublicAccount.getDerivationSchemeFromAccVersion(cosigner.version);
             const signatureCosignTransaction = signatureTransaction.signCosignatoriesTransaction(cosigner, cosignerDScheme);
-            signedTransaction.payload = signedTransaction.payload + signatureCosignTransaction.scheme + 
-                signatureCosignTransaction.signer + signatureCosignTransaction.signature;
+            signedTransaction.payload = signedTransaction.payload + signatureCosignTransaction.signer + 
+                signatureCosignTransaction.scheme + signatureCosignTransaction.signature;
         });
 
         // Calculate new size
@@ -84,7 +84,7 @@ export class AggregateTransaction extends VerifiableTransaction {
         const dScheme = PublicAccount.getDerivationSchemeFromAccVersion(initializer.version);
         const signedTransaction = this.signTransaction(initializer, generationHash, dScheme);
         cosignedSignedTransactions.forEach((cosignedTransaction) => {
-            signedTransaction.payload = signedTransaction.payload + cosignedTransaction.scheme + cosignedTransaction.signer + cosignedTransaction.signature;
+            signedTransaction.payload = signedTransaction.payload + cosignedTransaction.signer + cosignedTransaction.scheme + cosignedTransaction.signature;
         });
 
         // Calculate new size
@@ -108,7 +108,7 @@ export class AggregateTransaction extends VerifiableTransaction {
     static appendSignatures(signedTransaction, cosignedSignedTransactions) {
         let newPayload = signedTransaction.payload;
         cosignedSignedTransactions.forEach(cosignature => {
-            newPayload = newPayload + cosignature.scheme +  cosignature.signer + cosignature.signature;
+            newPayload = newPayload + cosignature.signer + cosignature.scheme + cosignature.signature ;
         });
 
         newPayload = this.recalculateSize(newPayload);
