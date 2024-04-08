@@ -6,7 +6,14 @@ The official ProximaX Blockchain SDK for TypeScript and JavaScript, available fo
 
 Build with NodeJS 18
 
-# TODO: update both CHANGELOG.md and README.md
+## New Transaction version
+
+New transaction signing with different derivation scheme will be introducted later.
+For old transaction of not yet upgraded Sirius Chain, please use version v0.10.x.
+
+You can take a look at the [wiki][wiki].
+
+### TODO: update CHANGELOG.md
 
 ## Requirements
 
