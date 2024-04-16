@@ -38,9 +38,9 @@ import { NetworkCurrencyMosaic } from '../../../src/model/mosaic/NetworkCurrency
 import { AliasActionType } from '../../../src/model/namespace/AliasActionType';
 import { NamespaceId } from '../../../src/model/namespace/NamespaceId';
 import { NamespaceType } from '../../../src/model/namespace/NamespaceType';
-import { AccountAddressRestrictionModificationTransaction } from '../../../src/model/transaction/AccountAddressRestrictionModificationTransaction';
+import { AccountAddressRestrictionModificationTransaction } from '../../../src/model/transaction/AccountMosaicRestrictionTransaction';
 import { AccountLinkTransaction } from '../../../src/model/transaction/AccountLinkTransaction';
-import { AccountMosaicRestrictionModificationTransaction } from '../../../src/model/transaction/AccountMosaicRestrictionModificationTransaction';
+import { AccountMosaicRestrictionModificationTransaction } from '../../../src/model/transaction/deprecated/AccountMosaicRestrictionModificationTransaction';
 import { AccountRestrictionModification } from '../../../src/model/transaction/AccountRestrictionModification';
 import { AccountRestrictionTransaction } from '../../../src/model/transaction/AccountRestrictionTransaction';
 import { AddressAliasTransaction } from '../../../src/model/transaction/AddressAliasTransaction';

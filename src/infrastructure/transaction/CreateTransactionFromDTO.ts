@@ -31,16 +31,16 @@ import {AddressAliasTransaction} from '../../model/transaction/AddressAliasTrans
 import {AggregateTransaction} from '../../model/transaction/AggregateTransaction';
 import {AggregateTransactionCosignature} from '../../model/transaction/AggregateTransactionCosignature';
 import {AggregateTransactionInfo} from '../../model/transaction/AggregateTransactionInfo';
-import {ChainConfigTransaction} from '../../model/transaction/ChainConfigTransaction';
+import {NetworkConfigTransaction} from '../../model/transaction/NetworkConfigTransaction';
 import {ChainUpgradeTransaction} from '../../model/transaction/ChainUpgradeTransaction';
 import {Deadline} from '../../model/transaction/Deadline';
 import { MessageType } from '../../model/transaction/MessageType';
 import { EncryptedMessage } from '../../model/transaction/EncryptedMessage';
 import { HexadecimalMessage } from '../../model/transaction/HexadecimalMessage';
 import {HashLockTransaction} from '../../model/transaction/HashLockTransaction';
-import {AccountAddressRestrictionModificationTransaction} from '../../model/transaction/AccountAddressRestrictionModificationTransaction';
-import {AccountOperationRestrictionModificationTransaction} from '../../model/transaction/AccountOperationRestrictionModificationTransaction';
-import {AccountMosaicRestrictionModificationTransaction} from '../../model/transaction/AccountMosaicRestrictionModificationTransaction';
+import {AccountAddressRestrictionModificationTransaction} from '../../model/transaction/AccountMosaicRestrictionTransaction';
+import {AccountOperationRestrictionModificationTransaction} from '../../model/transaction/deprecated/AccountOperationRestrictionModificationTransaction';
+import {AccountMosaicRestrictionModificationTransaction} from '../../model/transaction/deprecated/AccountMosaicRestrictionModificationTransaction';
 import {ModifyMultisigAccountTransaction} from '../../model/transaction/ModifyMultisigAccountTransaction';
 import {MosaicAliasTransaction} from '../../model/transaction/MosaicAliasTransaction';
 import {MosaicDefinitionTransaction} from '../../model/transaction/MosaicDefinitionTransaction';
@@ -58,7 +58,7 @@ import {TransactionInfo} from '../../model/transaction/TransactionInfo';
 import {TransactionType} from '../../model/transaction/TransactionType';
 import {TransferTransaction} from '../../model/transaction/TransferTransaction';
 import {UInt64} from '../../model/UInt64';
-import { ModifyMetadataTransaction, MetadataModification } from '../../model/transaction/ModifyMetadataTransaction';
+import { ModifyMetadataTransaction, MetadataModification } from '../../model/transaction/deprecated/ModifyMetadataTransaction';
 import { MetadataType as oldMetadataType } from '../../model/metadata/oldMetadataType';
 import { AddExchangeOfferTransaction } from '../../model/transaction/AddExchangeOfferTransaction';
 import { AddExchangeOffer } from '../../model/transaction/AddExchangeOffer';
@@ -598,7 +598,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isA
             );
             txn = chainUpgradeTxn;
         } else if (transactionDTO.type === TransactionType.CHAIN_CONFIGURE) {
-            const chainConfigTxn = new ChainConfigTransaction(
+            const NetworkConfigTxn = new NetworkConfigTransaction(
                 networkType,
                 transactionTypeVersion,
                 isAggregatedInfo.isEmbedded? Deadline.createEmpty() : Deadline.createFromDTO(transactionDTO.deadline),
@@ -611,7 +611,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isA
                                 networkType, signerVersion) : undefined,
                 transactionInfo,
             );
-            txn = chainConfigTxn;
+            txn = NetworkConfigTxn;
         } else if (transactionDTO.type === TransactionType.ADD_EXCHANGE_OFFER) {
             const addExchangeOfferTxn = new AddExchangeOfferTransaction(
                 networkType,

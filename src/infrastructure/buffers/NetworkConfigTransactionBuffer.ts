@@ -203,7 +203,7 @@ Catapult.Buffers.CatapultConfigTransactionBuffer.prototype.applyHeightDeltaArray
 /**
  * @returns {number}
  */
-Catapult.Buffers.CatapultConfigTransactionBuffer.prototype.blockChainConfigSize = function() {
+Catapult.Buffers.CatapultConfigTransactionBuffer.prototype.blockNetworkConfigSize = function() {
   var offset = this.bb.__offset(this.bb_pos, 20);
   return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
 };
@@ -220,7 +220,7 @@ Catapult.Buffers.CatapultConfigTransactionBuffer.prototype.supportedEntityVersio
  * @param {number} index
  * @returns {number}
  */
-Catapult.Buffers.CatapultConfigTransactionBuffer.prototype.blockChainConfig = function(index) {
+Catapult.Buffers.CatapultConfigTransactionBuffer.prototype.blockNetworkConfig = function(index) {
   var offset = this.bb.__offset(this.bb_pos, 24);
   return offset ? this.bb.readUint8(this.bb.__vector(this.bb_pos + offset) + index) : 0;
 };
@@ -228,7 +228,7 @@ Catapult.Buffers.CatapultConfigTransactionBuffer.prototype.blockChainConfig = fu
 /**
  * @returns {number}
  */
-Catapult.Buffers.CatapultConfigTransactionBuffer.prototype.blockChainConfigLength = function() {
+Catapult.Buffers.CatapultConfigTransactionBuffer.prototype.blockNetworkConfigLength = function() {
   var offset = this.bb.__offset(this.bb_pos, 24);
   return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
@@ -236,7 +236,7 @@ Catapult.Buffers.CatapultConfigTransactionBuffer.prototype.blockChainConfigLengt
 /**
  * @returns {Uint8Array}
  */
-Catapult.Buffers.CatapultConfigTransactionBuffer.prototype.blockChainConfigArray = function() {
+Catapult.Buffers.CatapultConfigTransactionBuffer.prototype.blockNetworkConfigArray = function() {
   var offset = this.bb.__offset(this.bb_pos, 24);
   return offset ? new Uint8Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
@@ -444,10 +444,10 @@ Catapult.Buffers.CatapultConfigTransactionBuffer.startApplyHeightDeltaVector = f
 
 /**
  * @param {flatbuffers.Builder} builder
- * @param {number} blockChainConfigSize
+ * @param {number} blockNetworkConfigSize
  */
-Catapult.Buffers.CatapultConfigTransactionBuffer.addBlockChainConfigSize = function(builder, blockChainConfigSize) {
-  builder.addFieldInt16(8, blockChainConfigSize, 0);
+Catapult.Buffers.CatapultConfigTransactionBuffer.addBlockNetworkConfigSize = function(builder, blockNetworkConfigSize) {
+  builder.addFieldInt16(8, blockNetworkConfigSize, 0);
 };
 
 /**
@@ -460,10 +460,10 @@ Catapult.Buffers.CatapultConfigTransactionBuffer.addSupportedEntityVersionsSize 
 
 /**
  * @param {flatbuffers.Builder} builder
- * @param {flatbuffers.Offset} blockChainConfigOffset
+ * @param {flatbuffers.Offset} blockNetworkConfigOffset
  */
-Catapult.Buffers.CatapultConfigTransactionBuffer.addBlockChainConfig = function(builder, blockChainConfigOffset) {
-  builder.addFieldOffset(10, blockChainConfigOffset, 0);
+Catapult.Buffers.CatapultConfigTransactionBuffer.addBlockNetworkConfig = function(builder, blockNetworkConfigOffset) {
+  builder.addFieldOffset(10, blockNetworkConfigOffset, 0);
 };
 
 /**
@@ -471,7 +471,7 @@ Catapult.Buffers.CatapultConfigTransactionBuffer.addBlockChainConfig = function(
  * @param {Array.<number>} data
  * @returns {flatbuffers.Offset}
  */
-Catapult.Buffers.CatapultConfigTransactionBuffer.createBlockChainConfigVector = function(builder, data) {
+Catapult.Buffers.CatapultConfigTransactionBuffer.createBlockNetworkConfigVector = function(builder, data) {
   builder.startVector(1, data.length, 1);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addInt8(data[i]);
@@ -483,7 +483,7 @@ Catapult.Buffers.CatapultConfigTransactionBuffer.createBlockChainConfigVector = 
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-Catapult.Buffers.CatapultConfigTransactionBuffer.startBlockChainConfigVector = function(builder, numElems) {
+Catapult.Buffers.CatapultConfigTransactionBuffer.startBlockNetworkConfigVector = function(builder, numElems) {
   builder.startVector(1, numElems, 1);
 };
 
@@ -543,13 +543,13 @@ Catapult.Buffers.CatapultConfigTransactionBuffer.finishCatapultConfigTransaction
  * @param {flatbuffers.Offset} maxFeeOffset
  * @param {flatbuffers.Offset} deadlineOffset
  * @param {flatbuffers.Offset} applyHeightDeltaOffset
- * @param {number} blockChainConfigSize
+ * @param {number} blockNetworkConfigSize
  * @param {number} supportedEntityVersionsSize
- * @param {flatbuffers.Offset} blockChainConfigOffset
+ * @param {flatbuffers.Offset} blockNetworkConfigOffset
  * @param {flatbuffers.Offset} supportedEntityVersionsOffset
  * @returns {flatbuffers.Offset}
  */
-Catapult.Buffers.CatapultConfigTransactionBuffer.createCatapultConfigTransactionBuffer = function(builder, size, signatureOffset, signerOffset, version, type, maxFeeOffset, deadlineOffset, applyHeightDeltaOffset, blockChainConfigSize, supportedEntityVersionsSize, blockChainConfigOffset, supportedEntityVersionsOffset) {
+Catapult.Buffers.CatapultConfigTransactionBuffer.createCatapultConfigTransactionBuffer = function(builder, size, signatureOffset, signerOffset, version, type, maxFeeOffset, deadlineOffset, applyHeightDeltaOffset, blockNetworkConfigSize, supportedEntityVersionsSize, blockNetworkConfigOffset, supportedEntityVersionsOffset) {
   Catapult.Buffers.CatapultConfigTransactionBuffer.startCatapultConfigTransactionBuffer(builder);
   Catapult.Buffers.CatapultConfigTransactionBuffer.addSize(builder, size);
   Catapult.Buffers.CatapultConfigTransactionBuffer.addSignature(builder, signatureOffset);
@@ -559,9 +559,9 @@ Catapult.Buffers.CatapultConfigTransactionBuffer.createCatapultConfigTransaction
   Catapult.Buffers.CatapultConfigTransactionBuffer.addMaxFee(builder, maxFeeOffset);
   Catapult.Buffers.CatapultConfigTransactionBuffer.addDeadline(builder, deadlineOffset);
   Catapult.Buffers.CatapultConfigTransactionBuffer.addApplyHeightDelta(builder, applyHeightDeltaOffset);
-  Catapult.Buffers.CatapultConfigTransactionBuffer.addBlockChainConfigSize(builder, blockChainConfigSize);
+  Catapult.Buffers.CatapultConfigTransactionBuffer.addBlockNetworkConfigSize(builder, blockNetworkConfigSize);
   Catapult.Buffers.CatapultConfigTransactionBuffer.addSupportedEntityVersionsSize(builder, supportedEntityVersionsSize);
-  Catapult.Buffers.CatapultConfigTransactionBuffer.addBlockChainConfig(builder, blockChainConfigOffset);
+  Catapult.Buffers.CatapultConfigTransactionBuffer.addBlockNetworkConfig(builder, blockNetworkConfigOffset);
   Catapult.Buffers.CatapultConfigTransactionBuffer.addSupportedEntityVersions(builder, supportedEntityVersionsOffset);
   return Catapult.Buffers.CatapultConfigTransactionBuffer.endCatapultConfigTransactionBuffer(builder);
 }

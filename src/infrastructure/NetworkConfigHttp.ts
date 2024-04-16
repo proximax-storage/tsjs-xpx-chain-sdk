@@ -5,9 +5,9 @@
 import {from as observableFrom, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import { ConfigRoutesApi, NetworkConfigResponse } from './api';
-import { ChainConfigRepository } from './ChainConfigRepository';
+import { NetworkConfigRepository } from './NetworkConfigRepository';
 import {Http} from './Http';
-import { ChainConfig } from '../model/model';
+import { NetworkConfig } from '../model/model';
 import { RequestOptions } from './RequestOptions';
 
 /**
@@ -15,7 +15,7 @@ import { RequestOptions } from './RequestOptions';
  *
  * @since 1.0
  */
-export class ChainConfigHttp extends Http implements ChainConfigRepository {
+export class NetworkConfigHttp extends Http implements NetworkConfigRepository {
     /**
      * @internal
      * xpx chain Library chain config routes api
@@ -34,14 +34,14 @@ export class ChainConfigHttp extends Http implements ChainConfigRepository {
     /**
      * Gets blockchain configuration at given height
      * @param height
-     * @returns Observable<ChainConfig>
+     * @returns Observable<NetworkConfig>
      */
-    public getChainConfig(height: number, requestOptions?: RequestOptions): Observable<ChainConfig> {
+    public getNetworkConfig(height: number, requestOptions?: RequestOptions): Observable<NetworkConfig> {
         return observableFrom(
             this.configRoutesApi.getConfig(height, requestOptions))
             .pipe(
                 map((response: NetworkConfigResponse) => {
-                    return ChainConfig.createFromDTO(response.body.networkConfig);
+                    return NetworkConfig.createFromDTO(response.body.networkConfig);
                 })
             );
     }

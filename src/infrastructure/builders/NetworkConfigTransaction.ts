@@ -3,23 +3,23 @@
 // license that can be found in the LICENSE file
 
 /**
- * @module transactions/ChainConfigTransaction
+ * @module transactions/NetworkConfigTransaction
  */
 import { TransactionType } from '../../model/transaction/TransactionType';
-import ChainConfigTransactionBufferPackage from '../buffers/ChainConfigTransactionBuffer';
-import ChainConfigTransactionSchema from '../schemas/ChainConfigTransactionSchema';
+import NetworkConfigTransactionBufferPackage from '../buffers/NetworkConfigTransactionBuffer';
+import NetworkConfigTransactionSchema from '../schemas/NetworkConfigTransactionSchema';
 import { VerifiableTransaction } from './VerifiableTransaction';
 
 const {
     CatapultConfigTransactionBuffer,
-} = ChainConfigTransactionBufferPackage.Buffers;
+} = NetworkConfigTransactionBufferPackage.Buffers;
 
 import * as flatbuffers from 'flatbuffers';
 import { Convert } from '../../core/format';
 
-export default class ChainConfigTransaction extends VerifiableTransaction {
+export default class NetworkConfigTransaction extends VerifiableTransaction {
     constructor(bytes) {
-        super(bytes, ChainConfigTransactionSchema);
+        super(bytes, NetworkConfigTransactionSchema);
     }
 }
 
@@ -92,7 +92,7 @@ export class Builder {
         const applyHeightDeltaVector = CatapultConfigTransactionBuffer
             .createApplyHeightDeltaVector(builder, this.applyHeightDelta);
         const networkConfigVector = CatapultConfigTransactionBuffer
-            .createBlockChainConfigVector(builder, this.networkConfig);
+            .createBlockNetworkConfigVector(builder, this.networkConfig);
         const supportedEntityVersionsVector = CatapultConfigTransactionBuffer
             .createSupportedEntityVersionsVector(builder, this.supportedEntityVersions);
 
@@ -105,16 +105,16 @@ export class Builder {
         CatapultConfigTransactionBuffer.addMaxFee(builder, feeVector);
         CatapultConfigTransactionBuffer.addDeadline(builder, deadlineVector);
         CatapultConfigTransactionBuffer.addApplyHeightDelta(builder, applyHeightDeltaVector);
-        CatapultConfigTransactionBuffer.addBlockChainConfigSize(builder, this.networkConfig.length);
+        CatapultConfigTransactionBuffer.addBlockNetworkConfigSize(builder, this.networkConfig.length);
         CatapultConfigTransactionBuffer.addSupportedEntityVersionsSize(builder, this.supportedEntityVersions.length);
-        CatapultConfigTransactionBuffer.addBlockChainConfig(builder, networkConfigVector);
+        CatapultConfigTransactionBuffer.addBlockNetworkConfig(builder, networkConfigVector);
         CatapultConfigTransactionBuffer.addSupportedEntityVersions(builder, supportedEntityVersionsVector);
 
         // Calculate size
-        const codedChainConfig = CatapultConfigTransactionBuffer.endCatapultConfigTransactionBuffer(builder);
-        builder.finish(codedChainConfig);
+        const codedNetworkConfig = CatapultConfigTransactionBuffer.endCatapultConfigTransactionBuffer(builder);
+        builder.finish(codedNetworkConfig);
 
         const bytes = builder.asUint8Array();
-        return new ChainConfigTransaction(bytes);
+        return new NetworkConfigTransaction(bytes);
     }
 }

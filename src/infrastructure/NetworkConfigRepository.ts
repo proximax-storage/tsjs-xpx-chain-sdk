@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file
 
 import {Observable} from 'rxjs';
-import { ChainConfig } from '../model/model';
+import { NetworkConfig } from '../model/model';
 import { RequestOptions } from './RequestOptions';
 
 /**
@@ -11,11 +11,11 @@ import { RequestOptions } from './RequestOptions';
  *
  * @since 1.0
  */
-export interface ChainConfigRepository {
+export interface NetworkConfigRepository {
     /**
      * Gets config at given height
-     * @returns Observable<ChainConfig>
+     * @returns Observable<NetworkConfig>
      */
-    getChainConfig(height: number, requestOptions?: RequestOptions): Observable<ChainConfig>;
+    getNetworkConfig(height: number, requestOptions?: RequestOptions): Observable<NetworkConfig>;
 
 }

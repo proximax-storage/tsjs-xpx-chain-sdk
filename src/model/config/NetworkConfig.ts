@@ -8,7 +8,7 @@ import { UInt64 } from "../UInt64";
 /**
  * The config structure stores a chain configuration as returned from http configRoutesApi.
  */
-export class ChainConfig {
+export class NetworkConfig {
     constructor(
         public readonly height: UInt64,
         public readonly networkConfig: string,
@@ -18,7 +18,7 @@ export class ChainConfig {
     }
 
     public static createFromDTO(configDTO: ConfigDTO) {
-        return new ChainConfig(
+        return new NetworkConfig(
             new UInt64(configDTO.height),
             configDTO.networkConfig,
             configDTO.supportedEntityVersions

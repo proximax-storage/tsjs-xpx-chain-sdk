@@ -4,9 +4,9 @@
 
 import {expect} from 'chai';
 import { APIUrl } from '../conf/conf.spec';
-import { ChainConfigHttp } from '../../src/infrastructure/ChainConfigHttp';
-describe('ChainConfigHttp', () => {
-    let chainConfigHttp = new ChainConfigHttp(APIUrl);
+import { NetworkConfigHttp } from '../../src/infrastructure/NetworkConfigHttp';
+describe('NetworkConfigHttp', () => {
+    let chainConfigHttp = new NetworkConfigHttp(APIUrl);
 
     describe('getChainConfig', () => {
         it('should return blockchain config', (done) => {

@@ -9,12 +9,12 @@ import { Deadline } from './Deadline';
 import { UInt64 } from '../UInt64';
 import { PublicAccount } from '../account/PublicAccount';
 import { TransactionInfo } from './TransactionInfo';
-import { Builder } from '../../infrastructure/builders/ChainConfigTransaction';
+import { Builder } from '../../infrastructure/builders/NetworkConfigTransaction';
 import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
 import { TransactionTypeVersion } from './TransactionTypeVersion';
 import { calculateFee, FeeCalculationStrategy } from './FeeCalculationStrategy';
 
-export class ChainConfigTransaction extends Transaction {
+export class NetworkConfigTransaction extends Transaction {
     /**
      * @param networkType
      * @param version
@@ -45,8 +45,8 @@ export class ChainConfigTransaction extends Transaction {
         networkConfig: string,
         supportedEntityVersions: string,
         networkType: NetworkType,
-        maxFee?: UInt64): ChainConfigTransaction {
-        return new ChainConfigTransactionBuilder()
+        maxFee?: UInt64): NetworkConfigTransaction {
+        return new NetworkConfigTransactionBuilder()
             .networkType(networkType)
             .deadline(deadline)
             .maxFee(maxFee)
@@ -63,7 +63,7 @@ export class ChainConfigTransaction extends Transaction {
      * @memberof Transaction
      */
     public get size(): number {
-        return ChainConfigTransaction.calculateSize(this.networkConfig.length, this.supportedEntityVersions.length);
+        return NetworkConfigTransaction.calculateSize(this.networkConfig.length, this.supportedEntityVersions.length);
     }
 
     public static calculateSize(networkConfigLength: number, supportedEntityVersionsLength: number): number {
@@ -80,7 +80,7 @@ export class ChainConfigTransaction extends Transaction {
      * @override Transaction.toJSON()
      * @description Serialize a transaction object - add own fields to the result of Transaction.toJSON()
      * @return {Object}
-     * @memberof ChainConfigTransaction
+     * @memberof NetworkConfigTransaction
      */
     public toJSON() {
         const parent = super.toJSON();
@@ -112,7 +112,7 @@ export class ChainConfigTransaction extends Transaction {
     }
 }
 
-export class ChainConfigTransactionBuilder extends TransactionBuilder {
+export class NetworkConfigTransactionBuilder extends TransactionBuilder {
     private _applyHeightDelta: UInt64;
     private _networkConfig: string;
     private _supportedEntityVersions: string;
@@ -137,12 +137,12 @@ export class ChainConfigTransactionBuilder extends TransactionBuilder {
         return this;
     }
 
-    public build(): ChainConfigTransaction {
-        return new ChainConfigTransaction(
+    public build(): NetworkConfigTransaction {
+        return new NetworkConfigTransaction(
             this._networkType,
             this._version || TransactionTypeVersion.CHAIN_CONFIG,
             this._deadline ? this._deadline : this._createNewDeadlineFn(),
-            this._maxFee ? this._maxFee : calculateFee(ChainConfigTransaction.calculateSize(this._networkConfig.length, this._supportedEntityVersions.length), this._feeCalculationStrategy),
+            this._maxFee ? this._maxFee : calculateFee(NetworkConfigTransaction.calculateSize(this._networkConfig.length, this._supportedEntityVersions.length), this._feeCalculationStrategy),
             this._applyHeightDelta,
             this._networkConfig,
             this._supportedEntityVersions,

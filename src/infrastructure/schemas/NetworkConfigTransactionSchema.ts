@@ -14,7 +14,7 @@ import {
 } from './Schema';
 
 /**
- * @module schema/ChainConfigTransactionSchema
+ * @module schema/NetworkConfigTransactionSchema
  */
 
 /**

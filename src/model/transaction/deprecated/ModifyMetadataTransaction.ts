@@ -2,22 +2,22 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file
 
-import { PublicAccount } from '../account/PublicAccount';
-import { NetworkType } from '../blockchain/NetworkType';
-import { UInt64 } from '../UInt64';
-import { Deadline } from './Deadline';
-import { Transaction, TransactionBuilder } from './Transaction';
-import { TransactionInfo } from './TransactionInfo';
-import { TransactionTypeVersion } from './TransactionTypeVersion';
-import { AggregateTransactionInfo } from './AggregateTransactionInfo';
-import { MetadataType } from '../metadata/oldMetadataType';
-import { VerifiableTransaction } from '../../infrastructure/builders/VerifiableTransaction';
-import { Builder } from '../../infrastructure/builders/ModifyMetadataTransaction';
-import { TransactionType } from './TransactionType';
-import { calculateFee } from './FeeCalculationStrategy';
-import { Address } from '../account/Address';
-import { MosaicId } from '../mosaic/MosaicId';
-import { NamespaceId } from '../namespace/NamespaceId';
+import { PublicAccount } from '../../account/PublicAccount';
+import { NetworkType } from '../../blockchain/NetworkType';
+import { UInt64 } from '../../UInt64';
+import { Deadline } from '../Deadline';
+import { Transaction, TransactionBuilder } from '../Transaction';
+import { TransactionInfo } from '../TransactionInfo';
+import { TransactionTypeVersion } from '../TransactionTypeVersion';
+import { AggregateTransactionInfo } from '../AggregateTransactionInfo';
+import { MetadataType } from '../../metadata/oldMetadataType';
+import { VerifiableTransaction } from '../../../infrastructure/builders/VerifiableTransaction';
+import { Builder } from '../../../infrastructure/builders/ModifyMetadataTransaction';
+import { TransactionType } from '../TransactionType';
+import { calculateFee } from '../FeeCalculationStrategy';
+import { Address } from '../../account/Address';
+import { MosaicId } from '../../mosaic/MosaicId';
+import { NamespaceId } from '../../namespace/NamespaceId';
 
 export enum MetadataModificationType {
     ADD = 0,
@@ -26,6 +26,7 @@ export enum MetadataModificationType {
 
 /**
  * Represents single metadata modification - add/remove of the key/value pair
+ * @deprecated
  * @param type
  * @param key
  * @param value

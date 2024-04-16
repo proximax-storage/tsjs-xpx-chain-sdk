@@ -7,15 +7,15 @@ import { TransactionBuilder } from "./Transaction";
 import { TransferTransactionBuilder } from './TransferTransaction';
 import { AccountLinkTransactionBuilder } from './AccountLinkTransaction';
 import { MosaicDefinitionTransactionBuilder } from './MosaicDefinitionTransaction';
-import { AccountAddressRestrictionModificationTransactionBuilder } from "./AccountAddressRestrictionModificationTransaction";
-import { AccountMosaicRestrictionModificationTransactionBuilder } from "./AccountMosaicRestrictionModificationTransaction";
-import { AccountOperationRestrictionModificationTransactionBuilder } from "./AccountOperationRestrictionModificationTransaction";
+import { AccountAddressRestrictionModificationTransactionBuilder } from "./AccountMosaicRestrictionTransaction";
+import { AccountMosaicRestrictionModificationTransactionBuilder } from "./deprecated/AccountMosaicRestrictionModificationTransaction";
+import { AccountOperationRestrictionModificationTransactionBuilder } from "./deprecated/AccountOperationRestrictionModificationTransaction";
 import { AddressAliasTransactionBuilder } from "./AddressAliasTransaction";
 import { 
     AggregateBondedTransactionBuilder, AggregateCompleteTransactionBuilder, 
     AggregateBondedV1TransactionBuilder, AggregateCompleteV1TransactionBuilder 
 } from "./AggregateTransaction";
-import { ChainConfigTransactionBuilder } from "./ChainConfigTransaction";
+import { NetworkConfigTransactionBuilder } from "./NetworkConfigTransaction";
 import { ChainUpgradeTransactionBuilder } from "./ChainUpgradeTransaction";
 import { HashLockTransactionBuilder } from "./HashLockTransaction";
 import { AccountMetadataTransactionBuilder } from "./AccountMetadataTransaction";
@@ -159,8 +159,8 @@ export class TransactionBuilderFactory {
         return builder;
     }
 
-    public chainConfig(): ChainConfigTransactionBuilder {
-        const builder = new ChainConfigTransactionBuilder();
+    public NetworkConfig(): NetworkConfigTransactionBuilder {
+        const builder = new NetworkConfigTransactionBuilder();
         builder.networkType(this.networkType)
             .generationHash(this.generationHash)
             .createNewDeadlineFn(this.createNewDeadlineFn);

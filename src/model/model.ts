@@ -44,7 +44,7 @@ export * from './blockchain/MerkleProofInfoPayload';
 export * from './blockchain/NetworkType';
 
 // Config
-export * from './config/ChainConfig';
+export * from './config/NetworkConfig';
 
 // Diagnostic
 export * from './diagnostic/ServerInfo';
@@ -134,11 +134,11 @@ export * from './receipt/TransactionStatement';
 export * from './richlist/RichlistEntry';
 
 // Transaction
-export * from './transaction/AccountAddressRestrictionModificationTransaction';
+export * from './transaction/AccountMosaicRestrictionTransaction';
 export * from './transaction/AccountMetadataTransaction';
 export * from './transaction/AccountLinkTransaction';
-export * from './transaction/AccountMosaicRestrictionModificationTransaction';
-export * from './transaction/AccountOperationRestrictionModificationTransaction';
+export * from './transaction/deprecated/AccountMosaicRestrictionModificationTransaction';
+export * from './transaction/deprecated/AccountOperationRestrictionModificationTransaction';
 export * from './transaction/AccountRestrictionModification';
 export * from './transaction/AccountRestrictionTransaction';
 export * from './transaction/AddExchangeOffer';
@@ -148,7 +148,7 @@ export * from './transaction/AggregateTransaction';
 export * from './transaction/AggregateTransactionCosignature';
 export * from './transaction/AggregateTransactionInfo';
 export * from './transaction/AliasTransaction';
-export * from './transaction/ChainConfigTransaction';
+export * from './transaction/NetworkConfigTransaction';
 export * from './transaction/ChainUpgradeTransaction';
 export * from './transaction/CosignatureSignedTransaction';
 export * from './transaction/CosignatureTransaction';

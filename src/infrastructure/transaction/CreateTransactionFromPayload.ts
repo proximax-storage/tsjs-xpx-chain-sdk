@@ -522,7 +522,7 @@ const CreateTransaction = (type: number, transactionData: string, txnVersion: Tr
             const supportedEntityVersionsLength = extractNumberFromHexReverse(transactionData.substring(20, 24));
             const networkConfig = transactionData.substring(24, 24 + networkConfigLength*2);
             const supportedEntityVersions = transactionData.substring(24 + networkConfigLength*2, 24 + networkConfigLength*2 + supportedEntityVersionsLength*2);
-            return factory.chainConfig()
+            return factory.NetworkConfig()
                 .applyHeightDelta(UInt64.fromHex(reverseHexString(applyHeightDelta)))
                 .networkConfig(decodeHexUtf8(networkConfig))
                 .supportedEntityVersions(decodeHexUtf8(supportedEntityVersions))

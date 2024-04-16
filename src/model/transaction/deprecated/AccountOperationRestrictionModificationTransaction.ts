@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-import { Builder } from '../../infrastructure/builders/AccountRestrictionsEntityTypeTransaction';
-import {VerifiableTransaction} from '../../infrastructure/builders/VerifiableTransaction';
-import { PublicAccount } from '../account/PublicAccount';
-import { RestrictionType } from '../account/RestrictionType';
-import { NetworkType } from '../blockchain/NetworkType';
-import { UInt64 } from '../UInt64';
-import { AccountRestrictionModification } from './AccountRestrictionModification';
-import { Deadline } from './Deadline';
-import { Transaction, TransactionBuilder } from './Transaction';
-import { TransactionInfo } from './TransactionInfo';
-import { TransactionType } from './TransactionType';
-import { TransactionTypeVersion } from './TransactionTypeVersion';
-import { calculateFee } from './FeeCalculationStrategy';
+import { Builder } from '../../../infrastructure/builders/AccountRestrictionsEntityTypeTransaction';
+import {VerifiableTransaction} from '../../../infrastructure/builders/VerifiableTransaction';
+import { PublicAccount } from '../../account/PublicAccount';
+import { RestrictionType } from '../../account/RestrictionType';
+import { NetworkType } from '../../blockchain/NetworkType';
+import { UInt64 } from '../../UInt64';
+import { AccountRestrictionModification } from '../AccountRestrictionModification';
+import { Deadline } from '../Deadline';
+import { Transaction, TransactionBuilder } from '../Transaction';
+import { TransactionInfo } from '../TransactionInfo';
+import { TransactionType } from '../TransactionType';
+import { TransactionTypeVersion } from '../TransactionTypeVersion';
+import { calculateFee } from '../FeeCalculationStrategy';
 
+/**
+ * @deprecated
+*/
 export class AccountOperationRestrictionModificationTransaction extends Transaction {
 
     /**
@@ -138,6 +141,9 @@ export class AccountOperationRestrictionModificationTransaction extends Transact
     }
 }
 
+/**
+ * @deprecated
+*/
 export class AccountOperationRestrictionModificationTransactionBuilder extends TransactionBuilder {
     private _modifications: Array<AccountRestrictionModification<TransactionType>>;
     private _restrictionType: RestrictionType;
