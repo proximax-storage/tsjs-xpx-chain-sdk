@@ -56,7 +56,7 @@ import { TestingAccount } from '../conf/conf.spec';
 import { deepStrictEqual } from 'assert';
 import { KeyGenerator } from '../../src/core/format/KeyGenerator'
 import { NamespaceType, MosaicMetadataTransaction, NamespaceMetadataTransaction, AccountMetadataTransaction, 
-    ChainUpgradeTransaction, ChainConfigTransaction, MosaicLevy, MosaicLevyType, MosaicModifyLevyTransaction } from '../../src/model/model';
+    ChainUpgradeTransaction, NetworkConfigTransaction, MosaicLevy, MosaicLevyType, MosaicModifyLevyTransaction } from '../../src/model/model';
 
 describe('SerializeTransactionToJSON', () => {
     let account: Account;
@@ -566,8 +566,8 @@ describe('SerializeTransactionToJSON', () => {
 
     });
 
-    it('should create ChainConfigTransaction', () => {
-        const chainConfigureTransaction = ChainConfigTransaction.create(
+    it('should create NetworkConfigTransaction', () => {
+        const NetworkConfigureTransaction = NetworkConfigTransaction.create(
             Deadline.create(),
             UInt64.fromUint(12345678901234567890),
             'some-network-config',
@@ -575,7 +575,7 @@ describe('SerializeTransactionToJSON', () => {
             NetworkType.MIJIN_TEST
         );
 
-        const json = chainConfigureTransaction.toJSON();
+        const json = NetworkConfigureTransaction.toJSON();
 
         expect(json.transaction.type).to.be.equal(TransactionType.CHAIN_CONFIGURE);
         deepStrictEqual(json.transaction.applyHeightDelta, UInt64.fromUint(12345678901234567890).toDTO());

@@ -345,6 +345,9 @@ export class AggregateCompleteTransactionBuilder extends TransactionBuilder {
     }
 }
 
+/**
+ * @deprecated
+ */
 export class AggregateCompleteV1TransactionBuilder extends TransactionBuilder {
     private _cosignatures: AggregateTransactionCosignature[] = [];
     private _innerTransactions: InnerTransaction[] = [];
@@ -405,6 +408,9 @@ export class AggregateBondedTransactionBuilder extends TransactionBuilder {
     }
 }
 
+/**
+ * @deprecated
+ */
 export class AggregateBondedV1TransactionBuilder extends TransactionBuilder {
     private _cosignatures: AggregateTransactionCosignature[] = [];
     private _innerTransactions: InnerTransaction[] = [];

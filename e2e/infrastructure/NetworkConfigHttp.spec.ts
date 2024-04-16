@@ -10,7 +10,7 @@ describe('NetworkConfigHttp', () => {
 
     describe('getChainConfig', () => {
         it('should return blockchain config', (done) => {
-            chainConfigHttp.getChainConfig(1)
+            chainConfigHttp.getNetworkConfig(1)
                 .subscribe((chainConfig) => {
                     expect(chainConfig.height.compact()).to.be.equal(1);
                     expect(chainConfig.networkConfig).not.to.be.undefined;

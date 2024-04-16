@@ -39,7 +39,10 @@ import { PlaceSdaExchangeOfferTransactionBuilder } from "./PlaceSdaExchangeOffer
 import { RemoveSdaExchangeOfferTransactionBuilder } from "./RemoveSdaExchangeOfferTransaction";
 import { CreateLiquidityProviderTransactionBuilder } from "./liquidityProvider/CreateLiquidityProviderTransaction";
 import { ManualRateChangeTransactionBuilder } from "./liquidityProvider/ManualRateChangeTransaction";
-
+import { NetworkConfigAbsoluteHeightTransactionBuilder } from "./NetworkConfigAbsoluteHeightTransaction";
+import { VrfLinkTransactionBuilder } from "./VrfLinkTransaction";
+import { NodeLinkTransactionBuilder } from "./NodeLinkTransaction";
+import { AccountV2UpgradeTransactionBuilder } from "./AccountV2UpgradeTransaction";
 
 export class TransactionBuilderFactory {
     private _networkType: NetworkType = NetworkType.MIJIN_TEST;
@@ -99,6 +102,24 @@ export class TransactionBuilderFactory {
         return builder;
     }
 
+    public nodeLink(): VrfLinkTransactionBuilder {
+        const builder = new VrfLinkTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public vrfLink(): NodeLinkTransactionBuilder {
+        const builder = new NodeLinkTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public accountV2Upgrade(): AccountV2UpgradeTransactionBuilder {
+        const builder = new AccountV2UpgradeTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
     public transfer(): TransferTransactionBuilder {
         const builder = new TransferTransactionBuilder();
         this.configureBuilder(builder);
@@ -111,18 +132,27 @@ export class TransactionBuilderFactory {
         return builder;
     }
 
+    /**
+     * @deprecated 
+     */
     public accountRestrictionAddress(): AccountAddressRestrictionModificationTransactionBuilder {
         const builder = new AccountAddressRestrictionModificationTransactionBuilder();
         this.configureBuilder(builder);
         return builder;
     }
 
+    /**
+     * @deprecated 
+     */
     public accountRestrictionMosaic(): AccountMosaicRestrictionModificationTransactionBuilder {
         const builder = new AccountMosaicRestrictionModificationTransactionBuilder();
         this.configureBuilder(builder);
         return builder;
     }
 
+    /**
+     * @deprecated 
+     */
     public accountRestrictionOperation(): AccountOperationRestrictionModificationTransactionBuilder {
         const builder = new AccountOperationRestrictionModificationTransactionBuilder();
         this.configureBuilder(builder);
@@ -147,20 +177,34 @@ export class TransactionBuilderFactory {
         return builder;
     }
 
+    /**
+     * @deprecated
+     */
     public aggregateBondedV1(): AggregateBondedV1TransactionBuilder {
         const builder = new AggregateBondedV1TransactionBuilder();
         this.configureBuilder(builder);
         return builder;
     }
 
+    /**
+     * @deprecated
+     */
     public aggregateCompleteV1(): AggregateCompleteV1TransactionBuilder {
         const builder = new AggregateCompleteV1TransactionBuilder();
         this.configureBuilder(builder);
         return builder;
     }
 
-    public NetworkConfig(): NetworkConfigTransactionBuilder {
+    public networkConfig(): NetworkConfigTransactionBuilder {
         const builder = new NetworkConfigTransactionBuilder();
+        builder.networkType(this.networkType)
+            .generationHash(this.generationHash)
+            .createNewDeadlineFn(this.createNewDeadlineFn);
+        return builder;
+    }
+
+    public networkConfigAbsoluteHeight(): NetworkConfigAbsoluteHeightTransactionBuilder {
+        const builder = new NetworkConfigAbsoluteHeightTransactionBuilder();
         builder.networkType(this.networkType)
             .generationHash(this.generationHash)
             .createNewDeadlineFn(this.createNewDeadlineFn);

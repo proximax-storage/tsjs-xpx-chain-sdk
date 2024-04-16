@@ -8,27 +8,27 @@ import {NetworkType} from '../../../src/model/blockchain/NetworkType';
 import {Deadline} from '../../../src/model/transaction/Deadline';
 import {UInt64} from '../../../src/model/UInt64';
 import {TestingAccount} from '../../conf/conf.spec';
-import { ChainConfigTransaction } from '../../../src/model/model';
+import { NetworkConfigTransaction } from '../../../src/model/model';
 
-describe('ChainConfigTransaction', () => {
+describe('NetworkConfigTransaction', () => {
     let account: Account;
     const generationHash = '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6';
     before(() => {
         account = TestingAccount;
     });
     describe('size', () => {
-        it('should return 186 for ChainConfigTransaction byte size with some config values', () => {
+        it('should return 186 for NetworkConfigTransaction byte size with some config values', () => {
 
-            const chainConfigTransaction = ChainConfigTransaction.create(
+            const networkConfigTransaction = NetworkConfigTransaction.create(
                 Deadline.create(),
                 UInt64.fromHex("1234567812345678"),
                 "some blockchain config",
                 "some supported entity versions",
                 NetworkType.MIJIN_TEST
             );
-            const signedTransaction = chainConfigTransaction.preV2SignWith(account, generationHash);
+            const signedTransaction = networkConfigTransaction.preV2SignWith(account, generationHash);
 
-            expect(chainConfigTransaction.size).to.be.equal(186);
+            expect(networkConfigTransaction.size).to.be.equal(186);
             expect(signedTransaction.payload.length).to.be.equal(186 * 2);
             expect(signedTransaction.payload.substring(
                 244,
