@@ -20,7 +20,7 @@ import { PublicAccount } from '../../account/PublicAccount';
 import { RestrictionType } from '../../account/RestrictionType';
 import { NetworkType } from '../../blockchain/NetworkType';
 import { UInt64 } from '../../UInt64';
-import { AccountRestrictionModification } from '../AccountRestrictionModification';
+import { AccountRestrictionModification } from './AccountRestrictionModification';
 import { Deadline } from '../Deadline';
 import { Transaction, TransactionBuilder } from '../Transaction';
 import { TransactionInfo } from '../TransactionInfo';

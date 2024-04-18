@@ -27,7 +27,7 @@ import { MosaicNonce } from '../../model/mosaic/MosaicNonce';
 import { MosaicProperties, PropertyBit } from '../../model/mosaic/MosaicProperties';
 import { NamespaceId } from '../../model/namespace/NamespaceId';
 import { NamespaceType } from '../../model/namespace/NamespaceType';
-import { AccountRestrictionModification } from '../../model/transaction/AccountRestrictionModification';
+import { AccountRestrictionModification } from '../../model/transaction/deprecated/AccountRestrictionModification';
 import { AggregateTransactionCosignature } from '../../model/transaction/AggregateTransactionCosignature';
 import { AggregateV2TransactionCosignature } from '../../model/transaction/AggregateV2TransactionCosignature';
 import { Deadline } from '../../model/transaction/Deadline';

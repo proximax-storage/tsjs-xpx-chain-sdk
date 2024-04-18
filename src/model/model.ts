@@ -134,13 +134,13 @@ export * from './receipt/TransactionStatement';
 export * from './richlist/RichlistEntry';
 
 // Transaction
-export * from './transaction/AccountMosaicRestrictionTransaction';
 export * from './transaction/AccountMetadataTransaction';
 export * from './transaction/AccountLinkTransaction';
+export * from './transaction/deprecated/AccountAddressRestrictionModificationTransaction';
 export * from './transaction/deprecated/AccountMosaicRestrictionModificationTransaction';
 export * from './transaction/deprecated/AccountOperationRestrictionModificationTransaction';
-export * from './transaction/AccountRestrictionModification';
-export * from './transaction/AccountRestrictionTransaction';
+export * from './transaction/deprecated/AccountRestrictionModification';
+export * from './transaction/deprecated/AccountRestrictionTransaction';
 export * from './transaction/AddExchangeOffer';
 export * from './transaction/AddExchangeOfferTransaction';
 export * from './transaction/AddressAliasTransaction';
@@ -224,6 +224,23 @@ export * from './transaction/storage/NewReplicatorOnboardingTransaction';
 export * from './transaction/storage/NewStoragePaymentTransaction';
 export * from './transaction/storage/NewVerificationPaymentTransaction';
 export * from './transaction/storage/ReplicatorOffboardingTransaction';
+
+// symbol merge transaction
+export * from './transaction/AccountAddressRestrictionTransaction';
+export * from './transaction/AccountMosaicRestrictionTransaction';
+export * from './transaction/AccountOperationRestrictionTransaction';
+export * from './transaction/AccountV2UpgradeTransaction';
+export * from './transaction/LockFundTransferTransaction';
+export * from './transaction/LockFundCancelUnlockTransaction';
+export * from './transaction/MosaicAddressRestrictionTransaction';
+export * from './transaction/MosaicGlobalRestrictionTransaction';
+export * from './transaction/NetworkConfigAbsoluteHeightTransaction';
+export * from './transaction/NodeLinkTransaction';
+export * from './transaction/VrfLinkTransaction';
+
+export * from './mosaic/MosaicRestriction';
+export * from './transaction/LockFund';
+export * from './account/AccountLink';
 
 // Liquidity Provider
 export * from './liquidity/LiquidityProvider';

@@ -98,8 +98,8 @@ export class Builder {
 
         // Calculate size
 
-        const codedTransfer = AccountV2UpgradeTransactionBuffer.endAccountV2UpgradeTransactionBuffer(builder);
-        builder.finish(codedTransfer);
+        const codedTxn = AccountV2UpgradeTransactionBuffer.endAccountV2UpgradeTransactionBuffer(builder);
+        builder.finish(codedTxn);
 
         const bytes = builder.asUint8Array();
         return new AccountV2UpgradeTransaction(bytes);

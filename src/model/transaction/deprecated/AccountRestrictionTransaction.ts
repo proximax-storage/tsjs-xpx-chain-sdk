@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { RestrictionType } from '../account/RestrictionType';
-import { NetworkType } from '../blockchain/NetworkType';
-import { UInt64 } from '../UInt64';
-import { AccountAddressRestrictionModificationTransaction } from './AccountMosaicRestrictionTransaction';
-import { AccountMosaicRestrictionModificationTransaction } from './deprecated/AccountMosaicRestrictionModificationTransaction';
-import { AccountOperationRestrictionModificationTransaction } from './deprecated/AccountOperationRestrictionModificationTransaction';
+import { RestrictionType } from '../../account/RestrictionType';
+import { NetworkType } from '../../blockchain/NetworkType';
+import { UInt64 } from '../../UInt64';
+import { AccountAddressRestrictionModificationTransaction } from './AccountAddressRestrictionModificationTransaction';
+import { AccountMosaicRestrictionModificationTransaction } from './AccountMosaicRestrictionModificationTransaction';
+import { AccountOperationRestrictionModificationTransaction } from './AccountOperationRestrictionModificationTransaction';
 import { AccountRestrictionModification } from './AccountRestrictionModification';
-import { Deadline } from './Deadline';
-import { TransactionType } from './TransactionType';
+import { Deadline } from '../Deadline';
+import { TransactionType } from '../TransactionType';
 
 export class AccountRestrictionTransaction {
     /**

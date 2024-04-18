@@ -105,8 +105,8 @@ export class Builder {
 
         // Calculate size
 
-        const codedTransfer = NodeLinkTransactionBuffer.endNodeLinkTransactionBuffer(builder);
-        builder.finish(codedTransfer);
+        const codedTxn = NodeLinkTransactionBuffer.endNodeLinkTransactionBuffer(builder);
+        builder.finish(codedTxn);
 
         const bytes = builder.asUint8Array();
         return new NodeLinkTransaction(bytes);

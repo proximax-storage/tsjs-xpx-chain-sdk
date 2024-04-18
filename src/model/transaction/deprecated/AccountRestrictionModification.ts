@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { Address } from '../account/Address';
-import { RestrictionModificationType } from '../account/RestrictionModificationType';
-import { MosaicId } from '../mosaic/MosaicId';
-import { TransactionType } from './TransactionType';
+import { Address } from '../../account/Address';
+import { RestrictionModificationType } from '../../account/RestrictionModificationType';
+import { MosaicId } from '../../mosaic/MosaicId';
+import { TransactionType } from '../TransactionType';
 
 export class AccountRestrictionModification<T> {
 

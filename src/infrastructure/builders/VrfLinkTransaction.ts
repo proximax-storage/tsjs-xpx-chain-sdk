@@ -105,8 +105,8 @@ export class Builder {
 
         // Calculate size
 
-        const codedTransfer = VrfLinkTransactionBuffer.endVrfLinkTransactionBuffer(builder);
-        builder.finish(codedTransfer);
+        const codedTxn = VrfLinkTransactionBuffer.endVrfLinkTransactionBuffer(builder);
+        builder.finish(codedTxn);
 
         const bytes = builder.asUint8Array();
         return new VrfLinkTransaction(bytes);

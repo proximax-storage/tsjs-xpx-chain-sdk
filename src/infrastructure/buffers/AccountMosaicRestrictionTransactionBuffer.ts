@@ -2,7 +2,7 @@
 
 import * as flatbuffers from 'flatbuffers';
 
-import { MosaicId } from './MosaicId';
+import { MosaicId } from './MosaicIdBuffer';
 
 
 export class AccountMosaicRestrictionTransactionBuffer {

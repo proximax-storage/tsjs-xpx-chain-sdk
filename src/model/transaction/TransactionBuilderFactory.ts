@@ -7,7 +7,7 @@ import { TransactionBuilder } from "./Transaction";
 import { TransferTransactionBuilder } from './TransferTransaction';
 import { AccountLinkTransactionBuilder } from './AccountLinkTransaction';
 import { MosaicDefinitionTransactionBuilder } from './MosaicDefinitionTransaction';
-import { AccountAddressRestrictionModificationTransactionBuilder } from "./AccountMosaicRestrictionTransaction";
+import { AccountAddressRestrictionModificationTransactionBuilder } from "./deprecated/AccountAddressRestrictionModificationTransaction";
 import { AccountMosaicRestrictionModificationTransactionBuilder } from "./deprecated/AccountMosaicRestrictionModificationTransaction";
 import { AccountOperationRestrictionModificationTransactionBuilder } from "./deprecated/AccountOperationRestrictionModificationTransaction";
 import { AddressAliasTransactionBuilder } from "./AddressAliasTransaction";
