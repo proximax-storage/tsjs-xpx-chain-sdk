@@ -18,7 +18,8 @@
 import {from as observableFrom, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import { DtoMapping } from '../core/utils/DtoMapping';
-import {AccountInfo, SupplementalPublicKeys } from '../model/account/AccountInfo';
+import { AccountInfo } from '../model/account/AccountInfo';
+import { SupplementalPublicKeys } from '../model/account/SupplementalPublicKeys';
 import { AccountNames } from '../model/account/AccountNames';
 import { AccountRestrictionsInfo } from '../model/account/AccountRestrictionsInfo';
 import {Address} from '../model/account/Address';
@@ -106,26 +107,23 @@ export class AccountHttp extends Http implements AccountRepository {
                     )),
                     accountInfoDTO.account.linkedAccountKey,
                     accountInfoDTO.account.supplementalPublicKeys ? 
-                    {
-                        linked: accountInfoDTO.account.supplementalPublicKeys.linked ?
-                            PublicAccount.createFromPublicKey(
-                                accountInfoDTO.account.supplementalPublicKeys.linked,
-                                address.networkType,
-                                accVersion
-                            ) : null,
-                        node: accountInfoDTO.account.supplementalPublicKeys.node ? 
-                            PublicAccount.createFromPublicKey(
-                                accountInfoDTO.account.supplementalPublicKeys.node,
-                                address.networkType,
-                                accVersion
-                            ): null,
-                        vrf: accountInfoDTO.account.supplementalPublicKeys.vrf ? 
-                            PublicAccount.createFromPublicKey(
-                                accountInfoDTO.account.supplementalPublicKeys.vrf,
-                                address.networkType,
-                                accVersion
-                            ) : null
-                    }: undefined,
+                    new SupplementalPublicKeys(
+                        accountInfoDTO.account.supplementalPublicKeys.linked ?
+                        PublicAccount.createFromPublicKey(
+                            accountInfoDTO.account.supplementalPublicKeys.linked,
+                            address.networkType
+                        ) : undefined, 
+                        accountInfoDTO.account.supplementalPublicKeys.node ?
+                        PublicAccount.createFromPublicKey(
+                            accountInfoDTO.account.supplementalPublicKeys.node,
+                            address.networkType
+                        ) : undefined, 
+                        accountInfoDTO.account.supplementalPublicKeys.vrf ?
+                        PublicAccount.createFromPublicKey(
+                            accountInfoDTO.account.supplementalPublicKeys.vrf,
+                            address.networkType
+                        ) : undefined, 
+                    ) : undefined,
                     accVersion
                 );
             })
@@ -188,26 +186,23 @@ export class AccountHttp extends Http implements AccountRepository {
                             new Mosaic(new MosaicId(mosaicDTO.id), new UInt64(mosaicDTO.amount))),
                         accountInfoDTO.account.linkedAccountKey,
                         accountInfoDTO.account.supplementalPublicKeys ? 
-                        {
-                            linked: accountInfoDTO.account.supplementalPublicKeys.linked ?
-                                PublicAccount.createFromPublicKey(
-                                    accountInfoDTO.account.supplementalPublicKeys.linked,
-                                    address.networkType,
-                                    accVersion
-                                ) : null,
-                            node: accountInfoDTO.account.supplementalPublicKeys.node ? 
-                                PublicAccount.createFromPublicKey(
-                                    accountInfoDTO.account.supplementalPublicKeys.node,
-                                    address.networkType,
-                                    accVersion
-                                ): null,
-                            vrf: accountInfoDTO.account.supplementalPublicKeys.vrf ? 
-                                PublicAccount.createFromPublicKey(
-                                    accountInfoDTO.account.supplementalPublicKeys.vrf,
-                                    address.networkType,
-                                    accVersion
-                                ) : null
-                        }: undefined,
+                        new SupplementalPublicKeys(
+                            accountInfoDTO.account.supplementalPublicKeys.linked ?
+                            PublicAccount.createFromPublicKey(
+                                accountInfoDTO.account.supplementalPublicKeys.linked,
+                                address.networkType
+                            ) : undefined, 
+                            accountInfoDTO.account.supplementalPublicKeys.node ?
+                            PublicAccount.createFromPublicKey(
+                                accountInfoDTO.account.supplementalPublicKeys.node,
+                                address.networkType
+                            ) : undefined, 
+                            accountInfoDTO.account.supplementalPublicKeys.vrf ?
+                            PublicAccount.createFromPublicKey(
+                                accountInfoDTO.account.supplementalPublicKeys.vrf,
+                                address.networkType
+                            ) : undefined, 
+                        ) : undefined,
                         accVersion
                     );
                 });

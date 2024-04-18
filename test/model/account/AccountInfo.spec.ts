@@ -30,6 +30,7 @@ describe('AccountInfo', () => {
     it('should createComplete an AccountInfo object', () => {
         const accountInfoDTO = {
             account: {
+                version: 1,
                 accountType: AccountLinkTypeEnum.NUMBER_1,
                 linkedAccountKey: '0'.repeat(64),
                 address: Address.createFromEncoded('9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142'),
@@ -42,6 +43,7 @@ describe('AccountInfo', () => {
                 }],
                 publicKey: '846B4439154579A5903B1459C9CF69CB8153F6D0110A7A0ED61DE29AE4810BF2',
                 publicKeyHeight: new UInt64([13, 0]),
+                supplementalPublicKeys: {}
             },
             meta: {},
         };
@@ -53,8 +55,10 @@ describe('AccountInfo', () => {
             accountInfoDTO.account.publicKey,
             accountInfoDTO.account.publicKeyHeight,
             accountInfoDTO.account.accountType.valueOf(),
+            accountInfoDTO.account.mosaics.map((mosaicDTO) => new Mosaic(mosaicDTO.id, mosaicDTO.amount)),
             accountInfoDTO.account.linkedAccountKey,
-            accountInfoDTO.account.mosaics.map((mosaicDTO) => new Mosaic(mosaicDTO.id, mosaicDTO.amount))
+            accountInfoDTO.account.supplementalPublicKeys,
+            accountInfoDTO.account.version
         );
 
         expect(accountInfo.meta).to.be.equal(accountInfoDTO.meta);
@@ -83,6 +87,11 @@ describe('AccountInfo', () => {
                 }],
                 publicKey: '846B4439154579A5903B1459C9CF69CB8153F6D0110A7A0ED61DE29AE4810BF2',
                 publicKeyHeight: new UInt64([13, 0]),
+                supplementalPublicKeys: {
+                    linked: PublicAccount.createFromPublicKey("AB".repeat(32), NetworkType.MIJIN_TEST),
+                    node: PublicAccount.createFromPublicKey("AC".repeat(32), NetworkType.MIJIN_TEST),
+                    vrf: PublicAccount.createFromPublicKey("AD".repeat(32), NetworkType.MIJIN_TEST),
+                }
             },
             meta: {},
         };
@@ -94,8 +103,9 @@ describe('AccountInfo', () => {
             accountInfoDTO.account.publicKey,
             accountInfoDTO.account.publicKeyHeight,
             accountInfoDTO.account.accountType.valueOf(),
-            accountInfoDTO.account.linkedAccountKey,
             accountInfoDTO.account.mosaics.map((mosaicDTO) => new Mosaic(mosaicDTO.id, mosaicDTO.amount)),
+            accountInfoDTO.account.linkedAccountKey,
+            accountInfoDTO.account.supplementalPublicKeys,
             accountInfoDTO.account.version
         );
 

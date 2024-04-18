@@ -20,12 +20,7 @@ import {UInt64} from '../UInt64';
 import {AccountType} from './AccountType';
 import {Address} from './Address';
 import {PublicAccount} from './PublicAccount';
-
-export interface SupplementalPublicKeys{
-    linked: PublicAccount | null; 
-    node: PublicAccount | null;
-    vrf: PublicAccount | null;
-}
+import { SupplementalPublicKeys } from './SupplementalPublicKeys';
 
 /**
  * The account info structure describes basic information for an account.
