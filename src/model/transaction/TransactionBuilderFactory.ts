@@ -43,6 +43,13 @@ import { NetworkConfigAbsoluteHeightTransactionBuilder } from "./NetworkConfigAb
 import { VrfLinkTransactionBuilder } from "./VrfLinkTransaction";
 import { NodeLinkTransactionBuilder } from "./NodeLinkTransaction";
 import { AccountV2UpgradeTransactionBuilder } from "./AccountV2UpgradeTransaction";
+import { AccountAddressRestrictionTransactionBuilder } from "./AccountAddressRestrictionTransaction";
+import { AccountMosaicRestrictionTransactionBuilder } from "./AccountMosaicRestrictionTransaction";
+import { AccountOperationRestrictionTransactionBuilder } from "./AccountOperationRestrictionTransaction";
+import { MosaicGlobalRestrictionTransactionBuilder } from "./MosaicGlobalRestrictionTransaction";
+import { MosaicAddressRestrictionTransactionBuilder } from "./MosaicAddressRestrictionTransaction";
+import { LockFundTransferTransactionBuilder } from "./LockFundTransferTransaction";
+import { LockFundCancelUnlockTransactionBuilder } from "./LockFundCancelUnlockTransaction";
 
 export class TransactionBuilderFactory {
     private _networkType: NetworkType = NetworkType.MIJIN_TEST;
@@ -347,6 +354,48 @@ export class TransactionBuilderFactory {
 
     public manualRateChange(): ManualRateChangeTransactionBuilder{
         const builder = new ManualRateChangeTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public accountAddressRestriction(): AccountAddressRestrictionTransactionBuilder{
+        const builder = new AccountAddressRestrictionTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public accountMosaicRestriction(): AccountMosaicRestrictionTransactionBuilder{
+        const builder = new AccountMosaicRestrictionTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public accountOperationRestriction(): AccountOperationRestrictionTransactionBuilder{
+        const builder = new AccountOperationRestrictionTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public lockFundTransfer(): LockFundTransferTransactionBuilder{
+        const builder = new LockFundTransferTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public lockFundCancelUnlock(): LockFundCancelUnlockTransactionBuilder{
+        const builder = new LockFundCancelUnlockTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public mosaicAddressRestriction(): MosaicAddressRestrictionTransactionBuilder{
+        const builder = new MosaicAddressRestrictionTransactionBuilder();
+        this.configureBuilder(builder);
+        return builder;
+    }
+
+    public mosaicGlobalRestriction(): MosaicGlobalRestrictionTransactionBuilder{
+        const builder = new MosaicGlobalRestrictionTransactionBuilder();
         this.configureBuilder(builder);
         return builder;
     }
