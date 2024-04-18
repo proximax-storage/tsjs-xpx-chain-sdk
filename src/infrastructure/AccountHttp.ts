@@ -18,7 +18,7 @@
 import {from as observableFrom, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import { DtoMapping } from '../core/utils/DtoMapping';
-import {AccountInfo} from '../model/account/AccountInfo';
+import {AccountInfo, SupplementalPublicKeys } from '../model/account/AccountInfo';
 import { AccountNames } from '../model/account/AccountNames';
 import { AccountRestrictionsInfo } from '../model/account/AccountRestrictionsInfo';
 import {Address} from '../model/account/Address';
@@ -91,18 +91,42 @@ export class AccountHttp extends Http implements AccountRepository {
         return observableFrom(this.accountRoutesApi.getAccountInfo(address.plain(), requestOptions)).pipe(
             map((response: AccountInfoResponse) => {
                 const accountInfoDTO = response.body;
+                const accVersion = accountInfoDTO.account.version ?? 1;
+                const address = Address.createFromEncoded(accountInfoDTO.account.address);
                 return new AccountInfo(
                     accountInfoDTO.meta,
-                    Address.createFromEncoded(accountInfoDTO.account.address),
+                    address,
                     new UInt64(accountInfoDTO.account.addressHeight),
                     accountInfoDTO.account.publicKey,
                     new UInt64(accountInfoDTO.account.publicKeyHeight),
                     accountInfoDTO.account.accountType.valueOf(),
-                    accountInfoDTO.account.linkedAccountKey,
                     accountInfoDTO.account.mosaics.map((mosaicDTO) => new Mosaic(
                         new MosaicId(mosaicDTO.id),
                         new UInt64(mosaicDTO.amount),
                     )),
+                    accountInfoDTO.account.linkedAccountKey,
+                    accountInfoDTO.account.supplementalPublicKeys ? 
+                    {
+                        linked: accountInfoDTO.account.supplementalPublicKeys.linked ?
+                            PublicAccount.createFromPublicKey(
+                                accountInfoDTO.account.supplementalPublicKeys.linked,
+                                address.networkType,
+                                accVersion
+                            ) : null,
+                        node: accountInfoDTO.account.supplementalPublicKeys.node ? 
+                            PublicAccount.createFromPublicKey(
+                                accountInfoDTO.account.supplementalPublicKeys.node,
+                                address.networkType,
+                                accVersion
+                            ): null,
+                        vrf: accountInfoDTO.account.supplementalPublicKeys.vrf ? 
+                            PublicAccount.createFromPublicKey(
+                                accountInfoDTO.account.supplementalPublicKeys.vrf,
+                                address.networkType,
+                                accVersion
+                            ) : null
+                    }: undefined,
+                    accVersion
                 );
             })
         );
@@ -151,16 +175,40 @@ export class AccountHttp extends Http implements AccountRepository {
             this.accountRoutesApi.getAccountsInfo(accountIdsBody, requestOptions))
             .pipe(map((response: AccountsInfoResponse) => {
                 return response.body.map((accountInfoDTO: AccountInfoDTO) => {
+                    const accVersion = accountInfoDTO.account.version ?? 1;
+                    const address = Address.createFromEncoded(accountInfoDTO.account.address);
                     return new AccountInfo(
                         accountInfoDTO.meta,
-                        Address.createFromEncoded(accountInfoDTO.account.address),
+                        address,
                         new UInt64(accountInfoDTO.account.addressHeight),
                         accountInfoDTO.account.publicKey,
                         new UInt64(accountInfoDTO.account.publicKeyHeight),
                         accountInfoDTO.account.accountType.valueOf(),
-                        accountInfoDTO.account.linkedAccountKey,
                         accountInfoDTO.account.mosaics.map((mosaicDTO: MosaicDTO) =>
                             new Mosaic(new MosaicId(mosaicDTO.id), new UInt64(mosaicDTO.amount))),
+                        accountInfoDTO.account.linkedAccountKey,
+                        accountInfoDTO.account.supplementalPublicKeys ? 
+                        {
+                            linked: accountInfoDTO.account.supplementalPublicKeys.linked ?
+                                PublicAccount.createFromPublicKey(
+                                    accountInfoDTO.account.supplementalPublicKeys.linked,
+                                    address.networkType,
+                                    accVersion
+                                ) : null,
+                            node: accountInfoDTO.account.supplementalPublicKeys.node ? 
+                                PublicAccount.createFromPublicKey(
+                                    accountInfoDTO.account.supplementalPublicKeys.node,
+                                    address.networkType,
+                                    accVersion
+                                ): null,
+                            vrf: accountInfoDTO.account.supplementalPublicKeys.vrf ? 
+                                PublicAccount.createFromPublicKey(
+                                    accountInfoDTO.account.supplementalPublicKeys.vrf,
+                                    address.networkType,
+                                    accVersion
+                                ) : null
+                        }: undefined,
+                        accVersion
                     );
                 });
             }));
