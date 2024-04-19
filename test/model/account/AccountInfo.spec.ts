@@ -41,6 +41,10 @@ describe('AccountInfo', () => {
                     amount: new UInt64([1830592442, 94387]),
                     id: new MosaicId([3646934825, 3576016193]),
                 }],
+                lockedMosaics: [{
+                    amount: new UInt64([1830592442, 94387]),
+                    id: new MosaicId([3646934825, 3576016193]),
+                }],
                 publicKey: '846B4439154579A5903B1459C9CF69CB8153F6D0110A7A0ED61DE29AE4810BF2',
                 publicKeyHeight: new UInt64([13, 0]),
                 supplementalPublicKeys: {}
@@ -56,6 +60,7 @@ describe('AccountInfo', () => {
             accountInfoDTO.account.publicKeyHeight,
             accountInfoDTO.account.accountType.valueOf(),
             accountInfoDTO.account.mosaics.map((mosaicDTO) => new Mosaic(mosaicDTO.id, mosaicDTO.amount)),
+            accountInfoDTO.account.lockedMosaics.map((mosaicDTO) => new Mosaic(mosaicDTO.id, mosaicDTO.amount)),
             accountInfoDTO.account.linkedAccountKey,
             accountInfoDTO.account.supplementalPublicKeys,
             accountInfoDTO.account.version
@@ -85,6 +90,10 @@ describe('AccountInfo', () => {
                     amount: new UInt64([1830592442, 94387]),
                     id: new MosaicId([3646934825, 3576016193]),
                 }],
+                lockedMosaics: [{
+                    amount: new UInt64([1830592442, 94387]),
+                    id: new MosaicId([3646934825, 3576016193]),
+                }],
                 publicKey: '846B4439154579A5903B1459C9CF69CB8153F6D0110A7A0ED61DE29AE4810BF2',
                 publicKeyHeight: new UInt64([13, 0]),
                 supplementalPublicKeys: {
@@ -104,6 +113,7 @@ describe('AccountInfo', () => {
             accountInfoDTO.account.publicKeyHeight,
             accountInfoDTO.account.accountType.valueOf(),
             accountInfoDTO.account.mosaics.map((mosaicDTO) => new Mosaic(mosaicDTO.id, mosaicDTO.amount)),
+            accountInfoDTO.account.lockedMosaics.map((mosaicDTO) => new Mosaic(mosaicDTO.id, mosaicDTO.amount)),
             accountInfoDTO.account.linkedAccountKey,
             accountInfoDTO.account.supplementalPublicKeys,
             accountInfoDTO.account.version
