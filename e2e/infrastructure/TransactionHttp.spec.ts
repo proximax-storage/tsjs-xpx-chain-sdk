@@ -1248,7 +1248,7 @@ describe('TransactionHttp', () => {
         describe('ChainConfigTransaction', () => {
             ((NemesisAccount.privateKey !== "0".repeat(64)) ? it : it.skip)('standalone', (done) => {
                 GetNemesisBlockDataPromise().then(nemesisBlockInfo => {
-                    const chainConfigTransaction = factory.chainConfig()
+                    const chainConfigTransaction = factory.networkConfig()
                         .applyHeightDelta(UInt64.fromUint(10))
                         .networkConfig(nemesisBlockInfo.config.networkConfig)
                         .supportedEntityVersions(nemesisBlockInfo.config.supportedEntityVersions)

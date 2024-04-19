@@ -7,7 +7,7 @@ import { APIUrl, TestingAccount, ConfTestingNamespaceId, ConfTestingMosaicId, Co
 import { MetadataHttp } from '../../src/infrastructure/MetadataHttp';
 import { Address, Transaction, TransactionBuilderFactory, UInt64, Mosaic, NamespaceId } from '../../src/model/model';
 import { Convert as convert } from '../../src/core/format';
-import { MetadataModification, MetadataModificationType } from '../../src/model/transaction/ModifyMetadataTransaction';
+import { MetadataModification, MetadataModificationType } from '../../src/model/transaction/deprecated/ModifyMetadataTransaction';
 import { TransactionHttp, Listener } from '../../src/infrastructure/infrastructure';
 import { validateTransactionConfirmed, validatePartialTransactionNotPartialAnyMore, validatePartialTransactionAnnouncedCorrectly } from '../utils';
 import { fail } from 'assert';

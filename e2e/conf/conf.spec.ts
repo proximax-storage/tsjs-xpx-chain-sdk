@@ -1,7 +1,7 @@
 const conf = require("config");
 
 import { MosaicId, NamespaceId, TransactionType, RegisterNamespaceTransaction, MosaicDefinitionTransaction,
-    TransferTransaction, TransactionInfo, MosaicNonce, MosaicProperties, UInt64, BlockInfo, ChainConfigTransaction, TransactionBuilderFactory, NetworkType, Account, Transaction } from '../../src/model/model';
+    TransferTransaction, TransactionInfo, MosaicNonce, MosaicProperties, UInt64, BlockInfo, NetworkConfigTransaction, TransactionBuilderFactory, NetworkType, Account, Transaction } from '../../src/model/model';
 import { ConfUtils } from './ConfUtils';
 import { AccountHttp, TransactionHttp, NamespaceHttp, MosaicHttp, BlockHttp, TransactionQueryParams } from '../../src/infrastructure/infrastructure';
 import { firstValueFrom } from "rxjs"
@@ -226,7 +226,7 @@ const GetNemesisBlockDataPromise = () => {
             const testNamespace = currencyNamespace ? currencyNamespace : regNamespaceTxs[0];
             const regMosaicTx = txs.find(tx => tx.type === TransactionType.MOSAIC_DEFINITION) as MosaicDefinitionTransaction;
             const transferTx = txs.find(tx => tx.type === TransactionType.TRANSFER) as TransferTransaction;
-            const config = txs.find(tx => tx.type === TransactionType.CHAIN_CONFIGURE) as ChainConfigTransaction;
+            const config = txs.find(tx => tx.type === TransactionType.CHAIN_CONFIGURE) as NetworkConfigTransaction;
 
             return {
                 nemesisBlockInfo,

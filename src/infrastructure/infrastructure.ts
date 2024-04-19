@@ -17,7 +17,7 @@
 
 export * from './AccountHttp';
 export * from './BlockHttp';
-export * from './ChainConfigHttp';
+export * from './NetworkConfigHttp';
 export * from './ChainHttp';
 export * from './ChainUpgradeHttp';
 export * from './DiagnosticHttp';

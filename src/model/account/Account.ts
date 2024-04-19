@@ -162,7 +162,7 @@ export class Account {
      * @param networkType - Network type
      * @param version - Account version
      */
-    public static generateNewAccount(networkType: NetworkType, version: number = 1): Account {
+    public static generateNewAccount(networkType: NetworkType, version: number = 2): Account {
         // Create random bytes
         const randomBytesArray = Crypto.randomBytes(32);
         // Hash random bytes with entropy seed

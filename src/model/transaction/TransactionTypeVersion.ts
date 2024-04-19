@@ -99,18 +99,21 @@ export enum TransactionTypeVersion {
 
     /**
      * Account Restriction address transaction version
+     * @deprecated
      * @type {number}
      */
     MODIFY_ACCOUNT_RESTRICTION_ADDRESS = 1,
 
     /**
      * Account Restriction mosaic transaction version
+     * @deprecated
      * @type {number}
      */
     MODIFY_ACCOUNT_RESTRICTION_MOSAIC = 1,
 
     /**
      * Account Restriction operation transaction version
+     * @deprecated
      * @type {number}
      */
     MODIFY_ACCOUNT_RESTRICTION_ENTITY_TYPE = 1,
@@ -246,5 +249,23 @@ export enum TransactionTypeVersion {
 	Drive_Closure                     = 1,
 	Replicator_Offboarding            = 1,
 
+    // --------------------------------------------------------------------------------------
+
+    // ----------------------------symbol merge type-----------------------------------------
+    /**
+     * Account v2 upgrade transaction type
+     * @type {number}
+     */
+    Account_V2_Upgrade                  = 1,
+    NetworkConfig_Absolute_Height       = 1,
+	Node_Key_Link                       = 1,
+	Vrf_Key_Link                        = 1,
+	Lock_Fund_Transfer                  = 1,
+	Lock_Fund_Cancel_Unlock             = 1,
+	Account_Address_Restriction         = 1,
+	Account_Mosaic_Restriction          = 1,
+	Account_Operation_Restriction       = 1,
+	Mosaic_Global_Restriction           = 1,
+	Mosaic_Address_Restriction          = 1,
     // --------------------------------------------------------------------------------------
 }

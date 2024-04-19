@@ -94,18 +94,21 @@ export enum TransactionType {
 
     /**
      * Account restriction address transaction type
+     * @deprecated
      * @type {number}
      */
     MODIFY_ACCOUNT_RESTRICTION_ADDRESS = 0x4150,
 
     /**
      * Account restriction mosaic transaction type
+     * @deprecated
      * @type {number}
      */
     MODIFY_ACCOUNT_RESTRICTION_MOSAIC = 0x4250,
 
     /**
      * Account restriction operation transaction type
+     * @deprecated
      * @type {number}
      */
     MODIFY_ACCOUNT_RESTRICTION_OPERATION = 0x4350,
@@ -214,12 +217,6 @@ export enum TransactionType {
     AGGREGATE_BONDED_V2 = 0x4441,
 
     /**
-     * Account v2 upgrade transaction type
-     * @type {number}
-     */
-    Account_V2_Upgrade = 0x4258,
-
-    /**
     * Place SDA exchange offer transaction type
     */
     PLACE_SDA_EXCHANGE_OFFER = 0x416A,
@@ -267,6 +264,11 @@ export enum TransactionType {
     //---------------------------------------------------------------------------------------
 
     // ----------------------------symbol merge type-----------------------------------------
+    /**
+     * Account v2 upgrade transaction type
+     * @type {number}
+     */
+    Account_V2_Upgrade                  = 0x4258,
     NetworkConfig_Absolute_Height       = 0x4259,
 	Node_Key_Link                       = 0x424c,
 	Vrf_Key_Link                        = 0x434c,
