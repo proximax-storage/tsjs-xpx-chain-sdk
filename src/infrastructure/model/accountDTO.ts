@@ -44,6 +44,7 @@ export class AccountDTO {
     * The public key of all linked accounts. The linked account can use|provide balance for remote delegated harvesting. 
     */
     'supplementalPublicKeys'?: SupplementalPublicKeysDTO;
+    'lockedMosaics'?:Array<MosaicDTO>;
 
     static discriminator: string | undefined = undefined;
 
@@ -92,6 +93,11 @@ export class AccountDTO {
             "name": "supplementalPublicKeys",
             "baseName": "supplementalPublicKeys",
             "type": "SupplementalPublicKeysDTO"
+        },
+        {
+            "name": "lockedMosaics",
+            "baseName": "lockedMosaics",
+            "type": "Array<MosaicDTO>"
         }    
     ];
 

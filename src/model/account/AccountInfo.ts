@@ -61,6 +61,7 @@ export class AccountInfo {
          */
         public readonly mosaics: Mosaic[],
 
+        public readonly lockedMosaics: Mosaic[],
         /**
          * Linked account key
          */
@@ -70,7 +71,7 @@ export class AccountInfo {
          * supplemental PublicKeys
          */
         public readonly supplementalPublicKeys?: SupplementalPublicKeys,
-         
+
         /**
          * account version
          */

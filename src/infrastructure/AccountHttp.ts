@@ -105,6 +105,11 @@ export class AccountHttp extends Http implements AccountRepository {
                         new MosaicId(mosaicDTO.id),
                         new UInt64(mosaicDTO.amount),
                     )),
+                    accountInfoDTO.account.lockedMosaics ? 
+                        accountInfoDTO.account.lockedMosaics.map((mosaicDTO) => new Mosaic(
+                            new MosaicId(mosaicDTO.id),
+                            new UInt64(mosaicDTO.amount),
+                        )): [],
                     accountInfoDTO.account.linkedAccountKey,
                     accountInfoDTO.account.supplementalPublicKeys ? 
                     new SupplementalPublicKeys(
@@ -184,6 +189,11 @@ export class AccountHttp extends Http implements AccountRepository {
                         accountInfoDTO.account.accountType.valueOf(),
                         accountInfoDTO.account.mosaics.map((mosaicDTO: MosaicDTO) =>
                             new Mosaic(new MosaicId(mosaicDTO.id), new UInt64(mosaicDTO.amount))),
+                        accountInfoDTO.account.lockedMosaics ? 
+                            accountInfoDTO.account.lockedMosaics.map((mosaicDTO) => new Mosaic(
+                                new MosaicId(mosaicDTO.id),
+                                new UInt64(mosaicDTO.amount),
+                            )): [],
                         accountInfoDTO.account.linkedAccountKey,
                         accountInfoDTO.account.supplementalPublicKeys ? 
                         new SupplementalPublicKeys(
