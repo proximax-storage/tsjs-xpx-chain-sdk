@@ -156,7 +156,7 @@ export class AccountOperationRestrictionTransactionBuilder extends TransactionBu
     private _restrictionAdditions: TransactionType[];
     private _restrictionDeletions: TransactionType[];
 
-    public restrictionFlags(restrictionFlags: RestrictionType) {
+    public restrictionFlags(restrictionFlags: number) {
         if (restrictionFlags > 0xFFFF) {
             throw new Error('restrictionFlags must be a uint16 number');
         };

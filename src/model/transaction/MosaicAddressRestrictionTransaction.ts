@@ -134,7 +134,7 @@ export class MosaicAddressRestrictionTransaction extends Transaction {
             .addDeadline(this.deadline.toDTO())
             .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
-            .addMosaicId(this.mosaicId.toDTO())
+            .addMosaicId(this.mosaicId.toDTO().id)
             .addRestrictionKey(this.restrictionKey.toDTO())
             .addPreviousRestrictionValue(this.previousRestrictionValue.toDTO())
             .addNewRestrictionValue(this.newRestrictionValue.toDTO())

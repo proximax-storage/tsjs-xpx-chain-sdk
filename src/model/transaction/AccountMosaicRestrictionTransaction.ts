@@ -149,8 +149,8 @@ export class AccountMosaicRestrictionTransaction extends Transaction {
             .addMaxFee(this.maxFee.toDTO())
             .addVersion(this.versionToDTO())
             .addRestrictionFlags(this.restrictionFlags)
-            .addRestrictionAdditions(this.restrictionAdditions.map(x=> x.toDTO()))
-            .addRestrictionDeletions(this.restrictionDeletions.map(x=> x.toDTO()))
+            .addRestrictionAdditions(this.restrictionAdditions.map(x=> x.toDTO().id))
+            .addRestrictionDeletions(this.restrictionDeletions.map(x=> x.toDTO().id))
             .build();
     }
 }
@@ -160,7 +160,7 @@ export class AccountMosaicRestrictionTransactionBuilder extends TransactionBuild
     private _restrictionAdditions: MosaicId[];
     private _restrictionDeletions: MosaicId[];
 
-    public restrictionFlags(restrictionFlags: RestrictionType) {
+    public restrictionFlags(restrictionFlags: number) {
         if (restrictionFlags > 0xFFFF) {
             throw new Error('restrictionFlags must be a uint16 number');
         };

@@ -24,11 +24,7 @@ const schema = new Schema([
 	ubyte('restrictionAdditionsCount'),
 	ubyte('restrictionDeletionsCount'),
 	uint('accountRestrictionTransactionBody_Reserved1'),
-	tableArray('restrictionAdditions', [
-        ushort('operation')
-    ]),
-	tableArray('restrictionDeletions', [
-        ushort('operation')
-    ])
+	array('restrictionAdditions', TypeSize.SHORT),
+	array('restrictionDeletions', TypeSize.SHORT)
 ]);
 export default schema;

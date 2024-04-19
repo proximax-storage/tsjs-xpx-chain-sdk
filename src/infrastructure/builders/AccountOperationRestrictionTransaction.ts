@@ -42,7 +42,7 @@ export class Builder {
     
     constructor() {
         this.maxFee = [0, 0];
-        this.type = TransactionType.Account_Address_Restriction;
+        this.type = TransactionType.Account_Operation_Restriction;
     }
 
     addSize(size) {
@@ -87,25 +87,6 @@ export class Builder {
 
     build() {
         const builder = new flatbuffers.Builder(1);
-
-        // const restrictionAdditionsArray: any = [];
-        // this.restrictionAdditions.forEach((addition) => {
-        //     builder.prep
-        //     const addressVector = AddressBuffer
-        //         .createAddressVector(builder, address.stringToAddress(addition));
-        //     AddressBuffer.startAddressBuffer(builder);
-        //     AddressBuffer.addAddress(builder, addressVector);
-        //     restrictionAdditionsArray.push(AddressBuffer.endAddressBuffer(builder));
-        // });
-
-        // const restrictionDeletionsArray: any = [];
-        // this.restrictionDeletions.forEach((deletion) => {
-        //     const addressVector = AddressBuffer
-        //         .createAddressVector(builder, address.stringToAddress(deletion));
-        //     AddressBuffer.startAddressBuffer(builder);
-        //     AddressBuffer.addAddress(builder, addressVector);
-        //     restrictionDeletionsArray.push(AddressBuffer.endAddressBuffer(builder));
-        // });
 
         // Create vectors
         const signatureVector = AccountOperationRestrictionTransactionBuffer

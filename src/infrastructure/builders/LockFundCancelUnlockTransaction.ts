@@ -28,7 +28,7 @@ export class Builder {
 
     constructor() {
         this.maxFee = [0, 0];
-        this.type = TransactionType.ADD_EXCHANGE_OFFER;
+        this.type = TransactionType.Lock_Fund_Cancel_Unlock;
     }
 
     addSize(size) {
