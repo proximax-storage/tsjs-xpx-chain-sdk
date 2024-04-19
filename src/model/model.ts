@@ -241,6 +241,7 @@ export * from './transaction/VrfLinkTransaction';
 export * from './mosaic/MosaicRestriction';
 export * from './transaction/LockFund';
 export * from './account/AccountLink';
+export * from './account/SupplementalPublicKeys';
 
 // Liquidity Provider
 export * from './liquidity/LiquidityProvider';
