@@ -221,6 +221,8 @@ export * from './transferTransactionDTO';
 export * from './upgradeDTO';
 export * from './uploadInfoDTO';
 export * from './verifiableEntityDTO';
+export * from './nodeUnlockedAccountDTO'
+export * from './nodePeerInfoDTO'
 
 /*
     Storage DTO export
@@ -472,6 +474,9 @@ import { ReplicatorDTO } from "./storage/replicatorDTO";
     Storage DTO export end    
 */
 
+import { NodeUnlockedAccountDTO } from './nodeUnlockedAccountDTO';
+import { NodePeerInfoDTO } from './nodePeerInfoDTO';
+
 /* tslint:disable:no-unused-variable */
 let primitives = [
                     "string",
@@ -713,7 +718,9 @@ let typeMap: {[index: string]: any} = {
     ReplicatorDTO,
     DownloadChannelInlineInfoMetaIdDTO,
     ReplicatorInlineMetaIdDTO,
-    DriveInfoInlineMetaIdDTO
+    DriveInfoInlineMetaIdDTO,
+    NodeUnlockedAccountDTO,
+    NodePeerInfoDTO
 }
 
 export class ObjectSerializer {

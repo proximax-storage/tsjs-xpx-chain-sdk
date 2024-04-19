@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ProximaX
+ * Copyright 2024 ProximaX
  * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,13 +16,18 @@
  */
 
 import {from as observableFrom, Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {map, mergeMap} from 'rxjs/operators';
 import { NodeInfo } from '../model/node/NodeInfo';
 import { NodeTime } from '../model/node/NodeTime';
-import { NodeInfoResponse, NodeRoutesApi, NodeTimeResponse } from './api';
+import { NodeUnlockedAccount } from '../model/node/NodeUnlockedAccount';
+import { NodePeers, PeerInfo } from '../model/node/NodePeers';
+import { NodeInfoResponse, NodePeersResponse, NodeRoutesApi, NodeTimeResponse, NodeUnlockedAccountResponse } from './api';
 import {Http} from './Http';
 import {NodeRepository} from './NodeRepository';
 import { RequestOptions } from './RequestOptions';
+import { PublicAccount } from "../model/account/PublicAccount";
+import { NetworkType } from '../model/model';
+import {NetworkHttp} from './NetworkHttp';
 
 /**
  * Node http repository.
@@ -39,11 +44,12 @@ export class NodeHttp extends Http implements NodeRepository {
     /**
      * Constructor
      * @param url
+     * @param networkHttp
      */
-    constructor(url: string) {
-        super();
+    constructor(url: string, networkHttp?: NetworkHttp) {
+        networkHttp = networkHttp == null ? new NetworkHttp(url) : networkHttp;
+        super(networkHttp);
         this.nodeRoutesApi = new NodeRoutesApi(url);
-
     }
 
     /**
@@ -78,5 +84,45 @@ export class NodeHttp extends Http implements NodeRepository {
                 return new NodeTime(nodeTimeDTO.communicationTimestamps.sendTimestamp, nodeTimeDTO.communicationTimestamps.receiveTimestamp);
             })
         );
+    }
+
+    public getNodeUnlockedAccounts(requestOptions?: RequestOptions): Observable<NodeUnlockedAccount> {
+        return this.getNetworkTypeObservable(requestOptions).pipe(
+            mergeMap((networkType: NetworkType) => 
+                observableFrom(this.nodeRoutesApi.getNodeUnlockedAccounts(requestOptions))
+                .pipe(
+                    map((response: NodeUnlockedAccountResponse) => {
+                        const nodeUnlockedAccountDTOs = response.body;
+                        return new NodeUnlockedAccount(
+                            nodeUnlockedAccountDTOs.map(
+                                x => PublicAccount.createFromPublicKey(x.PublicKey, networkType)
+                            )
+                        );
+                    })
+                )
+            )
+        );
+    }
+
+    public getNodePeers(requestOptions?: RequestOptions): Observable<NodePeers> {
+        return observableFrom(this.nodeRoutesApi.getNodePeers(requestOptions))
+                .pipe(
+                    map((response: NodePeersResponse) => {
+                        const nodePeersDTOs = response.body;
+                        return new NodePeers(
+                            nodePeersDTOs.map(
+                                x => new PeerInfo(
+                                    x.publicKey,
+                                    x.port,
+                                    x.networkIdentifier,
+                                    x.version,
+                                    x.roles,
+                                    x.host,
+                                    x.friendlyName
+                                )
+                            )
+                        );
+                    })
+                )
     }
 }

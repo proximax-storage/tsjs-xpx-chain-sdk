@@ -9,6 +9,8 @@ import {AxiosRequestConfig, AxiosResponse, AxiosError} from 'axios';
 /* tslint:disable:no-unused-locals */
 import { NodeInfoDTO } from '../model/nodeInfoDTO';
 import { NodeTimeDTO } from '../model/nodeTimeDTO';
+import { NodePeerInfoDTO } from '../model/nodePeerInfoDTO';
+import { NodeUnlockedAccountDTO } from '../model/nodeUnlockedAccountDTO';
 import { RequestOptions } from '../RequestOptions';
 
 import { ObjectSerializer } from '../model/models';
@@ -23,6 +25,16 @@ export interface NodeInfoResponse{
 export interface NodeTimeResponse{
     response: AxiosResponse;
     body: NodeTimeDTO;
+}
+
+export interface NodePeersResponse{
+    response: AxiosResponse;
+    body: Array<NodePeerInfoDTO>;
+}
+
+export interface NodeUnlockedAccountResponse{
+    response: AxiosResponse;
+    body: Array<NodeUnlockedAccountDTO>;
 }
 
 let defaultBasePath = 'http://localhost:3000';
@@ -129,6 +141,72 @@ export class NodeRoutesApi {
             axios(localVarRequestOptions).then(
                 (response)=>{
                     let body = ObjectSerializer.deserialize(response.data, "NodeTimeDTO");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
+                    } else {
+                            reject(response);
+                    }
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
+        });
+    }
+
+    /**
+     * Get the unlocked accouns from the node
+     * @summary Get unlocked accouns from the node
+     */
+    public async getNodeUnlockedAccounts (reqOptions?:RequestOptions) : Promise<NodeUnlockedAccountResponse> {
+        const localVarPath = '/node/unlockedaccount';
+        let requestHeaders = this.combineHeaders(reqOptions);
+
+        let localVarRequestOptions: AxiosRequestConfig = {
+            method: 'GET',
+            headers: requestHeaders,
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json'
+        };
+
+        return new Promise<NodeUnlockedAccountResponse>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "Array<NodeUnlockedAccountDTO>");
+                    if (response.status && response.status >= 200 && response.status <= 299) {
+                        resolve({ response: response, body: body });
+                    } else {
+                            reject(response);
+                    }
+                },
+                (error: AxiosError ) => {
+                    reject(error);
+                }
+            );
+        });
+    }
+
+    /**
+     * Get peer from the node
+     * @summary Get peer from the node
+     */
+    public async getNodePeers (reqOptions?:RequestOptions) : Promise<NodePeersResponse> {
+        const localVarPath = '/node/peers';
+        let requestHeaders = this.combineHeaders(reqOptions);
+
+        let localVarRequestOptions: AxiosRequestConfig = {
+            method: 'GET',
+            headers: requestHeaders,
+            url: localVarPath,
+            baseURL: this.basePath,
+            responseType: 'json'
+        };
+
+        return new Promise<NodePeersResponse>((resolve, reject) => {
+            axios(localVarRequestOptions).then(
+                (response)=>{
+                    let body = ObjectSerializer.deserialize(response.data, "Array<NodePeerInfoDTO>");
                     if (response.status && response.status >= 200 && response.status <= 299) {
                         resolve({ response: response, body: body });
                     } else {
