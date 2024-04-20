@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ProximaX
+ * Copyright 2024 ProximaX
  * Copyright 2018 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -56,7 +56,7 @@ export class Account {
         /**
          * The account version.
          */
-        public readonly version: number = 1){
+        public readonly version: number){
     }
 
     /**
@@ -162,7 +162,7 @@ export class Account {
      * @param networkType - Network type
      * @param version - Account version
      */
-    public static generateNewAccount(networkType: NetworkType, version: number = 2): Account {
+    public static generateNewAccount(networkType: NetworkType, version: number): Account {
         // Create random bytes
         const randomBytesArray = Crypto.randomBytes(32);
         // Hash random bytes with entropy seed
