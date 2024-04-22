@@ -34,7 +34,7 @@ export class ChainUpgradeHttp extends Http implements ChainUpgradeRepository {
     /**
      * Gets blockchain configuration at given height
      * @param height
-     * @returns Observable<ChainConfig>
+     * @returns Observable<NetworkConfig>
      */
     public getChainUpgrade(height: number, requestOptions?: RequestOptions): Observable<ChainUpgrade> {
         return observableFrom(

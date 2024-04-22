@@ -26,7 +26,7 @@ import { RestrictionModificationType } from '../../../src/model/account/Restrict
 import { RestrictionType } from '../../../src/model/account/RestrictionType';
 import { NetworkType } from '../../../src/model/blockchain/NetworkType';
 import { EncryptedMessage, MosaicMetadataTransaction, AccountMetadataTransaction, NamespaceMetadataTransaction, 
-    ChainConfigTransaction, ChainUpgradeTransaction, MosaicModifyLevyTransaction, MosaicRemoveLevyTransaction } from '../../../src/model/model';
+    NetworkConfigTransaction, ChainUpgradeTransaction, MosaicModifyLevyTransaction, MosaicRemoveLevyTransaction } from '../../../src/model/model';
 import { KeyGenerator } from '../../../src/core/format/KeyGenerator';
 import { MosaicId } from '../../../src/model/mosaic/MosaicId';
 import { MosaicLevy } from '../../../src/model/mosaic/MosaicLevy';
@@ -38,11 +38,11 @@ import { NetworkCurrencyMosaic } from '../../../src/model/mosaic/NetworkCurrency
 import { AliasActionType } from '../../../src/model/namespace/AliasActionType';
 import { NamespaceId } from '../../../src/model/namespace/NamespaceId';
 import { NamespaceType } from '../../../src/model/namespace/NamespaceType';
-import { AccountAddressRestrictionModificationTransaction } from '../../../src/model/transaction/AccountAddressRestrictionModificationTransaction';
+import { AccountAddressRestrictionModificationTransaction } from '../../../src/model/transaction/deprecated/AccountAddressRestrictionModificationTransaction';
 import { AccountLinkTransaction } from '../../../src/model/transaction/AccountLinkTransaction';
-import { AccountMosaicRestrictionModificationTransaction } from '../../../src/model/transaction/AccountMosaicRestrictionModificationTransaction';
-import { AccountRestrictionModification } from '../../../src/model/transaction/AccountRestrictionModification';
-import { AccountRestrictionTransaction } from '../../../src/model/transaction/AccountRestrictionTransaction';
+import { AccountMosaicRestrictionModificationTransaction } from '../../../src/model/transaction/deprecated/AccountMosaicRestrictionModificationTransaction';
+import { AccountRestrictionModification } from '../../../src/model/transaction/deprecated/AccountRestrictionModification';
+import { AccountRestrictionTransaction } from '../../../src/model/transaction/deprecated/AccountRestrictionTransaction';
 import { AddressAliasTransaction } from '../../../src/model/transaction/AddressAliasTransaction';
 import { AggregateTransaction } from '../../../src/model/transaction/AggregateTransaction';
 import { Deadline } from '../../../src/model/transaction/Deadline';
@@ -678,8 +678,8 @@ describe('TransactionMapping - createFromPayload', () => {
         deepStrictEqual(transaction.valueDifferences, new Uint8Array([0, 0, 0, 0, 0, 49]));
     })
     
-    it('should create ChainConfigTransaction transaction', () => {
-        const chainConfigureTransaction = ChainConfigTransaction.create(
+    it('should create NetworkConfigTransaction transaction', () => {
+        const NetworkConfigureTransaction = NetworkConfigTransaction.create(
             Deadline.create(),
             UInt64.fromHex('0123456789ABCDEF'),
             "some network config",
@@ -687,9 +687,9 @@ describe('TransactionMapping - createFromPayload', () => {
             NetworkType.MIJIN_TEST
         );
 
-        const signedTransaction = chainConfigureTransaction.preV2SignWith(account, generationHash);
+        const signedTransaction = NetworkConfigureTransaction.preV2SignWith(account, generationHash);
 
-        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as ChainConfigTransaction;
+        const transaction = TransactionMapping.createFromPayload(signedTransaction.payload) as NetworkConfigTransaction;
 
         expect(transaction.applyHeightDelta.toHex()).to.be.equal('0123456789ABCDEF');
         expect(transaction.networkConfig).to.be.equal("some network config");

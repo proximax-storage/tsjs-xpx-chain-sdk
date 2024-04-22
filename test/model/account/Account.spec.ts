@@ -42,7 +42,7 @@ describe('Account', () => {
     });
 
     it('should generate a new account', () => {
-        const account = Account.generateNewAccount(NetworkType.MIJIN_TEST);
+        const account = Account.generateNewAccount(NetworkType.MIJIN_TEST, 1);
         expect(account.publicKey).to.not.be.equal(undefined);
         expect(account.privateKey).to.not.be.equal(undefined);
         expect(account.address).to.not.be.equal(undefined);

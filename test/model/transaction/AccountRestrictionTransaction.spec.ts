@@ -21,8 +21,8 @@ import { RestrictionModificationType } from '../../../src/model/account/Restrict
 import { RestrictionType } from '../../../src/model/account/RestrictionType';
 import {NetworkType} from '../../../src/model/blockchain/NetworkType';
 import {MosaicId} from '../../../src/model/mosaic/MosaicId';
-import { AccountRestrictionModification } from '../../../src/model/transaction/AccountRestrictionModification';
-import {AccountRestrictionTransaction} from '../../../src/model/transaction/AccountRestrictionTransaction';
+import { AccountRestrictionModification } from '../../../src/model/transaction/deprecated/AccountRestrictionModification';
+import {AccountRestrictionTransaction} from '../../../src/model/transaction/deprecated/AccountRestrictionTransaction';
 import {Deadline} from '../../../src/model/transaction/Deadline';
 import { TransactionType } from '../../../src/model/transaction/TransactionType';
 import {UInt64} from '../../../src/model/UInt64';

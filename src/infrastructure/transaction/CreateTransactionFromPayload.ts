@@ -27,7 +27,7 @@ import { MosaicNonce } from '../../model/mosaic/MosaicNonce';
 import { MosaicProperties, PropertyBit } from '../../model/mosaic/MosaicProperties';
 import { NamespaceId } from '../../model/namespace/NamespaceId';
 import { NamespaceType } from '../../model/namespace/NamespaceType';
-import { AccountRestrictionModification } from '../../model/transaction/AccountRestrictionModification';
+import { AccountRestrictionModification } from '../../model/transaction/deprecated/AccountRestrictionModification';
 import { AggregateTransactionCosignature } from '../../model/transaction/AggregateTransactionCosignature';
 import { AggregateV2TransactionCosignature } from '../../model/transaction/AggregateV2TransactionCosignature';
 import { Deadline } from '../../model/transaction/Deadline';
@@ -522,7 +522,7 @@ const CreateTransaction = (type: number, transactionData: string, txnVersion: Tr
             const supportedEntityVersionsLength = extractNumberFromHexReverse(transactionData.substring(20, 24));
             const networkConfig = transactionData.substring(24, 24 + networkConfigLength*2);
             const supportedEntityVersions = transactionData.substring(24 + networkConfigLength*2, 24 + networkConfigLength*2 + supportedEntityVersionsLength*2);
-            return factory.chainConfig()
+            return factory.networkConfig()
                 .applyHeightDelta(UInt64.fromHex(reverseHexString(applyHeightDelta)))
                 .networkConfig(decodeHexUtf8(networkConfig))
                 .supportedEntityVersions(decodeHexUtf8(supportedEntityVersions))

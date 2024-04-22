@@ -20,6 +20,7 @@ import {UInt64} from '../UInt64';
 import {AccountType} from './AccountType';
 import {Address} from './Address';
 import {PublicAccount} from './PublicAccount';
+import { SupplementalPublicKeys } from './SupplementalPublicKeys';
 
 /**
  * The account info structure describes basic information for an account.
@@ -54,14 +55,23 @@ export class AccountInfo {
          * Account type
          */
         public readonly accountType: AccountType,
-        /**
-         * Linked account key
-         */
-        public readonly linkedAccountKey: string,
+        
         /**
          * Mosaics hold by the account.
          */
-        public readonly mosaics: Mosaic[], 
+        public readonly mosaics: Mosaic[],
+
+        public readonly lockedMosaics: Mosaic[],
+        /**
+         * Linked account key
+         */
+        public readonly linkedAccountKey?: string,
+
+        /**
+         * supplemental PublicKeys
+         */
+        public readonly supplementalPublicKeys?: SupplementalPublicKeys,
+
         /**
          * account version
          */
