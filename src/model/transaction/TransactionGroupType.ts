@@ -17,5 +17,6 @@
 export enum TransactionGroupType {
     CONFIRMED = "confirmed",
     UNCONFIRMED = "unconfirmed",
-    PARTIAL = "partial"
+    PARTIAL = "partial",
+    FAILED = "failed",
 }

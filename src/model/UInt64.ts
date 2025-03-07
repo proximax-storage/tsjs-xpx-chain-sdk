@@ -44,12 +44,24 @@ export class UInt64 {
     }
 
     /**
+     * Create from bigint value
+     * @param value
+     * @returns {UInt64}
+     */
+    public static fromBigInt(value: bigint): UInt64 {
+        if (value > BigInt("0x"+("FF".repeat(8)))) {
+            throw new Error('bigint value cannot be more than uint64 value');
+        }
+        return new UInt64(uint64.fromHex(value.toString(16).padStart(16, "0")));
+    }
+
+    /**
      * Parses a hex string into a UInt64.
      * @param {string} input A hex encoded string.
      * @returns {module:coders/uint64~uint64} The uint64 representation of the input.
      */
     public static fromHex(input: string): UInt64 {
-        const dto = uint64.fromHex(input);
+        const dto = uint64.fromHex(input.padStart(16, "0"));
         return new UInt64(dto);
     }
 

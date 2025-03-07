@@ -198,8 +198,7 @@ export class MosaicHttp extends Http implements MosaicRepository {
                     return response.body.map((richlistEntryDTO) => {
                         return RichlistEntry.create(
                             Address.createFromEncoded(richlistEntryDTO.address),
-                            // TODO: check if route response actually have publicKey, FIXME in the .yaml then
-                            (richlistEntryDTO as any).publicKey ? (richlistEntryDTO as any).publicKey : '0'.repeat(64),
+                            richlistEntryDTO.publicKey ? richlistEntryDTO.publicKey : '0'.repeat(64),
                             new UInt64(richlistEntryDTO.amount));
                     });
                 })

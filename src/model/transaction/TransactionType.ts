@@ -284,7 +284,8 @@ export enum TransactionType {
     // ----------------------------internal service txn--------------------------------------
     Add_Dbrb_Process                    = 0x416C,
     Remove_Dbrb_Process                 = 0x426C,
-    Remove_Dbrb_Process_By_Network      = 0x436C
+    Remove_Dbrb_Process_By_Network      = 0x436C,
+    Add_Or_Update_Dbrb_Process          = 0x446C
     // --------------------------------------------------------------------------------------
 
     // -------------SC -----------------------
