@@ -14,6 +14,7 @@ import { RequestFile } from '../api';
 
 export class MosaicRichListDTO {
     'address': string;
+    'publicKey': string;
     'amount': Array<number>;
 
     static discriminator: string | undefined = undefined;
@@ -22,6 +23,11 @@ export class MosaicRichListDTO {
         {
             "name": "address",
             "baseName": "address",
+            "type": "string"
+        },
+        {
+            "name": "publicKey",
+            "baseName": "publicKey",
             "type": "string"
         },
         {
