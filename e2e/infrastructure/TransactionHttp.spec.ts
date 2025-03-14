@@ -26,7 +26,7 @@ import {
 import { SignedTransaction, CosignatureTransaction, TransactionBuilderFactory, AccountRestrictionModification, MosaicId, 
     Mosaic, MosaicLevy, NamespaceId, UInt64, PlainMessage, CosignatureSignedTransaction, AggregateTransaction, MosaicNonce, MosaicProperties, AliasActionType, MosaicSupplyType, RestrictionModificationType, RestrictionType, TransactionType, HashType, LinkAction } from '../../src/model/model';
 import { fail } from 'assert';
-import { randomBytes } from 'crypto';
+import { Crypto } from '../../src/core/crypto';
 import { validateTransactionConfirmed, validatePartialTransactionNotPartialAnyMore, validatePartialTransactionAnnouncedCorrectly } from '../utils';
 import { TransactionHttp, AccountHttp, MosaicHttp, Listener } from '../../src/infrastructure/infrastructure';
 import { TransactionMapping } from '../../src/core/utils/utility';
@@ -778,7 +778,7 @@ describe('TransactionHttp', () => {
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
                         .duration(UInt64.fromUint(100))
                         .hashType(HashType.Op_Sha3_256)
-                        .secret(sha3_256.create().update(randomBytes(20)).hex())
+                        .secret(sha3_256.create().update(Crypto.randomBytes(20)).hex())
                         .recipient(TestingRecipient.address)
                         .build();
 
@@ -793,7 +793,7 @@ describe('TransactionHttp', () => {
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
                         .duration(UInt64.fromUint(100))
                         .hashType(HashType.Op_Sha3_256)
-                        .secret(sha3_256.create().update(randomBytes(20)).hex())
+                        .secret(sha3_256.create().update(Crypto.randomBytes(20)).hex())
                         .recipient(TestingRecipient.address)
                         .build();
 
@@ -812,7 +812,7 @@ describe('TransactionHttp', () => {
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
                         .duration(UInt64.fromUint(100))
                         .hashType(HashType.Op_Keccak_256)
-                        .secret(sha3_256.create().update(randomBytes(20)).hex())
+                        .secret(sha3_256.create().update(Crypto.randomBytes(20)).hex())
                         .recipient(TestingRecipient.address)
                         .build();
 
@@ -827,7 +827,7 @@ describe('TransactionHttp', () => {
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
                         .duration(UInt64.fromUint(100))
                         .hashType(HashType.Op_Keccak_256)
-                        .secret(sha3_256.create().update(randomBytes(20)).hex())
+                        .secret(sha3_256.create().update(Crypto.randomBytes(20)).hex())
                         .recipient(TestingRecipient.address)
                         .build();
 
@@ -848,7 +848,7 @@ describe('TransactionHttp', () => {
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
                         .duration(UInt64.fromUint(100))
                         .hashType(HashType.Op_Hash_160)
-                        .secret(sha3_256.create().update(randomBytes(20)).hex().substring(0, 40))
+                        .secret(sha3_256.create().update(Crypto.randomBytes(20)).hex().substring(0, 40))
                         .recipient(TestingRecipient.address)
                         .build();
 
@@ -863,7 +863,7 @@ describe('TransactionHttp', () => {
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
                         .duration(UInt64.fromUint(100))
                         .hashType(HashType.Op_Hash_160)
-                        .secret(sha3_256.create().update(randomBytes(20)).hex().substring(0, 40))
+                        .secret(sha3_256.create().update(Crypto.randomBytes(20)).hex().substring(0, 40))
                         .recipient(TestingRecipient.address)
                         .build();
 
@@ -884,7 +884,7 @@ describe('TransactionHttp', () => {
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
                         .duration(UInt64.fromUint(100))
                         .hashType(HashType.Op_Hash_256)
-                        .secret(sha3_256.create().update(randomBytes(20)).hex())
+                        .secret(sha3_256.create().update(Crypto.randomBytes(20)).hex())
                         .recipient(TestingRecipient.address)
                         .build();
 
@@ -899,7 +899,7 @@ describe('TransactionHttp', () => {
                         .mosaic(new Mosaic(ConfNetworkMosaic, UInt64.fromUint(10 * 1000000)))
                         .duration(UInt64.fromUint(100))
                         .hashType(HashType.Op_Hash_256)
-                        .secret(sha3_256.create().update(randomBytes(20)).hex())
+                        .secret(sha3_256.create().update(Crypto.randomBytes(20)).hex())
                         .recipient(TestingRecipient.address)
                         .build();
 
@@ -918,7 +918,7 @@ describe('TransactionHttp', () => {
         describe('SecretProofTransaction', () => {
             describe('HashType: Op_Sha3_256', () => {
                 it('standalone', (done) => {
-                    const secretSeed = randomBytes(20);
+                    const secretSeed = Crypto.randomBytes(20);
                     const secret = sha3_256.create().update(secretSeed).hex();
                     const proof = convert.uint8ArrayToHex(secretSeed);
                     const secretLockTransaction = factory.secretLock()
@@ -954,7 +954,7 @@ describe('TransactionHttp', () => {
                 });
 
                 it('aggregate', (done) => {
-                    const secretSeed = randomBytes(20);
+                    const secretSeed = Crypto.randomBytes(20);
                     const secret = sha3_256.create().update(secretSeed).hex();
                     const proof = convert.uint8ArrayToHex(secretSeed);
                     const secretLockTransaction = factory.secretLock()
@@ -995,7 +995,7 @@ describe('TransactionHttp', () => {
             });
             describe('HashType: Op_Keccak_256', () => {
                 it('standalone', (done) => {
-                    const secretSeed = randomBytes(20);
+                    const secretSeed = Crypto.randomBytes(20);
                     const secret = keccak_256.create().update(secretSeed).hex();
                     const proof = convert.uint8ArrayToHex(secretSeed);
                     const secretLockTransaction = factory.secretLock()
@@ -1031,7 +1031,7 @@ describe('TransactionHttp', () => {
                 });
 
                 it('aggregate', (done) => {
-                    const secretSeed = randomBytes(20);
+                    const secretSeed = Crypto.randomBytes(20);
                     const secret = keccak_256.create().update(secretSeed).hex();
                     const proof = convert.uint8ArrayToHex(secretSeed);
                     const secretLockTransaction = factory.secretLock()
@@ -1072,7 +1072,7 @@ describe('TransactionHttp', () => {
 
             describe('HashType: Op_Hash_160', () => {
                 it('standalone', (done) => {
-                    const secretSeed = randomBytes(20);
+                    const secretSeed = Crypto.randomBytes(20);
                     const proof = convert.uint8ArrayToHex(secretSeed);
                     const secret = CryptoJS.RIPEMD160(CryptoJS.enc.Hex.parse(CryptoJS.SHA256(CryptoJS.enc.Hex.parse(proof)).toString(CryptoJS.enc.Hex))).toString(CryptoJS.enc.Hex);
                     const secretLockTransaction = factory.secretLock()
@@ -1108,7 +1108,7 @@ describe('TransactionHttp', () => {
                 });
 
                 it('aggregate', (done) => {
-                    const secretSeed = randomBytes(20);
+                    const secretSeed = Crypto.randomBytes(20);
                     const proof = convert.uint8ArrayToHex(secretSeed);
                     const secret = CryptoJS.RIPEMD160(CryptoJS.enc.Hex.parse(CryptoJS.SHA256(CryptoJS.enc.Hex.parse(proof)).toString(CryptoJS.enc.Hex))).toString(CryptoJS.enc.Hex);
                     const secretLockTransaction = factory.secretLock()
@@ -1150,7 +1150,7 @@ describe('TransactionHttp', () => {
 
             describe('HashType: Op_Hash_256', () => {
                 it('standalone', (done) => {
-                    const secretSeed = randomBytes(20);
+                    const secretSeed = Crypto.randomBytes(20);
                     const proof = convert.uint8ArrayToHex(secretSeed);
                     const secret = CryptoJS.SHA256(CryptoJS.enc.Hex.parse(CryptoJS.SHA256(CryptoJS.enc.Hex.parse(proof)).toString(CryptoJS.enc.Hex))).toString(CryptoJS.enc.Hex);
                     const secretLockTransaction = factory.secretLock()
@@ -1186,7 +1186,7 @@ describe('TransactionHttp', () => {
                 });
 
                 it('aggregate', (done) => {
-                    const secretSeed = randomBytes(20);
+                    const secretSeed = Crypto.randomBytes(20);
                     const proof = convert.uint8ArrayToHex(secretSeed);
                     const secret = CryptoJS.SHA256(CryptoJS.enc.Hex.parse(CryptoJS.SHA256(CryptoJS.enc.Hex.parse(proof)).toString(CryptoJS.enc.Hex))).toString(CryptoJS.enc.Hex);
                     const secretLockTransaction = factory.secretLock()
