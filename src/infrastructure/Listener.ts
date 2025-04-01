@@ -17,7 +17,6 @@
 
 import {Observable, Subject} from 'rxjs';
 import {filter, map, share} from 'rxjs/operators';
-import * as WebSocket from 'ws';
 import {Address} from '../model/account/Address';
 import {PublicAccount} from '../model/account/PublicAccount';
 import {BlockInfo} from '../model/blockchain/BlockInfo';
@@ -39,6 +38,16 @@ import {TransactionMapUtility} from './transaction/TransactionMapUtility';
 import {RequestOptions} from './RequestOptions';
 import { DerivationScheme } from "../core/crypto/DerivationScheme";
 import { Convert } from "../core/format/Convert"
+
+let WebSocket;
+
+if (typeof window !== 'undefined') {
+  WebSocket = window.WebSocket;
+} else {
+  import('ws').then(module => {
+    WebSocket = module;
+  });
+}
 
 enum ListenerChannelName {
     block = 'block',
