@@ -36,18 +36,6 @@ import {UInt64} from '../model/UInt64';
 import {CreateTransactionFromDTO} from './transaction/CreateTransactionFromDTO';
 import {TransactionMapUtility} from './transaction/TransactionMapUtility';
 import {RequestOptions} from './RequestOptions';
-import { DerivationScheme } from "../core/crypto/DerivationScheme";
-import { Convert } from "../core/format/Convert"
-
-let WebSocket;
-
-if (typeof window !== 'undefined') {
-  WebSocket = window.WebSocket;
-} else {
-  import('ws').then(module => {
-    WebSocket = module;
-  });
-}
 
 enum ListenerChannelName {
     block = 'block',
@@ -66,6 +54,14 @@ interface ListenerMessage {
     readonly message: Transaction | string | BlockInfo | TransactionStatusError | CosignatureSignedTransaction;
 }
 
+async function getWebSocketImpl(): Promise<any> {
+    if (typeof window !== 'undefined') {
+        return window.WebSocket;
+    } else {
+        return await import('ws');
+    }
+}
+
 /**
  * Listener service
  */
@@ -75,7 +71,7 @@ export class Listener {
      * @internal
      * WebSocket connector
      */
-    private webSocket: WebSocket;
+    private webSocket: any;
     /**
      * @internal
      * Message subject for all requests
@@ -111,36 +107,43 @@ export class Listener {
      * Open web socket connection.
      * @returns Promise<Void>
      */
-    public open(requestOptions?: RequestOptions): Promise<void> {
-        return new Promise((resolve, reject) => {
-            if (this.webSocket === undefined || this.webSocket.readyState === WebSocket.CLOSED) {
-                if (this.websocketInjected) {
-                    this.webSocket = requestOptions && requestOptions.headers ? 
-                        new this.websocketInjected(this.url, {headers: requestOptions.headers}) : new this.websocketInjected(this.url);
-                } else {
-                    this.webSocket = requestOptions && requestOptions.headers ? 
-                        new WebSocket(this.url, {headers: requestOptions.headers}) : new WebSocket(this.url);
-                }
+    public async open(requestOptions?: RequestOptions): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            if (this.webSocket && this.webSocket.readyState !== WebSocket.CLOSED) {
+                resolve();
+                return;
+            }
+
+            try {
+                const WebSocketImpl = this.websocketInjected || (await getWebSocketImpl());
+
+                this.webSocket = requestOptions && requestOptions.headers
+                    ? new WebSocketImpl(this.url, { headers: requestOptions.headers })
+                    : new WebSocketImpl(this.url);
+
                 this.webSocket.onopen = () => {
                     console.log('connection open');
                 };
-                this.webSocket.onerror = (err) => {
-                    console.log('WebSocket Error ');
-                    console.log(err);
+                this.webSocket.onerror = (err: any) => {
+                    console.log('WebSocket Error ', err);
                     reject(err);
                 };
-                this.webSocket.onmessage = (msg) => {
+                this.webSocket.onmessage = (msg: any) => {
                     const message = JSON.parse(msg.data as string);
 
                     if (message.uid) {
                         this.uid = message.uid;
                         resolve();
                     } else if (message.transaction) {
-                        this.messageSubject.next({channelName: message.meta.channelName, message: CreateTransactionFromDTO(message)});
-                    } else if (message.block) {
-                        const networkType = parseInt((message.block.version >>> 0).toString(16).substring(0, 2), 16);
                         this.messageSubject.next({
-                            channelName: ListenerChannelName.block, message: new BlockInfo(
+                            channelName: message.meta.channelName,
+                            message: CreateTransactionFromDTO(message),
+                        });
+                    } else if (message.block) {
+                        const networkType = parseInt((message.block.version >>> 0).toString(16).substring(0, 2), 16); // Tx version
+                        this.messageSubject.next({
+                            channelName: ListenerChannelName.block,
+                            message: new BlockInfo(
                                 message.meta.hash,
                                 message.meta.generationHash,
                                 message.meta.totalFee ? new UInt64(message.meta.totalFee) : new UInt64([0, 0]),
@@ -148,7 +151,7 @@ export class Listener {
                                 message.block.signature,
                                 PublicAccount.createFromPublicKey(message.block.signer, networkType),
                                 networkType,
-                                parseInt((message.block.version >>> 0).toString(16).substring(2, 4), 16), // Tx version
+                                parseInt((message.block.version >>> 0).toString(16).substring(2, 4), 16),
                                 message.block.type,
                                 new UInt64(message.block.height),
                                 new UInt64(message.block.timestamp),
@@ -158,27 +161,35 @@ export class Listener {
                                 message.block.blockTransactionsHash,
                                 message.block.blockReceiptsHash,
                                 message.block.stateHash,
-                                TransactionMapUtility.extractBeneficiary(message, networkType), // passing `message` as `blockDTO`
+                                TransactionMapUtility.extractBeneficiary(message, networkType) // passing `message` as `blockDTO`
                             ),
                         });
                     } else if (message.status) {
                         this.messageSubject.next({
-                            channelName: ListenerChannelName.status, message: new TransactionStatusError(
+                            channelName: ListenerChannelName.status,
+                            message: new TransactionStatusError(
                                 message.hash,
                                 message.status,
-                                Deadline.createFromDTO(message.deadline)),
+                                Deadline.createFromDTO(message.deadline)
+                            ),
                         });
                     } else if (message.parentHash) {
                         this.messageSubject.next({
                             channelName: ListenerChannelName.cosignature,
-                            message: new CosignatureSignedTransaction(message.parentHash, message.signature, message.scheme, message.signer),
+                            message: new CosignatureSignedTransaction(
+                                message.parentHash,
+                                message.signature,
+                                message.scheme,
+                                message.signer
+                            ),
                         });
                     } else if (message.meta) {
-                        this.messageSubject.next({channelName: message.meta.channelName, message: message.meta.hash});
+                        this.messageSubject.next({ channelName: message.meta.channelName, message: message.meta.hash });
                     }
                 };
-            } else {
-                resolve();
+            } catch (err) {
+                console.error('Failed to initialize WebSocket:', err);
+                reject(err);
             }
         });
     }
