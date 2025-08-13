@@ -291,7 +291,7 @@ describe('AggregateTransactionService', () => {
             [modifyMultisigTransaction.toAggregateV1(multisig2.publicAccount)],
             NetworkType.MIJIN_TEST,
             []);
-        const signedTransaction = aggregateTransaction.preV2SignWith(account2, generationHash);
+        const signedTransaction = aggregateTransaction.signWith(account2, generationHash);
         firstValueFrom(aggregateTransactionService.isComplete(signedTransaction)).then((isComplete) => {
             expect(isComplete).to.be.true;
         });
@@ -318,7 +318,7 @@ describe('AggregateTransactionService', () => {
             NetworkType.MIJIN_TEST,
             []);
 
-        const signedTransaction = aggregateTransaction.preV2SignWith(account1, generationHash);
+        const signedTransaction = aggregateTransaction.signWith(account1, generationHash);
         firstValueFrom(aggregateTransactionService.isComplete(signedTransaction)).then((isComplete) => {
             expect(isComplete).to.be.false;
         });
@@ -346,7 +346,7 @@ describe('AggregateTransactionService', () => {
             NetworkType.MIJIN_TEST,
             []);
 
-        const signedTransaction = aggregateTransaction.preV2SignWith(account4, generationHash);
+        const signedTransaction = aggregateTransaction.signWith(account4, generationHash);
         firstValueFrom(aggregateTransactionService.isComplete(signedTransaction)).then((isComplete) => {
             expect(isComplete).to.be.true;
         });
@@ -521,7 +521,7 @@ describe('AggregateTransactionService', () => {
                         CtoATx.toAggregateV1(accountCarol.publicAccount)],
                     NetworkType.MIJIN_TEST,
                     []
-                ).preV2SignWith(accountAlice, generationHash),
+                ).signWith(accountAlice, generationHash),
                 []
             )
         }).to.throw(Error, 'Only serialized signed aggregate complete v1 transaction allowed.');
@@ -560,7 +560,7 @@ describe('AggregateTransactionService', () => {
         expect(signedTransaction.payload.indexOf(accountBob.publicKey) > -1).to.be.true;
         expect(signedTransaction.payload.indexOf(accountCarol.publicKey) > -1).to.be.true;
 
-        const signedOnlyByAlice = recreatedTx.preV2SignWith(accountAlice, generationHash);
+        const signedOnlyByAlice = recreatedTx.signWith(accountAlice, generationHash);
         const signedByAll = AggregateTransactionService.addCosignaturesV1(signedOnlyByAlice, cosignatureSignedTransactions);
 
         expect(signedByAll.hash).to.be.equal(signedTransaction.hash);

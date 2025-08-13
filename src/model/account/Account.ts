@@ -243,7 +243,7 @@ export class Account {
      * @return {SignedTransaction}
      */
     public sign(transaction: Transaction, generationHash): SignedTransaction {
-        return transaction.preV2SignWith(this, generationHash);
+        return transaction.signWith(this, generationHash);
     }
 
     /**
@@ -253,7 +253,7 @@ export class Account {
      * @return {SignedTransaction}
      */
     public upgradeV2Sign(transaction: Transaction, generationHash): SignedTransaction {
-        return transaction.signWith(this, generationHash);
+        return transaction.newSignWith(this, generationHash);
     }
 
     /**
@@ -297,9 +297,9 @@ export class Account {
      * @param cosignatureTransaction - The aggregate signature transaction.
      * @return {CosignatureSignedTransaction}
      */
-    public signCosignatureTransaction(cosignatureTransaction: CosignatureTransaction): CosignatureSignedTransaction {
+    public newSignCosignatureTransaction(cosignatureTransaction: CosignatureTransaction): CosignatureSignedTransaction {
         const dScheme = PublicAccount.getDerivationSchemeFromAccVersion(this.version);
-        return cosignatureTransaction.signWith(this);
+        return cosignatureTransaction.newSignWith(this);
     }
 
     /**
@@ -307,8 +307,8 @@ export class Account {
      * @param cosignatureTransaction - The aggregate signature transaction.
      * @return {CosignatureSignedTransaction}
      */
-    public preV2SignCosignatureTransaction(cosignatureTransaction: CosignatureTransaction): CosignatureSignedTransaction {
-        return cosignatureTransaction.preV2SignWith(this);
+    public signCosignatureTransaction(cosignatureTransaction: CosignatureTransaction): CosignatureSignedTransaction {
+        return cosignatureTransaction.signWith(this);
     }
 
     /**

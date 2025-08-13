@@ -58,7 +58,7 @@ describe('AddExchangeOfferTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        const signedTransaction = addExchangeOfferTransaction.preV2SignWith(account, generationHash);
+        const signedTransaction = addExchangeOfferTransaction.signWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
             244,

@@ -26,7 +26,7 @@ describe('ChainConfigTransaction', () => {
                 "some supported entity versions",
                 NetworkType.MIJIN_TEST
             );
-            const signedTransaction = chainConfigTransaction.preV2SignWith(account, generationHash);
+            const signedTransaction = chainConfigTransaction.signWith(account, generationHash);
 
             expect(chainConfigTransaction.size).to.be.equal(186);
             expect(signedTransaction.payload.length).to.be.equal(186 * 2);

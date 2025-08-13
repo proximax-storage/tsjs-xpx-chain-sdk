@@ -114,7 +114,7 @@ export abstract class Transaction {
      * @param {DerivationScheme} dScheme The derivation scheme
      * @returns {SignedTransaction}
      */
-    public signWith(account: Account, generationHash: string): SignedTransaction {
+    public newSignWith(account: Account, generationHash: string): SignedTransaction {
         this.version.signatureDScheme = PublicAccount.getDerivationSchemeFromAccVersion(account.version);
         const transaction = this.buildTransaction();
         const signedTransactionRaw = transaction.signTransaction(account, generationHash, this.version.signatureDScheme);
@@ -132,7 +132,7 @@ export abstract class Transaction {
      * @param generationHash - Network generation hash hex
      * @returns {SignedTransaction}
      */
-    public preV2SignWith(account: Account, generationHash: string): SignedTransaction {
+    public signWith(account: Account, generationHash: string): SignedTransaction {
         this.version.signatureDScheme = DerivationScheme.Unset;
         const transaction = this.buildTransaction();
         const signedTransactionRaw = transaction.signTransaction(account, generationHash, DerivationScheme.Ed25519Sha3);

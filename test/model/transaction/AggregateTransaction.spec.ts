@@ -112,7 +112,7 @@ describe('AggregateTransaction', () => {
             NetworkType.MIJIN_TEST,
             []);
 
-        const signedTransaction = aggregateTransaction.preV2SignWith(account, generationHash);
+        const signedTransaction = aggregateTransaction.signWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(0, 8)).to.be.equal('D1000000');
         expect(signedTransaction.payload.substring(244, 260)).to.be.equal('5300000053000000');
@@ -137,7 +137,7 @@ describe('AggregateTransaction', () => {
             [],
         );
 
-        const signedTransaction = aggregateTransaction.preV2SignWith(account, generationHash);
+        const signedTransaction = aggregateTransaction.signWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(0, 8)).to.be.equal('CD000000');
         expect(signedTransaction.payload.substring(244, 260)).to.be.equal('4F0000004F000000');
@@ -169,7 +169,7 @@ describe('AggregateTransaction', () => {
             [],
         );
 
-        const signedTransaction = aggregateTransaction.preV2SignWith(account, generationHash);
+        const signedTransaction = aggregateTransaction.signWith(account, generationHash);
 
         //expect(signedTransaction.payload.substring(0, 8)).to.be.equal('C0000000');
         //expect(signedTransaction.payload.substring(244, 260)).to.be.equal('4200000042000000');
@@ -197,7 +197,7 @@ describe('AggregateTransaction', () => {
             [],
         );
 
-        const signedTransaction = aggregateTransaction.preV2SignWith(account, generationHash);
+        const signedTransaction = aggregateTransaction.signWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(0, 8)).to.be.equal('B9000000');
         expect(signedTransaction.payload.substring(244, 260)).to.be.equal('3B0000003B000000');
@@ -231,7 +231,7 @@ describe('AggregateTransaction', () => {
             [],
         );
 
-        const signedTransaction = aggregateTransaction.preV2SignWith(account, generationHash);
+        const signedTransaction = aggregateTransaction.signWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(0, 8)).to.be.equal('ED000000');
         expect(signedTransaction.payload.substring(244, 260)).to.be.equal('6F0000006F000000');

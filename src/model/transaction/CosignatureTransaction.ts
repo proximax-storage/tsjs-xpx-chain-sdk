@@ -76,7 +76,7 @@ export class CosignatureTransaction {
      * @param {DerivationScheme} dScheme The derivation scheme
      * @returns {CosignatureSignedTransaction}
      */
-    public signWith(account: Account): CosignatureSignedTransaction {
+    public newSignWith(account: Account): CosignatureSignedTransaction {
         const dScheme = PublicAccount.getDerivationSchemeFromAccVersion(account.version);
         const aggregateSignatureTransaction = new CosignaturetransactionLibrary(this.transactionToCosign.transactionInfo!.hash);
         const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account, dScheme);
@@ -91,7 +91,7 @@ export class CosignatureTransaction {
      * @param {DerivationScheme} dScheme The derivation scheme
      * @returns {CosignatureSignedTransaction}
      */
-    public preV2SignWith(account: Account): CosignatureSignedTransaction {
+    public signWith(account: Account): CosignatureSignedTransaction {
         const aggregateSignatureTransaction = new CosignaturetransactionLibrary(this.transactionToCosign.transactionInfo!.hash);
         const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account, DerivationScheme.Ed25519Sha3);
         return CosignatureSignedTransaction.create(signedTransactionRaw.parentHash,

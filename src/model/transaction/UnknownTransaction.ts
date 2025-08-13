@@ -131,14 +131,14 @@ export class UnknownTransaction extends Transaction{
 
     /**
      * Serialize and sign transaction creating a new SignedTransaction
-     * @override Transaction.preV2SignWith()
+     * @override Transaction.signWith()
      * @internal
      * @param account - The account to sign the transaction
      * @param generationHash - Network generation hash hex
      * @param {DerivationScheme} dScheme The Sign Schema. (SHA2 / SHA3)
      * @returns {never}
      */
-    public preV2SignWith(): never {
+    public signWith(): never {
         throw new Error('Cannot sign UnknownTransaction');
     }
 

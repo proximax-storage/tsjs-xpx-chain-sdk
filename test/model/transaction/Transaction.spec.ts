@@ -245,7 +245,7 @@ describe('Transaction', () => {
 });
 
 class FakeTransaction extends Transaction {
-    public preV2SignWith(account: Account): SignedTransaction {
+    public signWith(account: Account): SignedTransaction {
         throw new Error('Method not implemented.');
     }
 

@@ -55,7 +55,7 @@ describe('RemoveExchangeOfferTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        const signedTransaction = removeExchangeOfferTransaction.preV2SignWith(account, generationHash);
+        const signedTransaction = removeExchangeOfferTransaction.signWith(account, generationHash);
 
         expect(signedTransaction.payload.substring(
             244,

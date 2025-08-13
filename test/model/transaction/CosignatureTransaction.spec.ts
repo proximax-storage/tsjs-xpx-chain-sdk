@@ -109,7 +109,7 @@ describe('CosignatureTransaction', () => {
 
         const cosignatureTransaction = CosignatureTransaction.create(aggregateTransferTransaction as AggregateTransaction);
 
-        const cosignatureSignedTransaction = account.preV2SignCosignatureTransaction(cosignatureTransaction);
+        const cosignatureSignedTransaction = account.signCosignatureTransaction(cosignatureTransaction);
 
         expect(cosignatureSignedTransaction.parentHash).to.be.equal(aggregateTransferTransaction.transactionInfo!.hash);
         expect(cosignatureSignedTransaction.signature).to.be.equal('BF3BC39F2292C028CB0FFA438A9F567A7C4D7' +
