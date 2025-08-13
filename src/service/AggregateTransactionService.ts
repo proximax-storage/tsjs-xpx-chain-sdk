@@ -159,7 +159,7 @@ export class AggregateTransactionService {
      * @param signedTransaction
      * @param cosignatures
      */
-    public static addCosignatures(signedTransaction: SignedTransaction, cosignatures: CosignatureSignedTransaction[]): SignedTransaction {
+    public static newAddCosignatures(signedTransaction: SignedTransaction, cosignatures: CosignatureSignedTransaction[]): SignedTransaction {
         // re-create the transaction from payload to determine the type - only allow aggregate complete transaction as an input
         const recreatedSignedTx = TransactionMapping.createFromPayload(signedTransaction.payload);
         if (recreatedSignedTx.type !== TransactionType.AGGREGATE_COMPLETE_V2) {
@@ -179,6 +179,17 @@ export class AggregateTransactionService {
             signedTransaction.type,
             signedTransaction.networkType
         );
+    }
+
+    /**
+     * Appends cosignatures to a signed aggregate transaction, if they are not yet added
+     *
+     * @param signedTransaction
+     * @param cosignatures
+     */
+    public static addCosignatures(signedTransaction: SignedTransaction, cosignatures: CosignatureSignedTransaction[]): SignedTransaction {
+        
+        return AggregateTransactionService.addCosignaturesV1(signedTransaction, cosignatures);
     }
 
     /**
