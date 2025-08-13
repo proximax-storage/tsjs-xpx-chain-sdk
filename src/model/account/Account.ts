@@ -104,7 +104,7 @@ export class Account {
      */
     public static createFromPrivateKey(privateKey: string,
         networkType: NetworkType,
-        version: number): Account {
+        version: number = 1): Account {
         
         switch (version) {
             case 1:
@@ -139,7 +139,7 @@ export class Account {
     */
     public static createFromMnemonic(mnemonic: string,
         networkType: NetworkType,
-        version: number): Account {
+        version: number = 1): Account {
 
         if(!Crypto.isValidMnemonic(mnemonic)) {
             throw Error(`Invalid mnemonic: ${mnemonic.length}`);
@@ -243,7 +243,7 @@ export class Account {
      * @return {SignedTransaction}
      */
     public sign(transaction: Transaction, generationHash): SignedTransaction {
-        return transaction.signWith(this, generationHash);
+        return transaction.preV2SignWith(this, generationHash);
     }
 
     /**
@@ -252,8 +252,8 @@ export class Account {
      * @param generationHash - Network generation hash hex
      * @return {SignedTransaction}
      */
-    public preV2Sign(transaction: Transaction, generationHash): SignedTransaction {
-        return transaction.preV2SignWith(this, generationHash);
+    public upgradeV2Sign(transaction: Transaction, generationHash): SignedTransaction {
+        return transaction.signWith(this, generationHash);
     }
 
     /**

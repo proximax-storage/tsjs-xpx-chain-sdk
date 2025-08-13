@@ -181,7 +181,7 @@ export abstract class Transaction {
      * @param signer - Transaction signer.
      * @returns InnerTransaction
      */
-    public toAggregate(signer: PublicAccount): InnerTransaction {
+    public toNewAggregate(signer: PublicAccount): InnerTransaction {
         if(!signer.version){
             throw new Error("Signer missing version, please specify to aggregate transaction");
         }
@@ -193,6 +193,15 @@ export abstract class Transaction {
 
         this.version.signatureDScheme = PublicAccount.getDerivationSchemeFromAccVersion(signer.version);
         return Object.assign({__proto__: Object.getPrototypeOf(this)}, this, {signer});
+    }
+
+    /**
+     * Convert an aggregate transaction to an inner transaction including transaction signer.
+     * @param signer - Transaction signer.
+     * @returns InnerTransaction
+     */
+    public toAggregate(signer: PublicAccount): InnerTransaction {
+        return this.toAggregateV1(signer);
     }
 
     /**

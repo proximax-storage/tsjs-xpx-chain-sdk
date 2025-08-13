@@ -435,7 +435,7 @@ describe('SerializeTransactionToJSON', () => {
             NetworkType.MIJIN_TEST,
             [],
         );
-        const signedTransaction = account.preV2Sign(aggregateTransaction, generationHash);
+        const signedTransaction = account.sign(aggregateTransaction, generationHash);
         const lockTransaction = HashLockTransaction.create(Deadline.create(),
             mosaic,
             UInt64.fromUint(10),

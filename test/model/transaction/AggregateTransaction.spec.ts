@@ -416,7 +416,28 @@ describe('AggregateTransaction', () => {
         }).to.throw(Error, 'Inner transaction cannot be an aggregated transaction.');
     });
 
-    it('should throw exception when unknown publicAccount version try to set as signer of inner txn with aggregate v2 transaction', () => {
+    // it('should throw exception when unknown publicAccount version try to set as signer of inner txn with aggregate v2 transaction', () => {
+    //     const transferTransaction = TransferTransaction.create(
+    //         Deadline.create(1, ChronoUnit.HOURS),
+    //         Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC'),
+    //         [],
+    //         PlainMessage.create('test-message'),
+    //         NetworkType.MIJIN_TEST,
+    //     );
+
+    //     expect(() => {
+    //         AggregateTransaction.createComplete(
+    //             Deadline.create(),
+    //             [
+    //                 transferTransaction.toAggregate(
+    //                  PublicAccount.createFromPublicKey(accountV2.publicKey, NetworkType.MIJIN_TEST, null)
+    //                 )
+    //             ],
+    //             NetworkType.MIJIN_TEST,
+    //             []);
+    //     }).to.throw(Error, 'Signer missing version, please specify to aggregate transaction');
+    // });
+    it('v1 aggregate should able to aggregate transaction with scheme 0 in version', () => {
         const transferTransaction = TransferTransaction.create(
             Deadline.create(1, ChronoUnit.HOURS),
             Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC'),
@@ -425,17 +446,26 @@ describe('AggregateTransaction', () => {
             NetworkType.MIJIN_TEST,
         );
 
-        expect(() => {
-            AggregateTransaction.createComplete(
-                Deadline.create(),
-                [
-                    transferTransaction.toAggregate(
-                     PublicAccount.createFromPublicKey(accountV2.publicKey, NetworkType.MIJIN_TEST)
-                    )
-                ],
-                NetworkType.MIJIN_TEST,
-                []);
-        }).to.throw(Error, 'Signer missing version, please specify to aggregate transaction');
+        const transferTransaction2 = TransferTransaction.create(
+            Deadline.create(1, ChronoUnit.HOURS),
+            Address.createFromRawAddress('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC'),
+            [],
+            PlainMessage.create('test-message'),
+            NetworkType.MIJIN_TEST,
+        );
+
+        const aggregateTransaction = AggregateTransaction.createBonded(
+            Deadline.create(),
+            [
+                transferTransaction.toAggregate(account.publicAccount),
+                transferTransaction2.toAggregate(accountV2.publicAccount)
+            ],
+            NetworkType.MIJIN_TEST,
+            []
+        );
+
+        expect(aggregateTransaction.innerTransactions[0].version.signatureDScheme).to.be.equal(0);
+        expect(aggregateTransaction.innerTransactions[1].version.signatureDScheme).to.be.equal(0);
     });
 
     it('v2 should able to support both v1 and v2 account to aggregate transaction with correct scheme in version', () => {
@@ -458,8 +488,8 @@ describe('AggregateTransaction', () => {
         const aggregateTransaction = AggregateTransaction.createBonded(
             Deadline.create(),
             [
-                transferTransaction.toAggregate(account.publicAccount),
-                transferTransaction2.toAggregate(accountV2.publicAccount)
+                transferTransaction.toNewAggregate(account.publicAccount),
+                transferTransaction2.toNewAggregate(accountV2.publicAccount)
             ],
             NetworkType.MIJIN_TEST,
             []

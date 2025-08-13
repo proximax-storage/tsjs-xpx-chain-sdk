@@ -45,7 +45,7 @@ export class PublicAccount {
                 /**
                  * The account version.
                  */
-                public readonly version?: number) {
+                public readonly version: number = 1) {
     }
 
     /**
@@ -55,7 +55,7 @@ export class PublicAccount {
      * @param version Account version
      * @returns {PublicAccount}
      */
-    static createFromPublicKey(publicKey: string, networkType: NetworkType, version?: number): PublicAccount {
+    static createFromPublicKey(publicKey: string, networkType: NetworkType, version: number = 1): PublicAccount {
         if (publicKey == null || (publicKey.length !== 64 && publicKey.length !== 66)) {
             throw new Error('Not a valid public key');
         }

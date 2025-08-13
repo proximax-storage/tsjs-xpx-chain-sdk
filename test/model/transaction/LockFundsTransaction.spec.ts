@@ -35,7 +35,7 @@ describe('HashLockTransaction', () => {
             NetworkType.MIJIN_TEST,
             [],
         );
-        const signedTransaction = account.preV2Sign(aggregateTransaction, generationHash);
+        const signedTransaction = account.sign(aggregateTransaction, generationHash);
         const lockHashTransaction = HashLockTransaction.create(Deadline.create(),
             NetworkCurrencyMosaic.createRelative(10),
             UInt64.fromUint(10),
@@ -53,7 +53,7 @@ describe('HashLockTransaction', () => {
             NetworkType.MIJIN_TEST,
             [],
         );
-        const signedTransaction = account.preV2Sign(aggregateTransaction, generationHash);
+        const signedTransaction = account.sign(aggregateTransaction, generationHash);
         const lockHashTransaction = HashLockTransaction.create(Deadline.create(),
             NetworkCurrencyMosaic.createRelative(10),
             UInt64.fromUint(10),
@@ -73,7 +73,7 @@ describe('HashLockTransaction', () => {
             NetworkType.MIJIN_TEST,
             [],
         );
-        const signedTransaction = account.preV2Sign(aggregateTransaction, generationHash);
+        const signedTransaction = account.sign(aggregateTransaction, generationHash);
         const transaction = HashLockTransaction.create(Deadline.create(),
             NetworkCurrencyMosaic.createRelative(10),
             UInt64.fromUint(10),
@@ -91,7 +91,7 @@ describe('HashLockTransaction', () => {
             NetworkType.MIJIN_TEST,
             [],
         );
-        const signedTransaction = account.preV2Sign(aggregateTransaction, generationHash);
+        const signedTransaction = account.sign(aggregateTransaction, generationHash);
         expect(() => {
             HashLockTransaction.create(Deadline.create(),
                 NetworkCurrencyMosaic.createRelative(10),
@@ -109,7 +109,7 @@ describe('HashLockTransaction', () => {
                 NetworkType.MIJIN_TEST,
                 [],
             );
-            const signedTransaction = account.preV2Sign(aggregateTransaction, generationHash);
+            const signedTransaction = account.sign(aggregateTransaction, generationHash);
             const lockHashTransaction = HashLockTransaction.create(Deadline.create(),
                 NetworkCurrencyMosaic.createRelative(10),
                 UInt64.fromUint(10),

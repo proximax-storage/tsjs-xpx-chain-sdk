@@ -512,7 +512,7 @@ describe('TransactionMapping - createFromPayload', () => {
             NetworkType.MIJIN_TEST,
             [],
         );
-        const signedTransaction = account.preV2Sign(aggregateTransaction, generationHash);
+        const signedTransaction = account.sign(aggregateTransaction, generationHash);
         const lockHashTransaction = HashLockTransaction.create(Deadline.create(),
             NetworkCurrencyMosaic.createRelative(10),
             UInt64.fromUint(10),
@@ -1127,7 +1127,7 @@ describe('TransactionMapping - createFromDTO (Transaction.toJSON() feed)', () =>
             NetworkType.MIJIN_TEST,
             [],
         );
-        const signedTransaction = account.preV2Sign(aggregateTransaction, generationHash);
+        const signedTransaction = account.sign(aggregateTransaction, generationHash);
         const lockTransaction = HashLockTransaction.create(Deadline.create(),
             NetworkCurrencyMosaic.createRelative(10),
             UInt64.fromUint(10),
