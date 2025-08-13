@@ -20,7 +20,7 @@ const schema = new Schema([
 	ushort('type'),
 	array('fee', TypeSize.INT),
 	array('deadline', TypeSize.INT),
-	array('targetAddress'),
+	array('targetPublicKey'),
 	array('scopedMetadataKey', TypeSize.INT),
 	array('valueSizeDelta'),
 	array('valueSize'),

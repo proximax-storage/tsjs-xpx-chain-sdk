@@ -84,7 +84,7 @@ export class AggregateTransaction extends Transaction {
                                  networkType: NetworkType,
                                  cosignatures: AggregateV2TransactionCosignature[] = [],
                                  maxFee?: UInt64): AggregateTransaction {
-        return new AggregateCompleteTransactionBuilder()
+        return new AggregateCompleteV1TransactionBuilder()
             .networkType(networkType)
             .deadline(deadline)
             .maxFee(maxFee)
@@ -130,7 +130,7 @@ export class AggregateTransaction extends Transaction {
                                networkType: NetworkType,
                                cosignatures: AggregateV2TransactionCosignature[] = [],
                                maxFee?: UInt64): AggregateTransaction {
-        return new AggregateBondedTransactionBuilder()
+        return new AggregateBondedV1TransactionBuilder()
             .networkType(networkType)
             .deadline(deadline)
             .maxFee(maxFee)
@@ -208,7 +208,7 @@ export class AggregateTransaction extends Transaction {
      * @param {DerivationScheme} dScheme The derivation scheme
      * @returns {SignedTransaction}
      */
-    public signTransactionWithCosignatories(initiatorAccount: Account,
+    public newSignTransactionWithCosignatories(initiatorAccount: Account,
                                             cosignatories: Account[],
                                             generationHash: string) {
         this.version.signatureDScheme = PublicAccount.getDerivationSchemeFromAccVersion(initiatorAccount.version);
@@ -217,6 +217,22 @@ export class AggregateTransaction extends Transaction {
                 .signTransactionWithCosigners(initiatorAccount, cosignatories, generationHash);
         return new SignedTransaction(signedTransactionRaw.payload, signedTransactionRaw.hash, initiatorAccount.publicKey,
                                      this.type, this.version.networkType);
+    }
+
+    /**
+     * Sign transaction with cosignatories creating a new SignedTransaction
+     * @param initiatorAccount - Initiator account
+     * @param cosignatories - The array of accounts that will cosign the transaction
+     * @param generationHash - Network generation hash hex
+     * @param {DerivationScheme} dScheme The derivation scheme
+     * @returns {SignedTransaction}
+     */
+    public signTransactionWithCosignatories(initiatorAccount: Account,
+                                            cosignatories: Account[],
+                                            generationHash: string) {
+        return this.signTransactionWithCosignatoriesV1(initiatorAccount,
+                    cosignatories,
+                    generationHash);
     }
 
     /**
@@ -246,7 +262,7 @@ export class AggregateTransaction extends Transaction {
      * @param {DerivationScheme} dScheme The derivation scheme
      * @return {SignedTransaction}
      */
-    public signTransactionGivenSignatures(initiatorAccount: Account,
+    public newSignTransactionGivenSignatures(initiatorAccount: Account,
                                           cosignatureSignedTransactions: CosignatureSignedTransaction[],
                                           generationHash: string) {
         this.version.signatureDScheme = PublicAccount.getDerivationSchemeFromAccVersion(initiatorAccount.version);
@@ -257,6 +273,24 @@ export class AggregateTransaction extends Transaction {
                                                                                          generationHash);
         return new SignedTransaction(signedTransactionRaw.payload, signedTransactionRaw.hash, initiatorAccount.publicKey,
                                      this.type, this.version.networkType);
+    }
+
+    /**
+     * Sign transaction with cosignatories collected from cosigned transactions and creating a new SignedTransaction
+     * For off chain Aggregated Complete Transaction co-signing.
+     * @param initiatorAccount - Initiator account
+     * @param {CosignatureSignedTransaction[]} cosignatureSignedTransactions - Array of cosigned transaction
+     * @param generationHash - Network generation hash hex
+     * @param {DerivationScheme} dScheme The derivation scheme
+     * @return {SignedTransaction}
+     */
+    public signTransactionGivenSignatures(initiatorAccount: Account,
+                                          cosignatureSignedTransactions: CosignatureSignedTransaction[],
+                                          generationHash: string) {
+        
+        return this.signTransactionGivenSignaturesV1(initiatorAccount,
+            cosignatureSignedTransactions, generationHash
+        );
     }
 
     /**

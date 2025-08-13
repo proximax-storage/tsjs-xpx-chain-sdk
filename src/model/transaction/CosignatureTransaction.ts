@@ -64,7 +64,7 @@ export class CosignatureTransaction {
         const dScheme = PublicAccount.getDerivationSchemeFromAccVersion(account.version);
         const transactionHash = VerifiableTransaction.createTransactionHash(payload, Array.from(Convert.hexToUint8(generationHash)));
         const aggregateSignatureTransaction = new CosignaturetransactionLibrary(transactionHash);
-        const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account, dScheme);
+        const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account);
         return CosignatureSignedTransaction.create(signedTransactionRaw.parentHash,
             signedTransactionRaw.signature, dScheme,
             signedTransactionRaw.signer);
@@ -79,7 +79,7 @@ export class CosignatureTransaction {
     public newSignWith(account: Account): CosignatureSignedTransaction {
         const dScheme = PublicAccount.getDerivationSchemeFromAccVersion(account.version);
         const aggregateSignatureTransaction = new CosignaturetransactionLibrary(this.transactionToCosign.transactionInfo!.hash);
-        const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account, dScheme);
+        const signedTransactionRaw = aggregateSignatureTransaction.newSignCosignatoriesTransaction(account, dScheme);
         return CosignatureSignedTransaction.create(signedTransactionRaw.parentHash,
             signedTransactionRaw.signature, dScheme,
             signedTransactionRaw.signer);
@@ -93,7 +93,7 @@ export class CosignatureTransaction {
      */
     public signWith(account: Account): CosignatureSignedTransaction {
         const aggregateSignatureTransaction = new CosignaturetransactionLibrary(this.transactionToCosign.transactionInfo!.hash);
-        const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account, DerivationScheme.Ed25519Sha3);
+        const signedTransactionRaw = aggregateSignatureTransaction.signCosignatoriesTransaction(account);
         return CosignatureSignedTransaction.create(signedTransactionRaw.parentHash,
             signedTransactionRaw.signature, DerivationScheme.Ed25519Sha3,
             signedTransactionRaw.signer);

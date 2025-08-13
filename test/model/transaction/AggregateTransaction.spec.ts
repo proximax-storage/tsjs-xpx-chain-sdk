@@ -370,25 +370,25 @@ describe('AggregateTransaction', () => {
         expect(aggregateTransaction.type).to.be.equal(0x4241);
     });
 
-    it('should have type 0x4341 when it\'s complete', () => {
+    it('should have type 0x4141 when it\'s complete', () => {
         const aggregateTransaction = AggregateTransaction.createComplete(
             Deadline.create(),
             [],
             NetworkType.MIJIN_TEST,
         );
 
-        expect(aggregateTransaction.type).to.be.equal(0x4341);
+        expect(aggregateTransaction.type).to.be.equal(0x4141);
     });
 
 
-    it('should have type 0x4441 when it\'s bonded', () => {
+    it('should have type 0x4241 when it\'s bonded', () => {
         const aggregateTransaction = AggregateTransaction.createBonded(
             Deadline.create(),
             [],
             NetworkType.MIJIN_TEST,
         );
 
-        expect(aggregateTransaction.type).to.be.equal(0x4441);
+        expect(aggregateTransaction.type).to.be.equal(0x4241);
     });
 
 
@@ -559,7 +559,7 @@ describe('AggregateTransaction', () => {
         expect(signedTransaction.payload.length).to.be.equal(aggregateTxnPayloadSize + (96 * 2 * 2));
     });
 
-    it('Should create signed transaction with cosignatories - Aggregated Complete V2', () => {
+    it('Should create signed transaction with cosignatories - Aggregated Complete V1', () => {
         const accountAlice = TestingAccountV2;
         const accountBob = CosignatoryAccountV2;
         const accountCarol = Cosignatory2AccountV2;
@@ -611,11 +611,12 @@ describe('AggregateTransaction', () => {
 
         const signedTransaction = recreatedTx.signTransactionGivenSignatures(accountAlice, cosignatureSignedTransactions, generationHash);
 
-        expect(signedTransaction.type).to.be.equal(TransactionType.AGGREGATE_COMPLETE_V2);
+        expect(signedTransaction.type).to.be.equal(TransactionType.AGGREGATE_COMPLETE_V1);
         expect(signedTransaction.signer).to.be.equal(accountAlice.publicKey);
         expect(signedTransaction.payload.indexOf(accountBob.publicKey) > -1).to.be.true;
         expect(signedTransaction.payload.indexOf(accountCarol.publicKey) > -1).to.be.true;
-        expect(signedTransaction.payload.length).to.be.equal(aggregateTxnPayloadSize + (97 * 2 * 2));
+        // v2 will be 97 * 2 * 2
+        expect(signedTransaction.payload.length).to.be.equal(aggregateTxnPayloadSize + (96 * 2 * 2));
     });
 
     describe('size', () => {

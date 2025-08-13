@@ -48,13 +48,13 @@ export class AggregateTransaction extends VerifiableTransaction {
             payload.substring(8, payload.length);
     }
 
-    signTransactionWithCosigners(initializer: Account, cosigners: Account[], generationHash) {
+    newSignTransactionWithCosigners(initializer: Account, cosigners: Account[], generationHash) {
         const dScheme = PublicAccount.getDerivationSchemeFromAccVersion(initializer.version);
         const signedTransaction = this.signTransaction(initializer, generationHash, dScheme);
         cosigners.forEach((cosigner) => {
             const signatureTransaction = new CosignatureTransaction(signedTransaction.hash);
             const cosignerDScheme = PublicAccount.getDerivationSchemeFromAccVersion(cosigner.version);
-            const signatureCosignTransaction = signatureTransaction.signCosignatoriesTransaction(cosigner, cosignerDScheme);
+            const signatureCosignTransaction = signatureTransaction.newSignCosignatoriesTransaction(cosigner, cosignerDScheme);
             signedTransaction.payload = signedTransaction.payload + signatureCosignTransaction.scheme + 
                 signatureCosignTransaction.signer + signatureCosignTransaction.signature;
         });
@@ -65,11 +65,15 @@ export class AggregateTransaction extends VerifiableTransaction {
         return signedTransaction;
     }
 
+    signTransactionWithCosigners(initializer: Account, cosigners: Account[], generationHash) {
+        return this.signTransactionWithCosignersV1(initializer, cosigners, generationHash);
+    }
+
     signTransactionWithCosignersV1(initializer, cosigners: Account[], generationHash) {
         const signedTransaction = this.signTransaction(initializer, generationHash, DerivationScheme.Ed25519Sha3);
         cosigners.forEach((cosigner) => {
             const signatureTransaction = new CosignatureTransaction(signedTransaction.hash);
-            const signatureCosignTransaction = signatureTransaction.signCosignatoriesTransaction(cosigner, DerivationScheme.Ed25519Sha3);
+            const signatureCosignTransaction = signatureTransaction.signCosignatoriesTransaction(cosigner);
             signedTransaction.payload = signedTransaction.payload +
                 signatureCosignTransaction.signer + signatureCosignTransaction.signature;
         });
@@ -80,7 +84,7 @@ export class AggregateTransaction extends VerifiableTransaction {
         return signedTransaction;
     }
 
-    signTransactionGivenSignatures(initializer, cosignedSignedTransactions, generationHash) {
+    newSignTransactionGivenSignatures(initializer, cosignedSignedTransactions, generationHash) {
         const dScheme = PublicAccount.getDerivationSchemeFromAccVersion(initializer.version);
         const signedTransaction = this.signTransaction(initializer, generationHash, dScheme);
         cosignedSignedTransactions.forEach((cosignedTransaction) => {
@@ -91,6 +95,10 @@ export class AggregateTransaction extends VerifiableTransaction {
         signedTransaction.payload = AggregateTransaction.recalculateSize(signedTransaction.payload);
 
         return signedTransaction;
+    }
+
+    signTransactionGivenSignatures(initializer, cosignedSignedTransactions, generationHash) {
+        return this.signTransactionGivenSignaturesV1(initializer, cosignedSignedTransactions, generationHash);
     }
 
     signTransactionGivenSignaturesV1(initializer, cosignedSignedTransactions, generationHash) {

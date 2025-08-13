@@ -1151,7 +1151,7 @@ const CreateStandaloneTransactionFromDTO = (transactionDTO, transactionInfo, isA
         txn!.version.signatureDScheme = dScheme;
 
         if(isAggregatedInfo.isEmbedded && isAggregatedInfo.isV2){
-            return txn!.toAggregate(txn!.signer!);
+            return txn!.toNewAggregate(txn!.signer!);
         }
         else if(isAggregatedInfo.isEmbedded){
             return txn!.toAggregateV1(txn!.signer!);

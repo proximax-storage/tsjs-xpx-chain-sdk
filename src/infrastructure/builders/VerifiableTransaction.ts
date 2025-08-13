@@ -124,7 +124,7 @@ export class VerifiableTransaction {
      * @param {DerivationScheme} dScheme The derivation scheme
      * @returns {module:model/TransactionPayload} Returns TransactionPayload instance
      */
-    signCosignatoriesTransaction(keyPair, dScheme: DerivationScheme = DerivationScheme.Ed25519Sha3) {
+    newSignCosignatoriesTransaction(keyPair, dScheme: DerivationScheme = DerivationScheme.Ed25519Sha3) {
         const signature = KeyPair.sign(keyPair, new Uint8Array(this.bytes), dScheme);
         return {
             parentHash: convert.uint8ArrayToHex(this.bytes),
@@ -132,6 +132,15 @@ export class VerifiableTransaction {
             scheme: convert.uint8ToHex(dScheme),
             signer: keyPair.publicKey,
         };
+    }
+
+    /**
+     * @param {KeyPair} keyPair KeyPair instance
+     * @param {DerivationScheme} dScheme The derivation scheme
+     * @returns {module:model/TransactionPayload} Returns TransactionPayload instance
+     */
+    signCosignatoriesTransaction(keyPair) {
+        return this.signCosignatoriesTransactionV1(keyPair);
     }
 
     /**
